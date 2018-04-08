@@ -1,0 +1,22 @@
+{
+	"name": "forrest79/phpgsql-db",
+	"type": "library",
+	"require": {
+		"php":  ">=7.1",
+		"ext-pgsql": ">=7.1"
+	},
+	"require-dev": {
+		"nette/tester": "~2"
+	},
+	"autoload": {
+		"psr-4": {
+			"Forrest79\\PhPgSql\\": "src/"
+		}
+	},
+	"authors": [
+		{
+			"name": "Jakub Trmota",
+			"email": "jakub@trmota.cz"
+		}
+	]
+}

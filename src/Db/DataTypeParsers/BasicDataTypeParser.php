@@ -1,0 +1,129 @@
+<?php declare(strict_types=1);
+
+namespace Forrest79\PhPgSql\Db\DataTypeParsers;
+
+use Forrest79\PhPgSql\Db\Exceptions;
+
+class BasicDataTypeParser implements DataTypeParser
+{
+
+	/**
+	 * @return mixed
+	 * @throws Exceptions\DataTypeParserException
+	 */
+	public function parse(string $type, string $value)
+	{
+		if ($type[0] === '_') { // arrays
+			switch ($type) {
+				case '_int2':
+				case '_int4':
+				case '_int8':
+					return $this->parseArray($value, function($value) {
+						return (int) $value;
+					});
+				case '_float4':
+				case '_float8':
+				case '_numeric':
+					return $this->parseArray($value, function($value) {
+						return (float) $value;
+					});
+				case '_bool':
+					return $this->parseArray($value, [$this, 'parseBool']);
+				case '_date':
+					return $this->parseArray($value, [$this, 'parseDate']);
+				case '_timestamp':
+					return $this->parseArray($value, function($value) {
+						return $this->parseTimestamp(trim($value, '"'));
+					});
+				case '_timestamptz':
+					return $this->parseArray($value, function($value) {
+						return $this->parseTimestampTz(trim($value, '"'));
+					});
+				case '_time':
+				case '_timetz':
+					return $this->parseArray($value);
+				case '_bpchar':
+				case '_varchar':
+				case '_text':
+				case '_tsquery':
+				case '_tsvector':
+					throw Exceptions\DataTypeParserException::tryUseConvertToJson($type, $value, 'array_to_json');
+				default :
+					throw Exceptions\DataTypeParserException::cantParseType($type, $value);
+			}
+		} else {
+			switch ($type) {
+				case 'int2':
+				case 'int4':
+				case 'int8':
+					return (int) $value;
+				case 'float4':
+				case 'float8':
+				case 'numeric':
+					return (float) $value;
+				case 'bool':
+					return $this->parseBool($value);
+				case 'date':
+					return $this->parseDate($value);
+				case 'timestamp':
+					return $this->parseTimestamp($value);
+				case 'timestamptz':
+					return $this->parseTimestampTz($value);
+				case 'json':
+				case 'jsonb':
+					return \json_decode($value, TRUE);
+				case 'time':
+				case 'timetz':
+					return $value;
+				case 'bpchar':
+				case 'varchar':
+				case 'text':
+					return $value;
+				case 'tsquery':
+				case 'tsvector':
+					return $value;
+				case 'hstore':
+					throw Exceptions\DataTypeParserException::tryUseConvertToJson($type, $value, 'hstore_to_json');
+				default :
+					throw Exceptions\DataTypeParserException::cantParseType($type, $value);
+			}
+		}
+	}
+
+
+	protected function parseArray($value, ?callable $typeFnc = NULL): array
+	{
+		$array = explode(',', substr($value, 1, -1));
+
+		if ($typeFnc !== NULL) {
+			$array = array_map($typeFnc, $array);
+		}
+
+		return $array;
+	}
+
+
+	protected function parseBool($value): bool
+	{
+		return $value === 't' ? TRUE : FALSE;
+	}
+
+
+	protected function parseDate($value): \DateTimeImmutable
+	{
+		return \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $value . ' 00:00:00');
+	}
+
+
+	protected function parseTimestamp($value): \DateTimeImmutable
+	{
+		return \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $value);
+	}
+
+
+	protected function parseTimestampTz($value): \DateTimeImmutable
+	{
+		return \DateTimeImmutable::createFromFormat('Y-m-d H:i:sO', $value);
+	}
+
+}
