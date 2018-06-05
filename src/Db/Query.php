@@ -11,7 +11,7 @@ class Query
 	private $params;
 
 
-	public function __construct(string $sql, array $params)
+	public function __construct(string $sql, array $params = [])
 	{
 		$this->sql = $sql;
 		$this->params = $params;

@@ -74,4 +74,4 @@ class AsyncTest extends TestCase
 
 }
 
-(new AsyncTest)->run();
+(new AsyncTest())->run();

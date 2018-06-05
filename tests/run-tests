@@ -1,3 +1,5 @@
 #!/bin/sh
 
-${0%/*}/../vendor/bin/tester -c ${0%/*}/php.ini "$@"
+${0%/*}/../vendor/bin/tester -c ${0%/*}/php.ini --coverage-src ${0%/*}/../src "$@"
+
+php ${0%/*}/clean-dbs.php

@@ -230,7 +230,6 @@ class ParseDataTypeTest extends TestCase
 		Tester\Assert::true($row->type_timestamp[0] instanceof \DateTimeImmutable);
 		Tester\Assert::true(is_array($row->type_timestamptz));
 		Tester\Assert::true($row->type_timestamptz[0] instanceof \DateTimeImmutable);
-		var_dump($row->type_timestamp, $row->type_timestamptz, $row->type_timetz);
 	}
 
 
@@ -242,4 +241,4 @@ class ParseDataTypeTest extends TestCase
 
 }
 
-(new ParseDataType)->run();
+(new ParseDataTypeTest())->run();

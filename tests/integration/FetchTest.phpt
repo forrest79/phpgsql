@@ -299,4 +299,4 @@ class FetchTest extends TestCase
 
 }
 
-(new FetchTest)->run();
+(new FetchTest())->run();

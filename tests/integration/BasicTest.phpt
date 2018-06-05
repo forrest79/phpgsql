@@ -42,4 +42,4 @@ class BasicTest extends TestCase
 
 }
 
-(new BasicTest)->run();
+(new BasicTest())->run();

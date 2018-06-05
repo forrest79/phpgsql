@@ -1,0 +1,3 @@
+#!/bin/sh
+
+${0%/*}/run-tests -d zend_extension=xdebug.so --coverage coverage.html --coverage-src ${0%/*}/../src "$@"

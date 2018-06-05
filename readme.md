@@ -18,11 +18,11 @@ Simple and fast PHP database library for PostgreSQL with auto converting DB type
 
 ### Installation
 
-The recommended way to install PhPgSql - Db is through Composer:
+The recommended way to install PhPgSql is through Composer:
 
 TODO
 ```
-composer require forrest79/phpgsql-db --dev
+composer require forrest79/phpgsql --dev
 ```
 
 PhPgSql requires PHP 7.1.0 and pgsql binary extension. It doesn't work with PDO!
@@ -167,10 +167,15 @@ $connection->addOnQuery(function(Connection $connection, Query $query, ?float $t
 });
 ```
 
-What next? Look at PhPgSql - Fluent.
+## Fluent
 
-TODO
-----
+### NOT SUPPORTED NOW (only important things)
+- ```[ WITH [ RECURSIVE ] with_query [, ...] ]``` add something like ```->addPrefix('WITH RECURSIVE SELECT column')```
+- ```DELETE FROM ... USING``` using can be written by ```WHERE ... IN (...)```, is using necessary?
+- ```INSERT INTO ... ON CONFLICT```
+
+## TODO
+
 - Travis tests
 - other tests + code coverage 
 - https://packagist.org/
