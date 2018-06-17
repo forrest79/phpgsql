@@ -251,13 +251,13 @@ class Connection
 	}
 
 
-	public function prepareQuery(string $query, ...$params): Query
+	public function createQuery(string $query, ...$params): Query
 	{
-		return $this->prepareQueryArray($query, $params);
+		return $this->createQueryArray($query, $params);
 	}
 
 
-	public function prepareQueryArray(string $query, array $params): Query
+	public function createQueryArray(string $query, array $params): Query
 	{
 		return new Query($query, $params);
 	}
@@ -376,7 +376,7 @@ class Connection
 				throw Exceptions\QueryException::cantPassParams();
 			}
 		} else {
-			$query = $this->prepareQueryArray($query, $params);
+			$query = $this->createQueryArray($query, $params);
 		}
 
 		return $query;

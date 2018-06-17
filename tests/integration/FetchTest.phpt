@@ -10,7 +10,7 @@ require_once __DIR__ . '/TestCase.php';
 /**
  * @testCase
  */
-class Fetch extends TestCase
+class FetchTest extends TestCase
 {
 	/** @var Db\Connection */
 	private $connection;
@@ -299,4 +299,4 @@ class Fetch extends TestCase
 
 }
 
-(new Fetch)->run();
+(new FetchTest)->run();

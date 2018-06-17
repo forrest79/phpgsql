@@ -19,79 +19,79 @@ class ConnectionException extends Exception
 	const ASYNC_CONSUME_INPUT_FAILED = 14;
 
 
-	public static function noExtensionException()
+	public static function noExtensionException(): self
 	{
 		return new self('PHP extension \'pgsql\' is not loaded.', self::NO_CONFIG);
 	}
 
 
-	public static function noConfigException()
+	public static function noConfigException(): self
 	{
 		return new self('No configuration was provided.', self::NO_CONFIG);
 	}
 
 
-	public static function connectionFailedException($message)
+	public static function connectionFailedException($message): self
 	{
 		return new self(\sprintf('Connection failed: %s.', $message), self::CONNECTION_FAILED);
 	}
 
 
-	public static function badConnectionException($message)
+	public static function badConnectionException($message): self
 	{
 		return new self(\sprintf('Connection failed (bad connection): %s.', $message), self::BAD_CONNECTION);
 	}
 
 
-	public static function asyncStreamFailedException()
+	public static function asyncStreamFailedException(): self
 	{
 		return new self('Asynchronous connection error.', self::NO_CONFIG);
 	}
 
 
-	public static function asyncConnectFailedException()
+	public static function asyncConnectFailedException(): self
 	{
 		return new self('Asynchronous connection error.', self::ASYNC_CONNECT_FAILED);
 	}
 
 
-	public static function asyncConnectTimeoutException(int $afterSecond, int $configSeconds)
+	public static function asyncConnectTimeoutException(int $afterSecond, int $configSeconds): self
 	{
 		return new self(\sprintf('Asynchronous connection timeout after %s seconds (%s seconds are configured).', $afterSecond, $configSeconds), self::ASYNC_CONNECT_TIMEOUT);
 	}
 
 
-	public static function asyncNoQueriesToSendException()
+	public static function asyncNoQueriesToSendException(): self
 	{
 		return new self('There\'re no queries to send.', self::ASYNC_NO_QUERIES_TO_SEND);
 	}
 
 
-	public static function asyncWaitingResultsException()
+	public static function asyncWaitingResultsException(): self
 	{
 		return new self('You must take results from previous async send via waitForAsyncQueriesResults().', self::ASYNC_WAITING_RESULTS);
 	}
 
 
-	public static function asyncNoQueriyWasSentException()
+	public static function asyncNoQueriyWasSentException(): self
 	{
 		return new self('There were sent queries.', self::ASYNC_NO_QUERY_WAS_SENT);
 	}
 
 
-	public static function asyncSendQueriesFailed()
+	public static function asyncSendQueriesFailed(): self
 	{
 		return new self('There were sent queries.', self::ASYNC_SEND_QUERIES_FAILED);
 	}
 
 
-	public static function asyncFlushResultsFailed(int $type)
+	public static function asyncFlushResultsFailed(int $type): self
 	{
 		return new self(\sprintf('Flushing result failed #%s.', $type), self::ASYNC_FLUSH_RESULTS_FAILED);
 	}
 
 
-	public static function asyncConsumeInputFailed()
+	public static function asyncConsumeInputFailed(): self
 	{
 		return new self('Consume input failed.', self::ASYNC_CONSUME_INPUT_FAILED);
 	}

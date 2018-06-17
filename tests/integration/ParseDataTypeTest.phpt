@@ -10,7 +10,7 @@ require_once __DIR__ . '/TestCase.php';
 /**
  * @testCase
  */
-class Async extends TestCase
+class ParseDataTypeTest extends TestCase
 {
 	/** @var Db\Connection */
 	private $connection;
@@ -242,4 +242,4 @@ class Async extends TestCase
 
 }
 
-(new Async)->run();
+(new ParseDataType)->run();

@@ -28,25 +28,25 @@ class QueryException extends Exception
 	}
 
 
-	public static function queryFailed(Db\Query $query, string $error)
+	public static function queryFailed(Db\Query $query, string $error): self
 	{
 		return new self(\sprintf('Query failed: \'%s\' with error: %s.', $query->getSql(), $error), self::QUERY_FAILED, $query);
 	}
 
 
-	public static function asyncQueryFailed(Db\Query $query, string $error)
+	public static function asyncQueryFailed(Db\Query $query, string $error): self
 	{
 		return new self(\sprintf('Async query failed? \'%s\' with error: %s.', $query->getSql(), $error), self::ASYNC_QUERY_FAILED, $query);
 	}
 
 
-	public static function cantPassParams()
+	public static function cantPassParams(): self
 	{
 		return new self('Can\'t pass params when passing Query object.', self::CANT_PASS_PARAMS);
 	}
 
 
-	public static function noParam(int $index)
+	public static function noParam(int $index): self
 	{
 		return new self(\sprintf('There is no param for index %s.', $index), self::NO_PARAM);
 	}

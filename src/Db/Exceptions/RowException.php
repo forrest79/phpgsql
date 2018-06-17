@@ -9,7 +9,7 @@ class RowException extends Exception
 	const NO_KEY = 1;
 
 
-	public static function noParam(string $key)
+	public static function noParam(string $key): self
 	{
 		return new self(\sprintf('There is no key \'%s\'.', $key), self::NO_KEY);
 	}
