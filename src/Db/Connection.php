@@ -25,6 +25,9 @@ class Connection
 	/** @var resource */
 	private $asyncStream;
 
+	/** @var RowFactory */
+	private $rowFactory;
+
 	/** @var DataTypeParsers\DataTypeParser */
 	private $dataTypeParser;
 
@@ -151,21 +154,21 @@ class Connection
 	}
 
 
-	public function addOnConnectListener(callable $eventListener)
+	public function addOnConnect(callable $callback)
 	{
-		$this->onConnect[] = $eventListener;
+		$this->onConnect[] = $callback;
 	}
 
 
-	public function addOnCloseListener(callable $eventListener)
+	public function addOnClose(callable $callback)
 	{
-		$this->onClose[] = $eventListener;
+		$this->onClose[] = $callback;
 	}
 
 
-	public function addOnQueryListener(callable $eventListener)
+	public function addOnQuery(callable $callback)
 	{
-		$this->onQuery[] = $eventListener;
+		$this->onQuery[] = $callback;
 	}
 
 
@@ -176,6 +179,23 @@ class Connection
 			$this->onClose();
 		}
 		return $this;
+	}
+
+
+	public function setRowFactory(RowFactory $rowFactory): self
+	{
+		$this->rowFactory = $rowFactory;
+		return $this;
+	}
+
+
+	private function getRowFactory(): RowFactory
+	{
+		if ($this->rowFactory === NULL) {
+			$this->rowFactory = new BasicRowFactory;
+		}
+
+		return $this->rowFactory;
 	}
 
 
@@ -214,7 +234,7 @@ class Connection
 	 */
 	public function queryArray($query, array $params): Result
 	{
-		$query = $this->normalizeQuery($query, $params);
+		$query = Helper::prepareSql($this->normalizeQuery($query, $params));
 
 		$start = $this->onQuery ? microtime(TRUE) : NULL;
 
@@ -227,7 +247,7 @@ class Connection
 			$this->onQuery($query, microtime(TRUE) - $start);
 		}
 
-		return new Result($resource, $this->getDataTypeParser());
+		return new Result($resource, $this->getRowFactory(), $this->getDataTypeParser());
 	}
 
 
@@ -259,7 +279,7 @@ class Connection
 	 */
 	public function asyncQueryArray($query, array $params): AsyncResult
 	{
-		$this->asyncQuery = $query = $this->normalizeQuery($query, $params);
+		$this->asyncQuery = $query = Helper::prepareSql($this->normalizeQuery($query, $params));
 
 		if (\pg_send_query_params($this->getConnectedResource(), $query->getSql(), $query->getParams()) === FALSE) {
 			throw Exceptions\QueryException::asyncQueryFailed($query, $this->getLastError());
@@ -269,7 +289,7 @@ class Connection
 			$this->onQuery($query);
 		}
 
-		return $this->asyncResult = new AsyncResult($this->getDataTypeParser());
+		return $this->asyncResult = new AsyncResult($this->getRowFactory(), $this->getDataTypeParser());
 	}
 
 
@@ -333,7 +353,7 @@ class Connection
 	 */
 	public function inTransaction(): bool
 	{
-		return !in_array(pg_transaction_status($this->getConnectedResource()), [PGSQL_TRANSACTION_UNKNOWN, PGSQL_TRANSACTION_IDLE], TRUE);
+		return !in_array(\pg_transaction_status($this->getConnectedResource()), [PGSQL_TRANSACTION_UNKNOWN, PGSQL_TRANSACTION_IDLE], TRUE);
 	}
 
 
@@ -352,7 +372,7 @@ class Connection
 	private function normalizeQuery($query, array $params): Query
 	{
 		if ($query instanceof Query) {
-			if (!$params) {
+			if ($params) {
 				throw Exceptions\QueryException::cantPassParams();
 			}
 		} else {
@@ -410,7 +430,7 @@ class Connection
 
 	private function onConnect(): void
 	{
-		array_walk($this->onConnect, function(callable $event) {
+		\array_walk($this->onConnect, function(callable $event) {
 			$event($this);
 		});
 	}
@@ -418,7 +438,7 @@ class Connection
 
 	private function onClose(): void
 	{
-		array_walk($this->onClose, function(callable $event) {
+		\array_walk($this->onClose, function(callable $event) {
 			$event($this);
 		});
 	}
@@ -426,7 +446,7 @@ class Connection
 
 	private function onQuery(Query $query, ?float $time = NULL): void
 	{
-		array_walk($this->onQuery, function(callable $event) use ($query, $time){
+		\array_walk($this->onQuery, function(callable $event) use ($query, $time){
 			$event($this, $query, $time);
 		});
 	}

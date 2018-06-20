@@ -10,7 +10,7 @@ class ResultException extends Exception
 
 	public static function noColumn(string $key)
 	{
-		return new self(sprintf('There is no key \'%s\'.', $key), self::NO_COLUMN);
+		return new self(\sprintf('There is no key \'%s\'.', $key), self::NO_COLUMN);
 	}
 
 

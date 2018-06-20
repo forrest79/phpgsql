@@ -11,7 +11,7 @@ class RowException extends Exception
 
 	public static function noParam(string $key)
 	{
-		return new self(sprintf('There is no key \'%s\'.', $key), self::NO_KEY);
+		return new self(\sprintf('There is no key \'%s\'.', $key), self::NO_KEY);
 	}
 
 }

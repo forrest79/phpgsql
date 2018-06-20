@@ -25,7 +25,7 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable
 		$this->columnsDataTypes = $columnsDataTypes;
 		$this->dataTypeParser = $dataTypeParser;
 
-		$this->values = array_combine(array_keys($values), array_fill(0, count($values), NULL));
+		$this->values = \array_combine(\array_keys($values), \array_fill(0, count($values), NULL));
 	}
 
 
@@ -67,7 +67,7 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable
 
 	public function count(): int
 	{
-		return count($this->values);
+		return \count($this->values);
 	}
 
 
@@ -115,11 +115,11 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable
 	 */
 	private function getValue(string $key)
 	{
-		if (!array_key_exists($key, $this->values)) {
+		if (!\array_key_exists($key, $this->values)) {
 			throw Exceptions\RowException::noParam($key);
 		}
 
-		if (array_key_exists($key, $this->rawValues)) {
+		if (\array_key_exists($key, $this->rawValues)) {
 			$this->parseValue($key);
 		}
 
@@ -142,7 +142,7 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable
 
 	private function existsKey(string $key): bool
 	{
-		return array_key_exists($key, $this->values);
+		return \array_key_exists($key, $this->values);
 	}
 
 

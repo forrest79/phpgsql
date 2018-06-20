@@ -1,8 +1,9 @@
-PhPgSql - DB
-================================================================
+PhPgSql
+=======
 
-Introduction
-------------
+## DB
+
+### Introduction
 
 Simple and fast PHP database library for PostgreSQL with auto converting DB types to PHP.
 
@@ -15,8 +16,7 @@ Simple and fast PHP database library for PostgreSQL with auto converting DB type
   - as variable you can pass scalar, bool, array, literal or other query
 
 
-Installation
-------------
+### Installation
 
 The recommended way to install PhPgSql - Db is through Composer:
 
@@ -28,8 +28,7 @@ composer require forrest79/phpgsql-db --dev
 PhPgSql requires PHP 7.1.0 and pgsql binary extension. It doesn't work with PDO!
 
 
-Using
------
+### Using
 
 First, create connection to PostgreSQL and connect it:
 
@@ -157,13 +156,13 @@ $connection->rollback('savepoint1');
 Or listen on events like connect/close/query:
 
 ```php
-$connection->addOnConnectListener(function(Connection $connection) {
+$connection->addOnConnect(function(Connection $connection) {
 	echo 'connect...';
 });
-$connection->addOnCloseListener(function(Connection $connection) {
+$connection->addOnClose(function(Connection $connection) {
 	echo 'close...';
 });
-$connection->addOnQueryListener(function(Connection $connection, Query $query, ?float $time = NULL) { // $time === NULL for async queries
+$connection->addOnQuery(function(Connection $connection, Query $query, ?float $time = NULL) { // $time === NULL for async queries
 	echo 'close...';
 });
 ```
@@ -172,8 +171,7 @@ What next? Look at PhPgSql - Fluent.
 
 TODO
 ----
-- can use own `Row` class? use some sort of RowFactory? Add to Query? Via connection?
-- shortcut for PG array creation and escape
 - Travis tests
+- other tests + code coverage 
 - https://packagist.org/
 - license

@@ -33,13 +33,13 @@ class ConnectionException extends Exception
 
 	public static function connectionFailedException($message)
 	{
-		return new self(sprintf('Connection failed: %s.', $message), self::CONNECTION_FAILED);
+		return new self(\sprintf('Connection failed: %s.', $message), self::CONNECTION_FAILED);
 	}
 
 
 	public static function badConnectionException($message)
 	{
-		return new self(sprintf('Connection failed (bad connection): %s.', $message), self::BAD_CONNECTION);
+		return new self(\sprintf('Connection failed (bad connection): %s.', $message), self::BAD_CONNECTION);
 	}
 
 
@@ -87,7 +87,7 @@ class ConnectionException extends Exception
 
 	public static function asyncFlushResultsFailed(int $type)
 	{
-		return new self(sprintf('Flushing result failed #%s.', $type), self::ASYNC_FLUSH_RESULTS_FAILED);
+		return new self(\sprintf('Flushing result failed #%s.', $type), self::ASYNC_FLUSH_RESULTS_FAILED);
 	}
 
 

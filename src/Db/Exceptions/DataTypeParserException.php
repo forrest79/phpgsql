@@ -10,13 +10,13 @@ class DataTypeParserException extends Exception
 
 	public static function cantParseType(string $type, string $value)
 	{
-		return new self(sprintf('Can\'t parse type \'%s\' for value \'%s\'.', $type, $value), self::CANT_PARSE_TYPE);
+		return new self(\sprintf('Can\'t parse type \'%s\' for value \'%s\'.', $type, $value), self::CANT_PARSE_TYPE);
 	}
 
 
 	public static function tryUseConvertToJson(string $type, string $value, string $pgJsonFunction)
 	{
-		return new self(sprintf('Can\'t parse type \'%s\' for value \'%s\', try convert it JSON with \'%s\'.', $type, $value, $pgJsonFunction), self::TRY_USE_CONVERT_TO_JSON);
+		return new self(\sprintf('Can\'t parse type \'%s\' for value \'%s\', try convert it JSON with \'%s\'.', $type, $value, $pgJsonFunction), self::TRY_USE_CONVERT_TO_JSON);
 	}
 
 }

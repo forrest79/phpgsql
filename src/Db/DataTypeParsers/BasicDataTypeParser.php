@@ -93,10 +93,10 @@ class BasicDataTypeParser implements DataTypeParser
 
 	protected function parseArray($value, ?callable $typeFnc = NULL): array
 	{
-		$array = explode(',', substr($value, 1, -1));
+		$array = \explode(',', substr($value, 1, -1));
 
 		if ($typeFnc !== NULL) {
-			$array = array_map($typeFnc, $array);
+			$array = \array_map($typeFnc, $array);
 		}
 
 		return $array;

@@ -8,6 +8,9 @@ class Result implements \Countable, \IteratorAggregate
 {
 	protected $queryResource;
 
+	/** @var RowFactory */
+	private $rowFactory;
+
 	/** @var DataTypeParsers\DataTypeParser */
 	private $dataTypeParser;
 
@@ -18,10 +21,18 @@ class Result implements \Countable, \IteratorAggregate
 	private $columnsDataTypes;
 
 
-	public function __construct($queryResource, DataTypeParsers\DataTypeParser $dataTypeParser)
+	public function __construct($queryResource, RowFactory $rowFactory, DataTypeParsers\DataTypeParser $dataTypeParser)
 	{
 		$this->queryResource = $queryResource;
+		$this->rowFactory = $rowFactory;
 		$this->dataTypeParser = $dataTypeParser;
+	}
+
+
+	public function setRowFactory(RowFactory $rowFactory): self
+	{
+		$this->rowFactory = $rowFactory;
+		return $this;
 	}
 
 
@@ -32,7 +43,7 @@ class Result implements \Countable, \IteratorAggregate
 			return NULL;
 		}
 
-		return new Row($data, $this->getColumnsDataTypes(), $this->dataTypeParser);
+		return $this->rowFactory->createRow($data, $this->getColumnsDataTypes(), $this->dataTypeParser);
 	}
 
 
@@ -83,7 +94,7 @@ class Result implements \Countable, \IteratorAggregate
 			return NULL;
 		}
 		$columns = $this->getColumns();
-		return $row[reset($columns)];
+		return $row[\reset($columns)];
 	}
 
 
@@ -132,7 +143,7 @@ class Result implements \Countable, \IteratorAggregate
 		}
 
 		$data = NULL;
-		$assoc = preg_split('#(\[\]|=|\|)#', $assoc, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+		$assoc = \preg_split('#(\[\]|=|\|)#', $assoc, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
 		// check columns
 		foreach ($assoc as $as) {
@@ -193,7 +204,7 @@ class Result implements \Countable, \IteratorAggregate
 			}
 
 			// autodetect
-			$tmp = array_keys($row->toArray());
+			$tmp = \array_keys($row->toArray());
 			$key = $tmp[0];
 			if (count($row) < 2) { // indexed-array
 				do {
@@ -243,7 +254,7 @@ class Result implements \Countable, \IteratorAggregate
 
 	public function getColumns(): array
 	{
-		return array_keys($this->getColumnsDataTypes());
+		return \array_keys($this->getColumnsDataTypes());
 	}
 
 

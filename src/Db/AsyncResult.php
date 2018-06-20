@@ -7,9 +7,9 @@ use Forrest79\PhPgSql\Db\Exceptions;
 class AsyncResult extends Result
 {
 
-	public function __construct(DataTypeParsers\DataTypeParser $dataTypeParser)
+	public function __construct(RowFactory $rowFactory, DataTypeParsers\DataTypeParser $dataTypeParser)
 	{
-		parent::__construct(NULL, $dataTypeParser);
+		parent::__construct(NULL, $rowFactory, $dataTypeParser);
 	}
 
 

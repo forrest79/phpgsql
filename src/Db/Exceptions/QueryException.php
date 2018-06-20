@@ -30,14 +30,13 @@ class QueryException extends Exception
 
 	public static function queryFailed(Db\Query $query, string $error)
 	{
-		return new self(sprintf('Query failed: \'%s\' with error: %s.', $query->getSql(), $error), self::QUERY_FAILED, $query);
+		return new self(\sprintf('Query failed: \'%s\' with error: %s.', $query->getSql(), $error), self::QUERY_FAILED, $query);
 	}
 
 
 	public static function asyncQueryFailed(Db\Query $query, string $error)
 	{
-
-		return new self(sprintf('Async query failed? \'%s\' with error: %s.', $query->getSql(), $error), self::ASYNC_QUERY_FAILED, $query);
+		return new self(\sprintf('Async query failed? \'%s\' with error: %s.', $query->getSql(), $error), self::ASYNC_QUERY_FAILED, $query);
 	}
 
 
@@ -49,7 +48,7 @@ class QueryException extends Exception
 
 	public static function noParam(int $index)
 	{
-		return new self(sprintf('There is no param for index %s.', $index), self::NO_PARAM);
+		return new self(\sprintf('There is no param for index %s.', $index), self::NO_PARAM);
 	}
 
 }
