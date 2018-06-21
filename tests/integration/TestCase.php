@@ -30,7 +30,7 @@ abstract class TestCase extends Tester\TestCase
 		$this->config = PHPGSQL_CONNECTION_CONFIG;
 		$this->adminConnection = new Db\Connection($this->config);
 
-		$this->adminConnection->query('CREATE DATABASE ?', $this->adminConnection::literal($this->getTableName()));
+		$this->adminConnection->query('CREATE DATABASE ?', $this->adminConnection::literal($this->getDbName()));
 	}
 
 
@@ -50,7 +50,7 @@ abstract class TestCase extends Tester\TestCase
 	}
 
 
-	protected function getTableName(): string
+	protected function getDbName(): string
 	{
 		return $this->dbname;
 	}

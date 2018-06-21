@@ -4,8 +4,8 @@ namespace Forrest79\PhPgSql\Fluent;
 
 class Complex implements \ArrayAccess
 {
-	const TYPE_AND = 'and';
-	const TYPE_OR = 'or';
+	const TYPE_AND = 'AND';
+	const TYPE_OR = 'OR';
 
 	/** @var Complex */
 	private $parent;
@@ -20,31 +20,46 @@ class Complex implements \ArrayAccess
 	private $conditions;
 
 
-	private function __construct(?Complex $parent, ?Fluent $fluent, string $type, array $conditions)
+	private function __construct(string $type, array $conditions, ?Complex $parent = NULL, ?Fluent $fluent = NULL)
 	{
+		$this->type = $type;
+		$this->conditions = $this->normalizeConditions($conditions);
 		$this->parent = $parent;
 		$this->fluent = $fluent;
-		$this->type = $type;
-		$this->conditions = $conditions;
 	}
 
 
+	/**
+	 * @throws Exceptions\ComplexException
+	 */
 	public function add($condition, ...$params): self
 	{
-		$this->conditions[] = [$condition, $params];
+		if (($condition instanceof self) && $params) {
+			throw Exceptions\ComplexException::complexCantHaveParams();
+		}
+		if ($condition instanceof self) {
+			$this->conditions[] = $condition;
+		} else {
+			\array_unshift($params, $condition);
+			$this->conditions[] = $params;
+		}
 		return $this;
 	}
 
 
-	public function complexAnd(array $conditions = []): Complex
+	public function addComplexAnd(array $conditions = []): Complex
 	{
-		return self::createAnd($conditions, $this->fluent, $this);
+		$complexAnd = self::createAnd($conditions, $this, $this->fluent);
+		$this->add($complexAnd);
+		return $complexAnd;
 	}
 
 
-	public function complexOr(array $conditions = []): Complex
+	public function addComplexOr(array $conditions = []): Complex
 	{
-		return self::createOr($conditions, $this->fluent, $this);
+		$complexOr = self::createOr($conditions, $this, $this->fluent);
+		$this->add($complexOr);
+		return $complexOr;
 	}
 
 
@@ -72,21 +87,27 @@ class Complex implements \ArrayAccess
 	}
 
 
+	/**
+	 * @throws Exceptions\ComplexException
+	 */
 	public function fluent(): Fluent
 	{
+		if ($this->fluent === NULL) {
+			throw Exceptions\ComplexException::noFluent();
+		}
 		return $this->fluent;
 	}
 
 
-	public static function createAnd(array $conditions = [], ?Fluent $fluent = NULL, ?Complex $parent = NULL): self
+	public static function createAnd(array $conditions = [], ?Complex $parent = NULL, ?Fluent $fluent = NULL): self
 	{
-		return new self($parent, $fluent, self::TYPE_AND, $conditions);
+		return new self(self::TYPE_AND, $conditions, $parent, $fluent);
 	}
 
 
-	public static function createOr(array $conditions = [], ?Fluent $fluent = NULL, ?Complex $parent = NULL): self
+	public static function createOr(array $conditions = [], ?Complex $parent = NULL, ?Fluent $fluent = NULL): self
 	{
-		return new self($parent, $fluent, self::TYPE_OR, $conditions);
+		return new self(self::TYPE_OR, $conditions, $parent, $fluent);
 	}
 
 
@@ -106,15 +127,6 @@ class Complex implements \ArrayAccess
 	{
 		if (!is_array($value)) {
 			$value = [$value];
-		} else {
-			$cnt = count($value);
-			if ($cnt === 2) {
-				[$condition, $params] = $value;
-				$value = [$condition, (array) $params];
-			} else if ($cnt > 2) {
-				$condition = array_shift($value);
-				$value = [$condition, $value];
-			}
 		}
 
 		if ($offset === NULL) {
@@ -128,6 +140,17 @@ class Complex implements \ArrayAccess
 	public function offsetUnset($offset)
 	{
 		unset($this->conditions[$offset]);
+	}
+
+
+	private function normalizeConditions(array $conditions): array
+	{
+		\array_walk($conditions, function(&$value) {
+			if (!is_array($value) && !($value instanceof self)) {
+				$value = [$value];
+			}
+		});
+		return $conditions;
 	}
 
 }

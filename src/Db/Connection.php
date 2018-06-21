@@ -79,11 +79,11 @@ class Connection
 			$connectType = $connectType | PGSQL_CONNECT_ASYNC;
 		}
 
-		$resource = \pg_connect($this->connectionConfig, $connectType);
+		$resource = @\pg_connect($this->connectionConfig, $connectType); // intentionally @
 		if (!$resource) {
-			throw Exceptions\ConnectionException::connectionFailedException($this->getLastError());
+			throw Exceptions\ConnectionException::connectionFailedException();
 		} elseif (\pg_connection_status($resource) === PGSQL_CONNECTION_BAD) {
-			throw Exceptions\ConnectionException::badConnectionException($this->getLastError());
+			throw Exceptions\ConnectionException::badConnectionException();
 		}
 
 		if ($this->connectAsync === TRUE) {
@@ -176,6 +176,7 @@ class Connection
 	{
 		if ($this->resource !== NULL) {
 			\pg_close($this->resource);
+			$this->resource = NULL;
 			$this->onClose();
 		}
 		return $this;
@@ -280,8 +281,7 @@ class Connection
 	public function asyncQueryArray($query, array $params): AsyncResult
 	{
 		$this->asyncQuery = $query = Helper::prepareSql($this->normalizeQuery($query, $params));
-
-		if (\pg_send_query_params($this->getConnectedResource(), $query->getSql(), $query->getParams()) === FALSE) {
+		if (@\pg_send_query_params($this->getConnectedResource(), $query->getSql(), $query->getParams()) === FALSE) { // intentionally @
 			throw Exceptions\QueryException::asyncQueryFailed($query, $this->getLastError());
 		}
 
@@ -300,7 +300,7 @@ class Connection
 	public function waitForAsyncQuery(): self
 	{
 		if ($this->asyncResult === NULL) {
-			throw Exceptions\ConnectionException::asyncNoQueriyWasSentException();
+			throw Exceptions\ConnectionException::asyncNoQueryWasSentException();
 		}
 
 		$resource = \pg_get_result($this->getConnectedResource());
@@ -383,12 +383,9 @@ class Connection
 	}
 
 
-	/**
-	 * @throws Exceptions\ConnectionException
-	 */
 	private function getLastError(): string
 	{
-		return \pg_last_error($this->getConnectedResource());
+		return $this->resource === NULL ? \pg_last_error() : \pg_last_error($this->resource);
 	}
 
 

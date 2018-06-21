@@ -273,7 +273,7 @@ class Result implements \Countable, \IteratorAggregate
 		if ($this->columnsDataTypes === NULL) {
 			$queryResource = $this->getResource();
 			$this->columnsDataTypes = [];
-			for ($i = 0; $i < pg_num_fields($queryResource); $i++) {
+			for ($i = 0; $i < \pg_num_fields($queryResource); $i++) {
 				$name = \pg_field_name($queryResource, $i);
 				$type = \pg_field_type($queryResource, $i);
 				$this->columnsDataTypes[$name] = $type;

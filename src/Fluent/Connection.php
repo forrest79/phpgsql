@@ -8,6 +8,7 @@ class Connection extends Db\Connection implements Sql
 {
 
 	/**
+	 * @inheritdoc
 	 * @throws Exceptions\FluentException
 	 */
 	public function table($from, ?string $alias = NULL): Fluent
@@ -35,6 +36,7 @@ class Connection extends Db\Connection implements Sql
 
 
 	/**
+	 * @inheritdoc
 	 * @throws Exceptions\FluentException
 	 */
 	public function from($from, ?string $alias = NULL): Fluent
@@ -44,78 +46,87 @@ class Connection extends Db\Connection implements Sql
 
 
 	/**
+	 * @inheritdoc
 	 * @throws Exceptions\FluentException
 	 */
-	public function join($join, ?string $alias = NULL, array $onConditions = []): Fluent
+	public function join($join, ?string $alias = NULL, $onCondition = NULL): Fluent
 	{
-		return $this->fluent()->join($join, $alias, $onConditions);
+		return $this->fluent()->join($join, $alias, $onCondition);
 	}
 
 
 	/**
+	 * @inheritdoc
 	 * @throws Exceptions\FluentException
 	 */
-	public function innerJoin($join, ?string $alias = NULL, array $onConditions = []): Fluent
+	public function innerJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent
 	{
-		return $this->fluent()->innerJoin($join, $alias, $onConditions);
+		return $this->fluent()->innerJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
+	 * @inheritdoc
 	 * @throws Exceptions\FluentException
 	 */
-	public function leftJoin($join, ?string $alias = NULL, array $onConditions = []): Fluent
+	public function leftJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent
 	{
-		return $this->fluent()->leftJoin($join, $alias, $onConditions);
+		return $this->fluent()->leftJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
+	 * @inheritdoc
 	 * @throws Exceptions\FluentException
 	 */
-	public function leftOuterJoin($join, ?string $alias = NULL, array $onConditions = []): Fluent
+	public function leftOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent
 	{
-		return $this->fluent()->leftOuterJoin($join, $alias, $onConditions);
+		return $this->fluent()->leftOuterJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
+	 * @inheritdoc
 	 * @throws Exceptions\FluentException
 	 */
-	public function rightJoin($join, ?string $alias = NULL, array $onConditions = []): Fluent
+	public function rightJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent
 	{
-		return $this->fluent()->rightJoin($join, $alias, $onConditions);
+		return $this->fluent()->rightJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
+	 * @inheritdoc
 	 * @throws Exceptions\FluentException
 	 */
-	public function rightOuterJoin($join, ?string $alias = NULL, array $onConditions = []): Fluent
+	public function rightOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent
 	{
-		return $this->fluent()->rightOuterJoin($join, $alias, $onConditions);
+		return $this->fluent()->rightOuterJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
+	 * @inheritdoc
 	 * @throws Exceptions\FluentException
 	 */
-	public function fullJoin($join, ?string $alias = NULL, array $onConditions = []): Fluent
+	public function fullJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent
 	{
-		return $this->fluent()->fullJoin($join, $alias, $onConditions);
+		return $this->fluent()->fullJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
+	 * @inheritdoc
 	 * @throws Exceptions\FluentException
 	 */
-	public function fullOuterJoin($join, ?string $alias = NULL, array $onConditions = []): Fluent
+	public function fullOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent
 	{
-		return $this->fluent()->fullOuterJoin($join, $alias, $onConditions);
+		return $this->fluent()->fullOuterJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
+	 * @inheritdoc
 	 * @throws Exceptions\FluentException
 	 */
 	public function crossJoin($join, ?string $alias = NULL): Fluent
@@ -125,18 +136,20 @@ class Connection extends Db\Connection implements Sql
 
 
 	/**
+	 * @inheritdoc
 	 * @throws Exceptions\FluentException
 	 */
-	public function on(string $alias, array $conditions): Fluent
+	public function on(string $alias, $condition): Fluent
 	{
-		return $this->fluent()->on($alias, $conditions);
+		return $this->fluent()->on($alias, $condition);
 	}
 
 
 	/**
+	 * @inheritdoc
 	 * @throws Exceptions\FluentException
 	 */
-	public function where(string $condition, ...$params): Fluent
+	public function where($condition, ...$params): Fluent
 	{
 		return $this->fluent()->where($condition, ...$params);
 	}
@@ -170,9 +183,10 @@ class Connection extends Db\Connection implements Sql
 
 
 	/**
+	 * @inheritdoc
 	 * @throws Exceptions\FluentException
 	 */
-	public function having(string $condition, ...$params): Fluent
+	public function having($condition, ...$params): Fluent
 	{
 		return $this->fluent()->having($condition, ...$params);
 	}

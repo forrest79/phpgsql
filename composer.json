@@ -1,5 +1,5 @@
 {
-	"name": "forrest79/phpgsql-db",
+	"name": "forrest79/phpgsql",
 	"type": "library",
 	"require": {
 		"php":  ">=7.1",

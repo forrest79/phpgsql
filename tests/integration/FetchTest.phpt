@@ -23,12 +23,12 @@ class FetchTest extends TestCase
 	protected function setUp(): void
 	{
 		parent::setUp();
-		$this->connection = new Db\Connection(sprintf('%s dbname=%s', $this->getConfig(), $this->getTableName()));
+		$this->connection = new Db\Connection(sprintf('%s dbname=%s', $this->getConfig(), $this->getDbName()));
 		$this->connection->connect();
 	}
 
 
-	public function testFetch()
+	public function testFetch(): void
 	{
 		$this->connection->query('
 			CREATE TABLE test(
@@ -49,7 +49,7 @@ class FetchTest extends TestCase
 	}
 
 
-	public function testFetchSingle()
+	public function testFetchSingle(): void
 	{
 		$this->connection->query('
 			CREATE TABLE test(
@@ -68,7 +68,7 @@ class FetchTest extends TestCase
 	}
 
 
-	public function testFetchAll()
+	public function testFetchAll(): void
 	{
 		$this->connection->query('
 			CREATE TABLE test(
@@ -102,7 +102,7 @@ class FetchTest extends TestCase
 	}
 
 
-	public function testFetchAssocSimple()
+	public function testFetchAssocSimple(): void
 	{
 		$this->connection->query('
 			CREATE TABLE test(
@@ -125,7 +125,7 @@ class FetchTest extends TestCase
 	}
 
 
-	public function testFetchAssocArray()
+	public function testFetchAssocArray(): void
 	{
 		$this->connection->query('
 			CREATE TABLE test(
@@ -148,7 +148,7 @@ class FetchTest extends TestCase
 	}
 
 
-	public function testFetchAssocPipe()
+	public function testFetchAssocPipe(): void
 	{
 		$this->connection->query('
 			CREATE TABLE test(
@@ -183,7 +183,7 @@ class FetchTest extends TestCase
 	}
 
 
-	public function testFetchAssocValue()
+	public function testFetchAssocValue(): void
 	{
 		$this->connection->query('
 			CREATE TABLE test(
@@ -206,7 +206,33 @@ class FetchTest extends TestCase
 	}
 
 
-	public function testFetchPairs()
+	public function testFetchAssocBlank(): void
+	{
+		$this->connection->query('
+			CREATE TABLE test(
+				id serial,
+				type integer,
+				name character varying
+			);
+		');
+		$this->connection->query('INSERT INTO test(type, name) SELECT generate_series, \'test\' || generate_series FROM generate_series(2, 1, -1)');
+
+		$result = $this->connection->query('SELECT id, type, name FROM test ORDER BY id');
+
+		$rows = $result->fetchAssoc('');
+
+		Tester\Assert::same(2, count($rows));
+
+		Tester\Assert::same(2, $rows[0]->type);
+		Tester\Assert::same('test2', $rows[0]->name);
+		Tester\Assert::same(1, $rows[1]->type);
+		Tester\Assert::same('test1', $rows[1]->name);
+
+		$result->free();
+	}
+
+
+	public function testFetchPairs(): void
 	{
 		$this->connection->query('
 			CREATE TABLE test(
@@ -230,7 +256,99 @@ class FetchTest extends TestCase
 	}
 
 
-	public function testResultIterator()
+	public function testFetchPairsOnlyOneColumn(): void
+	{
+		$this->connection->query('
+			CREATE TABLE test(
+				id serial,
+				name character varying
+			);
+		');
+		$this->connection->query('INSERT INTO test(name) SELECT \'name\' || generate_series FROM generate_series(3, 1, -1)');
+
+		$result = $this->connection->query('SELECT id, name FROM test ORDER BY id');
+
+		Tester\Assert::exception(function() use ($result): void {
+			$result->fetchPairs('name');
+		}, \InvalidArgumentException::class);
+
+		$result->free();
+	}
+
+
+	public function testFetchPairsIndexedArray(): void
+	{
+		$this->connection->query('
+			CREATE TABLE test(
+				id serial,
+				type integer
+			);
+		');
+		$this->connection->query('INSERT INTO test(type) SELECT generate_series FROM generate_series(3, 1, -1)');
+
+		$result = $this->connection->query('SELECT type FROM test ORDER BY id');
+
+		$rows = $result->fetchPairs();
+
+		Tester\Assert::same([3, 2, 1], $rows);
+
+		$rows = $result->fetchPairs(NULL, 'type');
+
+		Tester\Assert::same([3, 2, 1], $rows);
+
+		$result->free();
+	}
+
+
+	public function testFetchPairsBadKeyOrValue(): void
+	{
+		$this->connection->query('
+			CREATE TABLE test(
+				id serial,
+				name character varying
+			);
+		');
+		$this->connection->query('INSERT INTO test(name) SELECT \'name\' || generate_series FROM generate_series(3, 1, -1)');
+
+		$result = $this->connection->query('SELECT id, name FROM test ORDER BY id');
+
+		// Bad key
+		Tester\Assert::exception(function() use ($result): void {
+			$result->fetchPairs('type', 'name');
+		}, \InvalidArgumentException::class);
+
+		// Bad value
+		Tester\Assert::exception(function() use ($result): void {
+			$result->fetchPairs('id', 'type');
+		}, \InvalidArgumentException::class);
+
+		$result->free();
+	}
+
+
+	public function testFetchNoColumn(): void
+	{
+		$this->connection->query('
+			CREATE TABLE test(
+				id serial,
+  				name text
+			);
+		');
+		$this->connection->query('INSERT INTO test(name) VALUES(?)', 'phpgsql');
+
+		$result = $this->connection->query('SELECT id, name FROM test');
+
+		$row = $result->fetch();
+
+		Tester\Assert::exception(function() use ($row): void {
+			$row->cnt;
+		}, Db\Exceptions\RowException::class);
+
+		$result->free();
+	}
+
+
+	public function testResultIterator(): void
 	{
 		$this->connection->query('
 			CREATE TABLE test(
@@ -257,7 +375,7 @@ class FetchTest extends TestCase
 	}
 
 
-	public function testGetColumns()
+	public function testAffectedRows(): void
 	{
 		$this->connection->query('
 			CREATE TABLE test(
@@ -273,7 +391,7 @@ class FetchTest extends TestCase
 	}
 
 
-	public function testAffectedRows()
+	public function testGetColumns(): void
 	{
 		$this->connection->query('
 			CREATE TABLE test(
@@ -291,10 +409,180 @@ class FetchTest extends TestCase
 	}
 
 
+	public function testResultColumnType(): void
+	{
+		$this->connection->query('
+			CREATE TABLE test(
+				id serial,
+  				name text
+			);
+		');
+		$this->connection->query('INSERT INTO test(name) VALUES(?)', 'phpgsql');
+
+		$result = $this->connection->query('SELECT id, name FROM test');
+
+		Tester\Assert::same('text', $result->getColumnType('name'));
+
+		$result->free();
+	}
+
+
+	public function testResultNoColumnForType(): void
+	{
+		$this->connection->query('
+			CREATE TABLE test(
+				id serial,
+  				name text
+			);
+		');
+		$this->connection->query('INSERT INTO test(name) VALUES(?)', 'phpgsql');
+
+		$result = $this->connection->query('SELECT id, name FROM test');
+
+		Tester\Assert::exception(function() use ($result): void {
+			$result->getColumnType('count');
+		}, Db\Exceptions\ResultException::class);
+
+		$result->free();
+	}
+
+
+	public function testCustomRowFactoryOnConnection(): void
+	{
+		$this->connection->setRowFactory($this->createCustomRowFactory());
+
+		$this->connection->query('
+			CREATE TABLE test(
+				id serial,
+  				name text
+			);
+		');
+		$this->connection->query('INSERT INTO test(name) VALUES(?)', 'phpgsql');
+
+		$result = $this->connection->query('SELECT id, name FROM test');
+
+		$row = $result->fetch();
+
+		$result->free();
+
+		Tester\Assert::same('custom', $row->test);
+	}
+
+
+	public function testCustomRowFactoryOnResult(): void
+	{
+		$this->connection->query('
+			CREATE TABLE test(
+				id serial,
+  				name text
+			);
+		');
+		$this->connection->query('INSERT INTO test(name) VALUES(?)', 'phpgsql');
+
+		$result = $this->connection->query('SELECT id, name FROM test');
+		$result->setRowFactory($this->createCustomRowFactory());
+
+		$row = $result->fetch();
+
+		$result->free();
+
+		Tester\Assert::same('custom', $row->test);
+	}
+
+
+	public function testNoResults(): void
+	{
+		Tester\Assert::null($this->connection->query('SELECT 1 WHERE FALSE')->fetchSingle());
+		Tester\Assert::same([], $this->connection->query('SELECT 1 WHERE FALSE')->fetchAll());
+		Tester\Assert::same([], $this->connection->query('SELECT 1 WHERE FALSE')->fetchAssoc('column'));
+		Tester\Assert::same([], $this->connection->query('SELECT 1 WHERE FALSE')->fetchPairs());
+	}
+
+
+	public function testRowValues(): void
+	{
+		$this->connection->query('
+			CREATE TABLE test(
+				id serial,
+  				name text
+			);
+		');
+		$this->connection->query('INSERT INTO test(name) VALUES(?)', 'phpgsql');
+
+		$result = $this->connection->query('SELECT id, name FROM test');
+
+		$row = $result->fetch();
+
+		Tester\Assert::same('phpgsql', $row->name);
+
+		Tester\Assert::false(isset($row->type));
+
+		Tester\Assert::false(isset($row['another_type']));
+
+		Tester\Assert::exception(function() use ($row): void {
+			$row->type;
+		}, Db\Exceptions\RowException::class);
+
+		Tester\Assert::exception(function() use ($row): void {
+			$row['another_type'];
+		}, Db\Exceptions\RowException::class);
+
+		$row->type = 'test';
+
+		Tester\Assert::true(isset($row->type));
+
+		Tester\Assert::same('test', $row->type);
+
+		$row['another_type'] = 'another_test';
+
+		Tester\Assert::true(isset($row['another_type']));
+
+		Tester\Assert::same('another_test', $row['another_type']);
+
+		unset($row->type);
+
+		Tester\Assert::false(isset($row->type));
+
+		Tester\Assert::exception(function() use ($row): void {
+			$row->type;
+		}, Db\Exceptions\RowException::class);
+
+		unset($row['another_type']);
+
+		Tester\Assert::false(isset($row['another_type']));
+
+		Tester\Assert::exception(function() use ($row): void {
+			$row['another_type'];
+		}, Db\Exceptions\RowException::class);
+
+		unset($row->name);
+
+		foreach ($row as $key => $value) {
+			Tester\Assert::same('id', $key);
+			Tester\Assert::same(1, $value);
+		}
+
+		$result->free();
+	}
+
+
 	protected function tearDown(): void
 	{
 		$this->connection->close();
 		parent::tearDown();
+	}
+
+
+	private function createCustomRowFactory(): Db\RowFactory
+	{
+		return new class implements Db\RowFactory {
+
+			public function createRow(array $values, array $columnsDataTypes, Db\DataTypeParsers\DataTypeParser $dataTypeParser): Db\Row
+			{
+				return new Db\Row(['test' => 'custom'], ['test' => 'text'], $dataTypeParser);
+			}
+
+		};
 	}
 
 }

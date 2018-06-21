@@ -4,14 +4,14 @@ namespace Forrest79\PhPgSql\Fluent\Exceptions;
 
 class FluentException extends Exception
 {
-	const ONLY_ONE_MAIN_TABLE = 1;
-	const TABLE_ALIAS_ALREADY_EXISTS = 2;
-	const NON_EXISTING_PARAM_TO_RESET = 3;
-	const ALIAS_MUST_BE_SCALAR = 4;
-	const QUERYABLE_MUST_HAVE_ALIAS = 5;
-	const COLUMN_MUST_BE_SCALAR_OR_QUERYABLE = 6;
-	const CANT_UPDATE_FLUENT_AFTER_EXECUTE = 7;
-	const YOU_NEED_CONNECTION_FOR_THIS_ACTION = 8;
+	private const ONLY_ONE_MAIN_TABLE = 1;
+	private const TABLE_ALIAS_ALREADY_EXISTS = 2;
+	private const NON_EXISTING_PARAM_TO_RESET = 3;
+	private const QUERYABLE_MUST_HAVE_ALIAS = 4;
+	private const PARAM_MUST_BE_SCALAR_OR_QUERYABLE = 5;
+	private const CANT_UPDATE_FLUENT_AFTER_EXECUTE = 6;
+	private const YOU_MUST_EXECUTE_FLUENT_BEFORE_THAT = 7;
+	private const YOU_NEED_CONNECTION_FOR_THIS_ACTION = 8;
 
 
 	public static function onlyOneMainTable(): self
@@ -28,13 +28,7 @@ class FluentException extends Exception
 
 	public static function nonExistingParamToReset(string $param, array $params): self
 	{
-		return new self(\sprintf('Non existing parameter "%s" to reset. You can reset only these parameters "%s".', implode(', ', $params)), self::TABLE_ALIAS_ALREADY_EXISTS);
-	}
-
-
-	public static function aliasMustBeScalar(): self
-	{
-		return new self('Alias must be scalar.', self::ALIAS_MUST_BE_SCALAR);
+		return new self(\sprintf('Non existing parameter "%s" to reset. You can reset only these parameters "%s".', $param, implode(', ', $params)), self::NON_EXISTING_PARAM_TO_RESET);
 	}
 
 
@@ -46,13 +40,19 @@ class FluentException extends Exception
 
 	public static function columnMustBeScalarOrQueryable(): self
 	{
-		return new self('Column must be scalar or queryable.', self::COLUMN_MUST_BE_SCALAR_OR_QUERYABLE);
+		return new self('Column must be scalar or queryable.', self::PARAM_MUST_BE_SCALAR_OR_QUERYABLE);
 	}
 
 
 	public static function cantUpdateFluentAfterExecute(): self
 	{
 		return new self('Can\'t update fluent after execute.', self::CANT_UPDATE_FLUENT_AFTER_EXECUTE);
+	}
+
+
+	public static function youMustExecuteFluentBeforeThat(): self
+	{
+		return new self('You must execute fluent before that', self::YOU_MUST_EXECUTE_FLUENT_BEFORE_THAT);
 	}
 
 

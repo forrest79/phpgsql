@@ -23,18 +23,18 @@ class AsyncTest extends TestCase
 	protected function setUp(): void
 	{
 		parent::setUp();
-		$this->connection = new Db\Connection(sprintf('%s dbname=%s', $this->getConfig(), $this->getTableName()), FALSE, TRUE);
+		$this->connection = new Db\Connection(sprintf('%s dbname=%s', $this->getConfig(), $this->getDbName()), FALSE, TRUE);
 		$this->connection->connect();
 	}
 
 
-	public function testIsConnected()
+	public function testIsConnected(): void
 	{
 		Tester\Assert::true($this->connection->isConnected(TRUE));
 	}
 
 
-	public function testFetch()
+	public function testFetch(): void
 	{
 		$this->connection->query('
 			CREATE TABLE test(
@@ -63,6 +63,34 @@ class AsyncTest extends TestCase
 
 		$result1->free();
 		$result2->free();
+	}
+
+
+	public function testQueryEvent(): void
+	{
+		$queryDuration = 0;
+		$this->connection->addOnQuery(function(Db\Connection $connection, Db\Query $query, ?float $duration) use (&$queryDuration) {
+			$queryDuration = $duration;
+		});
+		$this->connection->asyncQuery('SELECT 1');
+		Tester\Assert::null($queryDuration);
+	}
+
+
+	public function testNoAsyncQuery(): void
+	{
+		Tester\Assert::exception(function(): void {
+			$this->connection->waitForAsyncQuery();
+		}, Db\Exceptions\ConnectionException::class);
+	}
+
+
+	public function testNoResource(): void
+	{
+		$resource = $this->connection->asyncQuery('SELECT 1');
+		Tester\Assert::exception(function() use ($resource): void {
+			$resource->getResource();
+		}, Db\Exceptions\ResultException::class);
 	}
 
 

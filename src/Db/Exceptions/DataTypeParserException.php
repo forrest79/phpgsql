@@ -4,8 +4,8 @@ namespace Forrest79\PhPgSql\Db\Exceptions;
 
 class DataTypeParserException extends Exception
 {
-	const CANT_PARSE_TYPE = 1;
-	const TRY_USE_CONVERT_TO_JSON = 2;
+	private const CANT_PARSE_TYPE = 1;
+	private const TRY_USE_CONVERT_TO_JSON = 2;
 
 
 	public static function cantParseType(string $type, string $value): self

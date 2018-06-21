@@ -170,13 +170,16 @@ $connection->addOnQuery(function(Connection $connection, Query $query, ?float $t
 ## Fluent
 
 ### NOT SUPPORTED NOW (only important things)
-- ```[ WITH [ RECURSIVE ] with_query [, ...] ]``` add something like ```->addPrefix('WITH RECURSIVE SELECT column')```
+- ```[ WITH [ RECURSIVE ] with_query [, ...] ]``` add something like ```->addPrefix('WITH RECURSIVE SELECT column')```?
 - ```DELETE FROM ... USING``` using can be written by ```WHERE ... IN (...)```, is using necessary?
 - ```INSERT INTO ... ON CONFLICT```
 
 ## TODO
 
+- complete docs
 - Travis tests
-- other tests + code coverage 
-- https://packagist.org/
+- nette - choose connection class (default Fluent) 
 - license
+
+- https://packagist.org/
+- performance - test foreach vs. array_walk vs. array_map

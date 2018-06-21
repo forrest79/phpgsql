@@ -4,13 +4,13 @@ namespace Forrest79\PhPgSql\Fluent\Exceptions;
 
 class QueryBuilderException extends Exception
 {
-	const BAD_QUERY_TYPE = 1;
-	const NO_COLUMNS_TO_SELECT = 2;
-	const NO_JOIN_CONDITIONS = 3;
-	const NO_DATA_TO_INSERT = 4;
-	const NO_DATA_TO_UPDATE = 5;
-	const NO_MAIN_TABLE = 6;
-	const BAD_PARAMS_COUNT = 7;
+	private const BAD_QUERY_TYPE = 1;
+	private const NO_COLUMNS_TO_SELECT = 2;
+	private const NO_JOIN_CONDITIONS = 3;
+	private const NO_DATA_TO_INSERT = 4;
+	private const NO_DATA_TO_UPDATE = 5;
+	private const NO_MAIN_TABLE = 6;
+	private const BAD_PARAMS_COUNT = 7;
 
 
 	public static function badQueryType(string $type): self

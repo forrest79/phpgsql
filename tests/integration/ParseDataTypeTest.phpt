@@ -23,12 +23,12 @@ class ParseDataTypeTest extends TestCase
 	protected function setUp(): void
 	{
 		parent::setUp();
-		$this->connection = new Db\Connection(sprintf('%s dbname=%s', $this->getConfig(), $this->getTableName()), FALSE, TRUE);
+		$this->connection = new Db\Connection(sprintf('%s dbname=%s', $this->getConfig(), $this->getDbName()), FALSE, TRUE);
 		$this->connection->connect();
 	}
 
 
-	public function testParseBasic()
+	public function testParseBasic(): void
 	{
 		$this->connection->query('
 			CREATE TABLE test(
@@ -135,7 +135,7 @@ class ParseDataTypeTest extends TestCase
 	}
 
 
-	public function testParseArrays()
+	public function testParseArrays(): void
 	{
 		$this->connection->query('
 			CREATE TABLE test(
@@ -153,14 +153,7 @@ class ParseDataTypeTest extends TestCase
 				type_time time[],
 				type_timetz timetz[],
 				type_timestamp timestamp[],
-				type_timestamptz timestamptz[],
-				type_varchar character varying[],
-				type_text text[],
-				type_char char(10)[],
-				type_tsquery tsquery[],
-				type_tsrange tsrange[],
-				type_tstzrange tstzrange[],
-				type_tsvector tsvector[]
+				type_timestamptz timestamptz[]
 			);
 		');
 
@@ -230,6 +223,107 @@ class ParseDataTypeTest extends TestCase
 		Tester\Assert::true($row->type_timestamp[0] instanceof \DateTimeImmutable);
 		Tester\Assert::true(is_array($row->type_timestamptz));
 		Tester\Assert::true($row->type_timestamptz[0] instanceof \DateTimeImmutable);
+	}
+
+
+	public function testParseHstore(): void
+	{
+		$this->connection->query('CREATE EXTENSION hstore;');
+
+		$this->connection->query('
+			CREATE TABLE test(
+				type_hstore hstore
+			);
+		');
+
+		$this->connection->queryArray('INSERT INTO test(type_hstore) VALUES (?)', ['a=>1']);
+
+		$row = $this->connection->query('SELECT * FROM test')->fetch();
+
+		Tester\Assert::exception(function() use ($row): void {
+			$row->type_hstore;
+		}, Db\Exceptions\DataTypeParserException::class);
+	}
+
+
+	public function testParseNonSupportedType(): void
+	{
+		$this->connection->query('
+			CREATE TABLE test(
+				type_point point
+			);
+		');
+
+		$this->connection->queryArray('INSERT INTO test(type_point) VALUES (?)', ['(1,2)']);
+
+		$row = $this->connection->query('SELECT * FROM test')->fetch();
+
+		Tester\Assert::exception(function() use ($row): void {
+			$row->type_point;
+		}, Db\Exceptions\DataTypeParserException::class);
+	}
+
+
+	public function testArrayConvertToJson(): void
+	{
+		$this->connection->query('
+			CREATE TABLE test(
+				type_tsvector tsvector[]
+			);
+		');
+
+		$this->connection->queryArray('INSERT INTO test(type_tsvector) VALUES (?)', ['{\'text\'}']);
+
+		$row = $this->connection->query('SELECT * FROM test')->fetch();
+
+		Tester\Assert::exception(function() use ($row): void {
+			$row->type_tsvector;
+		}, Db\Exceptions\DataTypeParserException::class);
+	}
+
+
+	public function testArrayNonSupportedType(): void
+	{
+		$this->connection->query('
+			CREATE TABLE test(
+				type_money money[]
+			);
+		');
+
+		$this->connection->queryArray('INSERT INTO test(type_money) VALUES (?)', ['{1)}']);
+
+		$row = $this->connection->query('SELECT * FROM test')->fetch();
+
+		Tester\Assert::exception(function() use ($row): void {
+			$row->type_money;
+		}, Db\Exceptions\DataTypeParserException::class);
+	}
+
+
+	public function testCustomDataTypeParser(): void
+	{
+		$this->connection->setDataTypeParser(new class implements Db\DataTypeParsers\DataTypeParser {
+
+			public function parse(string $type, string $value)
+			{
+				if ($type === 'point') {
+					return array_map('intval', explode(',', substr($value, 1, -1), 2));
+				}
+			}
+
+		});
+
+		$this->connection->query('
+			CREATE TABLE test(
+				type_point point
+			);
+		');
+
+		$this->connection->queryArray('INSERT INTO test(type_point) VALUES (?)', ['(1,2)']);
+
+		$row = $this->connection->query('SELECT * FROM test')->fetch();
+
+		Tester\Assert::same([1, 2], $row->type_point);
 	}
 
 

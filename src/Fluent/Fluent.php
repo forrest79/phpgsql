@@ -37,7 +37,7 @@ class Fluent implements Sql, \Countable, \IteratorAggregate
 	private const JOIN_LEFT_OUTER = 'LEFT OUTER JOIN';
 	private const JOIN_RIGHT_OUTER = 'RIGHT OUTER JOIN';
 	private const JOIN_FULL_OUTER = 'FULL OUTER JOIN';
-	private const JOIN_CROSS = 'CROSS JOIN';
+	public const JOIN_CROSS = 'CROSS JOIN';
 
 	private const COMBINE_UNION = 'UNION';
 	private const COMBINE_UNION_ALL = 'UNION ALL';
@@ -90,6 +90,7 @@ class Fluent implements Sql, \Countable, \IteratorAggregate
 
 
 	/**
+	 * @inheritdoc
 	 * @throws Exceptions\FluentException
 	 */
 	public function table($table, ?string $alias = NULL): self
@@ -127,6 +128,7 @@ class Fluent implements Sql, \Countable, \IteratorAggregate
 
 
 	/**
+	 * @inheritdoc
 	 * @throws Exceptions\FluentException
 	 */
 	public function from($from, ?string $alias = NULL): self
@@ -137,78 +139,87 @@ class Fluent implements Sql, \Countable, \IteratorAggregate
 
 
 	/**
+	 * @inheritdoc
 	 * @throws Exceptions\FluentException
 	 */
-	public function join($join, ?string $alias = NULL, array $onConditions = []): self
+	public function join($join, ?string $alias = NULL, $onCondition = NULL): self
 	{
-		return $this->innerJoin($join, $alias, $onConditions);
+		return $this->innerJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
+	 * @inheritdoc
 	 * @throws Exceptions\FluentException
 	 */
-	public function innerJoin($join, ?string $alias = NULL, array $onConditions = []): self
+	public function innerJoin($join, ?string $alias = NULL, $onCondition = NULL): self
 	{
-		return $this->addTable(self::JOIN_INNER, $join, $alias, $onConditions);
+		return $this->addTable(self::JOIN_INNER, $join, $alias, $onCondition);
 	}
 
 
 	/**
+	 * @inheritdoc
 	 * @throws Exceptions\FluentException
 	 */
-	public function leftJoin($join, ?string $alias = NULL, array $onConditions = []): self
+	public function leftJoin($join, ?string $alias = NULL, $onCondition = NULL): self
 	{
-		return $this->leftOuterJoin($join, $alias, $onConditions);
+		return $this->leftOuterJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
+	 * @inheritdoc
 	 * @throws Exceptions\FluentException
 	 */
-	public function leftOuterJoin($join, ?string $alias = NULL, array $onConditions = []): self
+	public function leftOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): self
 	{
-		return $this->addTable(self::JOIN_LEFT_OUTER, $join, $alias, $onConditions);
+		return $this->addTable(self::JOIN_LEFT_OUTER, $join, $alias, $onCondition);
 	}
 
 
 	/**
+	 * @inheritdoc
 	 * @throws Exceptions\FluentException
 	 */
-	public function rightJoin($join, ?string $alias = NULL, array $onConditions = []): self
+	public function rightJoin($join, ?string $alias = NULL, $onCondition = NULL): self
 	{
-		return $this->rightOuterJoin($join, $alias, $onConditions);
+		return $this->rightOuterJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
+	 * @inheritdoc
 	 * @throws Exceptions\FluentException
 	 */
-	public function rightOuterJoin($join, ?string $alias = NULL, array $onConditions = []): self
+	public function rightOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): self
 	{
-		return $this->addTable(self::JOIN_RIGHT_OUTER, $join, $alias, $onConditions);
+		return $this->addTable(self::JOIN_RIGHT_OUTER, $join, $alias, $onCondition);
 	}
 
 
 	/**
+	 * @inheritdoc
 	 * @throws Exceptions\FluentException
 	 */
-	public function fullJoin($join, ?string $alias = NULL, array $onConditions = []): self
+	public function fullJoin($join, ?string $alias = NULL, $onCondition = NULL): self
 	{
-		return $this->fullOuterJoin($join, $alias, $onConditions);
+		return $this->fullOuterJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
+	 * @inheritdoc
 	 * @throws Exceptions\FluentException
 	 */
-	public function fullOuterJoin($join, ?string $alias = NULL, array $onConditions = []): self
+	public function fullOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): self
 	{
-		return $this->addTable(self::JOIN_FULL_OUTER, $join, $alias, $onConditions);
+		return $this->addTable(self::JOIN_FULL_OUTER, $join, $alias, $onCondition);
 	}
 
 
 	/**
+	 * @inheritdoc
 	 * @throws Exceptions\FluentException
 	 */
 	public function crossJoin($join, ?string $alias = NULL): self
@@ -220,7 +231,7 @@ class Fluent implements Sql, \Countable, \IteratorAggregate
 	/**
 	 * @throws Exceptions\FluentException
 	 */
-	private function addTable(string $type, $name, $alias, array $onConditions = []): self
+	private function addTable(string $type, $name, ?string $alias, $onCondition = NULL): self
 	{
 		$this->updateFluent();
 
@@ -246,10 +257,10 @@ class Fluent implements Sql, \Countable, \IteratorAggregate
 			$this->params[self::PARAM_TABLE_TYPES][$type === self::TABLE_TYPE_FROM ? $type : self::TABLE_TYPE_JOINS][] = $alias;
 		}
 
-		if ($onConditions) {
+		if ($onCondition) {
 			$this->params[self::PARAM_JOIN_CONDITIONS][$alias] = \array_merge(
 				$this->params[self::PARAM_JOIN_CONDITIONS][$alias] ?? [],
-				$onConditions
+				$this->normalizeOn($onCondition)
 			);
 		}
 
@@ -258,25 +269,47 @@ class Fluent implements Sql, \Countable, \IteratorAggregate
 
 
 	/**
+	 * @inheritdoc
 	 * @throws Exceptions\FluentException
 	 */
-	public function on(string $alias, array $conditions): self
+	public function on(string $alias, $condition): self
 	{
 		$this->updateFluent();
 
 		$this->params[self::PARAM_JOIN_CONDITIONS][$alias] = \array_merge(
 			$this->params[self::PARAM_JOIN_CONDITIONS][$alias] ?? [],
-			$conditions
+			$this->normalizeOn($condition)
 		);
 
 		return $this;
 	}
 
 
+	private function normalizeOn($condition): array
+	{
+		if ($condition instanceof Complex) {
+			return [$condition];
+		}
+
+		if (!is_array($condition)) {
+			return [[$condition]];
+		}
+
+		$first = reset($condition);
+
+		if (is_array($first) || ($condition instanceof Complex)) {
+			return $condition;
+		}
+
+		return [$condition];
+	}
+
+
 	/**
+	 * @inheritdoc
 	 * @throws Exceptions\FluentException
 	 */
-	public function where(string $condition, ...$params): self
+	public function where($condition, ...$params): self
 	{
 		$this->updateFluent();
 		\array_unshift($params, $condition);
@@ -291,7 +324,7 @@ class Fluent implements Sql, \Countable, \IteratorAggregate
 	public function whereAnd(array $conditions = []): Complex
 	{
 		$this->updateFluent();
-		return $this->params[self::PARAM_WHERE][] = Complex::createAnd($this, $conditions);
+		return $this->params[self::PARAM_WHERE][] = Complex::createAnd($conditions, NULL, $this);
 	}
 
 
@@ -301,7 +334,7 @@ class Fluent implements Sql, \Countable, \IteratorAggregate
 	public function whereOr(array $conditions = []): Complex
 	{
 		$this->updateFluent();
-		return $this->params[self::PARAM_WHERE][] = Complex::createOr($this, $conditions);
+		return $this->params[self::PARAM_WHERE][] = Complex::createOr($conditions, NULL, $this);
 	}
 
 
@@ -317,9 +350,10 @@ class Fluent implements Sql, \Countable, \IteratorAggregate
 
 
 	/**
+	 * @inheritdoc
 	 * @throws Exceptions\FluentException
 	 */
-	public function having(string $condition, ...$params): self
+	public function having($condition, ...$params): self
 	{
 		$this->updateFluent();
 		\array_unshift($params, $condition);
@@ -334,7 +368,7 @@ class Fluent implements Sql, \Countable, \IteratorAggregate
 	public function havingAnd(array $conditions = []): Complex
 	{
 		$this->updateFluent();
-		return $this->params[self::PARAM_HAVING][] = Complex::createAnd($this, $conditions);
+		return $this->params[self::PARAM_HAVING][] = Complex::createAnd($conditions, NULL, $this);
 	}
 
 
@@ -344,7 +378,7 @@ class Fluent implements Sql, \Countable, \IteratorAggregate
 	public function havingOr(array $conditions = []): Complex
 	{
 		$this->updateFluent();
-		return $this->params[self::PARAM_HAVING][] = Complex::createOr($this, $conditions);
+		return $this->params[self::PARAM_HAVING][] = Complex::createOr($conditions, NULL, $this);
 	}
 
 
@@ -565,16 +599,17 @@ class Fluent implements Sql, \Countable, \IteratorAggregate
 	 */
 	private function checkQueryable($data, $alias): void
 	{
-		if (($alias !== NULL) && !is_scalar($alias)) {
-			throw Exceptions\FluentException::aliasMustBeScalar();
-		} else if ((($data instanceof self) || ($data instanceof Db\Query)) && !$alias) {
+		if ((($data instanceof self) || ($data instanceof Db\Query)) && !$alias) {
 			throw Exceptions\FluentException::queryableMustHaveAlias();
-		} else if (!is_scalar($data)) {
+		} else if (!is_scalar($data) && !($data instanceof self) && !($data instanceof Db\Query)) {
 			throw Exceptions\FluentException::columnMustBeScalarOrQueryable();
 		}
 	}
 
 
+	/**
+	 * @throws Exceptions\QueryBuilderException
+	 */
 	public function getQuery(): Db\Query
 	{
 		if ($this->query === NULL) {
@@ -584,6 +619,9 @@ class Fluent implements Sql, \Countable, \IteratorAggregate
 	}
 
 
+	/**
+	 * @throws Exceptions\QueryBuilderException
+	 */
 	public function prepareSql(): Db\Query
 	{
 		return Db\Helper::prepareSql($this->getQuery());
@@ -594,6 +632,7 @@ class Fluent implements Sql, \Countable, \IteratorAggregate
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
 	 * @throws Exceptions\FluentException
+	 * @throws Exceptions\QueryBuilderException
 	 */
 	public function execute(): Db\Result
 	{
@@ -608,6 +647,7 @@ class Fluent implements Sql, \Countable, \IteratorAggregate
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
 	 * @throws Exceptions\FluentException
+	 * @throws Exceptions\QueryBuilderException
 	 */
 	public function reexecute(): Db\Result
 	{
@@ -617,9 +657,22 @@ class Fluent implements Sql, \Countable, \IteratorAggregate
 
 
 	/**
+	 * @throws Exceptions\FluentException
+	 */
+	public function free(): bool
+	{
+		if ($this->result === NULL) {
+			throw Exceptions\FluentException::youMustExecuteFluentBeforeThat();
+		}
+		return $this->result->free();
+	}
+
+
+	/**
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
 	 * @throws Exceptions\FluentException
+	 * @throws Exceptions\QueryBuilderException
 	 */
 	public function count(): int
 	{
@@ -631,6 +684,7 @@ class Fluent implements Sql, \Countable, \IteratorAggregate
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
 	 * @throws Exceptions\FluentException
+	 * @throws Exceptions\QueryBuilderException
 	 */
 	public function getIterator(): Db\ResultIterator
 	{
@@ -642,6 +696,19 @@ class Fluent implements Sql, \Countable, \IteratorAggregate
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
 	 * @throws Exceptions\FluentException
+	 * @throws Exceptions\QueryBuilderException
+	 */
+	public function getAffectedRows(): int
+	{
+		return $this->execute()->getAffectedRows();
+	}
+
+
+	/**
+	 * @throws Db\Exceptions\ConnectionException
+	 * @throws Db\Exceptions\QueryException
+	 * @throws Exceptions\FluentException
+	 * @throws Exceptions\QueryBuilderException
 	 */
 	public function fetch(): ?Db\Row
 	{
@@ -653,6 +720,8 @@ class Fluent implements Sql, \Countable, \IteratorAggregate
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
 	 * @throws Exceptions\FluentException
+	 * @throws Exceptions\QueryBuilderException
+	 * @return mixed value on success, null if no next record
 	 */
 	public function fetchSingle()
 	{
@@ -664,6 +733,8 @@ class Fluent implements Sql, \Countable, \IteratorAggregate
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
 	 * @throws Exceptions\FluentException
+	 * @throws Exceptions\QueryBuilderException
+	 * @return Db\Row[]
 	 */
 	public function fetchAll(?int $offset = NULL, ?int $limit = NULL): array
 	{
@@ -675,6 +746,7 @@ class Fluent implements Sql, \Countable, \IteratorAggregate
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
 	 * @throws Exceptions\FluentException
+	 * @throws Exceptions\QueryBuilderException
 	 */
 	public function fetchAssoc(string $assoc): array
 	{
@@ -686,6 +758,7 @@ class Fluent implements Sql, \Countable, \IteratorAggregate
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
 	 * @throws Exceptions\FluentException
+	 * @throws Exceptions\QueryBuilderException
 	 */
 	public function fetchPairs(?string $key = NULL, ?string $value = NULL): array
 	{

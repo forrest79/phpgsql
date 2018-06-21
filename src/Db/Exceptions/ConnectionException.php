@@ -4,24 +4,24 @@ namespace Forrest79\PhPgSql\Db\Exceptions;
 
 class ConnectionException extends Exception
 {
-	const NO_EXTENSION = 1;
-	const NO_CONFIG = 2;
-	const CONNECTION_FAILED = 3;
-	const BAD_CONNECTION = 4;
-	const ASYNC_STREAM_FAILED = 5;
-	const ASYNC_CONNECT_FAILED = 6;
-	const ASYNC_CONNECT_TIMEOUT = 7;
-	const ASYNC_NO_QUERIES_TO_SEND = 8;
-	const ASYNC_WAITING_RESULTS = 9;
-	const ASYNC_NO_QUERY_WAS_SENT = 10;
-	const ASYNC_SEND_QUERIES_FAILED = 11;
-	const ASYNC_FLUSH_RESULTS_FAILED = 12;
-	const ASYNC_CONSUME_INPUT_FAILED = 14;
+	private const NO_EXTENSION = 1;
+	private const NO_CONFIG = 2;
+	private const CONNECTION_FAILED = 3;
+	private const BAD_CONNECTION = 4;
+	private const ASYNC_STREAM_FAILED = 5;
+	private const ASYNC_CONNECT_FAILED = 6;
+	private const ASYNC_CONNECT_TIMEOUT = 7;
+	private const ASYNC_NO_QUERIES_TO_SEND = 8;
+	private const ASYNC_WAITING_RESULTS = 9;
+	private const ASYNC_NO_QUERY_WAS_SENT = 10;
+	private const ASYNC_SEND_QUERIES_FAILED = 11;
+	private const ASYNC_FLUSH_RESULTS_FAILED = 12;
+	private const ASYNC_CONSUME_INPUT_FAILED = 14;
 
 
 	public static function noExtensionException(): self
 	{
-		return new self('PHP extension \'pgsql\' is not loaded.', self::NO_CONFIG);
+		return new self('PHP extension \'pgsql\' is not loaded.', self::NO_EXTENSION);
 	}
 
 
@@ -31,21 +31,21 @@ class ConnectionException extends Exception
 	}
 
 
-	public static function connectionFailedException($message): self
+	public static function connectionFailedException(): self
 	{
-		return new self(\sprintf('Connection failed: %s.', $message), self::CONNECTION_FAILED);
+		return new self('Connection failed.', self::CONNECTION_FAILED);
 	}
 
 
-	public static function badConnectionException($message): self
+	public static function badConnectionException(): self
 	{
-		return new self(\sprintf('Connection failed (bad connection): %s.', $message), self::BAD_CONNECTION);
+		return new self('Connection failed (bad connection).', self::BAD_CONNECTION);
 	}
 
 
 	public static function asyncStreamFailedException(): self
 	{
-		return new self('Asynchronous connection error.', self::NO_CONFIG);
+		return new self('Asynchronous connection error.', self::ASYNC_STREAM_FAILED);
 	}
 
 
@@ -73,15 +73,15 @@ class ConnectionException extends Exception
 	}
 
 
-	public static function asyncNoQueriyWasSentException(): self
+	public static function asyncNoQueryWasSentException(): self
 	{
-		return new self('There were sent queries.', self::ASYNC_NO_QUERY_WAS_SENT);
+		return new self('No query was sent.', self::ASYNC_NO_QUERY_WAS_SENT);
 	}
 
 
-	public static function asyncSendQueriesFailed(): self
+	public static function asyncSendQueryFailed(): self
 	{
-		return new self('There were sent queries.', self::ASYNC_SEND_QUERIES_FAILED);
+		return new self('Send query failed.', self::ASYNC_SEND_QUERIES_FAILED);
 	}
 
 

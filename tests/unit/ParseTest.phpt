@@ -19,14 +19,14 @@ class ParseTest extends Tester\TestCase
 	/**
 	 * @throws Db\Exceptions\ConnectionException
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		parent::setUp();
 		$this->connection = new Db\Connection();
 	}
 
 
-	public function testPrepareQuery()
+	public function testPrepareQuery(): void
 	{
 		$query = Db\Helper::prepareSql($this->connection->createQuery('SELECT * FROM table'));
 		Tester\Assert::same('SELECT * FROM table', $query->getSql());
@@ -34,7 +34,7 @@ class ParseTest extends Tester\TestCase
 	}
 
 
-	public function testPrepareQueryWithParams()
+	public function testPrepareQueryWithParams(): void
 	{
 		$query = Db\Helper::prepareSql($this->connection->createQuery('SELECT * FROM table WHERE column = $1', 1));
 		Tester\Assert::same('SELECT * FROM table WHERE column = $1', $query->getSql());
@@ -54,16 +54,16 @@ class ParseTest extends Tester\TestCase
 	}
 
 
-	public function testPrepareQueryWithBadParams()
+	public function testPrepareQueryWithBadParams(): void
 	{
-		Tester\Assert::exception(function() {
+		Tester\Assert::exception(function(): void {
 			$query = Db\Helper::prepareSql($this->connection->createQuery('SELECT * FROM table WHERE column = ? AND column2 = ?', 1));
 			$query->getSql();
 		}, Db\Exceptions\QueryException::class);
 	}
 
 
-	public function testPrepareQueryWithLiteral()
+	public function testPrepareQueryWithLiteral(): void
 	{
 		$query = Db\Helper::prepareSql($this->connection->createQuery('SELECT * FROM ? WHERE column = ?', $this->connection::literal('table'), 1));
 		Tester\Assert::same('SELECT * FROM table WHERE column = $1', $query->getSql());
@@ -71,7 +71,7 @@ class ParseTest extends Tester\TestCase
 	}
 
 
-	public function testPrepareQueryWithArray()
+	public function testPrepareQueryWithArray(): void
 	{
 		$query = Db\Helper::prepareSql($this->connection->createQuery('SELECT * FROM table WHERE column IN (?)', [1, 2]));
 		Tester\Assert::same('SELECT * FROM table WHERE column IN ($1, $2)', $query->getSql());
@@ -79,7 +79,7 @@ class ParseTest extends Tester\TestCase
 	}
 
 
-	public function testPrepareQueryWithQuery()
+	public function testPrepareQueryWithQuery(): void
 	{
 		$subquery = $this->connection->createQuery('SELECT id FROM subtable WHERE column = ?', 1);
 		$query = Db\Helper::prepareSql($this->connection->createQuery('SELECT * FROM table WHERE id IN (?)', $subquery));
@@ -88,7 +88,7 @@ class ParseTest extends Tester\TestCase
 	}
 
 
-	public function testPrepareQueryEscapeQuestionmark()
+	public function testPrepareQueryEscapeQuestionmark(): void
 	{
 		$query = Db\Helper::prepareSql($this->connection->createQuery('SELECT * FROM table WHERE column = ? AND text ILIKE \'What\?\'', 1));
 		Tester\Assert::same('SELECT * FROM table WHERE column = $1 AND text ILIKE \'What?\'', $query->getSql());
@@ -96,7 +96,7 @@ class ParseTest extends Tester\TestCase
 	}
 
 
-	public function testPrepareQueryComplex()
+	public function testPrepareQueryComplex(): void
 	{
 		$subquery = $this->connection->createQuery(
 			'SELECT id FROM subtable WHERE when = ? AND text ILIKE \'When\?\' AND year > ?',

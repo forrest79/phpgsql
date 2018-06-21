@@ -4,8 +4,8 @@ namespace Forrest79\PhPgSql\Db\Exceptions;
 
 class ResultException extends Exception
 {
-	const NO_COLUMN = 1;
-	const NO_RESOURCE = 2;
+	private const NO_COLUMN = 1;
+	private const NO_RESOURCE = 2;
 
 
 	public static function noColumn(string $key): self

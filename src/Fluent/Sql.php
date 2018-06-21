@@ -2,9 +2,16 @@
 
 namespace Forrest79\PhPgSql\Fluent;
 
+use Forrest79\PhPgSql\Db;
+
 interface Sql
 {
 
+	/**
+	 * @param string|Fluent|Db\Query $from
+	 * @param string|NULL $alias
+	 * @return Fluent
+	 */
 	function table($from, ?string $alias = NULL): Fluent;
 
 
@@ -14,40 +21,108 @@ interface Sql
 	function distinct(): Fluent;
 
 
+	/**
+	 * @param string|Fluent|Db\Query $from
+	 * @param string|NULL $alias
+	 * @return Fluent
+	 */
 	function from($from, ?string $alias = NULL): Fluent;
 
 
-	function join($join, ?string $alias = NULL, array $onConditions = []): Fluent;
+	/**
+	 * @param string|Fluent|Db\Query $join table or query
+	 * @param string|NULL $alias
+	 * @param string|array|Complex|NULL $onCondition
+	 * @return Fluent
+	 */
+	function join($join, ?string $alias = NULL, $onCondition = NULL): Fluent;
 
 
-	function innerJoin($join, ?string $alias = NULL, array $onConditions = []): Fluent;
+	/**
+	 * @param string|Fluent|Db\Query $join table or query
+	 * @param string|NULL $alias
+	 * @param string|array|Complex|NULL $onCondition
+	 * @return Fluent
+	 */
+	function innerJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent;
 
 
-	function leftJoin($join, ?string $alias = NULL, array $onConditions = []): Fluent;
+	/**
+	 * @param string|Fluent|Db\Query $join table or query
+	 * @param string|NULL $alias
+	 * @param string|array|Complex|NULL $onCondition
+	 * @return Fluent
+	 */
+	function leftJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent;
 
 
-	function leftOuterJoin($join, ?string $alias = NULL, array $onConditions = []): Fluent;
+	/**
+	 * @param string|Fluent|Db\Query $join table or query
+	 * @param string|NULL $alias
+	 * @param string|array|Complex|NULL $onCondition
+	 * @return Fluent
+	 */
+	function leftOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent;
 
 
-	function rightJoin($join, ?string $alias = NULL, array $onConditions = []): Fluent;
+	/**
+	 * @param string|Fluent|Db\Query $join table or query
+	 * @param string|NULL $alias
+	 * @param string|array|Complex|NULL $onCondition
+	 * @return Fluent
+	 */
+	function rightJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent;
 
 
-	function rightOuterJoin($join, ?string $alias = NULL, array $onConditions = []): Fluent;
+	/**
+	 * @param string|Fluent|Db\Query $join table or query
+	 * @param string|NULL $alias
+	 * @param string|array|Complex|NULL $onCondition
+	 * @return Fluent
+	 */
+	function rightOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent;
 
 
-	function fullJoin($join, ?string $alias = NULL, array $onConditions = []): Fluent;
+	/**
+	 * @param string|Fluent|Db\Query $join table or query
+	 * @param string|NULL $alias
+	 * @param string|array|Complex|NULL $onCondition
+	 * @return Fluent
+	 */
+	function fullJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent;
 
 
-	function fullOuterJoin($join, ?string $alias = NULL, array $onConditions = []): Fluent;
+	/**
+	 * @param string|Fluent|Db\Query $join table or query
+	 * @param string|NULL $alias
+	 * @param string|array|Complex|NULL $onCondition
+	 * @return Fluent
+	 */
+	function fullOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent;
 
 
+	/**
+	 * @param string|Fluent|Db\Query $join table or query
+	 * @param string|NULL $alias
+	 * @return Fluent
+	 */
 	function crossJoin($join, ?string $alias = NULL): Fluent;
 
 
-	function on(string $alias, array $conditions): Fluent;
+	/**
+	 * @param string $alias
+	 * @param string|array|Complex $condition
+	 * @return Fluent
+	 */
+	function on(string $alias, $condition): Fluent;
 
 
-	function where(string $condition, ...$params): Fluent;
+	/**
+	 * @param string|Complex $condition
+	 * @param mixed ...$params
+	 * @return Fluent
+	 */
+	function where($condition, ...$params): Fluent;
 
 
 	function whereAnd(array $conditions = []): Complex;
@@ -59,7 +134,12 @@ interface Sql
 	function groupBy(array $columns): Fluent;
 
 
-	function having(string $condition, ...$params): Fluent;
+	/**
+	 * @param string|Complex $condition
+	 * @param mixed ...$params
+	 * @return Fluent
+	 */
+	function having($condition, ...$params): Fluent;
 
 
 	function havingAnd(array $conditions = []): Complex;
@@ -77,15 +157,31 @@ interface Sql
 	function offset(int $offset): Fluent;
 
 
+	/**
+	 * @param string|Fluent|Db\Query $query
+	 * @return Fluent
+	 */
 	function union($query): Fluent;
 
 
+	/**
+	 * @param string|Fluent|Db\Query $query
+	 * @return Fluent
+	 */
 	function unionAll($query): Fluent;
 
 
+	/**
+	 * @param string|Fluent|Db\Query $query
+	 * @return Fluent
+	 */
 	function intersect($query): Fluent;
 
 
+	/**
+	 * @param string|Fluent|Db\Query $query
+	 * @return Fluent
+	 */
 	function except($query): Fluent;
 
 
