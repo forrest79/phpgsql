@@ -1,6 +1,9 @@
 PhPgSql
 =======
 
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://github.com/forrest79/PhPgSql/blob/master/license.md)
+[![Build Status](https://travis-ci.org/forrest79/PhPgSql.svg?branch=master)](https://travis-ci.org/forrest79/PhPgSql)
+
 ## DB
 
 ### Introduction
@@ -175,11 +178,6 @@ $connection->addOnQuery(function(Connection $connection, Query $query, ?float $t
 - ```INSERT INTO ... ON CONFLICT```
 
 ## TODO
-
-- complete docs
-- Travis tests
-- nette - choose connection class (default Fluent) 
-- license
 
 - https://packagist.org/
 - performance - test foreach vs. array_walk vs. array_map

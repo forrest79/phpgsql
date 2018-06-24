@@ -1,6 +1,9 @@
 {
 	"name": "forrest79/phpgsql",
+	"description": "PostgreSQL library for PHP with fluent interface for SQL query writing.",
+	"keywords": ["php", "database", "postgresql", "fluent"],
 	"type": "library",
+	"license": "BSD-3-Clause",
 	"require": {
 		"php":  ">=7.1",
 		"ext-pgsql": ">=7.1"
