@@ -28,6 +28,7 @@ class BasicTest extends Tester\TestCase
 
 	public function testDumpSql(): void
 	{
+		\putenv('TERM=none'); // don't use xterm in this test, if is really used
 		Tester\Assert::same("SELECT a \nFROM b JOIN c ON c.a = b.a \nWHERE d = 'x' \nGROUP BY a \nHAVING e = 2 \nORDER BY a \nLIMIT 1 \nOFFSET 2", Db\Helper::dump('SELECT a FROM b JOIN c ON c.a = b.a WHERE d = $1 GROUP BY a HAVING e = 2 ORDER BY a LIMIT 1 OFFSET 2', ['x']));
 	}
 

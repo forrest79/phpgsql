@@ -65,7 +65,7 @@ class BasicTest extends TestCase
 
 	public function testFailedConnection(): void
 	{
-		$this->connection->setConnectionConfig($this->getConfig() . 'x');
+		$this->connection->setConnectionConfig(str_replace('user=', 'user=non-existing-user-', $this->getConfig()));
 		Tester\Assert::exception(function() {
 			$this->connection->ping();
 		}, Db\Exceptions\ConnectionException::class);

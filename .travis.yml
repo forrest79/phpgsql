@@ -1,0 +1,26 @@
+language: php
+
+php:
+  - 7.1
+  - 7.2
+
+services:
+ - postgresql
+
+addons:
+  postgresql: "9.6"
+
+before_install:
+  - composer self-update
+
+install:
+  - composer install --no-interaction --prefer-source
+
+before_script:
+  - psql -c "ALTER ROLE postgres ENCRYPTED PASSWORD 'md53175bce1d3201d16594cebf9d7eb3f9d';" -U postgres
+
+script:
+  - ./vendor/bin/tester ./tests/
+
+after_failure:
+  - for i in $(find ./tests -name \*.actual); do echo "--- $i"; cat $i; echo; echo; done
