@@ -4,7 +4,7 @@ namespace Forrest79\PhPgSql\Fluent;
 
 use Forrest79\PhPgSql\Db;
 
-class Fluent implements Sql, \Countable, \IteratorAggregate
+class Fluent implements FluentSql, \Countable, \IteratorAggregate
 {
 	public const QUERY_SELECT = 'select';
 	public const QUERY_INSERT = 'insert';
@@ -613,7 +613,7 @@ class Fluent implements Sql, \Countable, \IteratorAggregate
 	public function getQuery(): Db\Query
 	{
 		if ($this->query === NULL) {
-			$this->query = QueryBuilder::create($this->queryType, $this->params)->createQuery();
+			$this->query = $this->createQueryBuilder()->createQuery();
 		}
 		return $this->query;
 	}
@@ -763,6 +763,12 @@ class Fluent implements Sql, \Countable, \IteratorAggregate
 	public function fetchPairs(?string $key = NULL, ?string $value = NULL): array
 	{
 		return $this->execute()->fetchPairs($key, $value);
+	}
+
+
+	protected function createQueryBuilder(): QueryBuilder
+	{
+		return QueryBuilder::create($this->queryType, $this->params);
 	}
 
 

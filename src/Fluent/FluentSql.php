@@ -4,7 +4,7 @@ namespace Forrest79\PhPgSql\Fluent;
 
 use Forrest79\PhPgSql\Db;
 
-interface Sql
+interface FluentSql
 {
 
 	/**

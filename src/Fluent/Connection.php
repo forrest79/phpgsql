@@ -4,7 +4,7 @@ namespace Forrest79\PhPgSql\Fluent;
 
 use Forrest79\PhPgSql\Db;
 
-class Connection extends Db\Connection implements Sql
+class Connection extends Db\Connection implements FluentSql
 {
 
 	/**
@@ -333,7 +333,7 @@ class Connection extends Db\Connection implements Sql
 	}
 
 
-	private function fluent(): Fluent
+	protected function fluent(): Fluent
 	{
 		return Fluent::create($this);
 	}
