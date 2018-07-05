@@ -86,6 +86,8 @@ class Connection
 			throw Exceptions\ConnectionException::badConnectionException();
 		}
 
+		$this->resource = $resource;
+
 		if ($this->connectAsync === TRUE) {
 			$stream = \pg_socket($resource);
 			if (!$stream) {
@@ -98,8 +100,6 @@ class Connection
 				$this->onConnect();
 			}
 		}
-
-		$this->resource = $resource;
 
 		return $this;
 	}

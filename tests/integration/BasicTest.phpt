@@ -78,8 +78,8 @@ class BasicTest extends TestCase
 		$queryDuration = 0;
 		$close = FALSE;
 
-		$this->connection->addOnConnect(function() use (&$connect): void {
-			$connect = TRUE;
+		$this->connection->addOnConnect(function(Db\Connection $connection) use (&$connect): void {
+			$connect = $connection->query('SELECT TRUE')->fetchSingle();
 		});
 
 		$this->connection->addOnQuery(function(Db\Connection $connection, Db\Query $query, float $duration) use (&$queryDuration): void {
