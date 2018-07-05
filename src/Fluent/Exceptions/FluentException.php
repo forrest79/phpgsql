@@ -4,14 +4,14 @@ namespace Forrest79\PhPgSql\Fluent\Exceptions;
 
 class FluentException extends Exception
 {
-	private const ONLY_ONE_MAIN_TABLE = 1;
-	private const TABLE_ALIAS_ALREADY_EXISTS = 2;
-	private const NON_EXISTING_PARAM_TO_RESET = 3;
-	private const QUERYABLE_MUST_HAVE_ALIAS = 4;
-	private const PARAM_MUST_BE_SCALAR_OR_QUERYABLE = 5;
-	private const CANT_UPDATE_FLUENT_AFTER_EXECUTE = 6;
-	private const YOU_MUST_EXECUTE_FLUENT_BEFORE_THAT = 7;
-	private const YOU_NEED_CONNECTION_FOR_THIS_ACTION = 8;
+	public const ONLY_ONE_MAIN_TABLE = 1;
+	public const TABLE_ALIAS_ALREADY_EXISTS = 2;
+	public const NON_EXISTING_PARAM_TO_RESET = 3;
+	public const QUERYABLE_MUST_HAVE_ALIAS = 4;
+	public const PARAM_MUST_BE_SCALAR_OR_QUERYABLE = 5;
+	public const CANT_UPDATE_FLUENT_AFTER_EXECUTE = 6;
+	public const YOU_MUST_EXECUTE_FLUENT_BEFORE_THAT = 7;
+	public const YOU_NEED_CONNECTION_FOR_THIS_ACTION = 8;
 
 
 	public static function onlyOneMainTable(): self

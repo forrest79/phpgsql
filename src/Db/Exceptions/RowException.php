@@ -6,7 +6,7 @@ use Forrest79\PhPgSql;
 
 class RowException extends Exception
 {
-	private const NO_KEY = 1;
+	public const NO_KEY = 1;
 
 
 	public static function noParam(string $key): self

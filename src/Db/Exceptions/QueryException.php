@@ -6,10 +6,10 @@ use Forrest79\PhPgSql\Db;
 
 class QueryException extends Exception
 {
-	private const QUERY_FAILED = 1;
-	private const ASYNC_QUERY_FAILED = 2;
-	private const CANT_PASS_PARAMS = 3;
-	private const NO_PARAM = 4;
+	public const QUERY_FAILED = 1;
+	public const ASYNC_QUERY_FAILED = 2;
+	public const CANT_PASS_PARAMS = 3;
+	public const NO_PARAM = 4;
 
 	/** @var Db\Query */
 	private $query;

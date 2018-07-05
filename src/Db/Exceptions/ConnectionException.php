@@ -4,19 +4,19 @@ namespace Forrest79\PhPgSql\Db\Exceptions;
 
 class ConnectionException extends Exception
 {
-	private const NO_EXTENSION = 1;
-	private const NO_CONFIG = 2;
-	private const CONNECTION_FAILED = 3;
-	private const BAD_CONNECTION = 4;
-	private const ASYNC_STREAM_FAILED = 5;
-	private const ASYNC_CONNECT_FAILED = 6;
-	private const ASYNC_CONNECT_TIMEOUT = 7;
-	private const ASYNC_NO_QUERIES_TO_SEND = 8;
-	private const ASYNC_WAITING_RESULTS = 9;
-	private const ASYNC_NO_QUERY_WAS_SENT = 10;
-	private const ASYNC_SEND_QUERIES_FAILED = 11;
-	private const ASYNC_FLUSH_RESULTS_FAILED = 12;
-	private const ASYNC_CONSUME_INPUT_FAILED = 14;
+	public const NO_EXTENSION = 1;
+	public const NO_CONFIG = 2;
+	public const CONNECTION_FAILED = 3;
+	public const BAD_CONNECTION = 4;
+	public const ASYNC_STREAM_FAILED = 5;
+	public const ASYNC_CONNECT_FAILED = 6;
+	public const ASYNC_CONNECT_TIMEOUT = 7;
+	public const ASYNC_NO_QUERIES_TO_SEND = 8;
+	public const ASYNC_WAITING_RESULTS = 9;
+	public const ASYNC_NO_QUERY_WAS_SENT = 10;
+	public const ASYNC_SEND_QUERIES_FAILED = 11;
+	public const ASYNC_FLUSH_RESULTS_FAILED = 12;
+	public const ASYNC_CONSUME_INPUT_FAILED = 14;
 
 
 	public static function noExtensionException(): self

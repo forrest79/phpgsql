@@ -4,9 +4,9 @@ namespace Forrest79\PhPgSql\Fluent\Exceptions;
 
 class ComplexException extends Exception
 {
-	private const NO_PARENT = 1;
-	private const NO_FLUENT = 2;
-	private const COMPLEX_CANT_HAVE_PARAMS = 3;
+	public const NO_PARENT = 1;
+	public const NO_FLUENT = 2;
+	public const COMPLEX_CANT_HAVE_PARAMS = 3;
 
 
 	public static function noParent(): self
