@@ -115,7 +115,7 @@ class Helper
 					return '?';
 				}
 
-				if (!isset($params[$origParamIndex])) {
+				if (!array_key_exists($origParamIndex, $params)) {
 					throw Exceptions\QueryException::noParam($origParamIndex);
 				}
 
