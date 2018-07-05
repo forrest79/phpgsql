@@ -8,6 +8,6 @@ interface DataTypeParser
 	/**
 	 * @return mixed
 	 */
-	public function parse(string $type, string $value);
+	public function parse(string $type, ?string $value);
 
 }

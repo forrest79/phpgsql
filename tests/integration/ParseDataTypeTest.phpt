@@ -28,6 +28,25 @@ class ParseDataTypeTest extends TestCase
 	}
 
 
+	public function testParseNull(): void
+	{
+		$this->connection->query('
+			CREATE TABLE test(
+				type_integer integer
+			);
+		');
+
+		$this->connection->queryArray('
+			INSERT INTO test(type_integer)
+			VALUES (?)
+		', [NULL]);
+
+		Tester\Assert::null($this->connection->query('SELECT type_integer FROM test')->fetchSingle());
+	}
+
+
+
+
 	public function testParseBasic(): void
 	{
 		$this->connection->query('
@@ -304,7 +323,7 @@ class ParseDataTypeTest extends TestCase
 	{
 		$this->connection->setDataTypeParser(new class implements Db\DataTypeParsers\DataTypeParser {
 
-			public function parse(string $type, string $value)
+			public function parse(string $type, ?string $value)
 			{
 				if ($type === 'point') {
 					return array_map('intval', explode(',', substr($value, 1, -1), 2));

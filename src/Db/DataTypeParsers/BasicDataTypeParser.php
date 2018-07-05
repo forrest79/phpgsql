@@ -11,8 +11,12 @@ class BasicDataTypeParser implements DataTypeParser
 	 * @return mixed
 	 * @throws Exceptions\DataTypeParserException
 	 */
-	public function parse(string $type, string $value)
+	public function parse(string $type, ?string $value)
 	{
+		if ($value === NULL) {
+			return NULL;
+		}
+
 		if ($type[0] === '_') { // arrays
 			switch ($type) {
 				case '_int2':
@@ -109,21 +113,45 @@ class BasicDataTypeParser implements DataTypeParser
 	}
 
 
+	/**
+	 * @throws Exceptions\DataTypeParserException
+	 */
 	protected function parseDate($value): \DateTimeImmutable
 	{
-		return \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $value . ' 00:00:00');
+		$datetime = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $value . ' 00:00:00');
+		if ($datetime === FALSE) {
+			throw Exceptions\DataTypeParserException::cantConvertDatetime('Y-m-d H:i:s', $value . ' 00:00:00');
+		}
+		return $datetime;
 	}
 
 
+	/**
+	 * @throws Exceptions\DataTypeParserException
+	 */
 	protected function parseTimestamp($value): \DateTimeImmutable
 	{
-		return \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $value);
+		$datetime = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $value);
+		if ($datetime === FALSE) {
+			throw Exceptions\DataTypeParserException::cantConvertDatetime('Y-m-d H:i:s', $value);
+		}
+		return $datetime;
 	}
 
 
+	/**
+	 * @throws Exceptions\DataTypeParserException
+	 */
 	protected function parseTimestampTz($value): \DateTimeImmutable
 	{
-		return \DateTimeImmutable::createFromFormat('Y-m-d H:i:sO', $value);
+		$datetime = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s.ue', $value);
+		if ($datetime === FALSE) {
+			$datetime = \DateTimeImmutable::createFromFormat('Y-m-d H:i:se', $value);
+		}
+		if ($datetime === FALSE) {
+			throw Exceptions\DataTypeParserException::cantConvertDatetime('Y-m-d H:i:s.ue/Y-m-d H:i:se', $value);
+		}
+		return $datetime;
 	}
 
 }
