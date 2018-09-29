@@ -297,7 +297,7 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 
 		$first = reset($condition);
 
-		if (is_array($first) || ($condition instanceof Complex)) {
+		if (is_array($first)) {
 			return $condition;
 		}
 
