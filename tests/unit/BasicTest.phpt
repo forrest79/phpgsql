@@ -15,14 +15,15 @@ class BasicTest extends Tester\TestCase
 
 	public function testCreateArray(): void
 	{
-		Tester\Assert::same('{\'1\',\'2\',\'3\'}', Db\Helper::createPgArray([1, 2, 3]));
-		Tester\Assert::same('{\'A\',\'B\',\'C\'}', Db\Helper::createPgArray(['A', 'B', 'C']));
+		Tester\Assert::same('{1,2,3}', Db\Helper::createPgArray([1, 2, 3]));
+		Tester\Assert::same('{\'A\',\'B\',\'C\'}', Db\Helper::createStringPgArray(['A', 'B', 'C']));
 	}
 
 
 	public function testCreateBlankArray(): void
 	{
 		Tester\Assert::same('{}', Db\Helper::createPgArray([]));
+		Tester\Assert::same('{}', Db\Helper::createStringPgArray([]));
 	}
 
 

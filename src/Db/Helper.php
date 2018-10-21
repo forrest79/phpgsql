@@ -11,7 +11,7 @@ class Helper
 	}
 
 
-	public static function createPgArray(array $array): string
+	public static function createStringPgArray(array $array): string
 	{
 		if (!$array) {
 			return '{}';
@@ -19,6 +19,15 @@ class Helper
 		return sprintf('{\'%s\'}', \implode('\',\'', \array_map(function($value) {
 			return \str_replace('\'', '\'\'', $value);
 		}, $array)));
+	}
+
+
+	public static function createPgArray(array $array): string
+	{
+		if (!$array) {
+			return '{}';
+		}
+		return sprintf('{%s}', \implode(',', $array));
 	}
 
 
