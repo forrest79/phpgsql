@@ -23,7 +23,6 @@ Simple and fast PHP database library for PostgreSQL with auto converting DB type
 
 The recommended way to install PhPgSql is through Composer:
 
-TODO
 ```
 composer require forrest79/phpgsql --dev
 ```
@@ -413,7 +412,6 @@ Just with table name:
 
 ## TODO
 
-- https://packagist.org/ (after some testing in real)
 - performance - test foreach vs. array_walk vs. array_map and use the best
 - better handle Fluent <-> QueryBuilder - can use own Fluent and own QueryBuilder? On Fluent just needed public constants?
 - better docs (now see tests)
