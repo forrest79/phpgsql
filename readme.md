@@ -23,7 +23,7 @@ Simple and fast PHP database library for PostgreSQL with auto converting DB type
 
 The recommended way to install PhPgSql is through Composer:
 
-```
+```sh
 composer require forrest79/phpgsql --dev
 ```
 
