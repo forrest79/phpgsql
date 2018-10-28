@@ -335,7 +335,7 @@ class Connection extends Db\Connection implements FluentSql
 
 	protected function fluent(): Fluent
 	{
-		return Fluent::create($this);
+		return new Fluent($this);
 	}
 
 }

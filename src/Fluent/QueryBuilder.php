@@ -16,7 +16,7 @@ class QueryBuilder
 	private $params;
 
 
-	private function __construct(string $queryType, array $params)
+	public function __construct(string $queryType, array $params)
 	{
 		$this->queryType = $queryType;
 		$this->params = $params;
@@ -501,12 +501,6 @@ class QueryBuilder
 		}
 
 		return \implode(sprintf(' %s ', $complex->getType()), $processedConditions);
-	}
-
-
-	public static function create(string $queryType, array $params): self
-	{
-		return new self($queryType, $params);
 	}
 
 }

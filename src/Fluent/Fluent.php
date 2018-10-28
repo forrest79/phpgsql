@@ -83,7 +83,7 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 	private $query;
 
 
-	private function __construct(?Db\Connection $connection = NULL)
+	public function __construct(?Db\Connection $connection = NULL)
 	{
 		$this->connection = $connection;
 	}
@@ -768,7 +768,7 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 
 	protected function createQueryBuilder(): QueryBuilder
 	{
-		return QueryBuilder::create($this->queryType, $this->params);
+		return new QueryBuilder($this->queryType, $this->params);
 	}
 
 
@@ -781,12 +781,6 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 			throw Exceptions\FluentException::youNeedConnectionForThisAction();
 		}
 		return $this->connection;
-	}
-
-
-	public static function create(?Db\Connection $connection = NULL)
-	{
-		return new self($connection);
 	}
 
 }
