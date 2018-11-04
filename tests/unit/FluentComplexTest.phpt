@@ -32,7 +32,7 @@ class FluentComplexTest extends Tester\TestCase
 
 	public function testFluent(): void
 	{
-		$fluent = Fluent\Fluent::create();
+		$fluent = new Fluent\Fluent();
 		$parentComplex = Fluent\Complex::createAnd([], NULL, $fluent);
 
 		Tester\Assert::same($fluent, $parentComplex->addComplexOr()->fluent());

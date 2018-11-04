@@ -178,7 +178,7 @@ Fluent interface can be used to simply create SQL queries using PHP.
 We can start with ```Fluent``` object:
 
 ```php
-$fluent = Fluent\Fluent::create();
+$fluent = new Fluent\Fluent();
 $fluent->select(['*'])->prepareSql(); // create Query object with SQL and params to pg_query_params 
 // $fluent->select(['*'])->getQuery(); // mostly internal, this is pass to Db\Connection, which prepare real SQL  
 ```
