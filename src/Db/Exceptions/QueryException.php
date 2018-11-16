@@ -48,7 +48,7 @@ class QueryException extends Exception
 
 	public static function noParam(int $index): self
 	{
-		return new self(\sprintf('There is no param for index %s.', $index), self::NO_PARAM);
+		return new self(\sprintf('There is no param for index %s. Did you escape all \'?\' characters, which you want to use as \'?\' and not as parameter?', $index), self::NO_PARAM);
 	}
 
 }
