@@ -95,7 +95,7 @@ class BasicDataTypeParser implements DataTypeParser
 	}
 
 
-	protected function parseArray($value, ?callable $typeFnc = NULL): array
+	protected function parseArray(string $value, ?callable $typeFnc = NULL): array
 	{
 		$array = \explode(',', substr($value, 1, -1));
 
@@ -107,7 +107,7 @@ class BasicDataTypeParser implements DataTypeParser
 	}
 
 
-	protected function parseBool($value): bool
+	protected function parseBool(string $value): bool
 	{
 		return $value === 't' ? TRUE : FALSE;
 	}
@@ -116,7 +116,7 @@ class BasicDataTypeParser implements DataTypeParser
 	/**
 	 * @throws Exceptions\DataTypeParserException
 	 */
-	protected function parseDate($value): \DateTimeImmutable
+	protected function parseDate(string $value): \DateTimeImmutable
 	{
 		$datetime = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $value . ' 00:00:00');
 		if ($datetime === FALSE) {
@@ -129,7 +129,7 @@ class BasicDataTypeParser implements DataTypeParser
 	/**
 	 * @throws Exceptions\DataTypeParserException
 	 */
-	protected function parseTimestamp($value): \DateTimeImmutable
+	protected function parseTimestamp(string $value): \DateTimeImmutable
 	{
 		$datetime = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $value);
 		if ($datetime === FALSE) {
@@ -142,7 +142,7 @@ class BasicDataTypeParser implements DataTypeParser
 	/**
 	 * @throws Exceptions\DataTypeParserException
 	 */
-	protected function parseTimestampTz($value): \DateTimeImmutable
+	protected function parseTimestampTz(string $value): \DateTimeImmutable
 	{
 		$datetime = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s.ue', $value);
 		if ($datetime === FALSE) {

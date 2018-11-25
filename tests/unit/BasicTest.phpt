@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Unit\Forrest79\PhPgSql\Db;
+namespace Forrest79\PhPgSql\Tests\Unit;
 
 use Forrest79\PhPgSql\Db;
 use Tester;

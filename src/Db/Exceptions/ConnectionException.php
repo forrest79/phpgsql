@@ -55,9 +55,9 @@ class ConnectionException extends Exception
 	}
 
 
-	public static function asyncConnectTimeoutException(int $afterSecond, int $configSeconds): self
+	public static function asyncConnectTimeoutException(float $afterSeconds, int $configSeconds): self
 	{
-		return new self(\sprintf('Asynchronous connection timeout after %s seconds (%s seconds are configured).', $afterSecond, $configSeconds), self::ASYNC_CONNECT_TIMEOUT);
+		return new self(\sprintf('Asynchronous connection timeout after %f seconds (%d seconds are configured).', $afterSeconds, $configSeconds), self::ASYNC_CONNECT_TIMEOUT);
 	}
 
 

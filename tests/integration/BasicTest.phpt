@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Integration\Forrest79\PhPgSql\Db;
+namespace Forrest79\PhPgSql\Tests\Integration;
 
 use Forrest79\PhPgSql\Db;
 use Tester;
@@ -16,10 +16,6 @@ class BasicTest extends TestCase
 	private $connection;
 
 
-	/**
-	 * @throws Db\Exceptions\ConnectionException
-	 * @throws Db\Exceptions\QueryException
-	 */
 	protected function setUp(): void
 	{
 		parent::setUp();
@@ -27,13 +23,13 @@ class BasicTest extends TestCase
 	}
 
 
-	public function testPing()
+	public function testPing(): void
 	{
 		Tester\Assert::true($this->connection->ping());
 	}
 
 
-	public function testConnectedResource()
+	public function testConnectedResource(): void
 	{
 		Tester\Assert::notEqual(NULL, $this->connection->getResource());
 	}
@@ -117,16 +113,16 @@ class BasicTest extends TestCase
 	{
 		$this->connection->begin();
 
-		Tester\Assert::true($this->connection->inTransaction());
+		Tester\Assert::true($this->connection->isInTransaction());
 		Tester\Assert::same(1, $this->connection->query('SELECT 1')->fetchSingle());
 
 		$this->connection->commit();
 
-		Tester\Assert::false($this->connection->inTransaction());
+		Tester\Assert::false($this->connection->isInTransaction());
 
 		$this->connection->begin();
 
-		Tester\Assert::true($this->connection->inTransaction());
+		Tester\Assert::true($this->connection->isInTransaction());
 		Tester\Assert::same(1, $this->connection->query('SELECT 1')->fetchSingle());
 
 		$this->connection->rollback();
@@ -139,20 +135,20 @@ class BasicTest extends TestCase
 
 		$this->connection->begin('test');
 
-		Tester\Assert::true($this->connection->inTransaction());
+		Tester\Assert::true($this->connection->isInTransaction());
 		Tester\Assert::same(1, $this->connection->query('SELECT 1')->fetchSingle());
 
 		$this->connection->commit('test');
 
 		$this->connection->commit();
 
-		Tester\Assert::false($this->connection->inTransaction());
+		Tester\Assert::false($this->connection->isInTransaction());
 
 		$this->connection->begin();
 
 		$this->connection->begin('test');
 
-		Tester\Assert::true($this->connection->inTransaction());
+		Tester\Assert::true($this->connection->isInTransaction());
 		Tester\Assert::same(1, $this->connection->query('SELECT 1')->fetchSingle());
 
 		$this->connection->rollback('test');

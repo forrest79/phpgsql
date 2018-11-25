@@ -8,121 +8,121 @@ interface FluentSql
 {
 
 	/**
-	 * @param string|Fluent|Db\Query $from
+	 * @param string|self|Db\Query $from
 	 * @param string|NULL $alias
-	 * @return Fluent
+	 * @return self
 	 */
-	function table($from, ?string $alias = NULL): Fluent;
+	function table($from, ?string $alias = NULL): self;
 
 
-	function select(array $columns): Fluent;
+	function select(array $columns): self;
 
 
-	function distinct(): Fluent;
+	function distinct(): self;
 
 
 	/**
-	 * @param string|Fluent|Db\Query $from
+	 * @param string|self|Db\Query $from
 	 * @param string|NULL $alias
-	 * @return Fluent
+	 * @return self
 	 */
-	function from($from, ?string $alias = NULL): Fluent;
+	function from($from, ?string $alias = NULL): self;
 
 
 	/**
-	 * @param string|Fluent|Db\Query $join table or query
+	 * @param string|self|Db\Query $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
-	 * @return Fluent
+	 * @return self
 	 */
-	function join($join, ?string $alias = NULL, $onCondition = NULL): Fluent;
+	function join($join, ?string $alias = NULL, $onCondition = NULL): self;
 
 
 	/**
-	 * @param string|Fluent|Db\Query $join table or query
+	 * @param string|self|Db\Query $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
-	 * @return Fluent
+	 * @return self
 	 */
-	function innerJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent;
+	function innerJoin($join, ?string $alias = NULL, $onCondition = NULL): self;
 
 
 	/**
-	 * @param string|Fluent|Db\Query $join table or query
+	 * @param string|self|Db\Query $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
-	 * @return Fluent
+	 * @return self
 	 */
-	function leftJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent;
+	function leftJoin($join, ?string $alias = NULL, $onCondition = NULL): self;
 
 
 	/**
-	 * @param string|Fluent|Db\Query $join table or query
+	 * @param string|self|Db\Query $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
-	 * @return Fluent
+	 * @return self
 	 */
-	function leftOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent;
+	function leftOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): self;
 
 
 	/**
-	 * @param string|Fluent|Db\Query $join table or query
+	 * @param string|self|Db\Query $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
-	 * @return Fluent
+	 * @return self
 	 */
-	function rightJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent;
+	function rightJoin($join, ?string $alias = NULL, $onCondition = NULL): self;
 
 
 	/**
-	 * @param string|Fluent|Db\Query $join table or query
+	 * @param string|self|Db\Query $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
-	 * @return Fluent
+	 * @return self
 	 */
-	function rightOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent;
+	function rightOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): self;
 
 
 	/**
-	 * @param string|Fluent|Db\Query $join table or query
+	 * @param string|self|Db\Query $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
-	 * @return Fluent
+	 * @return self
 	 */
-	function fullJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent;
+	function fullJoin($join, ?string $alias = NULL, $onCondition = NULL): self;
 
 
 	/**
-	 * @param string|Fluent|Db\Query $join table or query
+	 * @param string|self|Db\Query $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
-	 * @return Fluent
+	 * @return self
 	 */
-	function fullOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent;
+	function fullOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): self;
 
 
 	/**
-	 * @param string|Fluent|Db\Query $join table or query
+	 * @param string|self|Db\Query $join table or query
 	 * @param string|NULL $alias
-	 * @return Fluent
+	 * @return self
 	 */
-	function crossJoin($join, ?string $alias = NULL): Fluent;
+	function crossJoin($join, ?string $alias = NULL): self;
 
 
 	/**
 	 * @param string $alias
 	 * @param string|array|Complex $condition
-	 * @return Fluent
+	 * @return self
 	 */
-	function on(string $alias, $condition): Fluent;
+	function on(string $alias, $condition): self;
 
 
 	/**
 	 * @param string|Complex $condition
 	 * @param mixed ...$params
-	 * @return Fluent
+	 * @return self
 	 */
-	function where($condition, ...$params): Fluent;
+	function where($condition, ...$params): self;
 
 
 	function whereAnd(array $conditions = []): Complex;
@@ -131,15 +131,15 @@ interface FluentSql
 	function whereOr(array $conditions = []): Complex;
 
 
-	function groupBy(array $columns): Fluent;
+	function groupBy(array $columns): self;
 
 
 	/**
 	 * @param string|Complex $condition
 	 * @param mixed ...$params
-	 * @return Fluent
+	 * @return self
 	 */
-	function having($condition, ...$params): Fluent;
+	function having($condition, ...$params): self;
 
 
 	function havingAnd(array $conditions = []): Complex;
@@ -148,64 +148,64 @@ interface FluentSql
 	function havingOr(array $conditions = []): Complex;
 
 
-	function orderBy(array $colums): Fluent;
+	function orderBy(array $colums): self;
 
 
-	function limit(int $limit): Fluent;
+	function limit(int $limit): self;
 
 
-	function offset(int $offset): Fluent;
-
-
-	/**
-	 * @param string|Fluent|Db\Query $query
-	 * @return Fluent
-	 */
-	function union($query): Fluent;
+	function offset(int $offset): self;
 
 
 	/**
-	 * @param string|Fluent|Db\Query $query
-	 * @return Fluent
+	 * @param string|self|Db\Query $query
+	 * @return self
 	 */
-	function unionAll($query): Fluent;
+	function union($query): self;
 
 
 	/**
-	 * @param string|Fluent|Db\Query $query
-	 * @return Fluent
+	 * @param string|self|Db\Query $query
+	 * @return self
 	 */
-	function intersect($query): Fluent;
+	function unionAll($query): self;
 
 
 	/**
-	 * @param string|Fluent|Db\Query $query
-	 * @return Fluent
+	 * @param string|self|Db\Query $query
+	 * @return self
 	 */
-	function except($query): Fluent;
+	function intersect($query): self;
 
 
-	function insert(?string $into = NULL, ?array $columns = []): Fluent;
+	/**
+	 * @param string|self|Db\Query $query
+	 * @return self
+	 */
+	function except($query): self;
 
 
-	function values(array $data): Fluent;
+	function insert(?string $into = NULL, ?array $columns = []): self;
 
 
-	function rows(array $rows): Fluent;
+	function values(array $data): self;
 
 
-	function update(?string $table = NULL, ?string $alias = NULL): Fluent;
+	function rows(array $rows): self;
 
 
-	function set(array $data): Fluent;
+	function update(?string $table = NULL, ?string $alias = NULL): self;
 
 
-	function delete(?string $from = NULL, ?string $alias = NULL): Fluent;
+	function set(array $data): self;
 
 
-	function returning(array $returning): Fluent;
+	function delete(?string $from = NULL, ?string $alias = NULL): self;
 
 
-	function truncate(?string $table = NULL): Fluent;
+	function returning(array $returning): self;
+
+
+	function truncate(?string $table = NULL): self;
 
 }

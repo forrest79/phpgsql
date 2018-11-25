@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Integration\Forrest79\PhPgSql\Db;
+namespace Forrest79\PhPgSql\Tests\Integration;
 
 use Forrest79\PhPgSql\Db;
 use Tester;
@@ -16,10 +16,6 @@ class ParseDataTypeTest extends TestCase
 	private $connection;
 
 
-	/**
-	 * @throws Db\Exceptions\ConnectionException
-	 * @throws Db\Exceptions\QueryException
-	 */
 	protected function setUp(): void
 	{
 		parent::setUp();
@@ -43,8 +39,6 @@ class ParseDataTypeTest extends TestCase
 
 		Tester\Assert::null($this->connection->query('SELECT type_integer FROM test')->fetchSingle());
 	}
-
-
 
 
 	public function testParseBasic(): void
@@ -127,7 +121,7 @@ class ParseDataTypeTest extends TestCase
 			'vector',
 		]);
 
-		$row = $this->connection->query('SELECT * FROM test')->fetch();
+		$row = $this->fetch();
 
 		Tester\Assert::true(is_int($row->id));
 		Tester\Assert::true(is_int($row->type_integer));
@@ -211,7 +205,7 @@ class ParseDataTypeTest extends TestCase
 			'{\'2018-01-01 20:30:00+02\'}',
 		]);
 
-		$row = $this->connection->query('SELECT * FROM test')->fetch();
+		$row = $this->fetch();
 
 		Tester\Assert::true(is_int($row->id));
 		Tester\Assert::true(is_array($row->type_integer));
@@ -257,7 +251,7 @@ class ParseDataTypeTest extends TestCase
 
 		$this->connection->queryArray('INSERT INTO test(type_hstore) VALUES (?)', ['a=>1']);
 
-		$row = $this->connection->query('SELECT * FROM test')->fetch();
+		$row = $this->fetch();
 
 		Tester\Assert::exception(function() use ($row): void {
 			$row->type_hstore;
@@ -275,7 +269,7 @@ class ParseDataTypeTest extends TestCase
 
 		$this->connection->queryArray('INSERT INTO test(type_point) VALUES (?)', ['(1,2)']);
 
-		$row = $this->connection->query('SELECT * FROM test')->fetch();
+		$row = $this->fetch();
 
 		Tester\Assert::exception(function() use ($row): void {
 			$row->type_point;
@@ -293,7 +287,7 @@ class ParseDataTypeTest extends TestCase
 
 		$this->connection->queryArray('INSERT INTO test(type_tsvector) VALUES (?)', ['{\'text\'}']);
 
-		$row = $this->connection->query('SELECT * FROM test')->fetch();
+		$row = $this->fetch();
 
 		Tester\Assert::exception(function() use ($row): void {
 			$row->type_tsvector;
@@ -311,7 +305,7 @@ class ParseDataTypeTest extends TestCase
 
 		$this->connection->queryArray('INSERT INTO test(type_money) VALUES (?)', ['{1)}']);
 
-		$row = $this->connection->query('SELECT * FROM test')->fetch();
+		$row = $this->fetch();
 
 		Tester\Assert::exception(function() use ($row): void {
 			$row->type_money;
@@ -323,11 +317,17 @@ class ParseDataTypeTest extends TestCase
 	{
 		$this->connection->setDataTypeParser(new class implements Db\DataTypeParsers\DataTypeParser {
 
+			/**
+			 * @param string $type
+			 * @param string|NULL $value
+			 * @return mixed
+			 */
 			public function parse(string $type, ?string $value)
 			{
-				if ($type === 'point') {
+				if (($type === 'point') && ($value !== NULL)) {
 					return array_map('intval', explode(',', substr($value, 1, -1), 2));
 				}
+				return $value;
 			}
 
 		});
@@ -340,9 +340,19 @@ class ParseDataTypeTest extends TestCase
 
 		$this->connection->queryArray('INSERT INTO test(type_point) VALUES (?)', ['(1,2)']);
 
-		$row = $this->connection->query('SELECT * FROM test')->fetch();
+		$row = $this->fetch();
 
 		Tester\Assert::same([1, 2], $row->type_point);
+	}
+
+
+	private function fetch(): Db\Row
+	{
+		$row = $this->connection->query('SELECT * FROM test')->fetch();
+		if ($row === NULL) {
+			throw new \InvalidArgumentException('Bad data were return from database');
+		}
+		return $row;
 	}
 
 

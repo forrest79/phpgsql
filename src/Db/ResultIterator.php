@@ -7,7 +7,7 @@ class ResultIterator implements \Iterator
 	/** @var Result */
 	private $result;
 
-	/** @var Row */
+	/** @var Row|NULL */
 	private $row;
 
 	/** @var int */
@@ -49,7 +49,7 @@ class ResultIterator implements \Iterator
 
 	public function valid(): bool
 	{
-		return !empty($this->row);
+		return $this->row !== NULL;
 	}
 
 }

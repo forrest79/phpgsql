@@ -1,0 +1,33 @@
+includes:
+	- vendor/phpstan/phpstan-strict-rules/rules.neon
+
+parameters:
+	level: max
+	universalObjectCratesClasses:
+		- Forrest79\PhPgSql\Db\Row
+	fileExtensions:
+		- php
+		- phpt
+	autoload_directories:
+		- %rootDir%/../../../tests/integration
+		- %rootDir%/../../../tests/unit
+	autoload_files:
+		- %rootDir%/../../../tests/bootstrap.php
+	ignoreErrors:
+		# === We know, that this can't happen ===
+
+		# src/Db/Connection.php
+		- '~^Parameter #1 \$connection of function pg_connect_poll expects resource, resource\|null given\.$~'
+		- '~^Method Forrest79\\PhPgSql\\Db\\Connection::getConnectedResource\(\) should return resource but returns resource\|null\.$~'
+
+		# src/Db/ResultIterator.php
+		- '~^Method Forrest79\\PhPgSql\\Db\\ResultIterator::current\(\) should return Forrest79\\PhPgSql\\Db\\Row but returns Forrest79\\PhPgSql\\Db\\Row\|null\.$~'
+
+		# src/Fluent/Fluent.php
+		- '~^Parameter #1 \$alias of static method Forrest79\\PhPgSql\\Fluent\\Exceptions\\FluentException::tableAliasAlreadyExists\(\) expects string, Forrest79\\PhPgSql\\Db\\Query\|Forrest79\\PhPgSql\\Fluent\\Fluent\|string given\.$~'
+
+		# src/Fluent/QueryBuilder.php
+		- '~^Parameter #2 \$expected of static method Forrest79\\PhPgSql\\Fluent\\Exceptions\\QueryBuilderException::badParamsCount\(\) expects int, int\|false given\.$~'
+
+		# tests/unit/FluentTest.phpt
+		- '~Parameter #1 \$table of method Forrest79\\PhPgSql\\Fluent\\Fluent::table\(\) expects Forrest79\\PhPgSql\\Db\\Query\|Forrest79\\PhPgSql\\Fluent\\Fluent\|string, array\<int, string\> given\.$~'

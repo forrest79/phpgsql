@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Integration\Forrest79\PhPgSql\Db;
+namespace Forrest79\PhPgSql\Tests\Integration;
 
 use Forrest79\PhPgSql\Db;
 use Tester;
@@ -16,10 +16,6 @@ class FetchTest extends TestCase
 	private $connection;
 
 
-	/**
-	 * @throws Db\Exceptions\ConnectionException
-	 * @throws Db\Exceptions\QueryException
-	 */
 	protected function setUp(): void
 	{
 		parent::setUp();
@@ -40,7 +36,7 @@ class FetchTest extends TestCase
 
 		$result = $this->connection->query('SELECT id, name FROM test');
 
-		$row = $result->fetch();
+		$row = $this->fetch($result);
 
 		$result->free();
 
@@ -270,7 +266,7 @@ class FetchTest extends TestCase
 
 		Tester\Assert::exception(function() use ($result): void {
 			$result->fetchPairs('name');
-		}, \InvalidArgumentException::class);
+		}, Db\Exceptions\ResultException::class);
 
 		$result->free();
 	}
@@ -315,12 +311,12 @@ class FetchTest extends TestCase
 		// Bad key
 		Tester\Assert::exception(function() use ($result): void {
 			$result->fetchPairs('type', 'name');
-		}, \InvalidArgumentException::class);
+		}, Db\Exceptions\ResultException::class);
 
 		// Bad value
 		Tester\Assert::exception(function() use ($result): void {
 			$result->fetchPairs('id', 'type');
-		}, \InvalidArgumentException::class);
+		}, Db\Exceptions\ResultException::class);
 
 		$result->free();
 	}
@@ -338,7 +334,7 @@ class FetchTest extends TestCase
 
 		$result = $this->connection->query('SELECT id, name FROM test');
 
-		$row = $result->fetch();
+		$row = $this->fetch($result);
 
 		Tester\Assert::exception(function() use ($row): void {
 			$row->cnt;
@@ -461,7 +457,7 @@ class FetchTest extends TestCase
 
 		$result = $this->connection->query('SELECT id, name FROM test');
 
-		$row = $result->fetch();
+		$row = $this->fetch($result);
 
 		$result->free();
 
@@ -482,7 +478,7 @@ class FetchTest extends TestCase
 		$result = $this->connection->query('SELECT id, name FROM test');
 		$result->setRowFactory($this->createCustomRowFactory());
 
-		$row = $result->fetch();
+		$row = $this->fetch($result);
 
 		$result->free();
 
@@ -511,7 +507,7 @@ class FetchTest extends TestCase
 
 		$result = $this->connection->query('SELECT id, name FROM test');
 
-		$row = $result->fetch();
+		$row = $this->fetch($result);
 
 		Tester\Assert::same('phpgsql', $row->name);
 
@@ -570,6 +566,16 @@ class FetchTest extends TestCase
 	{
 		$this->connection->close();
 		parent::tearDown();
+	}
+
+
+	private function fetch(Db\Result $result): Db\Row
+	{
+		$row = $result->fetch();
+		if ($row === NULL) {
+			throw new \RuntimeException('No data from database were returned');
+		}
+		return $row;
 	}
 
 

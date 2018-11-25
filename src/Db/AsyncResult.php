@@ -2,8 +2,6 @@
 
 namespace Forrest79\PhPgSql\Db;
 
-use Forrest79\PhPgSql\Db\Exceptions;
-
 class AsyncResult extends Result
 {
 
@@ -18,22 +16,13 @@ class AsyncResult extends Result
 		return $this->queryResource !== NULL;
 	}
 
-	/**
-	 * @throws Exceptions\ResultException
-	 */
-	public function getResource()
-	{
-		if ($this->queryResource === NULL) {
-			throw Exceptions\ResultException::noResource();
-		}
-		return parent::getResource();
-	}
-
 
 	/**
 	 * @internal
+	 * @param resource $queryResource
+	 * @return void
 	 */
-	public function finishAsyncQuery($queryResource)
+	public function finishAsyncQuery($queryResource): void
 	{
 		$this->queryResource = $queryResource;
 	}

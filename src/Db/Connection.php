@@ -16,7 +16,7 @@ class Connection
 	/** @var int */
 	private $connectAsyncWaitSeconds = 15;
 
-	/** @var resource */
+	/** @var resource|NULL */
 	private $resource;
 
 	/** @var bool */
@@ -34,7 +34,7 @@ class Connection
 	/** @var Query */
 	private $asyncQuery;
 
-	/** @var AsyncResult */
+	/** @var AsyncResult|NULL */
 	private $asyncResult;
 
 	/** @var callable[] function(Connection $connection) {} */
@@ -80,7 +80,7 @@ class Connection
 		}
 
 		$resource = @\pg_connect($this->connectionConfig, $connectType); // intentionally @
-		if (!$resource) {
+		if ($resource === FALSE) {
 			throw Exceptions\ConnectionException::connectionFailedException();
 		} elseif (\pg_connection_status($resource) === PGSQL_CONNECTION_BAD) {
 			throw Exceptions\ConnectionException::badConnectionException();
@@ -90,13 +90,13 @@ class Connection
 
 		if ($this->connectAsync === TRUE) {
 			$stream = \pg_socket($resource);
-			if (!$stream) {
+			if ($stream === FALSE) {
 				throw Exceptions\ConnectionException::asyncStreamFailedException();
 			}
 			$this->asyncStream = $stream;
 		} else {
 			$this->connected = TRUE;
-			if ($this->onConnect) {
+			if (count($this->onConnect) > 0) {
 				$this->onConnect();
 			}
 		}
@@ -108,7 +108,7 @@ class Connection
 	/**
 	 * @throws Exceptions\ConnectionException
 	 */
-	public function isConnected($waitForConnect = FALSE): bool
+	public function isConnected(bool $waitForConnect = FALSE): bool
 	{
 		if ($waitForConnect === TRUE) {
 			$this->getConnectedResource();
@@ -154,19 +154,19 @@ class Connection
 	}
 
 
-	public function addOnConnect(callable $callback)
+	public function addOnConnect(callable $callback): void
 	{
 		$this->onConnect[] = $callback;
 	}
 
 
-	public function addOnClose(callable $callback)
+	public function addOnClose(callable $callback): void
 	{
 		$this->onClose[] = $callback;
 	}
 
 
-	public function addOnQuery(callable $callback)
+	public function addOnQuery(callable $callback): void
 	{
 		$this->onQuery[] = $callback;
 	}
@@ -219,6 +219,8 @@ class Connection
 
 	/**
 	 * @param string|Query $query
+	 * @param mixed ...$params
+	 * @return Result
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
@@ -230,6 +232,7 @@ class Connection
 
 	/**
 	 * @param string|Query $query
+	 * @return Result
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
@@ -237,10 +240,10 @@ class Connection
 	{
 		$query = Helper::prepareSql($this->normalizeQuery($query, $params));
 
-		$start = $this->onQuery ? microtime(TRUE) : NULL;
+		$start = count($this->onQuery) > 0 ? microtime(TRUE) : NULL;
 
 		$resource = @\pg_query_params($this->getConnectedResource(), $query->getSql(), $query->getParams()); // intentionally @
-		if (!$resource) {
+		if ($resource === FALSE) {
 			throw Exceptions\QueryException::queryFailed($query, $this->getLastError());
 		}
 
@@ -252,6 +255,11 @@ class Connection
 	}
 
 
+	/**
+	 * @param string $query
+	 * @param mixed ...$params
+	 * @return Query
+	 */
 	public function createQuery(string $query, ...$params): Query
 	{
 		return $this->createQueryArray($query, $params);
@@ -265,6 +273,9 @@ class Connection
 
 
 	/**
+	 * @param string|Query $query
+	 * @param mixed ...$params
+	 * @return AsyncResult
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
@@ -275,6 +286,9 @@ class Connection
 
 
 	/**
+	 * @param string|Query $query
+	 * @param array $params
+	 * @return AsyncResult
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
@@ -285,7 +299,7 @@ class Connection
 			throw Exceptions\QueryException::asyncQueryFailed($query, $this->getLastError());
 		}
 
-		if ($this->onQuery) {
+		if (count($this->onQuery) > 0) {
 			$this->onQuery($query);
 		}
 
@@ -304,7 +318,7 @@ class Connection
 		}
 
 		$resource = \pg_get_result($this->getConnectedResource());
-		if (!$resource) {
+		if ($resource === FALSE) {
 			throw Exceptions\QueryException::asyncQueryFailed($this->asyncQuery, $this->getLastError());
 		}
 		$this->asyncResult->finishAsyncQuery($resource);
@@ -321,7 +335,7 @@ class Connection
 	 */
 	public function begin(?string $savepoint = NULL): self
 	{
-		$this->query($savepoint ? "SAVEPOINT $savepoint" : 'START TRANSACTION');
+		$this->query($savepoint === NULL ? 'BEGIN' : ('SAVEPOINT ' . $savepoint));
 		return $this;
 	}
 
@@ -332,7 +346,7 @@ class Connection
 	 */
 	public function commit(?string $savepoint = NULL): self
 	{
-		$this->query($savepoint ? "RELEASE SAVEPOINT $savepoint" : 'COMMIT');
+		$this->query($savepoint === NULL ? 'COMMIT' : ('RELEASE SAVEPOINT ' . $savepoint));
 		return $this;
 	}
 
@@ -343,7 +357,7 @@ class Connection
 	 */
 	public function rollback(?string $savepoint = NULL): self
 	{
-		$this->query($savepoint ? "ROLLBACK TO SAVEPOINT $savepoint" : 'ROLLBACK');
+		$this->query($savepoint === NULL ? 'ROLLBACK' : ('ROLLBACK TO SAVEPOINT ' . $savepoint));
 		return $this;
 	}
 
@@ -351,13 +365,14 @@ class Connection
 	/**
 	 * @throws Exceptions\ConnectionException
 	 */
-	public function inTransaction(): bool
+	public function isInTransaction(): bool
 	{
 		return !in_array(\pg_transaction_status($this->getConnectedResource()), [PGSQL_TRANSACTION_UNKNOWN, PGSQL_TRANSACTION_IDLE], TRUE);
 	}
 
 
 	/**
+	 * @return resource
 	 * @throws Exceptions\ConnectionException
 	 */
 	public function getResource()
@@ -367,12 +382,15 @@ class Connection
 
 
 	/**
+	 * @param string|Query $query
+	 * @param array $params
+	 * @return Query
 	 * @throws Exceptions\QueryException
 	 */
 	private function normalizeQuery($query, array $params): Query
 	{
 		if ($query instanceof Query) {
-			if ($params) {
+			if (count($params) > 0) {
 				throw Exceptions\QueryException::cantPassParams();
 			}
 		} else {
@@ -390,6 +408,7 @@ class Connection
 
 
 	/**
+	 * @return resource
 	 * @throws Exceptions\ConnectionException
 	 */
 	private function getConnectedResource()
@@ -449,6 +468,10 @@ class Connection
 	}
 
 
+	/**
+	 * @param resource $stream
+	 * @return bool
+	 */
 	private static function isReadable($stream): bool
 	{
 		$read = [$stream]; $write = $ex = [];
@@ -456,6 +479,10 @@ class Connection
 	}
 
 
+	/**
+	 * @param resource $stream
+	 * @return bool
+	 */
 	private static function isWritable($stream): bool
 	{
 		$write = [$stream]; $read = $ex = [];

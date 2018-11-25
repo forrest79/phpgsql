@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Integration\Forrest79\PhPgSql\Db;
+namespace Forrest79\PhPgSql\Tests\Integration;
 
 use Forrest79\PhPgSql\Db;
 use Tester;
@@ -16,10 +16,6 @@ class AsyncTest extends TestCase
 	private $connection;
 
 
-	/**
-	 * @throws Db\Exceptions\ConnectionException
-	 * @throws Db\Exceptions\QueryException
-	 */
 	protected function setUp(): void
 	{
 		parent::setUp();
@@ -48,6 +44,9 @@ class AsyncTest extends TestCase
 		$this->connection->waitForAsyncQuery();
 
 		$row1 = $result1->fetch();
+		if ($row1 === NULL) {
+			throw new \RuntimeException('No data from database were returned');
+		}
 
 		Tester\Assert::same(['id' => 1, 'name' => 'name2'], $row1->toArray());
 
@@ -58,6 +57,9 @@ class AsyncTest extends TestCase
 		Tester\Assert::true($result2->isFinished());
 
 		$row2 = $result2->fetch();
+		if ($row2 === NULL) {
+			throw new \RuntimeException('No data from database were returned');
+		}
 
 		Tester\Assert::same(['id' => 2, 'name' => 'name1'], $row2->toArray());
 

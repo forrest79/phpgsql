@@ -67,7 +67,7 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 		self::PARAM_ROWS => [],
 	];
 
-	/** @var Db\Connection */
+	/** @var Db\Connection|NULL */
 	private $connection;
 
 	/** @var string */
@@ -76,10 +76,10 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 	/** @var array */
 	private $params = self::DEFAULT_PARAMS;
 
-	/** @var Db\Result */
+	/** @var Db\Result|NULL */
 	private $result;
 
-	/** @var Db\Query */
+	/** @var Db\Query|NULL */
 	private $query;
 
 
@@ -90,23 +90,30 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 
 
 	/**
-	 * @inheritdoc
+	 * @param string|self|Db\Query $table
+	 * @param string|NULL $alias
+	 * @return self
 	 * @throws Exceptions\FluentException
 	 */
-	public function table($table, ?string $alias = NULL): self
+	public function table($table, ?string $alias = NULL): FluentSql
 	{
 		return $this->addTable(self::TABLE_TYPE_MAIN, $table, $alias);
 	}
 
 
 	/**
+	 * @param array $columns
+	 * @return self
 	 * @throws Exceptions\FluentException
 	 */
-	public function select(array $columns): self
+	public function select(array $columns): FluentSql
 	{
 		$this->updateFluent();
 
 		\array_walk($columns, function($column, $alias): void {
+			if (is_int($alias)) {
+				$alias = NULL;
+			}
 			$this->checkQueryable($column, $alias);
 		});
 
@@ -117,9 +124,10 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 
 
 	/**
+	 * @return self
 	 * @throws Exceptions\FluentException
 	 */
-	public function distinct(): self
+	public function distinct(): FluentSql
 	{
 		$this->updateFluent();
 		$this->params[self::PARAM_DISTINCT] = TRUE;
@@ -128,10 +136,12 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 
 
 	/**
-	 * @inheritdoc
+	 * @param string|self|Db\Query $from
+	 * @param string|NULL $alias
+	 * @return self
 	 * @throws Exceptions\FluentException
 	 */
-	public function from($from, ?string $alias = NULL): self
+	public function from($from, ?string $alias = NULL): FluentSql
 	{
 		return $this->addTable(self::TABLE_TYPE_FROM, $from, $alias);
 	}
@@ -139,96 +149,127 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 
 
 	/**
-	 * @inheritdoc
+	 * @param string|self|Db\Query $join table or query
+	 * @param string|NULL $alias
+	 * @param string|array|Complex|NULL $onCondition
+	 * @return self
 	 * @throws Exceptions\FluentException
 	 */
-	public function join($join, ?string $alias = NULL, $onCondition = NULL): self
+	public function join($join, ?string $alias = NULL, $onCondition = NULL): FluentSql
 	{
 		return $this->innerJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @inheritdoc
+	 * @param string|self|Db\Query $join table or query
+	 * @param string|NULL $alias
+	 * @param string|array|Complex|NULL $onCondition
+	 * @return self
 	 * @throws Exceptions\FluentException
 	 */
-	public function innerJoin($join, ?string $alias = NULL, $onCondition = NULL): self
+	public function innerJoin($join, ?string $alias = NULL, $onCondition = NULL): FluentSql
 	{
 		return $this->addTable(self::JOIN_INNER, $join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @inheritdoc
+	 * @param string|self|Db\Query $join table or query
+	 * @param string|NULL $alias
+	 * @param string|array|Complex|NULL $onCondition
+	 * @return self
 	 * @throws Exceptions\FluentException
 	 */
-	public function leftJoin($join, ?string $alias = NULL, $onCondition = NULL): self
+	public function leftJoin($join, ?string $alias = NULL, $onCondition = NULL): FluentSql
 	{
 		return $this->leftOuterJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @inheritdoc
+	 * @param string|self|Db\Query $join table or query
+	 * @param string|NULL $alias
+	 * @param string|array|Complex|NULL $onCondition
+	 * @return self
 	 * @throws Exceptions\FluentException
 	 */
-	public function leftOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): self
+	public function leftOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): FluentSql
 	{
 		return $this->addTable(self::JOIN_LEFT_OUTER, $join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @inheritdoc
+	 * @param string|self|Db\Query $join table or query
+	 * @param string|NULL $alias
+	 * @param string|array|Complex|NULL $onCondition
+	 * @return self
 	 * @throws Exceptions\FluentException
 	 */
-	public function rightJoin($join, ?string $alias = NULL, $onCondition = NULL): self
+	public function rightJoin($join, ?string $alias = NULL, $onCondition = NULL): FluentSql
 	{
 		return $this->rightOuterJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @inheritdoc
+	 * @param string|self|Db\Query $join table or query
+	 * @param string|NULL $alias
+	 * @param string|array|Complex|NULL $onCondition
+	 * @return self
 	 * @throws Exceptions\FluentException
 	 */
-	public function rightOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): self
+	public function rightOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): FluentSql
 	{
 		return $this->addTable(self::JOIN_RIGHT_OUTER, $join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @inheritdoc
+	 * @param string|self|Db\Query $join table or query
+	 * @param string|NULL $alias
+	 * @param string|array|Complex|NULL $onCondition
+	 * @return self
 	 * @throws Exceptions\FluentException
 	 */
-	public function fullJoin($join, ?string $alias = NULL, $onCondition = NULL): self
+	public function fullJoin($join, ?string $alias = NULL, $onCondition = NULL): FluentSql
 	{
 		return $this->fullOuterJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @inheritdoc
+	 * @param string|self|Db\Query $join table or query
+	 * @param string|NULL $alias
+	 * @param string|array|Complex|NULL $onCondition
+	 * @return self
 	 * @throws Exceptions\FluentException
 	 */
-	public function fullOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): self
+	public function fullOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): FluentSql
 	{
 		return $this->addTable(self::JOIN_FULL_OUTER, $join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @inheritdoc
+	 * @param string|self|Db\Query $join table or query
+	 * @param string|NULL $alias
+	 * @return self
 	 * @throws Exceptions\FluentException
 	 */
-	public function crossJoin($join, ?string $alias = NULL): self
+	public function crossJoin($join, ?string $alias = NULL): FluentSql
 	{
 		return $this->addTable(self::JOIN_CROSS, $join, $alias);
 	}
 
 
 	/**
+	 * @param string $type
+	 * @param string|self|Db\Query $name
+	 * @param string|NULL $alias
+	 * @param string|array|Complex|NULL $onCondition
+	 * @return self
 	 * @throws Exceptions\FluentException
 	 */
 	private function addTable(string $type, $name, ?string $alias, $onCondition = NULL): self
@@ -241,7 +282,7 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 			throw Exceptions\FluentException::onlyOneMainTable();
 		}
 
-		if (!$alias) {
+		if ($alias === NULL) {
 			$alias = $name;
 		}
 
@@ -257,7 +298,7 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 			$this->params[self::PARAM_TABLE_TYPES][$type === self::TABLE_TYPE_FROM ? $type : self::TABLE_TYPE_JOINS][] = $alias;
 		}
 
-		if ($onCondition) {
+		if ($onCondition !== NULL) {
 			$this->params[self::PARAM_JOIN_CONDITIONS][$alias] = \array_merge(
 				$this->params[self::PARAM_JOIN_CONDITIONS][$alias] ?? [],
 				$this->normalizeOn($onCondition)
@@ -269,10 +310,12 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 
 
 	/**
-	 * @inheritdoc
+	 * @param string $alias
+	 * @param string|array|Complex $condition
+	 * @return self
 	 * @throws Exceptions\FluentException
 	 */
-	public function on(string $alias, $condition): self
+	public function on(string $alias, $condition): FluentSql
 	{
 		$this->updateFluent();
 
@@ -285,6 +328,10 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 	}
 
 
+	/**
+	 * @param string|array|Complex $condition
+	 * @return array
+	 */
 	private function normalizeOn($condition): array
 	{
 		if ($condition instanceof Complex) {
@@ -306,10 +353,12 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 
 
 	/**
-	 * @inheritdoc
+	 * @param string|Complex $condition
+	 * @param mixed ...$params
+	 * @return self
 	 * @throws Exceptions\FluentException
 	 */
-	public function where($condition, ...$params): self
+	public function where($condition, ...$params): FluentSql
 	{
 		$this->updateFluent();
 		\array_unshift($params, $condition);
@@ -339,9 +388,11 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 
 
 	/**
+	 * @param array $columns
+	 * @return self
 	 * @throws Exceptions\FluentException
 	 */
-	public function groupBy(array $columns): self
+	public function groupBy(array $columns): FluentSql
 	{
 		$this->updateFluent();
 		$this->params[self::PARAM_GROUPBY] = array_merge($this->params[self::PARAM_GROUPBY], $columns);
@@ -350,10 +401,12 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 
 
 	/**
-	 * @inheritdoc
+	 * @param string|Complex $condition
+	 * @param mixed ...$params
+	 * @return self
 	 * @throws Exceptions\FluentException
 	 */
-	public function having($condition, ...$params): self
+	public function having($condition, ...$params): FluentSql
 	{
 		$this->updateFluent();
 		\array_unshift($params, $condition);
@@ -383,9 +436,11 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 
 
 	/**
+	 * @param array $columns
+	 * @return self
 	 * @throws Exceptions\FluentException
 	 */
-	public function orderBy(array $columns): self
+	public function orderBy(array $columns): FluentSql
 	{
 		$this->updateFluent();
 		$this->params[self::PARAM_ORDERBY] = array_merge($this->params[self::PARAM_ORDERBY], $columns);
@@ -394,9 +449,11 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 
 
 	/**
+	 * @param int $limit
+	 * @return self
 	 * @throws Exceptions\FluentException
 	 */
-	public function limit(int $limit): self
+	public function limit(int $limit): FluentSql
 	{
 		$this->updateFluent();
 		$this->params[self::PARAM_LIMIT] = $limit;
@@ -405,9 +462,11 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 
 
 	/**
+	 * @param int $offset
+	 * @return self
 	 * @throws Exceptions\FluentException
 	 */
-	public function offset(int $offset): self
+	public function offset(int $offset): FluentSql
 	{
 		$this->updateFluent();
 		$this->params[self::PARAM_OFFSET] = $offset;
@@ -415,30 +474,51 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 	}
 
 
-	public function union($query): self
+	/**
+	 * @param string|self|Db\Query $query
+	 * @return self
+	 */
+	public function union($query): FluentSql
 	{
 		return $this->addCombine(self::COMBINE_UNION, $query);
 	}
 
 
-	public function unionAll($query): self
+	/**
+	 * @param string|self|Db\Query $query
+	 * @return self
+	 */
+	public function unionAll($query): FluentSql
 	{
 		return $this->addCombine(self::COMBINE_UNION_ALL, $query);
 	}
 
 
-	public function intersect($query): self
+	/**
+	 * @param string|self|Db\Query $query
+	 * @return self
+	 */
+	public function intersect($query): FluentSql
 	{
 		return $this->addCombine(self::COMBINE_INTERSECT, $query);
 	}
 
 
-	public function except($query): self
+	/**
+	 * @param string|self|Db\Query $query
+	 * @return self
+	 */
+	public function except($query): FluentSql
 	{
 		return $this->addCombine(self::COMBINE_EXCEPT, $query);
 	}
 
 
+	/**
+	 * @param string $type
+	 * @param string|self|Db\Query $query
+	 * @return self
+	 */
 	private function addCombine(string $type, $query): self
 	{
 		$this->params[self::PARAM_COMBINE_QUERIES][] = [$query, $type];
@@ -447,9 +527,12 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 
 
 	/**
+	 * @param string|NULL $into
+	 * @param array|NULL $columns
+	 * @return self
 	 * @throws Exceptions\FluentException
 	 */
-	public function insert(?string $into = NULL, ?array $columns = []): self
+	public function insert(?string $into = NULL, ?array $columns = []): FluentSql
 	{
 		$this->updateFluent();
 
@@ -466,9 +549,11 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 
 
 	/**
+	 * @param array $data
+	 * @return self
 	 * @throws Exceptions\FluentException
 	 */
-	public function values(array $data): self
+	public function values(array $data): FluentSql
 	{
 		$this->updateFluent();
 		$this->queryType = self::QUERY_INSERT;
@@ -478,9 +563,11 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 
 
 	/**
+	 * @param array $rows
+	 * @return self
 	 * @throws Exceptions\FluentException
 	 */
-	public function rows(array $rows): self
+	public function rows(array $rows): FluentSql
 	{
 		$this->updateFluent();
 
@@ -492,9 +579,12 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 
 
 	/**
+	 * @param string|NULL $table
+	 * @param string|NULL $alias
+	 * @return self
 	 * @throws Exceptions\FluentException
 	 */
-	public function update(?string $table = NULL, ?string $alias = NULL): self
+	public function update(?string $table = NULL, ?string $alias = NULL): FluentSql
 	{
 		$this->updateFluent();
 
@@ -509,9 +599,11 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 
 
 	/**
+	 * @param array $data
+	 * @return self
 	 * @throws Exceptions\FluentException
 	 */
-	public function set(array $data): self
+	public function set(array $data): FluentSql
 	{
 		$this->updateFluent();
 		$this->queryType = self::QUERY_UPDATE;
@@ -521,9 +613,12 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 
 
 	/**
+	 * @param string|NULL $from
+	 * @param string|NULL $alias
+	 * @return self
 	 * @throws Exceptions\FluentException
 	 */
-	public function delete(?string $from = NULL, ?string $alias = NULL): self
+	public function delete(?string $from = NULL, ?string $alias = NULL): FluentSql
 	{
 		$this->updateFluent();
 
@@ -538,9 +633,11 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 
 
 	/**
+	 * @param array $returning
+	 * @return self
 	 * @throws Exceptions\FluentException
 	 */
-	public function returning(array $returning): self
+	public function returning(array $returning): FluentSql
 	{
 		$this->updateFluent();
 		$this->params[self::PARAM_RETURNING] = \array_merge($this->params[self::PARAM_RETURNING], $returning);
@@ -549,9 +646,11 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 
 
 	/**
+	 * @param string|NULL $table
+	 * @return self
 	 * @throws Exceptions\FluentException
 	 */
-	public function truncate(?string $table = NULL): self
+	public function truncate(?string $table = NULL): FluentSql
 	{
 		$this->updateFluent();
 
@@ -595,11 +694,13 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 
 
 	/**
+	 * @param self|Db\Query|mixed $data
+	 * @param string|NULL $alias
 	 * @throws Exceptions\FluentException
 	 */
-	private function checkQueryable($data, $alias): void
+	private function checkQueryable($data, ?string $alias): void
 	{
-		if ((($data instanceof self) || ($data instanceof Db\Query)) && !$alias) {
+		if ((($data instanceof self) || ($data instanceof Db\Query)) && ($alias === NULL)) {
 			throw Exceptions\FluentException::queryableMustHaveAlias();
 		} else if (!is_scalar($data) && !($data instanceof self) && !($data instanceof Db\Query)) {
 			throw Exceptions\FluentException::columnMustBeScalarOrQueryable();
@@ -721,7 +822,7 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 	 * @throws Db\Exceptions\QueryException
 	 * @throws Exceptions\FluentException
 	 * @throws Exceptions\QueryBuilderException
-	 * @return mixed value on success, null if no next record
+	 * @return mixed value on success, NULL if no next record
 	 */
 	public function fetchSingle()
 	{

@@ -8,148 +8,185 @@ class Connection extends Db\Connection implements FluentSql
 {
 
 	/**
-	 * @inheritdoc
+	 * @param string|Fluent|Db\Query $from
+	 * @param string|NULL $alias
+	 * @return Fluent
 	 * @throws Exceptions\FluentException
 	 */
-	public function table($from, ?string $alias = NULL): Fluent
+	public function table($from, ?string $alias = NULL): FluentSql
 	{
 		return $this->fluent()->table($from, $alias);
 	}
 
 
 	/**
+	 * @param array $columns
+	 * @return Fluent
 	 * @throws Exceptions\FluentException
 	 */
-	public function select(array $columns): Fluent
+	public function select(array $columns): FluentSql
 	{
 		return $this->fluent()->select($columns);
 	}
 
 
 	/**
+	 * @return Fluent
 	 * @throws Exceptions\FluentException
 	 */
-	public function distinct(): Fluent
+	public function distinct(): FluentSql
 	{
 		return $this->fluent()->distinct();
 	}
 
 
 	/**
-	 * @inheritdoc
+	 * @param string|Fluent|Db\Query $from
+	 * @param string|NULL $alias
+	 * @return Fluent
 	 * @throws Exceptions\FluentException
 	 */
-	public function from($from, ?string $alias = NULL): Fluent
+	public function from($from, ?string $alias = NULL): FluentSql
 	{
 		return $this->fluent()->from($from, $alias);
 	}
 
 
 	/**
-	 * @inheritdoc
+	 * @param string|Fluent|Db\Query $join table or query
+	 * @param string|NULL $alias
+	 * @param string|array|Complex|NULL $onCondition
+	 * @return Fluent
 	 * @throws Exceptions\FluentException
 	 */
-	public function join($join, ?string $alias = NULL, $onCondition = NULL): Fluent
+	public function join($join, ?string $alias = NULL, $onCondition = NULL): FluentSql
 	{
 		return $this->fluent()->join($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @inheritdoc
+	 * @param string|Fluent|Db\Query $join table or query
+	 * @param string|NULL $alias
+	 * @param string|array|Complex|NULL $onCondition
+	 * @return Fluent
 	 * @throws Exceptions\FluentException
 	 */
-	public function innerJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent
+	public function innerJoin($join, ?string $alias = NULL, $onCondition = NULL): FluentSql
 	{
 		return $this->fluent()->innerJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @inheritdoc
+	 * @param string|Fluent|Db\Query $join table or query
+	 * @param string|NULL $alias
+	 * @param string|array|Complex|NULL $onCondition
+	 * @return Fluent
 	 * @throws Exceptions\FluentException
 	 */
-	public function leftJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent
+	public function leftJoin($join, ?string $alias = NULL, $onCondition = NULL): FluentSql
 	{
 		return $this->fluent()->leftJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @inheritdoc
+	 * @param string|Fluent|Db\Query $join table or query
+	 * @param string|NULL $alias
+	 * @param string|array|Complex|NULL $onCondition
+	 * @return Fluent
 	 * @throws Exceptions\FluentException
 	 */
-	public function leftOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent
+	public function leftOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): FluentSql
 	{
 		return $this->fluent()->leftOuterJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @inheritdoc
+	 * @param string|Fluent|Db\Query $join table or query
+	 * @param string|NULL $alias
+	 * @param string|array|Complex|NULL $onCondition
+	 * @return Fluent
 	 * @throws Exceptions\FluentException
 	 */
-	public function rightJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent
+	public function rightJoin($join, ?string $alias = NULL, $onCondition = NULL): FluentSql
 	{
 		return $this->fluent()->rightJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @inheritdoc
+	 * @param string|Fluent|Db\Query $join table or query
+	 * @param string|NULL $alias
+	 * @param string|array|Complex|NULL $onCondition
+	 * @return Fluent
 	 * @throws Exceptions\FluentException
 	 */
-	public function rightOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent
+	public function rightOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): FluentSql
 	{
 		return $this->fluent()->rightOuterJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @inheritdoc
+	 * @param string|Fluent|Db\Query $join table or query
+	 * @param string|NULL $alias
+	 * @param string|array|Complex|NULL $onCondition
+	 * @return Fluent
 	 * @throws Exceptions\FluentException
 	 */
-	public function fullJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent
+	public function fullJoin($join, ?string $alias = NULL, $onCondition = NULL): FluentSql
 	{
 		return $this->fluent()->fullJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @inheritdoc
+	 * @param string|Fluent|Db\Query $join table or query
+	 * @param string|NULL $alias
+	 * @param string|array|Complex|NULL $onCondition
+	 * @return Fluent
 	 * @throws Exceptions\FluentException
 	 */
-	public function fullOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent
+	public function fullOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): FluentSql
 	{
 		return $this->fluent()->fullOuterJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @inheritdoc
+	 * @param string|Fluent|Db\Query $join table or query
+	 * @param string|NULL $alias
+	 * @return Fluent
 	 * @throws Exceptions\FluentException
 	 */
-	public function crossJoin($join, ?string $alias = NULL): Fluent
+	public function crossJoin($join, ?string $alias = NULL): FluentSql
 	{
 		return $this->fluent()->crossJoin($join, $alias);
 	}
 
 
 	/**
-	 * @inheritdoc
+	 * @param string $alias
+	 * @param string|array|Complex $condition
+	 * @return Fluent
 	 * @throws Exceptions\FluentException
 	 */
-	public function on(string $alias, $condition): Fluent
+	public function on(string $alias, $condition): FluentSql
 	{
 		return $this->fluent()->on($alias, $condition);
 	}
 
 
 	/**
-	 * @inheritdoc
+	 * @param string|Complex $condition
+	 * @param mixed ...$params
+	 * @return Fluent
 	 * @throws Exceptions\FluentException
 	 */
-	public function where($condition, ...$params): Fluent
+	public function where($condition, ...$params): FluentSql
 	{
 		return $this->fluent()->where($condition, ...$params);
 	}
@@ -174,19 +211,23 @@ class Connection extends Db\Connection implements FluentSql
 
 
 	/**
+	 * @param array $columns
+	 * @return Fluent
 	 * @throws Exceptions\FluentException
 	 */
-	public function groupBy(array $columns): Fluent
+	public function groupBy(array $columns): FluentSql
 	{
 		return $this->fluent()->groupBy($columns);
 	}
 
 
 	/**
-	 * @inheritdoc
+	 * @param string|Complex $condition
+	 * @param mixed ...$params
+	 * @return Fluent
 	 * @throws Exceptions\FluentException
 	 */
-	public function having($condition, ...$params): Fluent
+	public function having($condition, ...$params): FluentSql
 	{
 		return $this->fluent()->having($condition, ...$params);
 	}
@@ -211,123 +252,164 @@ class Connection extends Db\Connection implements FluentSql
 
 
 	/**
+	 * @param array $colums
+	 * @return Fluent
 	 * @throws Exceptions\FluentException
 	 */
-	public function orderBy(array $colums): Fluent
+	public function orderBy(array $colums): FluentSql
 	{
 		return $this->fluent()->orderBy($colums);
 	}
 
 
 	/**
+	 * @param int $limit
+	 * @return Fluent
 	 * @throws Exceptions\FluentException
 	 */
-	public function limit(int $limit): Fluent
+	public function limit(int $limit): FluentSql
 	{
 		return $this->fluent()->limit($limit);
 	}
 
 
 	/**
+	 * @param int $offset
+	 * @return Fluent
 	 * @throws Exceptions\FluentException
 	 */
-	public function offset(int $offset): Fluent
+	public function offset(int $offset): FluentSql
 	{
 		return $this->fluent()->offset($offset);
 	}
 
 
-	public function union($query): Fluent
+	/**
+	 * @param string|Fluent|Db\Query $query
+	 * @return Fluent
+	 */
+	public function union($query): FluentSql
 	{
 		return $this->fluent()->union($query);
 	}
 
 
-	public function unionAll($query): Fluent
+	/**
+	 * @param string|Fluent|Db\Query $query
+	 * @return Fluent
+	 */
+	public function unionAll($query): FluentSql
 	{
 		return $this->fluent()->unionAll($query);
 	}
 
 
-	public function intersect($query): Fluent
+	/**
+	 * @param string|Fluent|Db\Query $query
+	 * @return Fluent
+	 */
+	public function intersect($query): FluentSql
 	{
 		return $this->fluent()->intersect($query);
 	}
 
 
-	public function except($query): Fluent
+	/**
+	 * @param string|Fluent|Db\Query $query
+	 * @return Fluent
+	 */
+	public function except($query): FluentSql
 	{
 		return $this->fluent()->except($query);
 	}
 
 
 	/**
+	 * @param string|NULL $into
+	 * @param array|NULL $columns
+	 * @return Fluent
 	 * @throws Exceptions\FluentException
 	 */
-	public function insert(?string $into = NULL, ?array $columns = []): Fluent
+	public function insert(?string $into = NULL, ?array $columns = []): FluentSql
 	{
 		return $this->fluent()->insert($into, $columns);
 	}
 
 
 	/**
+	 * @param array $data
+	 * @return Fluent
 	 * @throws Exceptions\FluentException
 	 */
-	public function values(array $data): Fluent
+	public function values(array $data): FluentSql
 	{
 		return $this->fluent()->values($data);
 	}
 
 
 	/**
+	 * @param array $rows
+	 * @return Fluent
 	 * @throws Exceptions\FluentException
 	 */
-	public function rows(array $rows): Fluent
+	public function rows(array $rows): FluentSql
 	{
 		return $this->fluent()->rows($rows);
 	}
 
 
 	/**
+	 * @param string|NULL $table
+	 * @param string|NULL $alias
+	 * @return Fluent
 	 * @throws Exceptions\FluentException
 	 */
-	public function update(?string $table = NULL, ?string $alias = NULL): Fluent
+	public function update(?string $table = NULL, ?string $alias = NULL): FluentSql
 	{
 		return $this->fluent()->update($table, $alias);
 	}
 
 
 	/**
+	 * @param array $data
+	 * @return Fluent
 	 * @throws Exceptions\FluentException
 	 */
-	public function set(array $data): Fluent
+	public function set(array $data): FluentSql
 	{
 		return $this->fluent()->set($data);
 	}
 
 
 	/**
+	 * @param string|NULL $from
+	 * @param string|NULL $alias
+	 * @return Fluent
 	 * @throws Exceptions\FluentException
 	 */
-	public function delete(?string $from = NULL, ?string $alias = NULL): Fluent
+	public function delete(?string $from = NULL, ?string $alias = NULL): FluentSql
 	{
 		return $this->fluent()->delete($from, $alias);
 	}
 
 
 	/**
+	 * @param array $returning
+	 * @return Fluent
 	 * @throws Exceptions\FluentException
 	 */
-	public function returning(array $returning): Fluent
+	public function returning(array $returning): FluentSql
 	{
 		return $this->fluent()->returning($returning);
 	}
 
 
 	/**
+	 * @param string|NULL $table
+	 * @return Fluent
 	 * @throws Exceptions\FluentException
 	 */
-	public function truncate(?string $table = NULL): Fluent
+	public function truncate(?string $table = NULL): FluentSql
 	{
 		return $this->fluent()->truncate($table);
 	}

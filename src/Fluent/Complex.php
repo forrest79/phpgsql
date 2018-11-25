@@ -7,10 +7,10 @@ class Complex implements \ArrayAccess
 	const TYPE_AND = 'AND';
 	const TYPE_OR = 'OR';
 
-	/** @var Complex */
+	/** @var Complex|NULL */
 	private $parent;
 
-	/** @var Fluent */
+	/** @var Fluent|NULL */
 	private $fluent;
 
 	/** @var string */
@@ -30,11 +30,14 @@ class Complex implements \ArrayAccess
 
 
 	/**
+	 * @param string|self $condition
+	 * @param mixed ...$params
+	 * @return self
 	 * @throws Exceptions\ComplexException
 	 */
 	public function add($condition, ...$params): self
 	{
-		if (($condition instanceof self) && $params) {
+		if (($condition instanceof self) && count($params) > 0) {
 			throw Exceptions\ComplexException::complexCantHaveParams();
 		}
 		if ($condition instanceof self) {
@@ -111,18 +114,31 @@ class Complex implements \ArrayAccess
 	}
 
 
+	/**
+	 * @param mixed $offset
+	 * @return bool
+	 */
 	public function offsetExists($offset)
 	{
 		return isset($this->conditions[$offset]);
 	}
 
 
+	/**
+	 * @param mixed $offset
+	 * @return mixed|NULL
+	 */
 	public function offsetGet($offset)
 	{
 		return $this->conditions[$offset] ?? NULL;
 	}
 
 
+	/**
+	 * @param mixed $offset
+	 * @param mixed $value
+	 * @return void
+	 */
 	public function offsetSet($offset, $value)
 	{
 		if (!is_array($value)) {
@@ -137,6 +153,10 @@ class Complex implements \ArrayAccess
 	}
 
 
+	/**
+	 * @param mixed $offset
+	 * @return void
+	 */
 	public function offsetUnset($offset)
 	{
 		unset($this->conditions[$offset]);

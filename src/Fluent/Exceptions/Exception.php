@@ -2,6 +2,6 @@
 
 namespace Forrest79\PhPgSql\Fluent\Exceptions;
 
-abstract class Exception extends \Exception
+abstract class Exception extends \RuntimeException
 {
 }

@@ -25,11 +25,13 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable
 		$this->columnsDataTypes = $columnsDataTypes;
 		$this->dataTypeParser = $dataTypeParser;
 
-		$this->values = \array_combine(\array_keys($values), \array_fill(0, count($values), NULL));
+		$this->values = \array_fill_keys(\array_keys($values), NULL);
 	}
 
 
 	/**
+	 * @param string $key
+	 * @return mixed
 	 * @throws Exceptions\RowException
 	 */
 	public function __get(string $key)
@@ -38,6 +40,11 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable
 	}
 
 
+	/**
+	 * @param string $key
+	 * @param mixed $value
+	 * @return void
+	 */
 	public function __set(string $key, $value): void
 	{
 		$this->setValue($key, $value);
@@ -78,6 +85,8 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable
 
 
 	/**
+	 * @param string $key
+	 * @return mixed
 	 * @throws Exceptions\RowException
 	 */
 	public function offsetGet($key)
@@ -86,31 +95,46 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable
 	}
 
 
+	/**
+	 * @param string $key
+	 * @param mixed $value
+	 * @return void
+	 */
 	public function offsetSet($key, $value): void
 	{
 		$this->setValue($key, $value);
 	}
 
 
+	/**
+	 * @param string $key
+	 * @return bool
+	 */
 	public function offsetExists($key): bool
 	{
 		return $this->existsKey($key);
 	}
 
 
+	/**
+	 * @param string $key
+	 * @return void
+	 */
 	public function offsetUnset($key): void
 	{
 		$this->removeValue($key);
 	}
 
 
-	public function hasKey($key): bool
+	public function hasKey(string $key): bool
 	{
 		return $this->existsKey($key);
 	}
 
 
 	/**
+	 * @param string $key
+	 * @return mixed
 	 * @throws Exceptions\RowException
 	 */
 	private function getValue(string $key)
@@ -134,6 +158,11 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable
 	}
 
 
+	/**
+	 * @param string $key
+	 * @param mixed $value
+	 * @return void
+	 */
 	private function setValue(string $key, $value): void
 	{
 		$this->values[$key] = $value;

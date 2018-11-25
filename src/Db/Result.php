@@ -6,6 +6,7 @@ use Forrest79\PhPgSql\Db\Exceptions;
 
 class Result implements \Countable, \IteratorAggregate
 {
+	/** @var resource|NULL */
 	protected $queryResource;
 
 	/** @var RowFactory */
@@ -21,6 +22,11 @@ class Result implements \Countable, \IteratorAggregate
 	private $columnsDataTypes;
 
 
+	/**
+	 * @param resource|NULL $queryResource
+	 * @param RowFactory $rowFactory
+	 * @param DataTypeParsers\DataTypeParser $dataTypeParser
+	 */
 	public function __construct($queryResource, RowFactory $rowFactory, DataTypeParsers\DataTypeParser $dataTypeParser)
 	{
 		$this->queryResource = $queryResource;
@@ -59,8 +65,14 @@ class Result implements \Countable, \IteratorAggregate
 	}
 
 
+	/**
+	 * @return resource
+	 */
 	public function getResource()
 	{
+		if ($this->queryResource === NULL) {
+			throw Exceptions\ResultException::noResource();
+		}
 		return $this->queryResource;
 	}
 
@@ -85,7 +97,7 @@ class Result implements \Countable, \IteratorAggregate
 
 	/**
 	 * Like fetch(), but returns only first field.
-	 * @return mixed value on success, null if no next record
+	 * @return mixed value on success, NULL if no next record
 	 */
 	public function fetchSingle()
 	{
@@ -107,7 +119,7 @@ class Result implements \Countable, \IteratorAggregate
 		$limit = $limit === NULL ? -1 : $limit;
 		$this->seek($offset ?: 0);
 		$row = $this->fetch();
-		if (!$row) {
+		if ($row === NULL) {
 			return [];  // empty result set
 		}
 
@@ -131,29 +143,32 @@ class Result implements \Countable, \IteratorAggregate
 	 *   builds a tree:          $tree[$val1][$index][$val2] = {record}
 	 * - associative descriptor: col1|col2=col3
 	 *   builds a tree:          $tree[$val1][$val2] = val2
-	 * @throws \InvalidArgumentException
+	 * @throws Exceptions\ResultException
 	 * @credit dibi (https://dibiphp.com/) | David Grudl
 	 */
-	public function fetchAssoc(string $assoc): array
+	public function fetchAssoc(string $assocDesc): array
 	{
 		$this->seek(0);
 		$row = $this->fetch();
-		if (!$row) {
+		if ($row === NULL) {
 			return [];  // empty result set
 		}
 
-		$data = NULL;
-		$assoc = \preg_split('#(\[\]|=|\|)#', $assoc, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+		$data = [];
+		$assoc = \preg_split('#(\[\]|=|\|)#', $assocDesc, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+		if ($assoc === FALSE) {
+			throw Exceptions\ResultException::fetchAssocParseFailed($assocDesc);
+		}
 
 		// check columns
 		foreach ($assoc as $as) {
 			// offsetExists ignores NULL in PHP 5.2.1, isset() surprisingly NULL accepts
-			if ($as !== '[]' && $as !== '=' && $as !== '|' && !$row->hasKey($as)) {
-				throw new \InvalidArgumentException("Unknown column '$as' in associative descriptor.");
+			if ($as !== '[]' && $as !== '=' && $as !== '|' && $row->hasKey($as) === FALSE) {
+				throw Exceptions\ResultException::noColumn($as);
 			}
 		}
 
-		if (empty($assoc)) {
+		if (count($assoc) === 0) {
 			$assoc[] = '[]';
 		}
 
@@ -185,14 +200,14 @@ class Result implements \Countable, \IteratorAggregate
 
 	/**
 	 * Fetches all records from table like $key => $value pairs.
-	 * @throws \InvalidArgumentException
+	 * @throws Exceptions\ResultException
 	 * @credit dibi (https://dibiphp.com/) | David Grudl
 	 */
 	public function fetchPairs(?string $key = NULL, ?string $value = NULL): array
 	{
 		$this->seek(0);
 		$row = $this->fetch();
-		if (!$row) {
+		if ($row === NULL) {
 			return [];  // empty result set
 		}
 
@@ -200,7 +215,7 @@ class Result implements \Countable, \IteratorAggregate
 
 		if ($value === NULL) {
 			if ($key !== NULL) {
-				throw new \InvalidArgumentException('Either none or both columns must be specified.');
+				throw Exceptions\ResultException::fetchPairsBadColumns();
 			}
 
 			// autodetect
@@ -216,8 +231,8 @@ class Result implements \Countable, \IteratorAggregate
 			$value = $tmp[1];
 
 		} else {
-			if (!$row->hasKey($value)) {
-				throw new \InvalidArgumentException("Unknown value column '$value'.");
+			if ($row->hasKey($value) === FALSE) {
+				throw Exceptions\ResultException::noColumn($value);
 			}
 
 			if ($key === NULL) { // indexed-array
@@ -227,8 +242,8 @@ class Result implements \Countable, \IteratorAggregate
 				return $data;
 			}
 
-			if (!$row->hasKey($key)) {
-				throw new \InvalidArgumentException("Unknown key column '$key'.");
+			if ($row->hasKey($key) === FALSE) {
+				throw Exceptions\ResultException::noColumn($key);
 			}
 		}
 
@@ -268,7 +283,7 @@ class Result implements \Countable, \IteratorAggregate
 	}
 
 
-	private function getColumnsDataTypes()
+	private function getColumnsDataTypes(): array
 	{
 		if ($this->columnsDataTypes === NULL) {
 			$queryResource = $this->getResource();

@@ -13,7 +13,7 @@ class Helper
 
 	public static function createStringPgArray(array $array): string
 	{
-		if (!$array) {
+		if (count($array) === 0) {
 			return '{}';
 		}
 		return sprintf('{\'%s\'}', \implode('\',\'', \array_map(function($value) {
@@ -24,7 +24,7 @@ class Helper
 
 	public static function createPgArray(array $array): string
 	{
-		if (!$array) {
+		if (count($array) === 0) {
 			return '{}';
 		}
 		return sprintf('{%s}', \implode(',', $array));
@@ -34,55 +34,57 @@ class Helper
 	/**
 	 * @credit https://github.com/dg/dibi/blob/master/src/Dibi/Helpers.php
 	 */
-	public static function dump(string $sql, array $parameters = [])
+	public static function dump(string $sql, array $parameters = []): string
 	{
 		static $keywords1 = 'SELECT|(?:ON\s+DUPLICATE\s+KEY)?UPDATE|INSERT(?:\s+INTO)?|REPLACE(?:\s+INTO)?|DELETE|CALL|UNION|FROM|WHERE|HAVING|GROUP\s+BY|ORDER\s+BY|LIMIT|OFFSET|FETCH\s+NEXT|SET|VALUES|LEFT\s+JOIN|INNER\s+JOIN|TRUNCATE|START\s+TRANSACTION|BEGIN|COMMIT|ROLLBACK(?:\s+TO\s+SAVEPOINT)?|(?:RELEASE\s+)?SAVEPOINT';
 		static $keywords2 = 'ALL|DISTINCT|DISTINCTROW|IGNORE|AS|USING|ON|AND|OR|IN|IS|NOT|NULL|LIKE|RLIKE|REGEXP|TRUE|FALSE';
 
 		// insert new lines
 		$sql = " $sql ";
-		$sql = \preg_replace("#(?<=[\\s,(])($keywords1)(?=[\\s,)])#i", "\n\$1", $sql);
+		$sql = (string) \preg_replace("#(?<=[\\s,(])($keywords1)(?=[\\s,)])#i", "\n\$1", $sql); // intentionally (string), other can't be returned
 
 		// reduce spaces
-		$sql = \preg_replace('#[ \t]{2,}#', ' ', $sql);
+		$sql = (string) \preg_replace('#[ \t]{2,}#', ' ', $sql); // intentionally (string), other can't be returned
 		$sql = \wordwrap($sql, 100);
-		$sql = \preg_replace("#([ \t]*\r?\n){2,}#", "\n", $sql);
+		$sql = (string) \preg_replace("#([ \t]*\r?\n){2,}#", "\n", $sql); // intentionally (string), other can't be returned
 
 		// syntax highlight
 		$highlighter = "#(/\\*.+?\\*/)|(\\*\\*.+?\\*\\*)|(?<=[\\s,(])($keywords1)(?=[\\s,)])|(?<=[\\s,(=])($keywords2)(?=[\\s,)=])#is";
 		if (PHP_SAPI === 'cli') {
 			if (\substr((string) \getenv('TERM'), 0, 5) === 'xterm') {
-				$sql = \preg_replace_callback($highlighter, function (array $m) {
-					if (!empty($m[1])) { // comment
+				$sql = (string) \preg_replace_callback($highlighter, function (array $m): string { // intentionally (string), other can't be returned
+					if (isset($m[1]) && $m[1]) { // comment
 						return "\033[1;30m" . $m[1] . "\033[0m";
-					} elseif (!empty($m[2])) { // error
+					} elseif (isset($m[2]) && $m[2]) { // error
 						return "\033[1;31m" . $m[2] . "\033[0m";
-					} elseif (!empty($m[3])) { // most important keywords
+					} elseif (isset($m[3]) && $m[3]) { // most important keywords
 						return "\033[1;34m" . $m[3] . "\033[0m";
-					} elseif (!empty($m[4])) { // other keywords
+					} elseif (isset($m[4]) && $m[4]) { // other keywords
 						return "\033[1;32m" . $m[4] . "\033[0m";
 					}
+					return $m[0];
 				}, $sql);
 			}
 			$sql = \trim($sql);
 		} else {
 			$sql = \htmlspecialchars($sql);
-			$sql = \preg_replace_callback($highlighter, function (array $m) {
-				if (!empty($m[1])) { // comment
+			$sql = (string) \preg_replace_callback($highlighter, function (array $m): string { // intentionally (string), other can't be returned
+				if (isset($m[1]) && $m[1]) { // comment
 					return '<em style="color:gray">' . $m[1] . '</em>';
-				} elseif (!empty($m[2])) { // error
+				} elseif (isset($m[2]) && $m[2]) { // error
 					return '<strong style="color:red">' . $m[2] . '</strong>';
-				} elseif (!empty($m[3])) { // most important keywords
+				} elseif (isset($m[3]) && $m[3]) { // most important keywords
 					return '<strong style="color:blue">' . $m[3] . '</strong>';
-				} elseif (!empty($m[4])) { // other keywords
+				} elseif (isset($m[4]) && $m[4]) { // other keywords
 					return '<strong style="color:green">' . $m[4] . '</strong>';
 				}
+				return $m[0];
 			}, $sql);
 			$sql = '<pre class="dump">' . \trim($sql) . '</pre>';
 		}
 
-		if ($parameters) {
-			$sql = \preg_replace_callback(
+		if (count($parameters) > 0) {
+			$sql = (string) \preg_replace_callback( // intentionally (string), other can't be returned
 				'/\$(\d+)/',
 				function ($matches) use (& $parameters) {
 					$i = $matches[1] - 1;

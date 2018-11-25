@@ -11,7 +11,7 @@ class QueryException extends Exception
 	public const CANT_PASS_PARAMS = 3;
 	public const NO_PARAM = 4;
 
-	/** @var Db\Query */
+	/** @var Db\Query|NULL */
 	private $query;
 
 

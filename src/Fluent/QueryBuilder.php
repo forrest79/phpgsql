@@ -222,7 +222,7 @@ class QueryBuilder
 	/**
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	private function getFrom(array &$params, $useMainTable = TRUE): string
+	private function getFrom(array &$params, bool $useMainTable = TRUE): string
 	{
 		$from = [];
 
@@ -247,7 +247,7 @@ class QueryBuilder
 			);
 		}
 
-		return $from ? (' ' . \implode(' ', $from)) : '';
+		return count($from) > 0 ? (' ' . \implode(' ', $from)) : '';
 	}
 
 
@@ -282,7 +282,7 @@ class QueryBuilder
 			}
 		}
 
-		return $joins ? (' ' . \implode(' ', $joins)) : '';
+		return count($joins) > 0 ? (' ' . \implode(' ', $joins)) : '';
 	}
 
 
@@ -443,7 +443,11 @@ class QueryBuilder
 
 
 	/**
-	 * @throws Exceptions\QueryBuilderException
+	 * @param string|NULL $type
+	 * @param string|Db\Query|Fluent $table
+	 * @param string $alias
+	 * @param array $params
+	 * @return string
 	 */
 	private function processTable(?string $type, $table, string $alias, array &$params): string
 	{

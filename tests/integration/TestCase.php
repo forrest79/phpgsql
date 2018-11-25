@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Integration\Forrest79\PhPgSql\Db;
+namespace Forrest79\PhPgSql\Tests\Integration;
 
 use Forrest79\PhPgSql\Db;
 use Tester;
@@ -19,10 +19,6 @@ abstract class TestCase extends Tester\TestCase
 	private $adminConnection;
 
 
-	/**
-	 * @throws Db\Exceptions\ConnectionException
-	 * @throws Db\Exceptions\QueryException
-	 */
 	protected function setUp(): void
 	{
 		parent::setUp();
@@ -34,10 +30,6 @@ abstract class TestCase extends Tester\TestCase
 	}
 
 
-	/**
-	 * @throws Db\Exceptions\ConnectionException
-	 * @throws Db\Exceptions\QueryException
-	 */
 	protected function tearDown(): void
 	{
 		$this->adminConnection->query('DROP DATABASE ?', $this->adminConnection::literal($this->dbname));

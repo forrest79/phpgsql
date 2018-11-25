@@ -1,8 +1,7 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Integration\Forrest79\PhPgSql\Db;
+namespace Forrest79\PhPgSql\Tests\Integration;
 
-use Forrest79\PhPgSql\Db;
 use Forrest79\PhPgSql\Fluent;
 use Tester;
 
@@ -11,16 +10,12 @@ require_once __DIR__ . '/TestCase.php';
 /**
  * @testCase
  */
-class FetchTest extends TestCase
+class FluentFetchTest extends TestCase
 {
 	/** @var Fluent\Connection */
 	private $connection;
 
 
-	/**
-	 * @throws Db\Exceptions\ConnectionException
-	 * @throws Db\Exceptions\QueryException
-	 */
 	protected function setUp(): void
 	{
 		parent::setUp();
@@ -44,6 +39,9 @@ class FetchTest extends TestCase
 			->from('test');
 
 		$row = $query->fetch();
+		if ($row === NULL) {
+			throw new \RuntimeException('No data from database were returned');
+		}
 
 		$query->free();
 
@@ -251,4 +249,4 @@ class FetchTest extends TestCase
 
 }
 
-(new FetchTest())->run();
+(new FluentFetchTest())->run();
