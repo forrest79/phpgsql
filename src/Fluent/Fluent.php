@@ -752,6 +752,9 @@ class Fluent implements FluentSql, \Countable, \IteratorAggregate
 	 */
 	public function reexecute(): Db\Result
 	{
+		if ($this->result !== NULL) {
+			$this->free();
+		}
 		$this->result = NULL;
 		return $this->execute();
 	}
