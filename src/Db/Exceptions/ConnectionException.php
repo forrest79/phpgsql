@@ -11,12 +11,11 @@ class ConnectionException extends Exception
 	public const ASYNC_STREAM_FAILED = 5;
 	public const ASYNC_CONNECT_FAILED = 6;
 	public const ASYNC_CONNECT_TIMEOUT = 7;
-	public const ASYNC_NO_QUERIES_TO_SEND = 8;
-	public const ASYNC_WAITING_RESULTS = 9;
-	public const ASYNC_NO_QUERY_WAS_SENT = 10;
-	public const ASYNC_SEND_QUERIES_FAILED = 11;
-	public const ASYNC_FLUSH_RESULTS_FAILED = 12;
-	public const ASYNC_CONSUME_INPUT_FAILED = 14;
+	public const ASYNC_WAITING_RESULTS = 8;
+	public const ASYNC_NO_QUERY_WAS_SENT = 9;
+	public const ASYNC_SEND_QUERIES_FAILED = 10;
+	public const ASYNC_FLUSH_RESULTS_FAILED = 11;
+	public const ASYNC_CONSUME_INPUT_FAILED = 12;
 
 
 	public static function noExtensionException(): self
@@ -58,12 +57,6 @@ class ConnectionException extends Exception
 	public static function asyncConnectTimeoutException(float $afterSeconds, int $configSeconds): self
 	{
 		return new self(\sprintf('Asynchronous connection timeout after %f seconds (%d seconds are configured).', $afterSeconds, $configSeconds), self::ASYNC_CONNECT_TIMEOUT);
-	}
-
-
-	public static function asyncNoQueriesToSendException(): self
-	{
-		return new self('There\'re no queries to send.', self::ASYNC_NO_QUERIES_TO_SEND);
 	}
 
 
