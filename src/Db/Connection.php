@@ -180,10 +180,10 @@ class Connection
 
 	public function close(): self
 	{
+		$this->onClose();
 		if ($this->resource !== NULL) {
 			\pg_close($this->resource);
 			$this->resource = NULL;
-			$this->onClose();
 		}
 		return $this;
 	}
