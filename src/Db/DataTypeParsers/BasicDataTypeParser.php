@@ -88,6 +88,10 @@ class BasicDataTypeParser implements DataTypeParser
 					return $value;
 				case 'hstore':
 					throw Exceptions\DataTypeParserException::tryUseConvertToJson($type, $value, 'hstore_to_json');
+				case 'oid': // internal PG type
+					return (int) $value;
+				case 'name': // internal PG type
+					return $value;
 				default :
 					throw Exceptions\DataTypeParserException::cantParseType($type, $value);
 			}

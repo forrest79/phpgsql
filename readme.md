@@ -30,6 +30,22 @@ composer require forrest79/phpgsql --dev
 PhPgSql requires PHP 7.1.0 and pgsql binary extension. It doesn't work with PDO!
 
 
+### Data type coverting
+
+This library automatically convert PG types to PHP types. Simple types are converted by `BasicDataTypeParser`, you can extends this parser or write your own, if you need parse another types or if you want to change parsing behavior.
+
+**Important!** To determine PG types from PG result is by default used function `pg_field_type`. This function has one undocumented behavior, sends SQL query `select oid,typname from pg_type` (https://github.com/php/php-src/blob/master/ext/pgsql/pgsql.c) for every request to get proper type names. This SELECT is relatively fast and parsing works out of the box with this. But for bigger databases can be this SELECT slower and in common, there is no need to perform it for all requests. We can cache this data and then use function `pg_field_type_oid`. Cache is needed to flush only if database structure is changed. You can use simply cache for this and this is recommended way. Options are, prepare your own cache with `DataTypesCache` interface or use one already prepared, this save cache to PHP file (it's really fast especially with opcache):
+
+```php
+$connection = new PhPgSql\Db\Connection();
+$dataTypeCache = new PhPgSql\Db\DataTypesCache\FileDbDataTypesCache($connection, '/tmp/cache.php'); // we need connection to load data from DB
+$connection->setDataTypesCache($dataTypeCache);
+
+// when database structure has changed:
+$dataTypeCache->clean();
+``` 
+
+
 ### Using
 
 First, create connection to PostgreSQL and connect it:

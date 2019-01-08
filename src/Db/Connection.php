@@ -31,6 +31,12 @@ class Connection
 	/** @var DataTypeParsers\DataTypeParser */
 	private $dataTypeParser;
 
+	/** @var DataTypesCache\DataTypesCache|NULL */
+	private $dataTypesCache;
+
+	/** @var array */
+	private $dataTypes;
+
 	/** @var Query */
 	private $asyncQuery;
 
@@ -217,6 +223,31 @@ class Connection
 	}
 
 
+	public function setDataTypesCache(?DataTypesCache\DataTypesCache $dataTypesCache): self
+	{
+		$this->dataTypesCache = $dataTypesCache;
+		return $this;
+	}
+
+
+	public function getDataTypesCache(): ?DataTypesCache\DataTypesCache
+	{
+		return $this->dataTypesCache;
+	}
+
+
+	private function getDataTypes(): array
+	{
+		if ($this->dataTypes === NULL) {
+			$this->dataTypes = $this->dataTypesCache === NULL
+				? []
+				: $this->dataTypesCache->load();
+		}
+
+		return $this->dataTypes;
+	}
+
+
 	/**
 	 * @param string|Query $query
 	 * @param mixed ...$params
@@ -251,7 +282,7 @@ class Connection
 			$this->onQuery($query, microtime(TRUE) - $start);
 		}
 
-		return new Result($resource, $this->getRowFactory(), $this->getDataTypeParser());
+		return new Result($resource, $this->getRowFactory(), $this->getDataTypeParser(), $this->getDataTypes());
 	}
 
 
@@ -303,7 +334,7 @@ class Connection
 			$this->onQuery($query);
 		}
 
-		return $this->asyncResult = new AsyncResult($this->getRowFactory(), $this->getDataTypeParser());
+		return $this->asyncResult = new AsyncResult($this->getRowFactory(), $this->getDataTypeParser(), $this->getDataTypes());
 	}
 
 
