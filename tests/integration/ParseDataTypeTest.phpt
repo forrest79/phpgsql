@@ -255,7 +255,7 @@ class ParseDataTypeTest extends TestCase
 
 		Tester\Assert::exception(function() use ($row): void {
 			$row->type_hstore;
-		}, Db\Exceptions\DataTypeParserException::class);
+		}, Db\Exceptions\DataTypeParserException::class, NULL, Db\Exceptions\DataTypeParserException::TRY_USE_CONVERT_TO_JSON);
 	}
 
 
@@ -273,7 +273,7 @@ class ParseDataTypeTest extends TestCase
 
 		Tester\Assert::exception(function() use ($row): void {
 			$row->type_point;
-		}, Db\Exceptions\DataTypeParserException::class);
+		}, Db\Exceptions\DataTypeParserException::class, NULL, Db\Exceptions\DataTypeParserException::CANT_PARSE_TYPE);
 	}
 
 
@@ -291,7 +291,7 @@ class ParseDataTypeTest extends TestCase
 
 		Tester\Assert::exception(function() use ($row): void {
 			$row->type_tsvector;
-		}, Db\Exceptions\DataTypeParserException::class);
+		}, Db\Exceptions\DataTypeParserException::class, NULL, Db\Exceptions\DataTypeParserException::TRY_USE_CONVERT_TO_JSON);
 	}
 
 
@@ -309,7 +309,7 @@ class ParseDataTypeTest extends TestCase
 
 		Tester\Assert::exception(function() use ($row): void {
 			$row->type_money;
-		}, Db\Exceptions\DataTypeParserException::class);
+		}, Db\Exceptions\DataTypeParserException::class, NULL, Db\Exceptions\DataTypeParserException::CANT_PARSE_TYPE);
 	}
 
 

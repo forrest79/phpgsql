@@ -56,7 +56,7 @@ class ParseTest extends Tester\TestCase
 		Tester\Assert::exception(function(): void {
 			$query = Db\Helper::prepareSql($this->connection->createQuery('SELECT * FROM table WHERE column = ? AND column2 = ?', 1));
 			$query->getSql();
-		}, Db\Exceptions\QueryException::class);
+		}, Db\Exceptions\QueryException::class, NULL, Db\Exceptions\QueryException::NO_PARAM);
 	}
 
 

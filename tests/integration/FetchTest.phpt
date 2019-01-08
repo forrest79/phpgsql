@@ -266,7 +266,7 @@ class FetchTest extends TestCase
 
 		Tester\Assert::exception(function() use ($result): void {
 			$result->fetchPairs('name');
-		}, Db\Exceptions\ResultException::class);
+		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::FETCH_PAIRS_FAILED);
 
 		$result->free();
 	}
@@ -311,12 +311,12 @@ class FetchTest extends TestCase
 		// Bad key
 		Tester\Assert::exception(function() use ($result): void {
 			$result->fetchPairs('type', 'name');
-		}, Db\Exceptions\ResultException::class);
+		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::NO_COLUMN);
 
 		// Bad value
 		Tester\Assert::exception(function() use ($result): void {
 			$result->fetchPairs('id', 'type');
-		}, Db\Exceptions\ResultException::class);
+		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::NO_COLUMN);
 
 		$result->free();
 	}
@@ -338,7 +338,7 @@ class FetchTest extends TestCase
 
 		Tester\Assert::exception(function() use ($row): void {
 			$row->cnt;
-		}, Db\Exceptions\RowException::class);
+		}, Db\Exceptions\RowException::class, NULL, Db\Exceptions\RowException::NO_KEY);
 
 		$result->free();
 	}
@@ -437,7 +437,7 @@ class FetchTest extends TestCase
 
 		Tester\Assert::exception(function() use ($result): void {
 			$result->getColumnType('count');
-		}, Db\Exceptions\ResultException::class);
+		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::NO_COLUMN);
 
 		$result->free();
 	}
@@ -517,11 +517,11 @@ class FetchTest extends TestCase
 
 		Tester\Assert::exception(function() use ($row): void {
 			$row->type;
-		}, Db\Exceptions\RowException::class);
+		}, Db\Exceptions\RowException::class, NULL, Db\Exceptions\RowException::NO_KEY);
 
 		Tester\Assert::exception(function() use ($row): void {
 			$row['another_type'];
-		}, Db\Exceptions\RowException::class);
+		}, Db\Exceptions\RowException::class, NULL, Db\Exceptions\RowException::NO_KEY);
 
 		$row->type = 'test';
 
@@ -541,7 +541,7 @@ class FetchTest extends TestCase
 
 		Tester\Assert::exception(function() use ($row): void {
 			$row->type;
-		}, Db\Exceptions\RowException::class);
+		}, Db\Exceptions\RowException::class, NULL, Db\Exceptions\RowException::NO_KEY);
 
 		unset($row['another_type']);
 
@@ -549,7 +549,7 @@ class FetchTest extends TestCase
 
 		Tester\Assert::exception(function() use ($row): void {
 			$row['another_type'];
-		}, Db\Exceptions\RowException::class);
+		}, Db\Exceptions\RowException::class, NULL, Db\Exceptions\RowException::NO_KEY);
 
 		unset($row->name);
 

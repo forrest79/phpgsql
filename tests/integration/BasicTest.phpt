@@ -40,7 +40,7 @@ class BasicTest extends TestCase
 		$this->connection->setConnectionConfig('');
 		Tester\Assert::exception(function() {
 			$this->connection->connect();
-		}, Db\Exceptions\ConnectionException::class);
+		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::NO_CONFIG);
 	}
 
 
@@ -64,7 +64,7 @@ class BasicTest extends TestCase
 		$this->connection->setConnectionConfig(str_replace('user=', 'user=non-existing-user-', $this->getConfig()));
 		Tester\Assert::exception(function() {
 			$this->connection->ping();
-		}, Db\Exceptions\ConnectionException::class);
+		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::CONNECTION_FAILED);
 	}
 
 
@@ -105,7 +105,7 @@ class BasicTest extends TestCase
 				Tester\Assert::true($e->getQuery() instanceof Db\Query);
 				throw $e;
 			}
-		}, Db\Exceptions\QueryException::class);
+		}, Db\Exceptions\QueryException::class, NULL, Db\Exceptions\QueryException::QUERY_FAILED);
 	}
 
 
@@ -162,7 +162,7 @@ class BasicTest extends TestCase
 		$query = $this->connection->createQuery('SELECT 1');
 		Tester\Assert::exception(function() use ($query) {
 			$this->connection->query($query, 1);
-		}, Db\Exceptions\QueryException::class);
+		}, Db\Exceptions\QueryException::class, NULL, Db\Exceptions\QueryException::CANT_PASS_PARAMS);
 	}
 
 

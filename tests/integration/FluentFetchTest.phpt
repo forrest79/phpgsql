@@ -225,7 +225,7 @@ class FluentFetchTest extends TestCase
 	{
 		Tester\Assert::exception(function() {
 			$this->connection->select([1])->free();
-		}, Fluent\Exceptions\FluentException::class);
+		}, Fluent\Exceptions\FluentException::class, NULL, Fluent\Exceptions\FluentException::YOU_MUST_EXECUTE_FLUENT_BEFORE_THAT);
 	}
 
 
@@ -237,7 +237,7 @@ class FluentFetchTest extends TestCase
 
 		Tester\Assert::exception(function() use ($query) {
 			$query->from('table');
-		}, Fluent\Exceptions\FluentException::class);
+		}, Fluent\Exceptions\FluentException::class, NULL, Fluent\Exceptions\FluentException::CANT_UPDATE_FLUENT_AFTER_EXECUTE);
 	}
 
 

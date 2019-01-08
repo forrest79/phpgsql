@@ -83,7 +83,7 @@ class AsyncTest extends TestCase
 	{
 		Tester\Assert::exception(function(): void {
 			$this->connection->waitForAsyncQuery();
-		}, Db\Exceptions\ConnectionException::class);
+		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::ASYNC_NO_QUERY_WAS_SENT);
 	}
 
 
@@ -92,7 +92,7 @@ class AsyncTest extends TestCase
 		$resource = $this->connection->asyncQuery('SELECT 1');
 		Tester\Assert::exception(function() use ($resource): void {
 			$resource->getResource();
-		}, Db\Exceptions\ResultException::class);
+		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::NO_RESOURCE);
 	}
 
 

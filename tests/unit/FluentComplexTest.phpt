@@ -25,7 +25,7 @@ class FluentComplexTest extends Tester\TestCase
 	{
 		Tester\Assert::exception(function() {
 			Fluent\Complex::createAnd()->parent();
-		}, Fluent\Exceptions\ComplexException::class);
+		}, Fluent\Exceptions\ComplexException::class, NULL, Fluent\Exceptions\ComplexException::NO_PARENT);
 	}
 
 
@@ -42,7 +42,7 @@ class FluentComplexTest extends Tester\TestCase
 	{
 		Tester\Assert::exception(function() {
 			Fluent\Complex::createAnd()->fluent();
-		}, Fluent\Exceptions\ComplexException::class);
+		}, Fluent\Exceptions\ComplexException::class, NULL, Fluent\Exceptions\ComplexException::NO_FLUENT);
 	}
 
 
@@ -50,7 +50,7 @@ class FluentComplexTest extends Tester\TestCase
 	{
 		Tester\Assert::exception(function() {
 			Fluent\Complex::createAnd()->add(Fluent\Complex::createAnd(), 'param1');
-		}, Fluent\Exceptions\ComplexException::class);
+		}, Fluent\Exceptions\ComplexException::class, NULL, Fluent\Exceptions\ComplexException::COMPLEX_CANT_HAVE_PARAMS);
 	}
 
 

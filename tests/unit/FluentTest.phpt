@@ -184,7 +184,7 @@ class FluentTest extends Tester\TestCase
 				->from('table', 't')
 				->join('another', 'x')
 				->prepareSql();
-		}, Fluent\Exceptions\QueryBuilderException::class);
+		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::NO_JOIN_CONDITIONS);
 	}
 
 
@@ -237,7 +237,7 @@ class FluentTest extends Tester\TestCase
 			$this->fluent()
 				->from('table')
 				->prepareSql();
-		}, Fluent\Exceptions\QueryBuilderException::class);
+		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::NO_COLUMNS_TO_SELECT);
 	}
 
 
@@ -333,7 +333,7 @@ class FluentTest extends Tester\TestCase
 			$this->fluent()
 				->insert('table')
 				->prepareSql();
-		}, Fluent\Exceptions\QueryBuilderException::class);
+		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::NO_DATA_TO_INSERT);
 	}
 
 
@@ -361,7 +361,7 @@ class FluentTest extends Tester\TestCase
 			$this->fluent()
 				->update('table')
 				->prepareSql();
-		}, Fluent\Exceptions\QueryBuilderException::class);
+		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::NO_DATA_TO_UPDATE);
 	}
 
 
@@ -372,7 +372,7 @@ class FluentTest extends Tester\TestCase
 				->update()
 				->set(['column' => 1])
 				->prepareSql();
-		}, Fluent\Exceptions\QueryBuilderException::class);
+		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::NO_MAIN_TABLE);
 	}
 
 
@@ -473,7 +473,7 @@ class FluentTest extends Tester\TestCase
 				->fluent()
 				->select(['*'])
 				->prepareSql();
-		}, Fluent\Exceptions\QueryBuilderException::class);
+		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::BAD_PARAMS_COUNT);
 	}
 
 
@@ -483,7 +483,7 @@ class FluentTest extends Tester\TestCase
 
 		Tester\Assert::exception(function() use ($fluent) {
 			$fluent->table('another');
-		}, Fluent\Exceptions\FluentException::class);
+		}, Fluent\Exceptions\FluentException::class, NULL, Fluent\Exceptions\FluentException::ONLY_ONE_MAIN_TABLE);
 	}
 
 
@@ -493,7 +493,7 @@ class FluentTest extends Tester\TestCase
 
 		Tester\Assert::exception(function() use ($fluent) {
 			$fluent->from('another', 't');
-		}, Fluent\Exceptions\FluentException::class);
+		}, Fluent\Exceptions\FluentException::class, NULL, Fluent\Exceptions\FluentException::TABLE_ALIAS_ALREADY_EXISTS);
 	}
 
 
@@ -532,7 +532,7 @@ class FluentTest extends Tester\TestCase
 		Tester\Assert::exception(function() {
 			$this->fluent()
 				->table($this->fluent()->select([1]));
-		}, Fluent\Exceptions\FluentException::class);
+		}, Fluent\Exceptions\FluentException::class, NULL, Fluent\Exceptions\FluentException::QUERYABLE_MUST_HAVE_ALIAS);
 	}
 
 
@@ -541,7 +541,7 @@ class FluentTest extends Tester\TestCase
 		Tester\Assert::exception(function() {
 			$this->fluent()
 				->table(['table'], 't');
-		}, Fluent\Exceptions\FluentException::class);
+		}, Fluent\Exceptions\FluentException::class, NULL, Fluent\Exceptions\FluentException::PARAM_MUST_BE_SCALAR_OR_QUERYABLE);
 	}
 
 
@@ -549,7 +549,7 @@ class FluentTest extends Tester\TestCase
 	{
 		Tester\Assert::exception(function() {
 			$this->fluent()->select([1])->execute();
-		}, Fluent\Exceptions\FluentException::class);
+		}, Fluent\Exceptions\FluentException::class, NULL, Fluent\Exceptions\FluentException::YOU_NEED_CONNECTION_FOR_THIS_ACTION);
 	}
 
 
@@ -557,7 +557,7 @@ class FluentTest extends Tester\TestCase
 	{
 		Tester\Assert::exception(function() {
 			(new Fluent\QueryBuilder('table', []))->createQuery();
-		}, Fluent\Exceptions\QueryBuilderException::class);
+		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::BAD_QUERY_TYPE);
 	}
 
 
