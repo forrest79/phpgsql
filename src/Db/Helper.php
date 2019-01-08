@@ -136,7 +136,7 @@ class Helper
 
 				if (\is_array($param)) {
 					$keys = '';
-					\array_walk($param, function() use (& $keys, & $paramIndex){
+					\array_walk($param, function() use (& $keys, & $paramIndex) {
 						$keys .= '$' . ++$paramIndex . ', ';
 					});
 					$parsedParams = \array_merge($parsedParams, $param);
