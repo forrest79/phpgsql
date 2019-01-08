@@ -16,12 +16,17 @@
 	},
 	"require-dev": {
 		"nette/tester": "~2",
-		"phpstan/phpstan": "^0.10.5",
+		"phpstan/phpstan": "^0.10.7",
 		"phpstan/phpstan-strict-rules": "^0.10.1"
 	},
 	"autoload": {
 		"psr-4": {
 			"Forrest79\\PhPgSql\\": "src/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Forrest79\\PhPgSql\\Tests\\": "tests/"
 		}
 	}
 }

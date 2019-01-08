@@ -5,12 +5,6 @@ parameters:
 	level: max
 	universalObjectCratesClasses:
 		- Forrest79\PhPgSql\Db\Row
-	fileExtensions:
-		- php
-		- phpt
-	autoload_directories:
-		- %rootDir%/../../../tests/integration
-		- %rootDir%/../../../tests/unit
 	autoload_files:
 		- %rootDir%/../../../tests/bootstrap.php
 	ignoreErrors:
