@@ -318,9 +318,7 @@ class ParseDataTypeTest extends TestCase
 		$this->connection->setDataTypeParser(new class implements Db\DataTypeParsers\DataTypeParser {
 
 			/**
-			 * @param string $type
-			 * @param string|NULL $value
-			 * @return mixed
+			 * {@inheritdoc}
 			 */
 			public function parse(string $type, ?string $value)
 			{
