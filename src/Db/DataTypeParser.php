@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Forrest79\PhPgSql\Db\DataTypeParsers;
+namespace Forrest79\PhPgSql\Db;
 
 interface DataTypeParser
 {

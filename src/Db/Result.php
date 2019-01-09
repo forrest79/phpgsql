@@ -12,7 +12,7 @@ class Result implements \Countable, \IteratorAggregate
 	/** @var RowFactory */
 	private $rowFactory;
 
-	/** @var DataTypeParsers\DataTypeParser */
+	/** @var DataTypeParser */
 	private $dataTypeParser;
 
 	/** @var array */
@@ -28,13 +28,13 @@ class Result implements \Countable, \IteratorAggregate
 	/**
 	 * @param resource|NULL $queryResource
 	 * @param RowFactory $rowFactory
-	 * @param DataTypeParsers\DataTypeParser $dataTypeParser
+	 * @param DataTypeParser $dataTypeParser
 	 * @param array $dataTypes
 	 */
 	public function __construct(
 		$queryResource,
 		RowFactory $rowFactory,
-		DataTypeParsers\DataTypeParser $dataTypeParser,
+		DataTypeParser $dataTypeParser,
 		array $dataTypes
 	)
 	{

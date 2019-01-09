@@ -5,6 +5,6 @@ namespace Forrest79\PhPgSql\Db;
 interface RowFactory
 {
 
-	public function createRow(array $values, array $columnsDataTypes, DataTypeParsers\DataTypeParser $dataTypeParser): Row;
+	public function createRow(array $values, array $columnsDataTypes, DataTypeParser $dataTypeParser): Row;
 
 }

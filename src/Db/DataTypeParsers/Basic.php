@@ -2,9 +2,10 @@
 
 namespace Forrest79\PhPgSql\Db\DataTypeParsers;
 
+use Forrest79\PhPgSql\Db;
 use Forrest79\PhPgSql\Db\Exceptions;
 
-class BasicDataTypeParser implements DataTypeParser
+class Basic implements Db\DataTypeParser
 {
 
 	/**

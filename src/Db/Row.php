@@ -12,14 +12,14 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable
 	/** @var array */
 	private $columnsDataTypes;
 
-	/** @var DataTypeParsers\DataTypeParser */
+	/** @var DataTypeParser */
 	private $dataTypeParser;
 
 	/** @var array */
 	private $values;
 
 
-	public function __construct(array $values, array $columnsDataTypes, DataTypeParsers\DataTypeParser $dataTypeParser)
+	public function __construct(array $values, array $columnsDataTypes, DataTypeParser $dataTypeParser)
 	{
 		$this->rawValues = $values;
 		$this->columnsDataTypes = $columnsDataTypes;

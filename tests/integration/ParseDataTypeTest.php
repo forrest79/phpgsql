@@ -315,7 +315,7 @@ class ParseDataTypeTest extends TestCase
 
 	public function testCustomDataTypeParser(): void
 	{
-		$this->connection->setDataTypeParser(new class implements Db\DataTypeParsers\DataTypeParser {
+		$this->connection->setDataTypeParser(new class implements Db\DataTypeParser {
 
 			/**
 			 * {@inheritdoc}

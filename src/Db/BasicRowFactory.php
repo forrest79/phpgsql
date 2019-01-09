@@ -5,7 +5,7 @@ namespace Forrest79\PhPgSql\Db;
 class BasicRowFactory implements RowFactory
 {
 
-	public function createRow(array $values, array $columnsDataTypes, DataTypeParsers\DataTypeParser $dataTypeParser): Row
+	public function createRow(array $values, array $columnsDataTypes, DataTypeParser $dataTypeParser): Row
 	{
 		return new Row($values, $columnsDataTypes, $dataTypeParser);
 	}

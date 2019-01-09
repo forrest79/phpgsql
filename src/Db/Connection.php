@@ -28,7 +28,7 @@ class Connection
 	/** @var RowFactory */
 	private $rowFactory;
 
-	/** @var DataTypeParsers\DataTypeParser */
+	/** @var DataTypeParser */
 	private $dataTypeParser;
 
 	/** @var DataTypesCache\DataTypesCache|NULL */
@@ -206,17 +206,17 @@ class Connection
 	}
 
 
-	public function setDataTypeParser(DataTypeParsers\DataTypeParser $dataTypeParser): self
+	public function setDataTypeParser(DataTypeParser $dataTypeParser): self
 	{
 		$this->dataTypeParser = $dataTypeParser;
 		return $this;
 	}
 
 
-	private function getDataTypeParser(): DataTypeParsers\DataTypeParser
+	private function getDataTypeParser(): DataTypeParser
 	{
 		if ($this->dataTypeParser === NULL) {
-			$this->dataTypeParser = new DataTypeParsers\BasicDataTypeParser;
+			$this->dataTypeParser = new DataTypeParsers\Basic();
 		}
 
 		return $this->dataTypeParser;

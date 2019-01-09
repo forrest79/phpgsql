@@ -583,7 +583,7 @@ class FetchTest extends TestCase
 	{
 		return new class implements Db\RowFactory {
 
-			public function createRow(array $values, array $columnsDataTypes, Db\DataTypeParsers\DataTypeParser $dataTypeParser): Db\Row
+			public function createRow(array $values, array $columnsDataTypes, Db\DataTypeParser $dataTypeParser): Db\Row
 			{
 				return new Db\Row(['test' => 'custom'], ['test' => 'text'], $dataTypeParser);
 			}
