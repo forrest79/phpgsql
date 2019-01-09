@@ -199,7 +199,7 @@ class Connection
 	private function getRowFactory(): RowFactory
 	{
 		if ($this->rowFactory === NULL) {
-			$this->rowFactory = new BasicRowFactory;
+			$this->rowFactory = new RowFactories\Basic();
 		}
 
 		return $this->rowFactory;
