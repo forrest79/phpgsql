@@ -166,6 +166,7 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable
 	private function setValue(string $key, $value): void
 	{
 		$this->values[$key] = $value;
+		unset($this->rawValues[$key]);
 	}
 
 
@@ -177,6 +178,7 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable
 
 	private function removeValue(string $key): void
 	{
+		unset($this->rawValues[$key]);
 		unset($this->values[$key]);
 	}
 

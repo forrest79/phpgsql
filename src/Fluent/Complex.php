@@ -4,8 +4,8 @@ namespace Forrest79\PhPgSql\Fluent;
 
 class Complex implements \ArrayAccess
 {
-	const TYPE_AND = 'AND';
-	const TYPE_OR = 'OR';
+	public const TYPE_AND = 'AND';
+	public const TYPE_OR = 'OR';
 
 	/** @var Complex|NULL */
 	private $parent;
