@@ -10,7 +10,7 @@ require_once __DIR__ . '/TestCase.php';
 /**
  * @testCase
  */
-class DataTypesCacheTest extends TestCase
+class DataTypeCacheTest extends TestCase
 {
 	/** @var Db\Connection */
 	private $connection;
@@ -18,7 +18,7 @@ class DataTypesCacheTest extends TestCase
 	/** @var string */
 	private $cacheFile;
 
-	/** @var Db\DataTypesCache\FileDbDataTypesCache */
+	/** @var Db\DataTypeCaches\PhpFile */
 	private $dataTypeCache;
 
 
@@ -27,13 +27,13 @@ class DataTypesCacheTest extends TestCase
 		parent::setUp();
 		$this->connection = new Db\Connection(sprintf('%s dbname=%s', $this->getConfig(), $this->getDbName()));
 		$this->cacheFile = sprintf('%s/plpgsql-data-types-cache-%s.php', sys_get_temp_dir(), uniqid());
-		$this->dataTypeCache = new Db\DataTypesCache\FileDbDataTypesCache($this->connection, $this->cacheFile);
+		$this->dataTypeCache = new Db\DataTypeCaches\PhpFile($this->connection, $this->cacheFile);
 	}
 
 
 	public function testCache(): void
 	{
-		$this->connection->setDataTypesCache($this->dataTypeCache);
+		$this->connection->setDataTypeCache($this->dataTypeCache);
 
 		Tester\Assert::false(file_exists($this->cacheFile));
 
@@ -74,4 +74,4 @@ class DataTypesCacheTest extends TestCase
 
 }
 
-(new DataTypesCacheTest())->run();
+(new DataTypeCacheTest())->run();

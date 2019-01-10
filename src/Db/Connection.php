@@ -31,8 +31,8 @@ class Connection
 	/** @var DataTypeParser */
 	private $dataTypeParser;
 
-	/** @var DataTypesCache\DataTypesCache|NULL */
-	private $dataTypesCache;
+	/** @var DataTypeCache|NULL */
+	private $dataTypeCache;
 
 	/** @var array */
 	private $dataTypes;
@@ -223,25 +223,18 @@ class Connection
 	}
 
 
-	public function setDataTypesCache(?DataTypesCache\DataTypesCache $dataTypesCache): self
+	public function setDataTypeCache(DataTypeCache $dataTypeCache): self
 	{
-		$this->dataTypesCache = $dataTypesCache;
+		$this->dataTypeCache = $dataTypeCache;
 		return $this;
 	}
 
 
-	public function getDataTypesCache(): ?DataTypesCache\DataTypesCache
+	private function getDataTypes(): ?array
 	{
-		return $this->dataTypesCache;
-	}
-
-
-	private function getDataTypes(): array
-	{
-		if ($this->dataTypes === NULL) {
-			$this->dataTypes = $this->dataTypesCache === NULL
-				? []
-				: $this->dataTypesCache->load();
+		if ($this->dataTypeCache !== NULL) {
+			$this->dataTypes = $this->dataTypeCache->load();
+			$this->dataTypeCache = NULL;
 		}
 
 		return $this->dataTypes;

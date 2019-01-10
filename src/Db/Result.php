@@ -15,7 +15,7 @@ class Result implements \Countable, \IteratorAggregate
 	/** @var DataTypeParser */
 	private $dataTypeParser;
 
-	/** @var array */
+	/** @var array|NULL */
 	private $dataTypes;
 
 	/** @var int */
@@ -29,13 +29,13 @@ class Result implements \Countable, \IteratorAggregate
 	 * @param resource|NULL $queryResource
 	 * @param RowFactory $rowFactory
 	 * @param DataTypeParser $dataTypeParser
-	 * @param array $dataTypes
+	 * @param array|NULL $dataTypes
 	 */
 	public function __construct(
 		$queryResource,
 		RowFactory $rowFactory,
 		DataTypeParser $dataTypeParser,
-		array $dataTypes
+		?array $dataTypes
 	)
 	{
 		$this->queryResource = $queryResource;
@@ -300,7 +300,7 @@ class Result implements \Countable, \IteratorAggregate
 			$this->columnsDataTypes = [];
 			for ($i = 0; $i < \pg_num_fields($queryResource); $i++) {
 				$name = \pg_field_name($queryResource, $i);
-				$type = $this->dataTypes === []
+				$type = $this->dataTypes === NULL
 					? \pg_field_type($queryResource, $i)
 					: $this->dataTypes[\pg_field_type_oid($queryResource, $i)];
 				$this->columnsDataTypes[$name] = $type;

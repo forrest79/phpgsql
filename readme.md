@@ -30,7 +30,7 @@ composer require forrest79/phpgsql --dev
 PhPgSql requires PHP 7.1.0 and pgsql binary extension. It doesn't work with PDO!
 
 
-### Data type coverting
+### Data type converting
 
 This library automatically convert PG types to PHP types. Simple types are converted by `BasicDataTypeParser`, you can extends this parser or write your own, if you need parse another types or if you want to change parsing behavior.
 
@@ -38,11 +38,11 @@ This library automatically convert PG types to PHP types. Simple types are conve
 
 ```php
 $connection = new PhPgSql\Db\Connection();
-$dataTypeCache = new PhPgSql\Db\DataTypesCache\FileDbDataTypesCache($connection, '/tmp/cache.php'); // we need connection to load data from DB
-$connection->setDataTypesCache($dataTypeCache);
+$phpFileCache = new PhPgSql\Db\DataTypeCache\PhpFile($connection, '/tmp/cache.php'); // we need connection to load data from DB
+$connection->setDataTypeCache($phpFileCache);
 
 // when database structure has changed:
-$dataTypeCache->clean();
+$phpFileCache->clean();
 ``` 
 
 

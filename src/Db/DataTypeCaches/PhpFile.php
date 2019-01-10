@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Forrest79\PhPgSql\Db\DataTypesCache;
+namespace Forrest79\PhPgSql\Db\DataTypeCaches;
 
 use Forrest79\PhPgSql\Db;
 
-class FileDbDataTypesCache extends DbDataTypesCache
+class PhpFile extends DbLoader
 {
 	/** @var string */
 	private $cacheFile;
