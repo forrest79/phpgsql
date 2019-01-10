@@ -92,6 +92,7 @@ class Complex implements \ArrayAccess
 
 	/**
 	 * @throws Exceptions\ComplexException
+	 * @return Fluent|FluentExecute
 	 */
 	public function fluent(): Fluent
 	{

@@ -545,14 +545,6 @@ class FluentTest extends Tester\TestCase
 	}
 
 
-	public function testConnectionIsNeed(): void
-	{
-		Tester\Assert::exception(function() {
-			$this->fluent()->select([1])->execute();
-		}, Fluent\Exceptions\FluentException::class, NULL, Fluent\Exceptions\FluentException::YOU_NEED_CONNECTION_FOR_THIS_ACTION);
-	}
-
-
 	public function testBadQueryBuilderType(): void
 	{
 		Tester\Assert::exception(function() {

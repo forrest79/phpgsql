@@ -11,7 +11,6 @@ class FluentException extends Exception
 	public const PARAM_MUST_BE_SCALAR_OR_QUERYABLE = 5;
 	public const CANT_UPDATE_FLUENT_AFTER_EXECUTE = 6;
 	public const YOU_MUST_EXECUTE_FLUENT_BEFORE_THAT = 7;
-	public const YOU_NEED_CONNECTION_FOR_THIS_ACTION = 8;
 
 
 	public static function onlyOneMainTable(): self
@@ -53,12 +52,6 @@ class FluentException extends Exception
 	public static function youMustExecuteFluentBeforeThat(): self
 	{
 		return new self('You must execute fluent before that', self::YOU_MUST_EXECUTE_FLUENT_BEFORE_THAT);
-	}
-
-
-	public static function youNeedConnectionForThisAction(): self
-	{
-		return new self('You need connection for this action. Did you create this Fluent from Fluent\Connection?', self::YOU_NEED_CONNECTION_FOR_THIS_ACTION);
 	}
 
 }
