@@ -16,7 +16,7 @@ class Result implements \Countable, \IteratorAggregate
 	private $dataTypeParser;
 
 	/** @var array|NULL */
-	private $dataTypes;
+	private $dataTypesCache;
 
 	/** @var int */
 	private $affectedRows;
@@ -29,19 +29,19 @@ class Result implements \Countable, \IteratorAggregate
 	 * @param resource|NULL $queryResource
 	 * @param RowFactory $rowFactory
 	 * @param DataTypeParser $dataTypeParser
-	 * @param array|NULL $dataTypes
+	 * @param array|NULL $dataTypesCache
 	 */
 	public function __construct(
 		$queryResource,
 		RowFactory $rowFactory,
 		DataTypeParser $dataTypeParser,
-		?array $dataTypes
+		?array $dataTypesCache
 	)
 	{
 		$this->queryResource = $queryResource;
 		$this->rowFactory = $rowFactory;
 		$this->dataTypeParser = $dataTypeParser;
-		$this->dataTypes = $dataTypes;
+		$this->dataTypesCache = $dataTypesCache;
 	}
 
 
@@ -300,9 +300,9 @@ class Result implements \Countable, \IteratorAggregate
 			$this->columnsDataTypes = [];
 			for ($i = 0; $i < \pg_num_fields($queryResource); $i++) {
 				$name = \pg_field_name($queryResource, $i);
-				$type = $this->dataTypes === NULL
+				$type = $this->dataTypesCache === NULL
 					? \pg_field_type($queryResource, $i)
-					: $this->dataTypes[\pg_field_type_oid($queryResource, $i)];
+					: $this->dataTypesCache[\pg_field_type_oid($queryResource, $i)];
 				$this->columnsDataTypes[$name] = $type;
 			};
 		}

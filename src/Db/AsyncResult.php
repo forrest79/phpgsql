@@ -5,9 +5,9 @@ namespace Forrest79\PhPgSql\Db;
 class AsyncResult extends Result
 {
 
-	public function __construct(RowFactory $rowFactory, DataTypeParser $dataTypeParser, ?array $dataTypes)
+	public function __construct(RowFactory $rowFactory, DataTypeParser $dataTypeParser, ?array $dataTypesCache)
 	{
-		parent::__construct(NULL, $rowFactory, $dataTypeParser, $dataTypes);
+		parent::__construct(NULL, $rowFactory, $dataTypeParser, $dataTypesCache);
 	}
 
 

@@ -18,40 +18,51 @@ class DataTypeCacheTest extends TestCase
 	/** @var string */
 	private $cacheFile;
 
-	/** @var Db\DataTypeCaches\PhpFile */
-	private $dataTypeCache;
-
 
 	protected function setUp(): void
 	{
 		parent::setUp();
 		$this->connection = new Db\Connection(sprintf('%s dbname=%s', $this->getConfig(), $this->getDbName()));
 		$this->cacheFile = sprintf('%s/plpgsql-data-types-cache-%s.php', sys_get_temp_dir(), uniqid());
-		$this->dataTypeCache = new Db\DataTypeCaches\PhpFile($this->connection, $this->cacheFile);
 	}
 
 
 	public function testCache(): void
 	{
-		$this->connection->setDataTypeCache($this->dataTypeCache);
+		$dataTypeCache = $this->createDataTypeCache();
+
+		$this->connection->setDataTypeCache($dataTypeCache);
 
 		Tester\Assert::false(file_exists($this->cacheFile));
 
-		$cacheDb = $this->dataTypeCache->load(); // load from DB
+		$cacheDb = $dataTypeCache->load($this->connection); // load from DB
 		Tester\Assert::true(count($cacheDb) > 0); // there must be some types
 
-		Tester\Assert::true($this->connection->query('SELECT TRUE')->fetchSingle());
+		Tester\Assert::true($this->connection->query('SELECT TRUE')->fetchSingle()); // test valid boolean parsing
 
-		$cacheFile = $this->dataTypeCache->load(); // load from file
+		$cacheCache = $dataTypeCache->load($this->connection); // load from cache
+		Tester\Assert::same($cacheDb, $cacheCache);
+
+		$dataTypeCacheNew = $this->createDataTypeCache();
+
+		$cacheFile = $dataTypeCacheNew->load($this->connection); // load from file
 		Tester\Assert::same($cacheDb, $cacheFile);
+
+		$cacheCacheNew = $dataTypeCacheNew->load($this->connection); // load from cache
+		Tester\Assert::same($cacheDb, $cacheCacheNew);
+
+		$dataTypeCache->clean();
+		$dataTypeCacheNew->clean();
 	}
 
 
 	public function testLoadCacheFromFile(): void
 	{
-		$type = 'test-type';
+		$type = 'phppgsql-test-type';
 
-		$cacheDb = $this->dataTypeCache->load(); // load from DB
+		$dataTypeCache = $this->createDataTypeCache();
+
+		$cacheDb = $dataTypeCache->load($this->connection); // load from DB
 		Tester\Assert::true(count($cacheDb) > 0); // there must be some types
 		Tester\Assert::false(array_search($type, $cacheDb, TRUE)); // but no $type
 
@@ -60,15 +71,21 @@ class DataTypeCacheTest extends TestCase
 			'<?php declare(strict_types=1);' . PHP_EOL . \sprintf('return [1=>\'%s\'];', $type)
 		);
 
-		$cacheFile = $this->dataTypeCache->load(); // load from file
+		$dataTypeCacheNew = $this->createDataTypeCache();
+		$cacheFile = $dataTypeCacheNew->load($this->connection); // load from file
 		Tester\Assert::same([1 => $type], $cacheFile);
+	}
+
+
+	private function createDataTypeCache(): Db\DataTypeCaches\PhpFile
+	{
+		return new Db\DataTypeCaches\PhpFile($this->cacheFile);
 	}
 
 
 	protected function tearDown(): void
 	{
 		$this->connection->close();
-		$this->dataTypeCache->clean();
 		parent::tearDown();
 	}
 

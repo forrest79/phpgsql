@@ -26,16 +26,13 @@ class Connection
 	private $asyncStream;
 
 	/** @var RowFactory */
-	private $rowFactory;
+	private $defaultRowFactory;
 
 	/** @var DataTypeParser */
 	private $dataTypeParser;
 
 	/** @var DataTypeCache|NULL */
 	private $dataTypeCache;
-
-	/** @var array */
-	private $dataTypes;
 
 	/** @var Query */
 	private $asyncQuery;
@@ -189,20 +186,20 @@ class Connection
 	}
 
 
-	public function setRowFactory(RowFactory $rowFactory): self
+	public function setDefaultRowFactory(RowFactory $rowFactory): self
 	{
-		$this->rowFactory = $rowFactory;
+		$this->defaultRowFactory = $rowFactory;
 		return $this;
 	}
 
 
-	private function getRowFactory(): RowFactory
+	private function getDefaultRowFactory(): RowFactory
 	{
-		if ($this->rowFactory === NULL) {
-			$this->rowFactory = new RowFactories\Basic();
+		if ($this->defaultRowFactory === NULL) {
+			$this->defaultRowFactory = new RowFactories\Basic();
 		}
 
-		return $this->rowFactory;
+		return $this->defaultRowFactory;
 	}
 
 
@@ -230,14 +227,9 @@ class Connection
 	}
 
 
-	private function getDataTypes(): ?array
+	private function getDataTypesCache(): ?array
 	{
-		if ($this->dataTypeCache !== NULL) {
-			$this->dataTypes = $this->dataTypeCache->load();
-			$this->dataTypeCache = NULL;
-		}
-
-		return $this->dataTypes;
+		return $this->dataTypeCache === NULL ? NULL : $this->dataTypeCache->load($this);
 	}
 
 
@@ -275,7 +267,7 @@ class Connection
 			$this->onQuery($query, microtime(TRUE) - $start);
 		}
 
-		return new Result($resource, $this->getRowFactory(), $this->getDataTypeParser(), $this->getDataTypes());
+		return new Result($resource, $this->getDefaultRowFactory(), $this->getDataTypeParser(), $this->getDataTypesCache());
 	}
 
 
@@ -327,7 +319,7 @@ class Connection
 			$this->onQuery($query);
 		}
 
-		return $this->asyncResult = new AsyncResult($this->getRowFactory(), $this->getDataTypeParser(), $this->getDataTypes());
+		return $this->asyncResult = new AsyncResult($this->getDefaultRowFactory(), $this->getDataTypeParser(), $this->getDataTypesCache());
 	}
 
 

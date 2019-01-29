@@ -8,27 +8,18 @@ abstract class DbLoader implements Db\DataTypeCache
 {
 	private const LOAD_QUERY = 'SELECT oid, typname FROM pg_catalog.pg_type';
 
-	/** @var Db\Connection */
-	private $connection;
 
-
-	public function __construct(Db\Connection $connection)
+	protected function loadFromDb(Db\Connection $connection): array
 	{
-		$this->connection = $connection;
-	}
-
-
-	protected function loadFromDb(): array
-	{
-		$connection = $this->connection->getResource();
-		$resource = @\pg_query($connection, self::LOAD_QUERY); // intentionally @
-		if ($resource === FALSE) {
+		$resource = $connection->getResource();
+		$query = @\pg_query($resource, self::LOAD_QUERY); // intentionally @
+		if ($query === FALSE) {
 			throw Db\Exceptions\DataTypeCacheException::cantLoadTypes();
 		}
 
 		$types = [];
 		while (TRUE) {
-			$data = \pg_fetch_assoc($resource);
+			$data = \pg_fetch_assoc($query);
 			if ($data === FALSE) {
 				break;
 			}
