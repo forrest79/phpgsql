@@ -23,6 +23,11 @@ class PhpFile extends DbLoader
 	{
 		if ($this->cache === NULL) {
 			if (!\is_file($this->cacheFile)) {
+				$cacheDir = \dirname($this->cacheFile);
+				if (!\is_dir($cacheDir)) {
+					\mkdir($cacheDir, 0777, TRUE);
+				}
+
 				$lockFile = $this->cacheFile . '.lock';
 				$handle = \fopen($lockFile, 'c+');
 				if (($handle === FALSE) || !\flock($handle, LOCK_EX)) {
@@ -31,11 +36,6 @@ class PhpFile extends DbLoader
 
 				// cache still not exists
 				if (!\is_file($this->cacheFile)) {
-					$cacheDir = \dirname($this->cacheFile);
-					if (!\is_dir($cacheDir)) {
-						\mkdir($cacheDir, 0777, TRUE);
-					}
-
 					$tempFile = $this->cacheFile . '.tmp';
 					\file_put_contents(
 						$tempFile,
