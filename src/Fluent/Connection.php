@@ -8,14 +8,14 @@ class Connection extends Db\Connection implements Sql
 {
 
 	/**
-	 * @param string|FluentExecute|Db\Query $from
+	 * @param string|FluentExecute|Db\Query $table
 	 * @param string|NULL $alias
 	 * @return FluentExecute
 	 * @throws Exceptions\FluentException
 	 */
-	public function table($from, ?string $alias = NULL): Sql
+	public function table($table, ?string $alias = NULL): Sql
 	{
-		return $this->fluent()->table($from, $alias);
+		return $this->fluent()->table($table, $alias);
 	}
 
 

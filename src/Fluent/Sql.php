@@ -8,11 +8,11 @@ interface Sql
 {
 
 	/**
-	 * @param string|self|Db\Query $from
+	 * @param string|self|Db\Query $table
 	 * @param string|NULL $alias
 	 * @return self
 	 */
-	function table($from, ?string $alias = NULL): self;
+	function table($table, ?string $alias = NULL): self;
 
 
 	function select(array $columns): self;
