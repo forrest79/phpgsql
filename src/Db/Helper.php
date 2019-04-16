@@ -41,7 +41,7 @@ class Helper
 
 		// insert new lines
 		$sql = " $sql ";
-		$sql = (string) \preg_replace("#(?<=[\\s,(])($keywords1)(?=[\\s,)])#i", "\n\$1", $sql); // intentionally (string), other can't be returned
+		$sql = (string) \preg_replace(\sprintf('#(?<=[\\s,(])(%s)(?=[\\s,)])#i', $keywords1), "\n\$1", $sql); // intentionally (string), other can't be returned
 
 		// reduce spaces
 		$sql = (string) \preg_replace('#[ \t]{2,}#', ' ', $sql); // intentionally (string), other can't be returned
@@ -49,18 +49,22 @@ class Helper
 		$sql = (string) \preg_replace("#([ \t]*\r?\n){2,}#", "\n", $sql); // intentionally (string), other can't be returned
 
 		// syntax highlight
-		$highlighter = "#(/\\*.+?\\*/)|(\\*\\*.+?\\*\\*)|(?<=[\\s,(])($keywords1)(?=[\\s,)])|(?<=[\\s,(=])($keywords2)(?=[\\s,)=])#is";
+		$highlighter = \sprintf(
+			'#(/\\*.+?\\*/)|(\\*\\*.+?\\*\\*)|(?<=[\\s,(])(%s)(?=[\\s,)])|(?<=[\\s,(=])(%s)(?=[\\s,)=])#is',
+			$keywords1,
+			$keywords2
+		);
 		if (PHP_SAPI === 'cli') {
 			if (\substr((string) \getenv('TERM'), 0, 5) === 'xterm') {
 				$sql = (string) \preg_replace_callback($highlighter, function (array $m): string { // intentionally (string), other can't be returned
 					if (isset($m[1]) && $m[1]) { // comment
-						return "\033[1;30m" . $m[1] . "\033[0m";
+						return \sprintf("\033[1;30m%s\033[0m", $m[1]);
 					} elseif (isset($m[2]) && $m[2]) { // error
-						return "\033[1;31m" . $m[2] . "\033[0m";
+						return \sprintf("\033[1;31m%s\033[0m", $m[2]);
 					} elseif (isset($m[3]) && $m[3]) { // most important keywords
-						return "\033[1;34m" . $m[3] . "\033[0m";
+						return \sprintf("\033[1;34m%s\033[0m", $m[3]);
 					} elseif (isset($m[4]) && $m[4]) { // other keywords
-						return "\033[1;32m" . $m[4] . "\033[0m";
+						return \sprintf("\033[1;32m%s\033[0m", $m[4]);
 					}
 					return $m[0];
 				}, $sql);
@@ -70,17 +74,17 @@ class Helper
 			$sql = \htmlspecialchars($sql);
 			$sql = (string) \preg_replace_callback($highlighter, function (array $m): string { // intentionally (string), other can't be returned
 				if (isset($m[1]) && $m[1]) { // comment
-					return '<em style="color:gray">' . $m[1] . '</em>';
+					return \sprintf('<em style="color:gray">%s</em>', $m[1]);
 				} elseif (isset($m[2]) && $m[2]) { // error
-					return '<strong style="color:red">' . $m[2] . '</strong>';
+					return \sprintf('<strong style="color:red">%s</strong>', $m[2]);
 				} elseif (isset($m[3]) && $m[3]) { // most important keywords
-					return '<strong style="color:blue">' . $m[3] . '</strong>';
+					return \sprintf('<strong style="color:blue">%s</strong>', $m[3]);
 				} elseif (isset($m[4]) && $m[4]) { // other keywords
-					return '<strong style="color:green">' . $m[4] . '</strong>';
+					return \sprintf('<strong style="color:green">%s</strong>', $m[4]);
 				}
 				return $m[0];
 			}, $sql);
-			$sql = '<pre class="dump">' . \trim($sql) . '</pre>';
+			$sql = \sprintf('<pre class="dump">%s</pre>', \trim($sql));
 		}
 
 		if (count($parameters) > 0) {
@@ -89,10 +93,10 @@ class Helper
 				function ($matches) use (& $parameters) {
 					$i = $matches[1] - 1;
 
-					if (isset($parameters[$i])) {
-						$value = \str_replace('\'', '\'\'', $parameters[$i]);
+					if (array_key_exists($i, $parameters)) {
+						$value = $parameters[$i];
 						unset($parameters[$i]);
-						return '\'' . $value . '\'';
+						return ($value === NULL) ? 'NULL' : \sprintf('\'%s\'', \str_replace('\'', '\'\'', $value));
 					}
 
 					return $matches[0];
