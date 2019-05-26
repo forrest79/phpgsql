@@ -18,10 +18,7 @@ parameters:
 		- '~^Method Forrest79\\PhPgSql\\Db\\ResultIterator::current\(\) should return Forrest79\\PhPgSql\\Db\\Row but returns Forrest79\\PhPgSql\\Db\\Row\|null\.$~'
 
 		# src/Fluent/Fluent.php
-		- '~^Parameter #1 \$alias of static method Forrest79\\PhPgSql\\Fluent\\Exceptions\\FluentException::tableAliasAlreadyExists\(\) expects string, Forrest79\\PhPgSql\\Db\\Query\|Forrest79\\PhPgSql\\Fluent\\Fluent\|string given\.$~'
+		- '~^Parameter #1 \$alias of static method Forrest79\\PhPgSql\\Fluent\\Exceptions\\FluentException::tableAliasAlreadyExists\(\) expects string, Forrest79\\PhPgSql\\Db\\Query\|Forrest79\\PhPgSql\\Fluent\\Sql\|string given\.$~'
 
 		# src/Fluent/QueryBuilder.php
 		- '~^Parameter #2 \$expected of static method Forrest79\\PhPgSql\\Fluent\\Exceptions\\QueryBuilderException::badParamsCount\(\) expects int, int\|false given\.$~'
-
-		# tests/unit/FluentTest.phpt
-		- '~Parameter #1 \$table of method Forrest79\\PhPgSql\\Fluent\\Fluent::table\(\) expects Forrest79\\PhPgSql\\Db\\Query\|Forrest79\\PhPgSql\\Fluent\\Fluent\|string, array\<int, string\> given\.$~'

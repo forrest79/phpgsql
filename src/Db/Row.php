@@ -85,43 +85,55 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable
 
 
 	/**
-	 * @param string $key
+	 * @param mixed $key
 	 * @return mixed
 	 * @throws Exceptions\RowException
 	 */
 	public function offsetGet($key)
 	{
+		if (!is_string($key)) {
+			throw Exceptions\RowException::notStringKey();
+		}
 		return $this->getValue($key);
 	}
 
 
 	/**
-	 * @param string $key
+	 * @param mixed $key
 	 * @param mixed $value
 	 * @return void
 	 */
 	public function offsetSet($key, $value): void
 	{
+		if (!is_string($key)) {
+			throw Exceptions\RowException::notStringKey();
+		}
 		$this->setValue($key, $value);
 	}
 
 
 	/**
-	 * @param string $key
+	 * @param mixed $key
 	 * @return bool
 	 */
 	public function offsetExists($key): bool
 	{
+		if (!is_string($key)) {
+			throw Exceptions\RowException::notStringKey();
+		}
 		return $this->existsKey($key);
 	}
 
 
 	/**
-	 * @param string $key
+	 * @param mixed $key
 	 * @return void
 	 */
 	public function offsetUnset($key): void
 	{
+		if (!is_string($key)) {
+			throw Exceptions\RowException::notStringKey();
+		}
 		$this->removeValue($key);
 	}
 

@@ -78,7 +78,7 @@ class Fluent implements Sql
 
 
 	/**
-	 * @param string|self|Db\Query $table
+	 * @param string|Sql|Db\Query $table
 	 * @param string|NULL $alias
 	 * @return self
 	 * @throws Exceptions\FluentException
@@ -124,7 +124,7 @@ class Fluent implements Sql
 
 
 	/**
-	 * @param string|self|Db\Query $from
+	 * @param string|Sql|Db\Query $from
 	 * @param string|NULL $alias
 	 * @return self
 	 * @throws Exceptions\FluentException
@@ -137,7 +137,7 @@ class Fluent implements Sql
 
 
 	/**
-	 * @param string|self|Db\Query $join table or query
+	 * @param string|Sql|Db\Query $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return self
@@ -150,7 +150,7 @@ class Fluent implements Sql
 
 
 	/**
-	 * @param string|self|Db\Query $join table or query
+	 * @param string|Sql|Db\Query $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return self
@@ -163,7 +163,7 @@ class Fluent implements Sql
 
 
 	/**
-	 * @param string|self|Db\Query $join table or query
+	 * @param string|Sql|Db\Query $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return self
@@ -176,7 +176,7 @@ class Fluent implements Sql
 
 
 	/**
-	 * @param string|self|Db\Query $join table or query
+	 * @param string|Sql|Db\Query $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return self
@@ -189,7 +189,7 @@ class Fluent implements Sql
 
 
 	/**
-	 * @param string|self|Db\Query $join table or query
+	 * @param string|Sql|Db\Query $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return self
@@ -202,7 +202,7 @@ class Fluent implements Sql
 
 
 	/**
-	 * @param string|self|Db\Query $join table or query
+	 * @param string|Sql|Db\Query $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return self
@@ -215,7 +215,7 @@ class Fluent implements Sql
 
 
 	/**
-	 * @param string|self|Db\Query $join table or query
+	 * @param string|Sql|Db\Query $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return self
@@ -228,7 +228,7 @@ class Fluent implements Sql
 
 
 	/**
-	 * @param string|self|Db\Query $join table or query
+	 * @param string|Sql|Db\Query $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return self
@@ -241,7 +241,7 @@ class Fluent implements Sql
 
 
 	/**
-	 * @param string|self|Db\Query $join table or query
+	 * @param string|Sql|Db\Query $join table or query
 	 * @param string|NULL $alias
 	 * @return self
 	 * @throws Exceptions\FluentException
@@ -254,7 +254,7 @@ class Fluent implements Sql
 
 	/**
 	 * @param string $type
-	 * @param string|self|Db\Query $name
+	 * @param string|Sql|Db\Query $name
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return self
@@ -463,7 +463,7 @@ class Fluent implements Sql
 
 
 	/**
-	 * @param string|self|Db\Query $query
+	 * @param string|Sql|Db\Query $query
 	 * @return self
 	 */
 	public function union($query): Sql
@@ -473,7 +473,7 @@ class Fluent implements Sql
 
 
 	/**
-	 * @param string|self|Db\Query $query
+	 * @param string|Sql|Db\Query $query
 	 * @return self
 	 */
 	public function unionAll($query): Sql
@@ -483,7 +483,7 @@ class Fluent implements Sql
 
 
 	/**
-	 * @param string|self|Db\Query $query
+	 * @param string|Sql|Db\Query $query
 	 * @return self
 	 */
 	public function intersect($query): Sql
@@ -493,7 +493,7 @@ class Fluent implements Sql
 
 
 	/**
-	 * @param string|self|Db\Query $query
+	 * @param string|Sql|Db\Query $query
 	 * @return self
 	 */
 	public function except($query): Sql
@@ -504,7 +504,7 @@ class Fluent implements Sql
 
 	/**
 	 * @param string $type
-	 * @param string|self|Db\Query $query
+	 * @param string|Sql|Db\Query $query
 	 * @return self
 	 */
 	private function addCombine(string $type, $query): self

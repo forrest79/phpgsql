@@ -163,7 +163,7 @@ class Helper
 			$sql
 		);
 
-		if (!$parsedParams) {
+		if ($parsedParams === []) {
 			$parsedParams = $params;
 		}
 
