@@ -248,6 +248,7 @@ class Connection
 
 	/**
 	 * @param string|Query $query
+	 * @param array $params
 	 * @return Result
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
