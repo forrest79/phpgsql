@@ -221,7 +221,7 @@ class FluentConnectionTest extends Tester\TestCase
 			->select([1])
 			->prepareSql();
 
-		Tester\Assert::same('SELECT 1 WHERE column = 1 AND another = 2', $query->getSql());
+		Tester\Assert::same('SELECT 1 WHERE (column = 1) AND (another = 2)', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
 	}
 
@@ -234,7 +234,7 @@ class FluentConnectionTest extends Tester\TestCase
 			->select([1])
 			->prepareSql();
 
-		Tester\Assert::same('SELECT 1 WHERE column = 1 OR another = 2', $query->getSql());
+		Tester\Assert::same('SELECT 1 WHERE (column = 1) OR (another = 2)', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
 	}
 
@@ -276,7 +276,7 @@ class FluentConnectionTest extends Tester\TestCase
 			->groupBy(['column', 'another'])
 			->prepareSql();
 
-		Tester\Assert::same('SELECT * FROM table GROUP BY column, another HAVING column = 1 AND another = 2', $query->getSql());
+		Tester\Assert::same('SELECT * FROM table GROUP BY column, another HAVING (column = 1) AND (another = 2)', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
 	}
 
@@ -291,7 +291,7 @@ class FluentConnectionTest extends Tester\TestCase
 			->groupBy(['column', 'another'])
 			->prepareSql();
 
-		Tester\Assert::same('SELECT * FROM table GROUP BY column, another HAVING column = 1 OR another = 2', $query->getSql());
+		Tester\Assert::same('SELECT * FROM table GROUP BY column, another HAVING (column = 1) OR (another = 2)', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
 	}
 

@@ -492,6 +492,10 @@ class QueryBuilder
 					throw Exceptions\QueryBuilderException::badParamsCount($condition, $cnt, $cntParams);
 				}
 
+				if ($withoutParentheses === FALSE) {
+					$condition = sprintf('(%s)', $condition);
+				}
+
 				\array_walk($conditionParams, function($param) use (&$params): void {
 					if ($param instanceof Fluent) {
 						$param = $param->getQuery();

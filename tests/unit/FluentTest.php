@@ -123,7 +123,7 @@ class FluentTest extends Tester\TestCase
 			->join('another', 'x', [['x.column = t.id'], ['x.id = 2']])
 			->prepareSql();
 
-		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another AS x ON x.column = t.id AND x.id = 2', $query->getSql());
+		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another AS x ON (x.column = t.id) AND (x.id = 2)', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
 	}
 
@@ -136,7 +136,7 @@ class FluentTest extends Tester\TestCase
 			->join('another', 'x', [['x.column = t.id'], ['x.id', 2]])
 			->prepareSql();
 
-		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another AS x ON x.column = t.id AND x.id = $1', $query->getSql());
+		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another AS x ON (x.column = t.id) AND (x.id = $1)', $query->getSql());
 		Tester\Assert::same([2], $query->getParams());
 	}
 
@@ -151,7 +151,7 @@ class FluentTest extends Tester\TestCase
 				->on('x', 'x.id = 3')
 			->prepareSql();
 
-		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another AS x ON x.column = t.id AND x.id = $1 AND x.id = 3', $query->getSql());
+		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another AS x ON (x.column = t.id) AND (x.id = $1) AND (x.id = 3)', $query->getSql());
 		Tester\Assert::same([2], $query->getParams());
 	}
 
@@ -171,7 +171,7 @@ class FluentTest extends Tester\TestCase
 			->join('another', 'x', $complexOn)
 			->prepareSql();
 
-		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another AS x ON (x.column = t.id AND x.id IN ($1, $2)) OR x.column = 3', $query->getSql());
+		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another AS x ON ((x.column = t.id) AND (x.id IN ($1, $2))) OR (x.column = 3)', $query->getSql());
 		Tester\Assert::same([1, 2], $query->getParams());
 	}
 
@@ -438,7 +438,7 @@ class FluentTest extends Tester\TestCase
 			->from('table')
 			->prepareSql();
 
-		Tester\Assert::same('SELECT * FROM table WHERE column = $1 OR column2 IN ($2, $3) OR (column IN (SELECT 1) AND column2 = ANY(SELECT 2)) OR column3 IS NOT NULL', $query->getSql());
+		Tester\Assert::same('SELECT * FROM table WHERE (column = $1) OR (column2 IN ($2, $3)) OR ((column IN (SELECT 1)) AND (column2 = ANY(SELECT 2))) OR (column3 IS NOT NULL)', $query->getSql());
 		Tester\Assert::same([1, 2, 3], $query->getParams());
 	}
 
@@ -459,7 +459,7 @@ class FluentTest extends Tester\TestCase
 			->groupBy(['column', 'column2'])
 			->prepareSql();
 
-		Tester\Assert::same('SELECT * FROM table GROUP BY column, column2 HAVING column = $1 OR column2 IN ($2, $3) OR (column IN (SELECT 1) AND column2 = ANY(SELECT 2)) OR column3 IS NOT NULL', $query->getSql());
+		Tester\Assert::same('SELECT * FROM table GROUP BY column, column2 HAVING (column = $1) OR (column2 IN ($2, $3)) OR ((column IN (SELECT 1)) AND (column2 = ANY(SELECT 2))) OR (column3 IS NOT NULL)', $query->getSql());
 		Tester\Assert::same([1, 2, 3], $query->getParams());
 	}
 
