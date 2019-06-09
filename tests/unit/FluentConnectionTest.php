@@ -481,6 +481,31 @@ class FluentConnectionTest extends Tester\TestCase
 		Tester\Assert::same([], $query->getParams());
 	}
 
+
+	public function testPrefix(): void
+	{
+		$query = $this->fluentConnection
+			->prefix('WITH cte')
+			->select([1])
+			->prepareSql();
+
+		Tester\Assert::same('WITH cte SELECT 1', $query->getSql());
+		Tester\Assert::same([], $query->getParams());
+	}
+
+
+	public function testPrefixAndSuffix(): void
+	{
+		$query = $this->fluentConnection
+			->sufix('FOR UPDATE')
+			->select(['column'])
+			->from('table')
+			->prepareSql();
+
+		Tester\Assert::same('SELECT column FROM table FOR UPDATE', $query->getSql());
+		Tester\Assert::same([], $query->getParams());
+	}
+
 }
 
 (new FluentConnectionTest())->run();

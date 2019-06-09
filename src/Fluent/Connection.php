@@ -415,6 +415,30 @@ class Connection extends Db\Connection implements Sql
 	}
 
 
+	/**
+	 * @param string $queryPrefix
+	 * @param mixed ...$params
+	 * @return self
+	 * @throws Exceptions\FluentException
+	 */
+	public function prefix(string $queryPrefix, ...$params): Sql
+	{
+		return $this->fluent()->prefix($queryPrefix, ...$params);
+	}
+
+
+	/**
+	 * @param string $querySufix
+	 * @param mixed ...$params
+	 * @return self
+	 * @throws Exceptions\FluentException
+	 */
+	public function sufix(string $querySufix, ...$params): Sql
+	{
+		return $this->fluent()->sufix($querySufix, ...$params);
+	}
+
+
 	protected function fluent(): FluentExecute
 	{
 		return new FluentExecute($this);

@@ -28,6 +28,8 @@ class Fluent implements Sql
 	public const PARAM_RETURNING = 'returning';
 	public const PARAM_DATA = 'data';
 	public const PARAM_ROWS = 'rows';
+	public const PARAM_PREFIX = 'prefix';
+	public const PARAM_SUFFIX = 'suffix';
 
 	public const TABLE_TYPE_MAIN = 'main';
 	public const TABLE_TYPE_FROM = 'from';
@@ -65,6 +67,8 @@ class Fluent implements Sql
 		self::PARAM_RETURNING => [],
 		self::PARAM_DATA => [],
 		self::PARAM_ROWS => [],
+		self::PARAM_PREFIX => [],
+		self::PARAM_SUFFIX => [],
 	];
 
 	/** @var string */
@@ -648,6 +652,36 @@ class Fluent implements Sql
 			$this->table($table);
 		}
 
+		return $this;
+	}
+
+
+	/**
+	 * @param string $queryPrefix
+	 * @param mixed ...$params
+	 * @return self
+	 * @throws Exceptions\FluentException
+	 */
+	public function prefix(string $queryPrefix, ...$params): Sql
+	{
+		$this->updateFluent();
+		\array_unshift($params, $queryPrefix);
+		$this->params[self::PARAM_PREFIX][] = $params;
+		return $this;
+	}
+
+
+	/**
+	 * @param string $querySufix
+	 * @param mixed ...$params
+	 * @return self
+	 * @throws Exceptions\FluentException
+	 */
+	public function sufix(string $querySufix, ...$params): Sql
+	{
+		$this->updateFluent();
+		\array_unshift($params, $querySufix);
+		$this->params[self::PARAM_SUFFIX][] = $params;
 		return $this;
 	}
 

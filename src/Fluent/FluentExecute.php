@@ -37,6 +37,8 @@ use Forrest79\PhPgSql\Db;
  * @method self delete(?string $from = NULL, ?string $alias = NULL)
  * @method self returning(array $returning)
  * @method self truncate(?string $table = NULL)
+ * @method self prefix(string $queryPrefix, ...$params)
+ * @method self sufix(string $querySufix, ...$params)
  */
 class FluentExecute extends Fluent implements \Countable, \IteratorAggregate
 {

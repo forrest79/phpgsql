@@ -11,6 +11,7 @@ class FluentException extends Exception
 	public const PARAM_MUST_BE_SCALAR_OR_QUERYABLE = 5;
 	public const CANT_UPDATE_FLUENT_AFTER_EXECUTE = 6;
 	public const YOU_MUST_EXECUTE_FLUENT_BEFORE_THAT = 7;
+	public const BAD_PARAM = 7;
 
 
 	public static function onlyOneMainTable(): self
@@ -52,6 +53,12 @@ class FluentException extends Exception
 	public static function youMustExecuteFluentBeforeThat(): self
 	{
 		return new self('You must execute fluent before that', self::YOU_MUST_EXECUTE_FLUENT_BEFORE_THAT);
+	}
+
+
+	public static function badParam(string $param, string $value, array $validValues): self
+	{
+		return new self(sprintf('Bad param \'%s\' with value \'%s\'. Valid values are \'%s\'.', $param, $value, implode('\', \'', $validValues)), self::YOU_MUST_EXECUTE_FLUENT_BEFORE_THAT);
 	}
 
 }

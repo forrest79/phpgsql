@@ -423,6 +423,39 @@ class FluentTest extends Tester\TestCase
 	}
 
 
+	public function testParamsPrefix(): void
+	{
+		$withQuery = $this->fluent()
+			->select(['columnWith'])
+			->from('tableWith')
+			->where('columnWith > ?', 5);
+
+		$query = $this->fluent()
+			->select(['column'])
+			->from('table')
+			->where('column', 100)
+			->prefix('WITH cte AS (?)', $withQuery)
+			->prepareSql();
+
+		Tester\Assert::same('WITH cte AS (SELECT columnWith FROM tableWith WHERE columnWith > $1) SELECT column FROM table WHERE column = $2', $query->getSql());
+		Tester\Assert::same([5, 100], $query->getParams());
+	}
+
+
+	public function testSimpleSuffix(): void
+	{
+		$query = $this->fluent()
+			->select(['column'])
+			->from('table')
+			->where('column', 100)
+			->sufix('FOR UPDATE')
+			->prepareSql();
+
+		Tester\Assert::same('SELECT column FROM table WHERE column = $1 FOR UPDATE', $query->getSql());
+		Tester\Assert::same([100], $query->getParams());
+	}
+
+
 	public function testComplexWhere(): void
 	{
 		$complexOr = $this->fluent()->whereOr();

@@ -208,4 +208,20 @@ interface Sql
 
 	function truncate(?string $table = NULL): self;
 
+
+	/**
+	 * @param string $queryPrefix
+	 * @param mixed ...$params
+	 * @return self
+	 */
+	function prefix(string $queryPrefix, ...$params): self;
+
+
+	/**
+	 * @param string $querySufix
+	 * @param mixed ...$params
+	 * @return self
+	 */
+	function sufix(string $querySufix, ...$params): self;
+
 }

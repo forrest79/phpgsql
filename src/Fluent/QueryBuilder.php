@@ -29,19 +29,24 @@ class QueryBuilder
 	public function createQuery(): Db\Query
 	{
 		$params = [];
+
+		$sql = $this->getPrefixSuffix(Fluent::PARAM_PREFIX, $params);
+
 		if ($this->queryType === Fluent::QUERY_SELECT) {
-			$sql = $this->createSelect($params);
+			$sql .= $this->createSelect($params);
 		} else if ($this->queryType === Fluent::QUERY_INSERT) {
-			$sql = $this->createInsert($params);
+			$sql .= $this->createInsert($params);
 		} else if ($this->queryType === Fluent::QUERY_UPDATE) {
-			$sql = $this->createUpdate($params);
+			$sql .= $this->createUpdate($params);
 		} else if ($this->queryType === Fluent::QUERY_DELETE) {
-			$sql = $this->createDelete($params);
+			$sql .= $this->createDelete($params);
 		} else if ($this->queryType === Fluent::QUERY_TRUNCATE) {
-			$sql =  $this->createTruncate();
+			$sql .= $this->createTruncate();
 		} else {
 			throw Exceptions\QueryBuilderException::badQueryType($this->queryType);
 		}
+
+		$sql .= $this->getPrefixSuffix(Fluent::PARAM_SUFFIX, $params);
 
 		return new Db\Query($sql, $params);
 	}
@@ -374,6 +379,42 @@ class QueryBuilder
 		$params[] = $offset;
 
 		return ' OFFSET ?';
+	}
+
+
+	/**
+	 * @throws Exceptions\QueryBuilderException
+	 */
+	private function getPrefixSuffix(string $type, array &$params): string
+	{
+		$items = $this->params[$type] ?? [];
+
+		if ($items === []) {
+			return '';
+		}
+
+		$processedItems = [];
+		foreach ($items as $itemParams)
+		{
+			$item = \array_shift($itemParams);
+
+			\array_walk($itemParams, function ($param) use (&$params): void {
+				if ($param instanceof Fluent) {
+					$param = $param->getQuery();
+				}
+				$params[] = $param;
+			});
+
+			$processedItems[] = $item;
+		}
+
+		if ($type === Fluent::PARAM_PREFIX) {
+			return \sprintf('%s ', \implode(' ', $processedItems));
+		} else if ($type === Fluent::PARAM_SUFFIX) {
+			return \sprintf(' %s', \implode(' ', $processedItems));
+		}
+
+		throw Exceptions\FluentException::badParam('$type', $type, [Fluent::PARAM_PREFIX, Fluent::PARAM_SUFFIX]);
 	}
 
 
