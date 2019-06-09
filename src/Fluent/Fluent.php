@@ -84,7 +84,7 @@ class Fluent implements Sql
 	/**
 	 * @param string|Sql|Db\Query $table
 	 * @param string|NULL $alias
-	 * @return self
+	 * @return static
 	 * @throws Exceptions\FluentException
 	 */
 	public function table($table, ?string $alias = NULL): Sql
@@ -95,7 +95,7 @@ class Fluent implements Sql
 
 	/**
 	 * @param array $columns
-	 * @return self
+	 * @return static
 	 * @throws Exceptions\FluentException
 	 */
 	public function select(array $columns): Sql
@@ -116,7 +116,7 @@ class Fluent implements Sql
 
 
 	/**
-	 * @return self
+	 * @return static
 	 * @throws Exceptions\FluentException
 	 */
 	public function distinct(): Sql
@@ -130,7 +130,7 @@ class Fluent implements Sql
 	/**
 	 * @param string|Sql|Db\Query $from
 	 * @param string|NULL $alias
-	 * @return self
+	 * @return static
 	 * @throws Exceptions\FluentException
 	 */
 	public function from($from, ?string $alias = NULL): Sql
@@ -144,7 +144,7 @@ class Fluent implements Sql
 	 * @param string|Sql|Db\Query $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
-	 * @return self
+	 * @return static
 	 * @throws Exceptions\FluentException
 	 */
 	public function join($join, ?string $alias = NULL, $onCondition = NULL): Sql
@@ -157,7 +157,7 @@ class Fluent implements Sql
 	 * @param string|Sql|Db\Query $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
-	 * @return self
+	 * @return static
 	 * @throws Exceptions\FluentException
 	 */
 	public function innerJoin($join, ?string $alias = NULL, $onCondition = NULL): Sql
@@ -170,7 +170,7 @@ class Fluent implements Sql
 	 * @param string|Sql|Db\Query $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
-	 * @return self
+	 * @return static
 	 * @throws Exceptions\FluentException
 	 */
 	public function leftJoin($join, ?string $alias = NULL, $onCondition = NULL): Sql
@@ -183,7 +183,7 @@ class Fluent implements Sql
 	 * @param string|Sql|Db\Query $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
-	 * @return self
+	 * @return static
 	 * @throws Exceptions\FluentException
 	 */
 	public function leftOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Sql
@@ -196,7 +196,7 @@ class Fluent implements Sql
 	 * @param string|Sql|Db\Query $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
-	 * @return self
+	 * @return static
 	 * @throws Exceptions\FluentException
 	 */
 	public function rightJoin($join, ?string $alias = NULL, $onCondition = NULL): Sql
@@ -209,7 +209,7 @@ class Fluent implements Sql
 	 * @param string|Sql|Db\Query $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
-	 * @return self
+	 * @return static
 	 * @throws Exceptions\FluentException
 	 */
 	public function rightOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Sql
@@ -222,7 +222,7 @@ class Fluent implements Sql
 	 * @param string|Sql|Db\Query $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
-	 * @return self
+	 * @return static
 	 * @throws Exceptions\FluentException
 	 */
 	public function fullJoin($join, ?string $alias = NULL, $onCondition = NULL): Sql
@@ -235,7 +235,7 @@ class Fluent implements Sql
 	 * @param string|Sql|Db\Query $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
-	 * @return self
+	 * @return static
 	 * @throws Exceptions\FluentException
 	 */
 	public function fullOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Sql
@@ -247,7 +247,7 @@ class Fluent implements Sql
 	/**
 	 * @param string|Sql|Db\Query $join table or query
 	 * @param string|NULL $alias
-	 * @return self
+	 * @return static
 	 * @throws Exceptions\FluentException
 	 */
 	public function crossJoin($join, ?string $alias = NULL): Sql
@@ -261,7 +261,7 @@ class Fluent implements Sql
 	 * @param string|Sql|Db\Query $name
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
-	 * @return self
+	 * @return static
 	 * @throws Exceptions\FluentException
 	 */
 	private function addTable(string $type, $name, ?string $alias, $onCondition = NULL): self
@@ -304,7 +304,7 @@ class Fluent implements Sql
 	/**
 	 * @param string $alias
 	 * @param string|array|Complex $condition
-	 * @return self
+	 * @return static
 	 * @throws Exceptions\FluentException
 	 */
 	public function on(string $alias, $condition): Sql
@@ -347,7 +347,7 @@ class Fluent implements Sql
 	/**
 	 * @param string|Complex $condition
 	 * @param mixed ...$params
-	 * @return self
+	 * @return static
 	 * @throws Exceptions\FluentException
 	 */
 	public function where($condition, ...$params): Sql
@@ -381,7 +381,7 @@ class Fluent implements Sql
 
 	/**
 	 * @param array $columns
-	 * @return self
+	 * @return static
 	 * @throws Exceptions\FluentException
 	 */
 	public function groupBy(array $columns): Sql
@@ -395,7 +395,7 @@ class Fluent implements Sql
 	/**
 	 * @param string|Complex $condition
 	 * @param mixed ...$params
-	 * @return self
+	 * @return static
 	 * @throws Exceptions\FluentException
 	 */
 	public function having($condition, ...$params): Sql
@@ -429,7 +429,7 @@ class Fluent implements Sql
 
 	/**
 	 * @param array $columns
-	 * @return self
+	 * @return static
 	 * @throws Exceptions\FluentException
 	 */
 	public function orderBy(array $columns): Sql
@@ -442,7 +442,7 @@ class Fluent implements Sql
 
 	/**
 	 * @param int $limit
-	 * @return self
+	 * @return static
 	 * @throws Exceptions\FluentException
 	 */
 	public function limit(int $limit): Sql
@@ -455,7 +455,7 @@ class Fluent implements Sql
 
 	/**
 	 * @param int $offset
-	 * @return self
+	 * @return static
 	 * @throws Exceptions\FluentException
 	 */
 	public function offset(int $offset): Sql
@@ -468,7 +468,7 @@ class Fluent implements Sql
 
 	/**
 	 * @param string|Sql|Db\Query $query
-	 * @return self
+	 * @return static
 	 */
 	public function union($query): Sql
 	{
@@ -478,7 +478,7 @@ class Fluent implements Sql
 
 	/**
 	 * @param string|Sql|Db\Query $query
-	 * @return self
+	 * @return static
 	 */
 	public function unionAll($query): Sql
 	{
@@ -488,7 +488,7 @@ class Fluent implements Sql
 
 	/**
 	 * @param string|Sql|Db\Query $query
-	 * @return self
+	 * @return static
 	 */
 	public function intersect($query): Sql
 	{
@@ -498,7 +498,7 @@ class Fluent implements Sql
 
 	/**
 	 * @param string|Sql|Db\Query $query
-	 * @return self
+	 * @return static
 	 */
 	public function except($query): Sql
 	{
@@ -509,7 +509,7 @@ class Fluent implements Sql
 	/**
 	 * @param string $type
 	 * @param string|Sql|Db\Query $query
-	 * @return self
+	 * @return static
 	 */
 	private function addCombine(string $type, $query): self
 	{
@@ -521,7 +521,7 @@ class Fluent implements Sql
 	/**
 	 * @param string|NULL $into
 	 * @param array|NULL $columns
-	 * @return self
+	 * @return static
 	 * @throws Exceptions\FluentException
 	 */
 	public function insert(?string $into = NULL, ?array $columns = []): Sql
@@ -542,7 +542,7 @@ class Fluent implements Sql
 
 	/**
 	 * @param array $data
-	 * @return self
+	 * @return static
 	 * @throws Exceptions\FluentException
 	 */
 	public function values(array $data): Sql
@@ -556,7 +556,7 @@ class Fluent implements Sql
 
 	/**
 	 * @param array $rows
-	 * @return self
+	 * @return static
 	 * @throws Exceptions\FluentException
 	 */
 	public function rows(array $rows): Sql
@@ -573,7 +573,7 @@ class Fluent implements Sql
 	/**
 	 * @param string|NULL $table
 	 * @param string|NULL $alias
-	 * @return self
+	 * @return static
 	 * @throws Exceptions\FluentException
 	 */
 	public function update(?string $table = NULL, ?string $alias = NULL): Sql
@@ -592,7 +592,7 @@ class Fluent implements Sql
 
 	/**
 	 * @param array $data
-	 * @return self
+	 * @return static
 	 * @throws Exceptions\FluentException
 	 */
 	public function set(array $data): Sql
@@ -607,7 +607,7 @@ class Fluent implements Sql
 	/**
 	 * @param string|NULL $from
 	 * @param string|NULL $alias
-	 * @return self
+	 * @return static
 	 * @throws Exceptions\FluentException
 	 */
 	public function delete(?string $from = NULL, ?string $alias = NULL): Sql
@@ -626,7 +626,7 @@ class Fluent implements Sql
 
 	/**
 	 * @param array $returning
-	 * @return self
+	 * @return static
 	 * @throws Exceptions\FluentException
 	 */
 	public function returning(array $returning): Sql
@@ -639,7 +639,7 @@ class Fluent implements Sql
 
 	/**
 	 * @param string|NULL $table
-	 * @return self
+	 * @return static
 	 * @throws Exceptions\FluentException
 	 */
 	public function truncate(?string $table = NULL): Sql
@@ -659,7 +659,7 @@ class Fluent implements Sql
 	/**
 	 * @param string $queryPrefix
 	 * @param mixed ...$params
-	 * @return self
+	 * @return static
 	 * @throws Exceptions\FluentException
 	 */
 	public function prefix(string $queryPrefix, ...$params): Sql
@@ -674,7 +674,7 @@ class Fluent implements Sql
 	/**
 	 * @param string $querySufix
 	 * @param mixed ...$params
-	 * @return self
+	 * @return static
 	 * @throws Exceptions\FluentException
 	 */
 	public function sufix(string $querySufix, ...$params): Sql
