@@ -24,7 +24,7 @@ abstract class DbLoader implements Db\DataTypeCache
 				break;
 			}
 			$types[(int) $data['oid']] = $data['typname'];
-		};
+		}
 
 		return $types;
 	}

@@ -380,7 +380,6 @@ class FluentConnectionTest extends Tester\TestCase
 
 		Tester\Assert::same('SELECT 1 EXCEPT (SELECT 2)', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
-
 	}
 
 

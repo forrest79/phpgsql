@@ -13,10 +13,10 @@ class Helper
 
 	public static function createStringPgArray(array $array): string
 	{
-		if (count($array) === 0) {
+		if (\count($array) === 0) {
 			return '{}';
 		}
-		return sprintf('{\'%s\'}', \implode('\',\'', \array_map(function($value) {
+		return \sprintf('{\'%s\'}', \implode('\',\'', \array_map(static function ($value): string {
 			return \str_replace('\'', '\'\'', $value);
 		}, $array)));
 	}
@@ -24,10 +24,10 @@ class Helper
 
 	public static function createPgArray(array $array): string
 	{
-		if (count($array) === 0) {
+		if (\count($array) === 0) {
 			return '{}';
 		}
-		return sprintf('{%s}', \implode(',', $array));
+		return \sprintf('{%s}', \implode(',', $array));
 	}
 
 
@@ -40,7 +40,7 @@ class Helper
 		static $keywords2 = 'ALL|DISTINCT|DISTINCTROW|IGNORE|AS|USING|ON|AND|OR|IN|IS|NOT|NULL|LIKE|RLIKE|REGEXP|TRUE|FALSE';
 
 		// insert new lines
-		$sql = " $sql ";
+		$sql = \sprintf(' %s ', $sql);
 		$sql = (string) \preg_replace(\sprintf('#(?<=[\\s,(])(%s)(?=[\\s,)])#i', $keywords1), "\n\$1", $sql); // intentionally (string), other can't be returned
 
 		// reduce spaces
@@ -56,7 +56,7 @@ class Helper
 		);
 		if (PHP_SAPI === 'cli') {
 			if (\substr((string) \getenv('TERM'), 0, 5) === 'xterm') {
-				$sql = (string) \preg_replace_callback($highlighter, function (array $m): string { // intentionally (string), other can't be returned
+				$sql = (string) \preg_replace_callback($highlighter, static function (array $m): string { // intentionally (string), other can't be returned
 					if (isset($m[1]) && $m[1]) { // comment
 						return \sprintf("\033[1;30m%s\033[0m", $m[1]);
 					} elseif (isset($m[2]) && $m[2]) { // error
@@ -72,7 +72,7 @@ class Helper
 			$sql = \trim($sql);
 		} else {
 			$sql = \htmlspecialchars($sql);
-			$sql = (string) \preg_replace_callback($highlighter, function (array $m): string { // intentionally (string), other can't be returned
+			$sql = (string) \preg_replace_callback($highlighter, static function (array $m): string { // intentionally (string), other can't be returned
 				if (isset($m[1]) && $m[1]) { // comment
 					return \sprintf('<em style="color:gray">%s</em>', $m[1]);
 				} elseif (isset($m[2]) && $m[2]) { // error
@@ -87,13 +87,13 @@ class Helper
 			$sql = \sprintf('<pre class="dump">%s</pre>', \trim($sql));
 		}
 
-		if (count($parameters) > 0) {
+		if (\count($parameters) > 0) {
 			$sql = (string) \preg_replace_callback( // intentionally (string), other can't be returned
 				'/\$(\d+)/',
-				function ($matches) use (& $parameters) {
+				static function ($matches) use (& $parameters): string {
 					$i = $matches[1] - 1;
 
-					if (array_key_exists($i, $parameters)) {
+					if (\array_key_exists($i, $parameters)) {
 						$value = $parameters[$i];
 						unset($parameters[$i]);
 						return ($value === NULL) ? 'NULL' : \sprintf('\'%s\'', \str_replace('\'', '\'\'', $value));
@@ -125,12 +125,12 @@ class Helper
 		$parsedParams = [];
 		$sql = \preg_replace_callback(
 			'/([\\\\]?)\?/',
-			function ($matches) use (& $params, & $parsedParams, & $origParamIndex, & $paramIndex) {
+			static function ($matches) use (& $params, & $parsedParams, & $origParamIndex, & $paramIndex): string {
 				if ($matches[1] === '\\') {
 					return '?';
 				}
 
-				if (!array_key_exists($origParamIndex, $params)) {
+				if (!\array_key_exists($origParamIndex, $params)) {
 					throw Exceptions\QueryException::noParam($origParamIndex);
 				}
 
@@ -140,7 +140,7 @@ class Helper
 
 				if (\is_array($param)) {
 					$keys = '';
-					\array_walk($param, function() use (& $keys, & $paramIndex) {
+					\array_walk($param, static function () use (& $keys, & $paramIndex): void {
 						$keys .= '$' . ++$paramIndex . ', ';
 					});
 					$parsedParams = \array_merge($parsedParams, $param);
@@ -151,7 +151,7 @@ class Helper
 					return (string) $param;
 				} else if ($param instanceof Query) {
 					[$subquerySql, $subqueryParams] = self::createSql($param->getSql(), $param->getParams(), $paramIndex);
-					$paramIndex += count($subqueryParams);
+					$paramIndex += \count($subqueryParams);
 					$parsedParams = \array_merge($parsedParams, $subqueryParams);
 					return $subquerySql;
 				}

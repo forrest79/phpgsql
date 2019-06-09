@@ -31,7 +31,7 @@ class PhpFile extends DbLoader
 				$lockFile = $this->cacheFile . '.lock';
 				$handle = \fopen($lockFile, 'c+');
 				if (($handle === FALSE) || !\flock($handle, LOCK_EX)) {
-					throw new \RuntimeException(sprintf('Unable to create or acquire exclusive lock on file \'%s\'.', $lockFile));
+					throw new \RuntimeException(\sprintf('Unable to create or acquire exclusive lock on file \'%s\'.', $lockFile));
 				}
 
 				// cache still not exists
@@ -41,10 +41,10 @@ class PhpFile extends DbLoader
 						$tempFile,
 						'<?php declare(strict_types=1);' . PHP_EOL . \sprintf('return [%s];', self::prepareCacheArray($this->loadFromDb($connection)))
 					);
-					rename($tempFile, $this->cacheFile); // atomic replace (in Linux)
+					\rename($tempFile, $this->cacheFile); // atomic replace (in Linux)
 
-					if (function_exists('opcache_invalidate')) {
-						opcache_invalidate($this->cacheFile, TRUE);
+					if (\function_exists('opcache_invalidate')) {
+						\opcache_invalidate($this->cacheFile, TRUE);
 					}
 				}
 
@@ -63,8 +63,8 @@ class PhpFile extends DbLoader
 	private static function prepareCacheArray(array $data): string
 	{
 		$cache = '';
-		\array_walk($data, function(string $typname, int $oid) use (&$cache): void {
-			$cache .= sprintf("%d=>'%s',", $oid, str_replace("'", "\\'", $typname));
+		\array_walk($data, static function (string $typname, int $oid) use (&$cache): void {
+			$cache .= \sprintf("%d=>'%s',", $oid, \str_replace("'", "\\'", $typname));
 		});
 		return $cache;
 	}
@@ -72,7 +72,7 @@ class PhpFile extends DbLoader
 
 	public function clean(): self
 	{
-		@unlink($this->cacheFile); // intentionally @ - file may not exists
+		@\unlink($this->cacheFile); // intentionally @ - file may not exists
 		$this->cache = NULL;
 		return $this;
 	}

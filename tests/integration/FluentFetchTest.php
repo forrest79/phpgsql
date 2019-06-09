@@ -19,7 +19,7 @@ class FluentFetchTest extends TestCase
 	protected function setUp(): void
 	{
 		parent::setUp();
-		$this->connection = new Fluent\Connection(sprintf('%s dbname=%s', $this->getConfig(), $this->getDbName()));
+		$this->connection = new Fluent\Connection(\sprintf('%s dbname=%s', $this->getConfig(), $this->getDbName()));
 		$this->connection->connect();
 	}
 
@@ -164,7 +164,7 @@ class FluentFetchTest extends TestCase
 			->from('test')
 			->orderBy(['id']);
 
-		Tester\Assert::same(3, count($query));
+		Tester\Assert::same(3, \count($query));
 
 		$expected = [
 			['id' => 1, 'name' => 'name3'],
@@ -223,7 +223,7 @@ class FluentFetchTest extends TestCase
 
 	public function testFreeWithoutResult(): void
 	{
-		Tester\Assert::exception(function() {
+		Tester\Assert::exception(function (): void {
 			$this->connection->select([1])->free();
 		}, Fluent\Exceptions\FluentException::class, NULL, Fluent\Exceptions\FluentException::YOU_MUST_EXECUTE_FLUENT_BEFORE_THAT);
 	}
@@ -235,7 +235,7 @@ class FluentFetchTest extends TestCase
 
 		$query->fetchSingle();
 
-		Tester\Assert::exception(function() use ($query) {
+		Tester\Assert::exception(static function () use ($query): void {
 			$query->from('table');
 		}, Fluent\Exceptions\FluentException::class, NULL, Fluent\Exceptions\FluentException::CANT_UPDATE_FLUENT_AFTER_EXECUTE);
 	}

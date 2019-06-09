@@ -24,7 +24,7 @@ class ResultException extends Exception
 
 	public static function fetchAssocParseFailed(string $assocDesc): self
 	{
-		return new self(sprintf('Failed parsing associative descriptor \'%s\'.', $assocDesc), self::FETCH_ASSOC_PARSE_FAILED);
+		return new self(\sprintf('Failed parsing associative descriptor \'%s\'.', $assocDesc), self::FETCH_ASSOC_PARSE_FAILED);
 	}
 
 

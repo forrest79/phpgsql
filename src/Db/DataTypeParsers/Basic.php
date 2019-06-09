@@ -23,13 +23,13 @@ class Basic implements Db\DataTypeParser
 				case '_int2':
 				case '_int4':
 				case '_int8':
-					return $this->parseArray($value, function($value) {
+					return $this->parseArray($value, static function ($value): int {
 						return (int) $value;
 					});
 				case '_float4':
 				case '_float8':
 				case '_numeric':
-					return $this->parseArray($value, function($value) {
+					return $this->parseArray($value, static function ($value): float {
 						return (float) $value;
 					});
 				case '_bool':
@@ -37,12 +37,12 @@ class Basic implements Db\DataTypeParser
 				case '_date':
 					return $this->parseArray($value, [$this, 'parseDate']);
 				case '_timestamp':
-					return $this->parseArray($value, function($value) {
-						return $this->parseTimestamp(trim($value, '"'));
+					return $this->parseArray($value, function ($value): \DateTimeImmutable {
+						return $this->parseTimestamp(\trim($value, '"'));
 					});
 				case '_timestamptz':
-					return $this->parseArray($value, function($value) {
-						return $this->parseTimestampTz(trim($value, '"'));
+					return $this->parseArray($value, function ($value): \DateTimeImmutable {
+						return $this->parseTimestampTz(\trim($value, '"'));
 					});
 				case '_time':
 				case '_timetz':
@@ -53,7 +53,7 @@ class Basic implements Db\DataTypeParser
 				case '_tsquery':
 				case '_tsvector':
 					throw Exceptions\DataTypeParserException::tryUseConvertToJson($type, $value, 'array_to_json');
-				default :
+				default:
 					throw Exceptions\DataTypeParserException::cantParseType($type, $value);
 			}
 		} else {
@@ -89,7 +89,7 @@ class Basic implements Db\DataTypeParser
 					return $value;
 				case 'hstore':
 					throw Exceptions\DataTypeParserException::tryUseConvertToJson($type, $value, 'hstore_to_json');
-				default :
+				default:
 					throw Exceptions\DataTypeParserException::cantParseType($type, $value);
 			}
 		}
@@ -98,7 +98,7 @@ class Basic implements Db\DataTypeParser
 
 	protected function parseArray(string $value, ?callable $typeFnc = NULL): array
 	{
-		$array = \explode(',', substr($value, 1, -1));
+		$array = \explode(',', \substr($value, 1, -1));
 
 		if ($typeFnc !== NULL) {
 			$array = \array_map($typeFnc, $array);
@@ -110,7 +110,7 @@ class Basic implements Db\DataTypeParser
 
 	protected function parseBool(string $value): bool
 	{
-		return $value === 't' ? TRUE : FALSE;
+		return $value === 't';
 	}
 
 

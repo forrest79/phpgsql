@@ -2,8 +2,6 @@
 
 namespace Forrest79\PhPgSql\Db\Exceptions;
 
-use Forrest79\PhPgSql;
-
 class RowException extends Exception
 {
 	public const NO_KEY = 1;

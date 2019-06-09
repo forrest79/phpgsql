@@ -19,7 +19,7 @@ class BasicTest extends TestCase
 	protected function setUp(): void
 	{
 		parent::setUp();
-		$this->connection = new Db\Connection(sprintf('%s dbname=%s', $this->getConfig(), $this->getDbName()));
+		$this->connection = new Db\Connection(\sprintf('%s dbname=%s', $this->getConfig(), $this->getDbName()));
 	}
 
 
@@ -38,7 +38,7 @@ class BasicTest extends TestCase
 	public function testConnectionNoConfig(): void
 	{
 		$this->connection->setConnectionConfig('');
-		Tester\Assert::exception(function() {
+		Tester\Assert::exception(function (): void {
 			$this->connection->connect();
 		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::NO_CONFIG);
 	}
@@ -61,8 +61,8 @@ class BasicTest extends TestCase
 
 	public function testFailedConnection(): void
 	{
-		$this->connection->setConnectionConfig(str_replace('user=', 'user=non-existing-user-', $this->getConfig()));
-		Tester\Assert::exception(function() {
+		$this->connection->setConnectionConfig(\str_replace('user=', 'user=non-existing-user-', $this->getConfig()));
+		Tester\Assert::exception(function (): void {
 			$this->connection->ping();
 		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::CONNECTION_FAILED);
 	}
@@ -74,15 +74,15 @@ class BasicTest extends TestCase
 		$queryDuration = 0;
 		$close = FALSE;
 
-		$this->connection->addOnConnect(function(Db\Connection $connection) use (&$connect): void {
+		$this->connection->addOnConnect(static function (Db\Connection $connection) use (&$connect): void {
 			$connect = $connection->query('SELECT TRUE')->fetchSingle();
 		});
 
-		$this->connection->addOnQuery(function(Db\Connection $connection, Db\Query $query, float $duration) use (&$queryDuration): void {
+		$this->connection->addOnQuery(static function (Db\Connection $connection, Db\Query $query, float $duration) use (&$queryDuration): void {
 			$queryDuration = $duration;
 		});
 
-		$this->connection->addOnClose(function() use (&$close): void {
+		$this->connection->addOnClose(static function () use (&$close): void {
 			$close = TRUE;
 		});
 
@@ -98,7 +98,7 @@ class BasicTest extends TestCase
 
 	public function testFailedQuery(): void
 	{
-		Tester\Assert::exception(function() {
+		Tester\Assert::exception(function (): void {
 			try {
 				$this->connection->query('SELECT bad_column');
 			} catch (Db\Exceptions\QueryException $e) {
@@ -160,7 +160,7 @@ class BasicTest extends TestCase
 	public function testQueryWithParams(): void
 	{
 		$query = $this->connection->createQuery('SELECT 1');
-		Tester\Assert::exception(function() use ($query) {
+		Tester\Assert::exception(function () use ($query): void {
 			$this->connection->query($query, 1);
 		}, Db\Exceptions\QueryException::class, NULL, Db\Exceptions\QueryException::CANT_PASS_PARAMS);
 	}

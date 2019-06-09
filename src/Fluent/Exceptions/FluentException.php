@@ -28,7 +28,7 @@ class FluentException extends Exception
 
 	public static function nonExistingParamToReset(string $param, array $params): self
 	{
-		return new self(\sprintf('Non existing parameter "%s" to reset. You can reset only these parameters "%s".', $param, implode(', ', $params)), self::NON_EXISTING_PARAM_TO_RESET);
+		return new self(\sprintf('Non existing parameter "%s" to reset. You can reset only these parameters "%s".', $param, \implode(', ', $params)), self::NON_EXISTING_PARAM_TO_RESET);
 	}
 
 
@@ -58,7 +58,7 @@ class FluentException extends Exception
 
 	public static function badParam(string $param, string $value, array $validValues): self
 	{
-		return new self(sprintf('Bad param \'%s\' with value \'%s\'. Valid values are \'%s\'.', $param, $value, implode('\', \'', $validValues)), self::YOU_MUST_EXECUTE_FLUENT_BEFORE_THAT);
+		return new self(\sprintf('Bad param \'%s\' with value \'%s\'. Valid values are \'%s\'.', $param, $value, \implode('\', \'', $validValues)), self::YOU_MUST_EXECUTE_FLUENT_BEFORE_THAT);
 	}
 
 }

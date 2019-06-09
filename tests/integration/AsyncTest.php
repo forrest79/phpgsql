@@ -19,7 +19,7 @@ class AsyncTest extends TestCase
 	protected function setUp(): void
 	{
 		parent::setUp();
-		$this->connection = new Db\Connection(sprintf('%s dbname=%s', $this->getConfig(), $this->getDbName()), FALSE, TRUE);
+		$this->connection = new Db\Connection(\sprintf('%s dbname=%s', $this->getConfig(), $this->getDbName()), FALSE, TRUE);
 		$this->connection->connect();
 	}
 
@@ -71,7 +71,7 @@ class AsyncTest extends TestCase
 	public function testQueryEvent(): void
 	{
 		$queryDuration = 0;
-		$this->connection->addOnQuery(function(Db\Connection $connection, Db\Query $query, ?float $duration) use (&$queryDuration) {
+		$this->connection->addOnQuery(static function (Db\Connection $connection, Db\Query $query, ?float $duration) use (&$queryDuration): void {
 			$queryDuration = $duration;
 		});
 		$this->connection->asyncQuery('SELECT 1');
@@ -81,7 +81,7 @@ class AsyncTest extends TestCase
 
 	public function testNoAsyncQuery(): void
 	{
-		Tester\Assert::exception(function(): void {
+		Tester\Assert::exception(function (): void {
 			$this->connection->waitForAsyncQuery();
 		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::ASYNC_NO_QUERY_WAS_SENT);
 	}
@@ -90,7 +90,7 @@ class AsyncTest extends TestCase
 	public function testNoResource(): void
 	{
 		$resource = $this->connection->asyncQuery('SELECT 1');
-		Tester\Assert::exception(function() use ($resource): void {
+		Tester\Assert::exception(static function () use ($resource): void {
 			$resource->getResource();
 		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::NO_RESOURCE);
 	}

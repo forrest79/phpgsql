@@ -19,7 +19,7 @@ class FetchTest extends TestCase
 	protected function setUp(): void
 	{
 		parent::setUp();
-		$this->connection = new Db\Connection(sprintf('%s dbname=%s', $this->getConfig(), $this->getDbName()));
+		$this->connection = new Db\Connection(\sprintf('%s dbname=%s', $this->getConfig(), $this->getDbName()));
 		$this->connection->connect();
 	}
 
@@ -217,7 +217,7 @@ class FetchTest extends TestCase
 
 		$rows = $result->fetchAssoc('');
 
-		Tester\Assert::same(2, count($rows));
+		Tester\Assert::same(2, \count($rows));
 
 		Tester\Assert::same(2, $rows[0]->type);
 		Tester\Assert::same('test2', $rows[0]->name);
@@ -264,7 +264,7 @@ class FetchTest extends TestCase
 
 		$result = $this->connection->query('SELECT id, name FROM test ORDER BY id');
 
-		Tester\Assert::exception(function() use ($result): void {
+		Tester\Assert::exception(static function () use ($result): void {
 			$result->fetchPairs('name');
 		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::FETCH_PAIRS_FAILED);
 
@@ -309,12 +309,12 @@ class FetchTest extends TestCase
 		$result = $this->connection->query('SELECT id, name FROM test ORDER BY id');
 
 		// Bad key
-		Tester\Assert::exception(function() use ($result): void {
+		Tester\Assert::exception(static function () use ($result): void {
 			$result->fetchPairs('type', 'name');
 		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::NO_COLUMN);
 
 		// Bad value
-		Tester\Assert::exception(function() use ($result): void {
+		Tester\Assert::exception(static function () use ($result): void {
 			$result->fetchPairs('id', 'type');
 		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::NO_COLUMN);
 
@@ -336,7 +336,7 @@ class FetchTest extends TestCase
 
 		$row = $this->fetch($result);
 
-		Tester\Assert::exception(function() use ($row): void {
+		Tester\Assert::exception(static function () use ($row): void {
 			$row->cnt;
 		}, Db\Exceptions\RowException::class, NULL, Db\Exceptions\RowException::NO_KEY);
 
@@ -356,7 +356,7 @@ class FetchTest extends TestCase
 
 		$result = $this->connection->query('SELECT id, name FROM test ORDER BY id');
 
-		Tester\Assert::same(3, count($result));
+		Tester\Assert::same(3, \count($result));
 
 		$expected = [
 			['id' => 1, 'name' => 'name3'],
@@ -435,7 +435,7 @@ class FetchTest extends TestCase
 
 		$result = $this->connection->query('SELECT id, name FROM test');
 
-		Tester\Assert::exception(function() use ($result): void {
+		Tester\Assert::exception(static function () use ($result): void {
 			$result->getColumnType('count');
 		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::NO_COLUMN);
 
@@ -515,11 +515,11 @@ class FetchTest extends TestCase
 
 		Tester\Assert::false(isset($row['another_type']));
 
-		Tester\Assert::exception(function() use ($row): void {
+		Tester\Assert::exception(static function () use ($row): void {
 			$row->type;
 		}, Db\Exceptions\RowException::class, NULL, Db\Exceptions\RowException::NO_KEY);
 
-		Tester\Assert::exception(function() use ($row): void {
+		Tester\Assert::exception(static function () use ($row): void {
 			$row['another_type'];
 		}, Db\Exceptions\RowException::class, NULL, Db\Exceptions\RowException::NO_KEY);
 
@@ -539,7 +539,7 @@ class FetchTest extends TestCase
 
 		Tester\Assert::false(isset($row->type));
 
-		Tester\Assert::exception(function() use ($row): void {
+		Tester\Assert::exception(static function () use ($row): void {
 			$row->type;
 		}, Db\Exceptions\RowException::class, NULL, Db\Exceptions\RowException::NO_KEY);
 
@@ -547,7 +547,7 @@ class FetchTest extends TestCase
 
 		Tester\Assert::false(isset($row['another_type']));
 
-		Tester\Assert::exception(function() use ($row): void {
+		Tester\Assert::exception(static function () use ($row): void {
 			$row['another_type'];
 		}, Db\Exceptions\RowException::class, NULL, Db\Exceptions\RowException::NO_KEY);
 

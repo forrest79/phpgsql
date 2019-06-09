@@ -418,7 +418,7 @@ class Connection extends Db\Connection implements Sql
 	/**
 	 * @param string $queryPrefix
 	 * @param mixed ...$params
-	 * @return self
+	 * @return FluentExecute
 	 * @throws Exceptions\FluentException
 	 */
 	public function prefix(string $queryPrefix, ...$params): Sql
@@ -430,7 +430,7 @@ class Connection extends Db\Connection implements Sql
 	/**
 	 * @param string $querySufix
 	 * @param mixed ...$params
-	 * @return self
+	 * @return FluentExecute
 	 * @throws Exceptions\FluentException
 	 */
 	public function sufix(string $querySufix, ...$params): Sql

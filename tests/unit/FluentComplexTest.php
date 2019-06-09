@@ -23,7 +23,7 @@ class FluentComplexTest extends Tester\TestCase
 
 	public function testNoParent(): void
 	{
-		Tester\Assert::exception(function() {
+		Tester\Assert::exception(static function () {
 			Fluent\Complex::createAnd()->parent();
 		}, Fluent\Exceptions\ComplexException::class, NULL, Fluent\Exceptions\ComplexException::NO_PARENT);
 	}
@@ -40,7 +40,7 @@ class FluentComplexTest extends Tester\TestCase
 
 	public function testNoFluent(): void
 	{
-		Tester\Assert::exception(function() {
+		Tester\Assert::exception(static function () {
 			Fluent\Complex::createAnd()->fluent();
 		}, Fluent\Exceptions\ComplexException::class, NULL, Fluent\Exceptions\ComplexException::NO_FLUENT);
 	}
@@ -48,7 +48,7 @@ class FluentComplexTest extends Tester\TestCase
 
 	public function testAddComplexWithParams(): void
 	{
-		Tester\Assert::exception(function() {
+		Tester\Assert::exception(static function () {
 			Fluent\Complex::createAnd()->add(Fluent\Complex::createAnd(), 'param1');
 		}, Fluent\Exceptions\ComplexException::class, NULL, Fluent\Exceptions\ComplexException::COMPLEX_CANT_HAVE_PARAMS);
 	}
@@ -66,7 +66,7 @@ class FluentComplexTest extends Tester\TestCase
 
 		$conditions = $complex->getConditions();
 
-		Tester\Assert::same(3, count($conditions));
+		Tester\Assert::same(3, \count($conditions));
 		Tester\Assert::same(['column = ?', 1], $conditions[0]);
 		Tester\Assert::same($complexAnd, $conditions[1]);
 		Tester\Assert::same($complexOr, $conditions[2]);
@@ -105,7 +105,7 @@ class FluentComplexTest extends Tester\TestCase
 
 		$conditions = $complex->getConditions();
 
-		Tester\Assert::same(1, count($conditions));
+		Tester\Assert::same(1, \count($conditions));
 		Tester\Assert::same([['column = ?', 1]], $conditions);
 	}
 

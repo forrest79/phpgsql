@@ -53,7 +53,7 @@ class ParseTest extends Tester\TestCase
 
 	public function testPrepareQueryWithBadParams(): void
 	{
-		Tester\Assert::exception(function(): void {
+		Tester\Assert::exception(function (): void {
 			$query = Db\Helper::prepareSql($this->connection->createQuery('SELECT * FROM table WHERE column = ? AND column2 = ?', 1));
 			$query->getSql();
 		}, Db\Exceptions\QueryException::class, NULL, Db\Exceptions\QueryException::NO_PARAM);

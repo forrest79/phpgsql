@@ -22,8 +22,8 @@ class DataTypeCacheTest extends TestCase
 	protected function setUp(): void
 	{
 		parent::setUp();
-		$this->connection = new Db\Connection(sprintf('%s dbname=%s', $this->getConfig(), $this->getDbName()));
-		$this->cacheFile = sprintf('%s/plpgsql-data-types-cache-%s.php', sys_get_temp_dir(), uniqid());
+		$this->connection = new Db\Connection(\sprintf('%s dbname=%s', $this->getConfig(), $this->getDbName()));
+		$this->cacheFile = \sprintf('%s/plpgsql-data-types-cache-%s.php', \sys_get_temp_dir(), \uniqid());
 	}
 
 
@@ -33,10 +33,10 @@ class DataTypeCacheTest extends TestCase
 
 		$this->connection->setDataTypeCache($dataTypeCache);
 
-		Tester\Assert::false(file_exists($this->cacheFile));
+		Tester\Assert::false(\file_exists($this->cacheFile));
 
 		$cacheDb = $dataTypeCache->load($this->connection); // load from DB
-		Tester\Assert::true(count($cacheDb) > 0); // there must be some types
+		Tester\Assert::true(\count($cacheDb) > 0); // there must be some types
 
 		Tester\Assert::true($this->connection->query('SELECT TRUE')->fetchSingle()); // test valid boolean parsing
 
@@ -63,8 +63,8 @@ class DataTypeCacheTest extends TestCase
 		$dataTypeCache = $this->createDataTypeCache();
 
 		$cacheDb = $dataTypeCache->load($this->connection); // load from DB
-		Tester\Assert::true(count($cacheDb) > 0); // there must be some types
-		Tester\Assert::false(array_search($type, $cacheDb, TRUE)); // but no $type
+		Tester\Assert::true(\count($cacheDb) > 0); // there must be some types
+		Tester\Assert::false(\array_search($type, $cacheDb, TRUE)); // but no $type
 
 		\file_put_contents(
 			$this->cacheFile,

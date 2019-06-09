@@ -19,7 +19,7 @@ class ParseDataTypeTest extends TestCase
 	protected function setUp(): void
 	{
 		parent::setUp();
-		$this->connection = new Db\Connection(sprintf('%s dbname=%s', $this->getConfig(), $this->getDbName()), FALSE, TRUE);
+		$this->connection = new Db\Connection(\sprintf('%s dbname=%s', $this->getConfig(), $this->getDbName()), FALSE, TRUE);
 		$this->connection->connect();
 	}
 
@@ -123,28 +123,28 @@ class ParseDataTypeTest extends TestCase
 
 		$row = $this->fetch();
 
-		Tester\Assert::true(is_int($row->id));
-		Tester\Assert::true(is_int($row->type_integer));
-		Tester\Assert::true(is_int($row->type_bigint));
-		Tester\Assert::true(is_int($row->type_smallint));
-		Tester\Assert::true(is_float($row->type_numeric));
-		Tester\Assert::true(is_float($row->type_decimal));
-		Tester\Assert::true(is_float($row->type_real));
-		Tester\Assert::true(is_float($row->type_double));
-		Tester\Assert::true(is_float($row->type_float));
-		Tester\Assert::true(is_bool($row->type_bool));
+		Tester\Assert::true(\is_int($row->id));
+		Tester\Assert::true(\is_int($row->type_integer));
+		Tester\Assert::true(\is_int($row->type_bigint));
+		Tester\Assert::true(\is_int($row->type_smallint));
+		Tester\Assert::true(\is_float($row->type_numeric));
+		Tester\Assert::true(\is_float($row->type_decimal));
+		Tester\Assert::true(\is_float($row->type_real));
+		Tester\Assert::true(\is_float($row->type_double));
+		Tester\Assert::true(\is_float($row->type_float));
+		Tester\Assert::true(\is_bool($row->type_bool));
 		Tester\Assert::true($row->type_date instanceof \DateTimeImmutable);
-		Tester\Assert::true(is_string($row->type_time));
-		Tester\Assert::true(is_string($row->type_timetz));
+		Tester\Assert::true(\is_string($row->type_time));
+		Tester\Assert::true(\is_string($row->type_timetz));
 		Tester\Assert::true($row->type_timestamp instanceof \DateTimeImmutable);
 		Tester\Assert::true($row->type_timestamptz instanceof \DateTimeImmutable);
-		Tester\Assert::true(is_string($row->type_varchar));
-		Tester\Assert::true(is_string($row->type_text));
-		Tester\Assert::true(is_string($row->type_char));
-		Tester\Assert::true(is_array($row->type_json));
-		Tester\Assert::true(is_array($row->type_jsonb));
-		Tester\Assert::true(is_string($row->type_tsquery));
-		Tester\Assert::true(is_string($row->type_tsvector));
+		Tester\Assert::true(\is_string($row->type_varchar));
+		Tester\Assert::true(\is_string($row->type_text));
+		Tester\Assert::true(\is_string($row->type_char));
+		Tester\Assert::true(\is_array($row->type_json));
+		Tester\Assert::true(\is_array($row->type_jsonb));
+		Tester\Assert::true(\is_string($row->type_tsquery));
+		Tester\Assert::true(\is_string($row->type_tsvector));
 	}
 
 
@@ -207,34 +207,34 @@ class ParseDataTypeTest extends TestCase
 
 		$row = $this->fetch();
 
-		Tester\Assert::true(is_int($row->id));
-		Tester\Assert::true(is_array($row->type_integer));
-		Tester\Assert::true(is_int($row->type_integer[0]));
-		Tester\Assert::true(is_array($row->type_bigint));
-		Tester\Assert::true(is_int($row->type_bigint[0]));
-		Tester\Assert::true(is_array($row->type_smallint));
-		Tester\Assert::true(is_int($row->type_smallint[0]));
-		Tester\Assert::true(is_array($row->type_numeric));
-		Tester\Assert::true(is_float($row->type_numeric[0]));
-		Tester\Assert::true(is_array($row->type_decimal));
-		Tester\Assert::true(is_float($row->type_decimal[0]));
-		Tester\Assert::true(is_array($row->type_real));
-		Tester\Assert::true(is_float($row->type_real[0]));
-		Tester\Assert::true(is_array($row->type_double));
-		Tester\Assert::true(is_float($row->type_double[0]));
-		Tester\Assert::true(is_array($row->type_float));
-		Tester\Assert::true(is_float($row->type_float[0]));
-		Tester\Assert::true(is_array($row->type_bool));
-		Tester\Assert::true(is_bool($row->type_bool[0]));
-		Tester\Assert::true(is_array($row->type_date));
+		Tester\Assert::true(\is_int($row->id));
+		Tester\Assert::true(\is_array($row->type_integer));
+		Tester\Assert::true(\is_int($row->type_integer[0]));
+		Tester\Assert::true(\is_array($row->type_bigint));
+		Tester\Assert::true(\is_int($row->type_bigint[0]));
+		Tester\Assert::true(\is_array($row->type_smallint));
+		Tester\Assert::true(\is_int($row->type_smallint[0]));
+		Tester\Assert::true(\is_array($row->type_numeric));
+		Tester\Assert::true(\is_float($row->type_numeric[0]));
+		Tester\Assert::true(\is_array($row->type_decimal));
+		Tester\Assert::true(\is_float($row->type_decimal[0]));
+		Tester\Assert::true(\is_array($row->type_real));
+		Tester\Assert::true(\is_float($row->type_real[0]));
+		Tester\Assert::true(\is_array($row->type_double));
+		Tester\Assert::true(\is_float($row->type_double[0]));
+		Tester\Assert::true(\is_array($row->type_float));
+		Tester\Assert::true(\is_float($row->type_float[0]));
+		Tester\Assert::true(\is_array($row->type_bool));
+		Tester\Assert::true(\is_bool($row->type_bool[0]));
+		Tester\Assert::true(\is_array($row->type_date));
 		Tester\Assert::true($row->type_date[0] instanceof \DateTimeImmutable);
-		Tester\Assert::true(is_array($row->type_time));
-		Tester\Assert::true(is_string($row->type_time[0]));
-		Tester\Assert::true(is_array($row->type_timetz));
-		Tester\Assert::true(is_string($row->type_timetz[0]));
-		Tester\Assert::true(is_array($row->type_timestamp));
+		Tester\Assert::true(\is_array($row->type_time));
+		Tester\Assert::true(\is_string($row->type_time[0]));
+		Tester\Assert::true(\is_array($row->type_timetz));
+		Tester\Assert::true(\is_string($row->type_timetz[0]));
+		Tester\Assert::true(\is_array($row->type_timestamp));
 		Tester\Assert::true($row->type_timestamp[0] instanceof \DateTimeImmutable);
-		Tester\Assert::true(is_array($row->type_timestamptz));
+		Tester\Assert::true(\is_array($row->type_timestamptz));
 		Tester\Assert::true($row->type_timestamptz[0] instanceof \DateTimeImmutable);
 	}
 
@@ -253,7 +253,7 @@ class ParseDataTypeTest extends TestCase
 
 		$row = $this->fetch();
 
-		Tester\Assert::exception(function() use ($row): void {
+		Tester\Assert::exception(static function () use ($row): void {
 			$row->type_hstore;
 		}, Db\Exceptions\DataTypeParserException::class, NULL, Db\Exceptions\DataTypeParserException::TRY_USE_CONVERT_TO_JSON);
 	}
@@ -271,7 +271,7 @@ class ParseDataTypeTest extends TestCase
 
 		$row = $this->fetch();
 
-		Tester\Assert::exception(function() use ($row): void {
+		Tester\Assert::exception(static function () use ($row): void {
 			$row->type_point;
 		}, Db\Exceptions\DataTypeParserException::class, NULL, Db\Exceptions\DataTypeParserException::CANT_PARSE_TYPE);
 	}
@@ -289,7 +289,7 @@ class ParseDataTypeTest extends TestCase
 
 		$row = $this->fetch();
 
-		Tester\Assert::exception(function() use ($row): void {
+		Tester\Assert::exception(static function () use ($row): void {
 			$row->type_tsvector;
 		}, Db\Exceptions\DataTypeParserException::class, NULL, Db\Exceptions\DataTypeParserException::TRY_USE_CONVERT_TO_JSON);
 	}
@@ -307,7 +307,7 @@ class ParseDataTypeTest extends TestCase
 
 		$row = $this->fetch();
 
-		Tester\Assert::exception(function() use ($row): void {
+		Tester\Assert::exception(static function () use ($row): void {
 			$row->type_money;
 		}, Db\Exceptions\DataTypeParserException::class, NULL, Db\Exceptions\DataTypeParserException::CANT_PARSE_TYPE);
 	}
@@ -323,7 +323,7 @@ class ParseDataTypeTest extends TestCase
 			public function parse(string $type, ?string $value)
 			{
 				if (($type === 'point') && ($value !== NULL)) {
-					return array_map('intval', explode(',', substr($value, 1, -1), 2));
+					return \array_map('intval', \explode(',', \substr($value, 1, -1), 2));
 				}
 				return $value;
 			}

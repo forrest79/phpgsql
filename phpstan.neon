@@ -8,17 +8,30 @@ parameters:
 	autoload_files:
 		- %rootDir%/../../../tests/bootstrap.php
 	ignoreErrors:
+		# === This is OK ===
+
+		-
+			message: '#Parameter \#1 \$table of method Forrest79\\PhPgSql\\Fluent\\Fluent::table\(\) expects Forrest79\\PhPgSql\\Db\\Query\|Forrest79\\PhPgSql\\Fluent\\Sql\|string, array\<int, string\> given\.#'
+			path: %rootDir%/../../../tests/unit/FluentTest.php
+
 		# === We know, that this can't happen ===
 
-		# src/Db/Connection.php
-		- '~^Parameter #1 \$connection of function pg_connect_poll expects resource, resource\|null given\.$~'
-		- '~^Method Forrest79\\PhPgSql\\Db\\Connection::getConnectedResource\(\) should return resource but returns resource\|null\.$~'
+		-
+			message: '#Parameter \#1 \$connection of function pg_connect_poll expects resource, resource\|null given\.#'
+			path: %rootDir%/../../../src/Db/Connection.php
 
-		# src/Db/ResultIterator.php
-		- '~^Method Forrest79\\PhPgSql\\Db\\ResultIterator::current\(\) should return Forrest79\\PhPgSql\\Db\\Row but returns Forrest79\\PhPgSql\\Db\\Row\|null\.$~'
+		-
+			message: '#Method Forrest79\\PhPgSql\\Db\\Connection::getConnectedResource\(\) should return resource but returns resource\|null\.#'
+			path: %rootDir%/../../../src/Db/Connection.php
 
-		# src/Fluent/Fluent.php
-		- '~^Parameter #1 \$alias of static method Forrest79\\PhPgSql\\Fluent\\Exceptions\\FluentException::tableAliasAlreadyExists\(\) expects string, Forrest79\\PhPgSql\\Db\\Query\|Forrest79\\PhPgSql\\Fluent\\Sql\|string given\.$~'
+		-
+			message: '#Method Forrest79\\PhPgSql\\Db\\ResultIterator::current\(\) should return Forrest79\\PhPgSql\\Db\\Row but returns Forrest79\\PhPgSql\\Db\\Row\|null\.#'
+			path: %rootDir%/../../../src/Db/ResultIterator.php
 
-		# src/Fluent/QueryBuilder.php
-		- '~^Parameter #2 \$expected of static method Forrest79\\PhPgSql\\Fluent\\Exceptions\\QueryBuilderException::badParamsCount\(\) expects int, int\|false given\.$~'
+		-
+			message: '#Parameter \#1 \$alias of static method Forrest79\\PhPgSql\\Fluent\\Exceptions\\FluentException::tableAliasAlreadyExists\(\) expects string, Forrest79\\PhPgSql\\Db\\Query\|Forrest79\\PhPgSql\\Fluent\\Sql\|string given\.#'
+			path: %rootDir%/../../../src/Fluent/Fluent.php
+
+		-
+			message: '#Parameter \#2 \$expected of static method Forrest79\\PhPgSql\\Fluent\\Exceptions\\QueryBuilderException::badParamsCount\(\) expects int, int\|false given\.#'
+			path: %rootDir%/../../../src/Fluent/QueryBuilder.php

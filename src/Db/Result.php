@@ -2,8 +2,6 @@
 
 namespace Forrest79\PhPgSql\Db;
 
-use Forrest79\PhPgSql\Db\Exceptions;
-
 class Result implements \Countable, \IteratorAggregate
 {
 	/** @var resource|NULL */
@@ -107,6 +105,7 @@ class Result implements \Countable, \IteratorAggregate
 
 	/**
 	 * Like fetch(), but returns only first field.
+	 *
 	 * @return mixed value on success, NULL if no next record
 	 */
 	public function fetchSingle()
@@ -122,11 +121,12 @@ class Result implements \Countable, \IteratorAggregate
 
 	/**
 	 * Fetches all records from table.
+	 *
 	 * @return Row[]
 	 */
 	public function fetchAll(?int $offset = NULL, ?int $limit = NULL): array
 	{
-		$limit = $limit === NULL ? -1 : $limit;
+		$limit = $limit ?? -1;
 		$this->seek($offset ?: 0);
 		$row = $this->fetch();
 		if ($row === NULL) {
@@ -140,7 +140,9 @@ class Result implements \Countable, \IteratorAggregate
 			}
 			$limit--;
 			$data[] = $row;
-		} while ($row = $this->fetch());
+
+			$row = $this->fetch();
+		} while ($row !== NULL);
 
 		return $data;
 	}
@@ -153,6 +155,7 @@ class Result implements \Countable, \IteratorAggregate
 	 *   builds a tree:          $tree[$val1][$index][$val2] = {record}
 	 * - associative descriptor: col1|col2=col3
 	 *   builds a tree:          $tree[$val1][$val2] = val2
+	 *
 	 * @throws Exceptions\ResultException
 	 * @credit dibi (https://dibiphp.com/) | David Grudl
 	 */
@@ -178,7 +181,7 @@ class Result implements \Countable, \IteratorAggregate
 			}
 		}
 
-		if (count($assoc) === 0) {
+		if (\count($assoc) === 0) {
 			$assoc[] = '[]';
 		}
 
@@ -192,6 +195,7 @@ class Result implements \Countable, \IteratorAggregate
 					$x = & $x[];
 				} else if ($as === '=') { // "value" node
 					$x = $row->{$assoc[$i + 1]};
+					$row = $this->fetch();
 					continue 2;
 				} else if ($as !== '|') { // associative-array node
 					$x = & $x[$row->$as];
@@ -201,7 +205,9 @@ class Result implements \Countable, \IteratorAggregate
 			if ($x === NULL) { // build leaf
 				$x = $row;
 			}
-		} while ($row = $this->fetch());
+
+			$row = $this->fetch();
+		} while ($row !== NULL);
 
 		unset($x);
 		return $data;
@@ -210,6 +216,7 @@ class Result implements \Countable, \IteratorAggregate
 
 	/**
 	 * Fetches all records from table like $key => $value pairs.
+	 *
 	 * @throws Exceptions\ResultException
 	 * @credit dibi (https://dibiphp.com/) | David Grudl
 	 */
@@ -231,10 +238,11 @@ class Result implements \Countable, \IteratorAggregate
 			// autodetect
 			$tmp = \array_keys($row->toArray());
 			$key = $tmp[0];
-			if (count($row) < 2) { // indexed-array
+			if (\count($row) < 2) { // indexed-array
 				do {
 					$data[] = $row[$key];
-				} while ($row = $this->fetch());
+					$row = $this->fetch();
+				} while ($row !== NULL);
 				return $data;
 			}
 
@@ -248,7 +256,8 @@ class Result implements \Countable, \IteratorAggregate
 			if ($key === NULL) { // indexed-array
 				do {
 					$data[] = $row[$value];
-				} while ($row = $this->fetch());
+					$row = $this->fetch();
+				} while ($row !== NULL);
 				return $data;
 			}
 
@@ -259,7 +268,8 @@ class Result implements \Countable, \IteratorAggregate
 
 		do {
 			$data[(string) $row[$key]] = $row[$value];
-		} while ($row = $this->fetch());
+			$row = $this->fetch();
+		} while ($row !== NULL);
 
 		return $data;
 	}
@@ -304,7 +314,7 @@ class Result implements \Countable, \IteratorAggregate
 					? \pg_field_type($queryResource, $i)
 					: $this->dataTypesCache[\pg_field_type_oid($queryResource, $i)];
 				$this->columnsDataTypes[$name] = $type;
-			};
+			}
 		}
 		return $this->columnsDataTypes;
 	}

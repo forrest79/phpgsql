@@ -2,8 +2,6 @@
 
 namespace Forrest79\PhPgSql\Db;
 
-use Forrest79\PhPgSql\Db\Exceptions;
-
 class Row implements \ArrayAccess, \IteratorAggregate, \Countable
 {
 	/** @var array */
@@ -65,7 +63,7 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable
 
 	public function toArray(): array
 	{
-		foreach ($this->rawValues as $key => $value) {
+		foreach (\array_keys($this->rawValues) as $key) {
 			$this->parseValue($key);
 		}
 		return $this->values;
@@ -91,7 +89,7 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable
 	 */
 	public function offsetGet($key)
 	{
-		if (!is_string($key)) {
+		if (!\is_string($key)) {
 			throw Exceptions\RowException::notStringKey();
 		}
 		return $this->getValue($key);
@@ -105,7 +103,7 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable
 	 */
 	public function offsetSet($key, $value): void
 	{
-		if (!is_string($key)) {
+		if (!\is_string($key)) {
 			throw Exceptions\RowException::notStringKey();
 		}
 		$this->setValue($key, $value);
@@ -118,7 +116,7 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable
 	 */
 	public function offsetExists($key): bool
 	{
-		if (!is_string($key)) {
+		if (!\is_string($key)) {
 			throw Exceptions\RowException::notStringKey();
 		}
 		return $this->existsKey($key);
@@ -131,7 +129,7 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable
 	 */
 	public function offsetUnset($key): void
 	{
-		if (!is_string($key)) {
+		if (!\is_string($key)) {
 			throw Exceptions\RowException::notStringKey();
 		}
 		$this->removeValue($key);

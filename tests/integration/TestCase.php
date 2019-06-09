@@ -22,7 +22,7 @@ abstract class TestCase extends Tester\TestCase
 	protected function setUp(): void
 	{
 		parent::setUp();
-		$this->dbname = sprintf('phpgsql_%s_%s', getmypid(), uniqid());
+		$this->dbname = \sprintf('phpgsql_%s_%s', \getmypid(), \uniqid());
 		$this->config = PHPGSQL_CONNECTION_CONFIG;
 		$this->adminConnection = new Db\Connection($this->config);
 

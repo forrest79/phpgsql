@@ -40,13 +40,13 @@ class Connection
 	/** @var AsyncResult|NULL */
 	private $asyncResult;
 
-	/** @var callable[] function(Connection $connection) {} */
+	/** @var callable[] function (Connection $connection) {} */
 	private $onConnect = [];
 
-	/** @var callable[] function(Connection $connection) {} */
+	/** @var callable[] function (Connection $connection) {} */
 	private $onClose = [];
 
-	/** @var callable[] function(Connection $connection, Query $query, float $time) {} */
+	/** @var callable[] function (Connection $connection, Query $query, float $time) {} */
 	private $onQuery = [];
 
 
@@ -55,7 +55,7 @@ class Connection
 	 */
 	public function __construct(string $connectionConfig = '', bool $connectForceNew = FALSE, bool $connectAsync = FALSE)
 	{
-		if (!extension_loaded('pgsql')) {
+		if (!\extension_loaded('pgsql')) {
 			throw Exceptions\ConnectionException::noExtensionException();
 		}
 
@@ -76,10 +76,10 @@ class Connection
 
 		$connectType = 0;
 		if ($this->connectForceNew === TRUE) {
-			$connectType = $connectType | PGSQL_CONNECT_FORCE_NEW;
+			$connectType |= PGSQL_CONNECT_FORCE_NEW;
 		}
 		if ($this->connectAsync === TRUE) {
-			$connectType = $connectType | PGSQL_CONNECT_ASYNC;
+			$connectType |= PGSQL_CONNECT_ASYNC;
 		}
 
 		$resource = @\pg_connect($this->connectionConfig, $connectType); // intentionally @
@@ -99,7 +99,7 @@ class Connection
 			$this->asyncStream = $stream;
 		} else {
 			$this->connected = TRUE;
-			if (count($this->onConnect) > 0) {
+			if (\count($this->onConnect) > 0) {
 				$this->onConnect();
 			}
 		}
@@ -257,7 +257,7 @@ class Connection
 	{
 		$query = Helper::prepareSql($this->normalizeQuery($query, $params));
 
-		$start = count($this->onQuery) > 0 ? microtime(TRUE) : NULL;
+		$start = \count($this->onQuery) > 0 ? \microtime(TRUE) : NULL;
 
 		$resource = @\pg_query_params($this->getConnectedResource(), $query->getSql(), $query->getParams()); // intentionally @
 		if ($resource === FALSE) {
@@ -265,7 +265,7 @@ class Connection
 		}
 
 		if ($start !== NULL) {
-			$this->onQuery($query, microtime(TRUE) - $start);
+			$this->onQuery($query, \microtime(TRUE) - $start);
 		}
 
 		return new Result($resource, $this->getDefaultRowFactory(), $this->getDataTypeParser(), $this->getDataTypesCache());
@@ -316,7 +316,7 @@ class Connection
 			throw Exceptions\QueryException::asyncQueryFailed($query, $this->getLastError());
 		}
 
-		if (count($this->onQuery) > 0) {
+		if (\count($this->onQuery) > 0) {
 			$this->onQuery($query);
 		}
 
@@ -384,7 +384,7 @@ class Connection
 	 */
 	public function isInTransaction(): bool
 	{
-		return !in_array(\pg_transaction_status($this->getConnectedResource()), [PGSQL_TRANSACTION_UNKNOWN, PGSQL_TRANSACTION_IDLE], TRUE);
+		return !\in_array(\pg_transaction_status($this->getConnectedResource()), [PGSQL_TRANSACTION_UNKNOWN, PGSQL_TRANSACTION_IDLE], TRUE);
 	}
 
 
@@ -407,7 +407,7 @@ class Connection
 	private function normalizeQuery($query, array $params): Query
 	{
 		if ($query instanceof Query) {
-			if (count($params) > 0) {
+			if (\count($params) > 0) {
 				throw Exceptions\QueryException::cantPassParams();
 			}
 		} else {
@@ -463,7 +463,7 @@ class Connection
 
 	private function onConnect(): void
 	{
-		\array_walk($this->onConnect, function(callable $event) {
+		\array_walk($this->onConnect, function (callable $event): void {
 			$event($this);
 		});
 	}
@@ -471,7 +471,7 @@ class Connection
 
 	private function onClose(): void
 	{
-		\array_walk($this->onClose, function(callable $event) {
+		\array_walk($this->onClose, function (callable $event): void {
 			$event($this);
 		});
 	}
@@ -479,7 +479,7 @@ class Connection
 
 	private function onQuery(Query $query, ?float $time = NULL): void
 	{
-		\array_walk($this->onQuery, function(callable $event) use ($query, $time){
+		\array_walk($this->onQuery, function (callable $event) use ($query, $time): void {
 			$event($this, $query, $time);
 		});
 	}
@@ -491,7 +491,8 @@ class Connection
 	 */
 	private static function isReadable($stream): bool
 	{
-		$read = [$stream]; $write = $ex = [];
+		$read = [$stream];
+		$write = $ex = [];
 		return (bool) \stream_select($read, $write, $ex, $usec = 1, 0);
 	}
 
@@ -502,7 +503,8 @@ class Connection
 	 */
 	private static function isWritable($stream): bool
 	{
-		$write = [$stream]; $read = $ex = [];
+		$write = [$stream];
+		$read = $ex = [];
 		return (bool) \stream_select($read, $write, $ex, $usec = 1, 0);
 	}
 

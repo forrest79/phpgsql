@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Forrest79\PhPgSql\Fluent;
 
@@ -79,7 +79,7 @@ class QueryBuilder
 	{
 		$mainTableAlias = $this->getMainTableAlias();
 
-		$insert = sprintf('INSERT %s', $this->processTable(
+		$insert = \sprintf('INSERT %s', $this->processTable(
 			'INTO',
 			$this->params[Fluent::PARAM_TABLES][$mainTableAlias][self::TABLE_NAME],
 			$mainTableAlias,
@@ -90,7 +90,7 @@ class QueryBuilder
 		$rows = [];
 		if ($this->params[Fluent::PARAM_DATA] !== []) {
 			$values = [];
-			\array_walk($this->params[Fluent::PARAM_DATA], function($value, $column) use (&$columns, &$values, &$params): void {
+			\array_walk($this->params[Fluent::PARAM_DATA], static function ($value, $column) use (&$columns, &$values, &$params): void {
 				$columns[] = $column;
 				$values[] = '?';
 				$params[] = $value;
@@ -98,10 +98,10 @@ class QueryBuilder
 			$rows[] = \implode(', ', $values);
 		} else if ($this->params[Fluent::PARAM_ROWS] !== []) {
 			$columns = $this->params[Fluent::PARAM_INSERT_COLUMNS];
-			\array_walk($this->params[Fluent::PARAM_ROWS], function($row) use (&$columns, &$rows, &$params): void {
+			\array_walk($this->params[Fluent::PARAM_ROWS], static function ($row) use (&$columns, &$rows, &$params): void {
 				$values = [];
 				$fillColumns = $columns === [];
-				\array_walk($row, function($value, $column) use ($fillColumns, &$columns, &$values, &$params): void {
+				\array_walk($row, static function ($value, $column) use ($fillColumns, &$columns, &$values, &$params): void {
 					if ($fillColumns) {
 						$columns[] = $column;
 					}
@@ -127,10 +127,10 @@ class QueryBuilder
 				$this->getHaving($params) .
 				$this->combine($params);
 		} else {
-			$data = \sprintf(' VALUES(%s)', implode('), (', $rows));
+			$data = \sprintf(' VALUES(%s)', \implode('), (', $rows));
 		}
 
-		return $insert . \sprintf('(%s)', implode(', ', $columns)) . $data . $this->getReturning($params);
+		return $insert . \sprintf('(%s)', \implode(', ', $columns)) . $data . $this->getReturning($params);
 	}
 
 
@@ -146,7 +146,7 @@ class QueryBuilder
 		$mainTableAlias = $this->getMainTableAlias();
 
 		$set = [];
-		\array_walk($this->params[Fluent::PARAM_DATA], function($value, $column) use (&$set, &$params): void {
+		\array_walk($this->params[Fluent::PARAM_DATA], static function ($value, $column) use (&$set, &$params): void {
 			$set[] = \sprintf('%s = ?', $column);
 			$params[] = $value;
 		});
@@ -215,9 +215,9 @@ class QueryBuilder
 				$value = '(?)';
 			}
 			if ($columnNames !== NULL) {
-				$columnNames[] = is_int($key) ? $value : $key;
+				$columnNames[] = \is_int($key) ? $value : $key;
 			}
-			$columns[] = \sprintf('%s%s', $value, is_int($key) ? '' : sprintf(' AS %s', $key));
+			$columns[] = \sprintf('%s%s', $value, \is_int($key) ? '' : \sprintf(' AS %s', $key));
 		}
 
 		return \implode(', ', $columns);
@@ -252,7 +252,7 @@ class QueryBuilder
 			);
 		}
 
-		return count($from) > 0 ? (' ' . \implode(' ', $from)) : '';
+		return \count($from) > 0 ? (' ' . \implode(' ', $from)) : '';
 	}
 
 
@@ -280,14 +280,15 @@ class QueryBuilder
 					throw Exceptions\QueryBuilderException::noJoinConditions($tableAlias);
 				}
 
-				$joins[] = sprintf('%s ON %s',
+				$joins[] = \sprintf(
+					'%s ON %s',
 					$table,
 					$this->processComplex(Complex::createAnd($this->params[Fluent::PARAM_JOIN_CONDITIONS][$tableAlias]), $params)
 				);
 			}
 		}
 
-		return count($joins) > 0 ? (' ' . \implode(' ', $joins)) : '';
+		return \count($joins) > 0 ? (' ' . \implode(' ', $joins)) : '';
 	}
 
 
@@ -350,7 +351,7 @@ class QueryBuilder
 			$columns[] = $value;
 		}
 
-		return \sprintf(' ORDER BY %s', implode(', ', $columns));
+		return \sprintf(' ORDER BY %s', \implode(', ', $columns));
 	}
 
 
@@ -394,11 +395,10 @@ class QueryBuilder
 		}
 
 		$processedItems = [];
-		foreach ($items as $itemParams)
-		{
+		foreach ($items as $itemParams) {
 			$item = \array_shift($itemParams);
 
-			\array_walk($itemParams, function ($param) use (&$params): void {
+			\array_walk($itemParams, static function ($param) use (&$params): void {
 				if ($param instanceof Fluent) {
 					$param = $param->getQuery();
 				}
@@ -465,9 +465,9 @@ class QueryBuilder
 				$params[] = $value->getQuery();
 				$value = '(?)';
 			}
-			$columns[] = \sprintf('%s%s', $value, is_int($key) ? '' : sprintf(' AS %s', $key));
+			$columns[] = \sprintf('%s%s', $value, \is_int($key) ? '' : \sprintf(' AS %s', $key));
 		}
-		return \sprintf(' RETURNING %s', implode(', ', $columns));
+		return \sprintf(' RETURNING %s', \implode(', ', $columns));
 	}
 
 
@@ -509,19 +509,18 @@ class QueryBuilder
 	private function processComplex(Complex $complex, array &$params): string
 	{
 		$conditions = $complex->getConditions();
-		$withoutParentheses = count($conditions) === 1;
+		$withoutParentheses = \count($conditions) === 1;
 		$processedConditions = [];
-		foreach ($conditions as $conditionParams)
-		{
+		foreach ($conditions as $conditionParams) {
 			if ($conditionParams instanceof Complex) {
 				$condition = \sprintf($withoutParentheses === TRUE ? '%s' : '(%s)', $this->processComplex($conditionParams, $params));
 			} else {
 				$condition = \array_shift($conditionParams);
 				$cnt = \preg_match_all('/(?<!\\\\)\?/', $condition);
-				$cntParams = count($conditionParams);
+				$cntParams = \count($conditionParams);
 				if (($cnt === 0) && ($cntParams === 1)) {
 					$param = \reset($conditionParams);
-					if (is_array($param) || ($param instanceof Db\Query) || ($param instanceof Fluent)) {
+					if (\is_array($param) || ($param instanceof Db\Query) || ($param instanceof Fluent)) {
 						$condition = \sprintf('%s IN (?)', $condition);
 					} else {
 						$condition = \sprintf('%s = ?', $condition);
@@ -534,10 +533,10 @@ class QueryBuilder
 				}
 
 				if ($withoutParentheses === FALSE) {
-					$condition = sprintf('(%s)', $condition);
+					$condition = \sprintf('(%s)', $condition);
 				}
 
-				\array_walk($conditionParams, function($param) use (&$params): void {
+				\array_walk($conditionParams, static function ($param) use (&$params): void {
 					if ($param instanceof Fluent) {
 						$param = $param->getQuery();
 					}
@@ -549,7 +548,7 @@ class QueryBuilder
 			$processedConditions[] = $condition;
 		}
 
-		return \implode(sprintf(' %s ', $complex->getType()), $processedConditions);
+		return \implode(\sprintf(' %s ', $complex->getType()), $processedConditions);
 	}
 
 }

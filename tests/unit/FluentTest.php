@@ -178,7 +178,7 @@ class FluentTest extends Tester\TestCase
 
 	public function testJoinNoOn(): void
 	{
-		Tester\Assert::exception(function() {
+		Tester\Assert::exception(function (): void {
 			$this->fluent()
 				->select(['x.column'])
 				->from('table', 't')
@@ -233,7 +233,7 @@ class FluentTest extends Tester\TestCase
 
 	public function testSelectNoColumns(): void
 	{
-		Tester\Assert::exception(function() {
+		Tester\Assert::exception(function (): void {
 			$this->fluent()
 				->from('table')
 				->prepareSql();
@@ -271,7 +271,7 @@ class FluentTest extends Tester\TestCase
 	{
 		$query = $this->fluent()
 			->values([
-				'column' => 1
+				'column' => 1,
 			])
 			->insert('table')
 			->returning(['column'])
@@ -329,7 +329,7 @@ class FluentTest extends Tester\TestCase
 
 	public function testInsertNoData(): void
 	{
-		Tester\Assert::exception(function() {
+		Tester\Assert::exception(function (): void {
 			$this->fluent()
 				->insert('table')
 				->prepareSql();
@@ -343,7 +343,7 @@ class FluentTest extends Tester\TestCase
 			->update('table', 't')
 			->set([
 				'column' => 1,
-				'column_from' => Db\Literal::create('t2.id')
+				'column_from' => Db\Literal::create('t2.id'),
 			])
 			->from('table2', 't2')
 			->where('t2.column', 100)
@@ -357,7 +357,7 @@ class FluentTest extends Tester\TestCase
 
 	public function testUpdateNoData(): void
 	{
-		Tester\Assert::exception(function() {
+		Tester\Assert::exception(function (): void {
 			$this->fluent()
 				->update('table')
 				->prepareSql();
@@ -367,7 +367,7 @@ class FluentTest extends Tester\TestCase
 
 	public function testNoMainTable(): void
 	{
-		Tester\Assert::exception(function() {
+		Tester\Assert::exception(function (): void {
 			$this->fluent()
 				->update()
 				->set(['column' => 1])
@@ -499,7 +499,7 @@ class FluentTest extends Tester\TestCase
 
 	public function testComplexBadParams(): void
 	{
-		Tester\Assert::exception(function() {
+		Tester\Assert::exception(function (): void {
 			$this->fluent()
 				->whereOr()
 					->add('columns = ? AND column2 = ?', 1, 2, 3)
@@ -514,7 +514,7 @@ class FluentTest extends Tester\TestCase
 	{
 		$fluent = $this->fluent()->table('table');
 
-		Tester\Assert::exception(function() use ($fluent) {
+		Tester\Assert::exception(static function () use ($fluent): void {
 			$fluent->table('another');
 		}, Fluent\Exceptions\FluentException::class, NULL, Fluent\Exceptions\FluentException::ONLY_ONE_MAIN_TABLE);
 	}
@@ -524,7 +524,7 @@ class FluentTest extends Tester\TestCase
 	{
 		$fluent = $this->fluent()->table('table', 't');
 
-		Tester\Assert::exception(function() use ($fluent) {
+		Tester\Assert::exception(static function () use ($fluent): void {
 			$fluent->from('another', 't');
 		}, Fluent\Exceptions\FluentException::class, NULL, Fluent\Exceptions\FluentException::TABLE_ALIAS_ALREADY_EXISTS);
 	}
@@ -552,7 +552,7 @@ class FluentTest extends Tester\TestCase
 
 	public function testResetBadParam(): void
 	{
-		Tester\Assert::exception(function() {
+		Tester\Assert::exception(function (): void {
 			$this->fluent()
 				->select([1])
 				->reset('table');
@@ -562,7 +562,7 @@ class FluentTest extends Tester\TestCase
 
 	public function testQueyableMustHaveAlias(): void
 	{
-		Tester\Assert::exception(function() {
+		Tester\Assert::exception(function (): void {
 			$this->fluent()
 				->table($this->fluent()->select([1]));
 		}, Fluent\Exceptions\FluentException::class, NULL, Fluent\Exceptions\FluentException::QUERYABLE_MUST_HAVE_ALIAS);
@@ -571,16 +571,15 @@ class FluentTest extends Tester\TestCase
 
 	public function testParamMustBeScalarOrQueryable(): void
 	{
-		Tester\Assert::exception(function() {
-			$this->fluent()
-				->table(['table'], 't');
+		Tester\Assert::exception(function (): void {
+			$this->fluent()->table(['table'], 't');
 		}, Fluent\Exceptions\FluentException::class, NULL, Fluent\Exceptions\FluentException::PARAM_MUST_BE_SCALAR_OR_QUERYABLE);
 	}
 
 
 	public function testBadQueryBuilderType(): void
 	{
-		Tester\Assert::exception(function() {
+		Tester\Assert::exception(static function (): void {
 			(new Fluent\QueryBuilder('table', []))->createQuery();
 		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::BAD_QUERY_TYPE);
 	}

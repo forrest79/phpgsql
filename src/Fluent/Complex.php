@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Forrest79\PhPgSql\Fluent;
 
@@ -37,7 +37,7 @@ class Complex implements \ArrayAccess
 	 */
 	public function add($condition, ...$params): self
 	{
-		if (($condition instanceof self) && count($params) > 0) {
+		if (($condition instanceof self) && \count($params) > 0) {
 			throw Exceptions\ComplexException::complexCantHaveParams();
 		}
 		if ($condition instanceof self) {
@@ -142,7 +142,7 @@ class Complex implements \ArrayAccess
 	 */
 	public function offsetSet($offset, $value)
 	{
-		if (!is_array($value)) {
+		if (!\is_array($value)) {
 			$value = [$value];
 		}
 
@@ -166,8 +166,8 @@ class Complex implements \ArrayAccess
 
 	private function normalizeConditions(array $conditions): array
 	{
-		\array_walk($conditions, function(&$value) {
-			if (!is_array($value) && !($value instanceof self)) {
+		\array_walk($conditions, static function (&$value): void {
+			if (!\is_array($value) && !($value instanceof self)) {
 				$value = [$value];
 			}
 		});

@@ -102,14 +102,14 @@ class Fluent implements Sql
 	{
 		$this->updateFluent();
 
-		\array_walk($columns, function($column, $alias): void {
-			if (is_int($alias)) {
+		\array_walk($columns, function ($column, $alias): void {
+			if (\is_int($alias)) {
 				$alias = NULL;
 			}
 			$this->checkQueryable($column, $alias);
 		});
 
-		$this->params[self::PARAM_SELECT] = array_merge($this->params[self::PARAM_SELECT], $columns);
+		$this->params[self::PARAM_SELECT] = \array_merge($this->params[self::PARAM_SELECT], $columns);
 
 		return $this;
 	}
@@ -330,13 +330,13 @@ class Fluent implements Sql
 			return [$condition];
 		}
 
-		if (!is_array($condition)) {
+		if (!\is_array($condition)) {
 			return [[$condition]];
 		}
 
-		$first = reset($condition);
+		$first = \reset($condition);
 
-		if (is_array($first)) {
+		if (\is_array($first)) {
 			return $condition;
 		}
 
@@ -387,7 +387,7 @@ class Fluent implements Sql
 	public function groupBy(array $columns): Sql
 	{
 		$this->updateFluent();
-		$this->params[self::PARAM_GROUPBY] = array_merge($this->params[self::PARAM_GROUPBY], $columns);
+		$this->params[self::PARAM_GROUPBY] = \array_merge($this->params[self::PARAM_GROUPBY], $columns);
 		return $this;
 	}
 
@@ -435,7 +435,7 @@ class Fluent implements Sql
 	public function orderBy(array $columns): Sql
 	{
 		$this->updateFluent();
-		$this->params[self::PARAM_ORDERBY] = array_merge($this->params[self::PARAM_ORDERBY], $columns);
+		$this->params[self::PARAM_ORDERBY] = \array_merge($this->params[self::PARAM_ORDERBY], $columns);
 		return $this;
 	}
 
@@ -691,8 +691,8 @@ class Fluent implements Sql
 	 */
 	public function reset(string $param): self
 	{
-		if (!array_key_exists($param, self::DEFAULT_PARAMS)) {
-			throw Exceptions\FluentException::nonExistingParamToReset($param, array_keys(self::DEFAULT_PARAMS));
+		if (!\array_key_exists($param, self::DEFAULT_PARAMS)) {
+			throw Exceptions\FluentException::nonExistingParamToReset($param, \array_keys(self::DEFAULT_PARAMS));
 		}
 
 		$this->updateFluent();
@@ -718,7 +718,7 @@ class Fluent implements Sql
 	{
 		if ((($data instanceof self) || ($data instanceof Db\Query)) && ($alias === NULL)) {
 			throw Exceptions\FluentException::queryableMustHaveAlias();
-		} else if (!is_scalar($data) && !($data instanceof self) && !($data instanceof Db\Query)) {
+		} else if (!\is_scalar($data) && !($data instanceof self) && !($data instanceof Db\Query)) {
 			throw Exceptions\FluentException::columnMustBeScalarOrQueryable();
 		}
 	}
