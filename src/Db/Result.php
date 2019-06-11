@@ -168,7 +168,7 @@ class Result implements \Countable, \IteratorAggregate
 		}
 
 		$data = [];
-		$assoc = \preg_split('#(\[\]|=|\|)#', $assocDesc, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+		$assoc = \preg_split('#(\[\]|=|\|)#', $assocDesc, -1, \PREG_SPLIT_DELIM_CAPTURE | \PREG_SPLIT_NO_EMPTY);
 		if ($assoc === FALSE) {
 			throw Exceptions\ResultException::fetchAssocParseFailed($assocDesc);
 		}

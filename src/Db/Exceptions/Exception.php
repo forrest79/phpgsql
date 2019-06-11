@@ -4,4 +4,5 @@ namespace Forrest79\PhPgSql\Db\Exceptions;
 
 abstract class Exception extends \RuntimeException
 {
+
 }

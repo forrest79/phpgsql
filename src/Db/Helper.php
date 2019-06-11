@@ -54,9 +54,10 @@ class Helper
 			$keywords1,
 			$keywords2
 		);
-		if (PHP_SAPI === 'cli') {
+		if (\PHP_SAPI === 'cli') {
 			if (\substr((string) \getenv('TERM'), 0, 5) === 'xterm') {
-				$sql = (string) \preg_replace_callback($highlighter, static function (array $m): string { // intentionally (string), other can't be returned
+				// intentionally (string), other can't be returned
+				$sql = (string) \preg_replace_callback($highlighter, static function (array $m): string {
 					if (isset($m[1]) && $m[1]) { // comment
 						return \sprintf("\033[1;30m%s\033[0m", $m[1]);
 					} elseif (isset($m[2]) && $m[2]) { // error
@@ -72,7 +73,8 @@ class Helper
 			$sql = \trim($sql);
 		} else {
 			$sql = \htmlspecialchars($sql);
-			$sql = (string) \preg_replace_callback($highlighter, static function (array $m): string { // intentionally (string), other can't be returned
+			// intentionally (string), other can't be returned
+			$sql = (string) \preg_replace_callback($highlighter, static function (array $m): string {
 				if (isset($m[1]) && $m[1]) { // comment
 					return \sprintf('<em style="color:gray">%s</em>', $m[1]);
 				} elseif (isset($m[2]) && $m[2]) { // error

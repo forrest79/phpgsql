@@ -97,11 +97,14 @@ class ParseTest extends Tester\TestCase
 	{
 		$subquery = $this->connection->createQuery(
 			'SELECT id FROM subtable WHERE when = ? AND text ILIKE \'When\?\' AND year > ?',
-			$this->connection::literal('now()'), 2005
+			$this->connection::literal('now()'),
+			2005
 		);
 		$query = Db\Helper::prepareSql($this->connection->createQuery(
 			'SELECT * FROM table WHERE column = ? OR id IN (?) OR type IN (?)',
-			'yes', $subquery, [3, 2, 1]
+			'yes',
+			$subquery,
+			[3, 2, 1]
 		));
 		Tester\Assert::same('SELECT * FROM table WHERE column = $1 OR id IN (SELECT id FROM subtable WHERE when = now() AND text ILIKE \'When?\' AND year > $2) OR type IN ($3, $4, $5)', $query->getSql());
 		Tester\Assert::same(['yes', 2005, 3, 2, 1], $query->getParams());

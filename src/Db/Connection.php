@@ -76,16 +76,16 @@ class Connection
 
 		$connectType = 0;
 		if ($this->connectForceNew === TRUE) {
-			$connectType |= PGSQL_CONNECT_FORCE_NEW;
+			$connectType |= \PGSQL_CONNECT_FORCE_NEW;
 		}
 		if ($this->connectAsync === TRUE) {
-			$connectType |= PGSQL_CONNECT_ASYNC;
+			$connectType |= \PGSQL_CONNECT_ASYNC;
 		}
 
 		$resource = @\pg_connect($this->connectionConfig, $connectType); // intentionally @
 		if ($resource === FALSE) {
 			throw Exceptions\ConnectionException::connectionFailedException();
-		} elseif (\pg_connection_status($resource) === PGSQL_CONNECTION_BAD) {
+		} elseif (\pg_connection_status($resource) === \PGSQL_CONNECTION_BAD) {
 			throw Exceptions\ConnectionException::badConnectionException();
 		}
 
@@ -384,7 +384,7 @@ class Connection
 	 */
 	public function isInTransaction(): bool
 	{
-		return !\in_array(\pg_transaction_status($this->getConnectedResource()), [PGSQL_TRANSACTION_UNKNOWN, PGSQL_TRANSACTION_IDLE], TRUE);
+		return !\in_array(\pg_transaction_status($this->getConnectedResource()), [\PGSQL_TRANSACTION_UNKNOWN, \PGSQL_TRANSACTION_IDLE], TRUE);
 	}
 
 
@@ -439,16 +439,16 @@ class Connection
 			do {
 				$test = \microtime(TRUE);
 				switch (\pg_connect_poll($this->resource)) {
-					case PGSQL_POLLING_READING:
+					case \PGSQL_POLLING_READING:
 						while (!self::isReadable($this->asyncStream));
 						break;
-					case PGSQL_POLLING_WRITING:
+					case \PGSQL_POLLING_WRITING:
 						while (!self::isWritable($this->asyncStream));
 						break;
-					case PGSQL_POLLING_FAILED:
+					case \PGSQL_POLLING_FAILED:
 						throw Exceptions\ConnectionException::asyncConnectFailedException();
-					case PGSQL_POLLING_OK:
-					case PGSQL_POLLING_ACTIVE: // this can't happen?
+					case \PGSQL_POLLING_OK:
+					case \PGSQL_POLLING_ACTIVE: // this can't happen?
 						$this->connected = TRUE;
 						$this->onConnect();
 						return $this->resource;

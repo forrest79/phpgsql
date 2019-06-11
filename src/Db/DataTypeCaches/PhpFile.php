@@ -30,7 +30,7 @@ class PhpFile extends DbLoader
 
 				$lockFile = $this->cacheFile . '.lock';
 				$handle = \fopen($lockFile, 'c+');
-				if (($handle === FALSE) || !\flock($handle, LOCK_EX)) {
+				if (($handle === FALSE) || !\flock($handle, \LOCK_EX)) {
 					throw new \RuntimeException(\sprintf('Unable to create or acquire exclusive lock on file \'%s\'.', $lockFile));
 				}
 
@@ -39,7 +39,7 @@ class PhpFile extends DbLoader
 					$tempFile = $this->cacheFile . '.tmp';
 					\file_put_contents(
 						$tempFile,
-						'<?php declare(strict_types=1);' . PHP_EOL . \sprintf('return [%s];', self::prepareCacheArray($this->loadFromDb($connection)))
+						'<?php declare(strict_types=1);' . \PHP_EOL . \sprintf('return [%s];', self::prepareCacheArray($this->loadFromDb($connection)))
 					);
 					\rename($tempFile, $this->cacheFile); // atomic replace (in Linux)
 
@@ -48,7 +48,7 @@ class PhpFile extends DbLoader
 					}
 				}
 
-				\flock($handle, LOCK_UN);
+				\flock($handle, \LOCK_UN);
 				\fclose($handle);
 				@\unlink($lockFile); // intentionally @ - file may become locked on Windows
 			}

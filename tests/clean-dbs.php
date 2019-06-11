@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/bootstrap.php';
 
-$connection = \pg_connect(PHPGSQL_CONNECTION_CONFIG);
+$connection = \pg_connect(\PHPGSQL_CONNECTION_CONFIG);
 if ($connection !== FALSE) {
 	$resource = \pg_query($connection, 'SELECT \'DROP DATABASE \' || datname || \';\' FROM pg_database WHERE datistemplate = FALSE AND datname LIKE \'phpgsql_%_%\';');
 	if ($resource !== FALSE) {
