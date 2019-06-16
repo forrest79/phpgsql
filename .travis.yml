@@ -23,7 +23,7 @@ before_script:
 script:
   - vendor/bin/phpcs -s src tests
   - vendor/bin/phpstan analyse src tests
-  - vendor/bin/tester tests
+  - tests/run-tests tests
 
 after_failure:
   - for i in $(find tests -name \*.actual); do echo "--- $i"; cat $i; echo; echo; done
