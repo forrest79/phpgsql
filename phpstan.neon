@@ -11,8 +11,8 @@ parameters:
 		# === This is OK ===
 
 		-
-			message: '#Parameter \#1 \$table of method Forrest79\\PhPgSql\\Fluent\\Fluent::table\(\) expects Forrest79\\PhPgSql\\Db\\Query\|Forrest79\\PhPgSql\\Fluent\\Sql\|string, array\<int, string\> given\.#'
-			path: %rootDir%/../../../tests/unit/FluentTest.php
+			message: '#Parameter \#1 \$table of method Forrest79\\PhPgSql\\Fluent\\Fluent::table\(\) expects Forrest79\\PhPgSql\\Db\\Query\|Forrest79\\PhPgSql\\Fluent\\Sql\|string, array<int, string> given\.#'
+			path: %rootDir%/../../../tests/Unit/FluentTest.php
 
 		# === We know, that this can't happen ===
 
