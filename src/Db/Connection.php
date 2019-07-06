@@ -136,6 +136,12 @@ class Connection
 	}
 
 
+	public function getConnectionConfig(): string
+	{
+		return $this->connectionConfig;
+	}
+
+
 	public function setConnectForceNew(bool $forceNew = TRUE): self
 	{
 		$this->connectForceNew = $forceNew;

@@ -6,45 +6,47 @@ use Forrest79\PhPgSql\Db;
 
 class PhpFile extends DbLoader
 {
-	/** @var array|NULL */
-	private $cache;
+	/** @var array */
+	private $cache = [];
 
 	/** @var string */
-	private $cacheFile;
+	private $cacheDirectory;
 
 
-	public function __construct(string $cacheFile)
+	public function __construct(string $cacheDirectory)
 	{
-		$this->cacheFile = $cacheFile;
+		$this->cacheDirectory = \rtrim($cacheDirectory, '\/');
 	}
 
 
 	public function load(Db\Connection $connection): array
 	{
-		if ($this->cache === NULL) {
-			if (!\is_file($this->cacheFile)) {
-				$cacheDir = \dirname($this->cacheFile);
-				if (!\is_dir($cacheDir)) {
-					\mkdir($cacheDir, 0777, TRUE);
+		$connectionConfig = $connection->getConnectionConfig();
+
+		if (!isset($this->cache[$connectionConfig])) {
+			$cacheFile = $this->getCacheFile($connectionConfig);
+			if (!\is_file($cacheFile)) {
+				if (!\is_dir($this->cacheDirectory)) {
+					\mkdir($this->cacheDirectory, 0777, TRUE);
 				}
 
-				$lockFile = $this->cacheFile . '.lock';
+				$lockFile = $cacheFile . '.lock';
 				$handle = \fopen($lockFile, 'c+');
 				if (($handle === FALSE) || !\flock($handle, \LOCK_EX)) {
 					throw new \RuntimeException(\sprintf('Unable to create or acquire exclusive lock on file \'%s\'.', $lockFile));
 				}
 
 				// cache still not exists
-				if (!\is_file($this->cacheFile)) {
-					$tempFile = $this->cacheFile . '.tmp';
+				if (!\is_file($cacheFile)) {
+					$tempFile = $cacheFile . '.tmp';
 					\file_put_contents(
 						$tempFile,
 						'<?php declare(strict_types=1);' . \PHP_EOL . \sprintf('return [%s];', self::prepareCacheArray($this->loadFromDb($connection)))
 					);
-					\rename($tempFile, $this->cacheFile); // atomic replace (in Linux)
+					\rename($tempFile, $cacheFile); // atomic replace (in Linux)
 
 					if (\function_exists('opcache_invalidate')) {
-						\opcache_invalidate($this->cacheFile, TRUE);
+						\opcache_invalidate($cacheFile, TRUE);
 					}
 				}
 
@@ -53,10 +55,25 @@ class PhpFile extends DbLoader
 				@\unlink($lockFile); // intentionally @ - file may become locked on Windows
 			}
 
-			$this->cache = require $this->cacheFile;
+			$this->cache[$connectionConfig] = require $cacheFile;
 		}
 
-		return $this->cache;
+		return $this->cache[$connectionConfig];
+	}
+
+
+	public function clean(Db\Connection $connection): void
+	{
+		$connectionConfig = $connection->getConnectionConfig();
+
+		@\unlink($this->getCacheFile($connectionConfig)); // intentionally @ - file may not exists
+		unset($this->cache[$connectionConfig]);
+	}
+
+
+	private function getCacheFile(string $connectionConfig): string
+	{
+		return $this->cacheDirectory . \DIRECTORY_SEPARATOR . \md5($connectionConfig) . '.php';
 	}
 
 
@@ -67,14 +84,6 @@ class PhpFile extends DbLoader
 			$cache .= \sprintf("%d=>'%s',", $oid, \str_replace("'", "\\'", $typname));
 		});
 		return $cache;
-	}
-
-
-	public function clean(): self
-	{
-		@\unlink($this->cacheFile); // intentionally @ - file may not exists
-		$this->cache = NULL;
-		return $this;
 	}
 
 }

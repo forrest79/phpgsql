@@ -38,12 +38,12 @@ This library automatically convert PG types to PHP types. Simple types are conve
 
 ```php
 $connection = new PhPgSql\Db\Connection();
-$phpFileCache = new PhPgSql\Db\DataTypeCache\PhpFile($connection, '/tmp/cache.php'); // we need connection to load data from DB
+$phpFileCache = new PhPgSql\Db\DataTypeCache\PhpFile($connection, '/tmp/cache'); // we need connection to load data from DB and each connection can has different data types
 $connection->setDataTypeCache($phpFileCache);
 
 // when database structure has changed:
 $phpFileCache->clean();
-``` 
+```
 
 
 ### Using
@@ -195,8 +195,8 @@ We can start with ```Fluent``` object:
 
 ```php
 $fluent = new Fluent\Fluent();
-$fluent->select(['*'])->prepareSql(); // create Query object with SQL and params to pg_query_params 
-// $fluent->select(['*'])->getQuery(); // mostly internal, this is pass to Db\Connection, which prepare real SQL  
+$fluent->select(['*'])->prepareSql(); // create Query object with SQL and params to pg_query_params
+// $fluent->select(['*'])->getQuery(); // mostly internal, this is pass to Db\Connection, which prepare real SQL
 ```
 
 But if fluent object has no DB connection, you can't send query directly to database. You can pass connection as parameter in ```create(Db\Connection $connection)``` function or the better solution is to start with ```Fluent\Connection```, which pass DB connection to ```Fluent``` automaticaly:
@@ -222,7 +222,7 @@ $freshRows = $fluent->reexecute()->fetchAll();
 
 You can start creating your query with every possible command, it does't matter on the order of commands, SQL is always created right. Every query is SELECT at first, until you call ```->insert(...)```, ```->update(...)```, ```->delete(...)``` or ```->truncate(...)```, which change query to apropriate SQL command. So you can prepare you query in common way and at the end, you can decide if you want to SELECT data or DELETE data or whatsoever. If you call some command more than once, data is merged, for example, this ```->select(['column1'])->select(['column2'])``` is the same as ```->select(['column1', 'column2'])```.
 
-There is one special command ```->table(...)```, it define main table for SQL, when you call select, it will be used as FROM, if you call INSERT it will be used as INTO, the same for UPDATE, DELETE or TRUNCATE. 
+There is one special command ```->table(...)```, it define main table for SQL, when you call select, it will be used as FROM, if you call INSERT it will be used as INTO, the same for UPDATE, DELETE or TRUNCATE.
 
 ```php
 $fluent = (new Fluent\Connection())
@@ -256,30 +256,30 @@ If you call more ```->where(...)``` or ```->having(...)``` it is concat with AND
 	->select(['*'])
 	->from('table')
 	->prepareSql(); // 'SELECT * FROM table WHERE column = $1 OR column2 IN ($2, $3) OR (column IN (SELECT 1) AND column2 = ANY(SELECT 2)) OR column3 IS NOT NULL'
-```  
+```
 
 The same can be used with ```HAVING``` and ```ON``` conditions for joins, but ```ON``` conditions don't have this API. You have to pass it manually:
 
 ```php
 (new Fluent\Connection())
 	->join('table', 't' /*, here could be the same as in the second argument of 'on' function */)
-	// all these ons will be merged to one conditions - 't' is alias if is used or 'table' if there is no alias 
+	// all these ons will be merged to one conditions - 't' is alias if is used or 'table' if there is no alias
 	->on('t', 't.id = c.table_id') // most conditions are this simple, so you can pass simple string
 	->on('t', ['t.id IN (?)', [1, 2, 3]]) // if you want to use dynamic parameters in condition, use ? in string and add param to array, where first value is condition string
 	->on('t', [['t.id = c.table_id'], ['t.id = ?', 1]]) // you can pass more conditions and it will be concat with AND, in this case, every condition must be array, even if there is only one item as condition string (we can't recognize, if second argument will be new condition on string param to first condition)
-	->on('t', $complex) // you can pass prepared Complex object, Complex::createAnd(...)/creatrOr(...) 
+	->on('t', $complex) // you can pass prepared Complex object, Complex::createAnd(...)/creatrOr(...)
 ```
 
-Every condition (in WHERE/HAVING/ON) can be simple string, can have one argument with =/IN detection or can have many argument with ? character: 
+Every condition (in WHERE/HAVING/ON) can be simple string, can have one argument with =/IN detection or can have many argument with ? character:
 
 ```php
 (new Fluent\Connection())
 	->where('column IS NOT NULL');
 	->where('column', $value); // in value is scalar = ? will be add, if array, Db\Query or other Fluent IN (?) will be added
-	->where('column BETWEEN ? AND ?', $from, $to) // you need pass as many argument as ? is passed 
+	->where('column BETWEEN ? AND ?', $from, $to) // you need pass as many argument as ? is passed
 ```
 
-To almost every parameters (select, where, having, on, orderBy, returning, from, joins, unions, ...) you can pass ```Db\Query``` or other ```Fluent\Fluent``` object. At some places (select, from, joins), you must provide alias if you want to pass this objects.  
+To almost every parameters (select, where, having, on, orderBy, returning, from, joins, unions, ...) you can pass ```Db\Query``` or other ```Fluent\Fluent``` object. At some places (select, from, joins), you must provide alias if you want to pass this objects.
 
 ```php
 $fluent = (new Fluent\Connection())
@@ -430,4 +430,5 @@ Just with table name:
 
 - performance - test foreach vs. array_walk vs. array_map and use the best
 - better handle Fluent <-> QueryBuilder - can use own Fluent and own QueryBuilder? On Fluent just needed public constants?
+- create column data types service, that will use data type cache and that will handle rebuild cache on devel? Just once per request? Can call (optionable) pg_field_type if type is not in cache?
 - better docs (now see tests)
