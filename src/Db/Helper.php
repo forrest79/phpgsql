@@ -16,8 +16,8 @@ class Helper
 		if (\count($array) === 0) {
 			return '{}';
 		}
-		return \sprintf('{\'%s\'}', \implode('\',\'', \array_map(static function ($value): string {
-			return \str_replace('\'', '\'\'', $value);
+		return \sprintf('{"%s"}', \implode('","', \array_map(static function ($value): string {
+			return \str_replace('"', '\"', $value);
 		}, $array)));
 	}
 
