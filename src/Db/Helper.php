@@ -13,7 +13,7 @@ class Helper
 
 	public static function createStringPgArray(array $array): string
 	{
-		if (\count($array) === 0) {
+		if ($array === []) {
 			return '{}';
 		}
 		return \sprintf('{\'%s\'}', \implode('\',\'', \array_map(static function ($value): string {
@@ -24,7 +24,7 @@ class Helper
 
 	public static function createPgArray(array $array): string
 	{
-		if (\count($array) === 0) {
+		if ($array === []) {
 			return '{}';
 		}
 		return \sprintf('{%s}', \implode(',', $array));
