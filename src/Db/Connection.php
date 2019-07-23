@@ -99,7 +99,7 @@ class Connection
 			$this->asyncStream = $stream;
 		} else {
 			$this->connected = TRUE;
-			if (\count($this->onConnect) > 0) {
+			if ($this->onConnect !== []) {
 				$this->onConnect();
 			}
 		}
@@ -263,7 +263,7 @@ class Connection
 	{
 		$query = Helper::prepareSql($this->normalizeQuery($query, $params));
 
-		$start = \count($this->onQuery) > 0 ? \microtime(TRUE) : NULL;
+		$start = $this->onQuery !== [] ? \microtime(TRUE) : NULL;
 
 		$resource = @\pg_query_params($this->getConnectedResource(), $query->getSql(), $query->getParams()); // intentionally @
 		if ($resource === FALSE) {
@@ -322,7 +322,7 @@ class Connection
 			throw Exceptions\QueryException::asyncQueryFailed($query, $this->getLastError());
 		}
 
-		if (\count($this->onQuery) > 0) {
+		if ($this->onQuery !== []) {
 			$this->onQuery($query);
 		}
 
@@ -413,7 +413,7 @@ class Connection
 	private function normalizeQuery($query, array $params): Query
 	{
 		if ($query instanceof Query) {
-			if (\count($params) > 0) {
+			if ($params !== []) {
 				throw Exceptions\QueryException::cantPassParams();
 			}
 		} else {

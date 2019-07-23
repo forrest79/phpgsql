@@ -181,7 +181,7 @@ class Result implements \Countable, \IteratorAggregate
 			}
 		}
 
-		if (\count($assoc) === 0) {
+		if ($assoc === []) {
 			$assoc[] = '[]';
 		}
 

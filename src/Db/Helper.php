@@ -13,7 +13,7 @@ class Helper
 
 	public static function createStringPgArray(array $array): string
 	{
-		if (\count($array) === 0) {
+		if ($array === []) {
 			return '{}';
 		}
 		return \sprintf('{"%s"}', \implode('","', \array_map(static function ($value): string {
@@ -24,7 +24,7 @@ class Helper
 
 	public static function createPgArray(array $array): string
 	{
-		if (\count($array) === 0) {
+		if ($array === []) {
 			return '{}';
 		}
 		return \sprintf('{%s}', \implode(',', $array));
@@ -89,7 +89,7 @@ class Helper
 			$sql = \sprintf('<pre class="dump">%s</pre>', \trim($sql));
 		}
 
-		if (\count($parameters) > 0) {
+		if ($parameters !== []) {
 			$sql = (string) \preg_replace_callback( // intentionally (string), other can't be returned
 				'/\$(\d+)/',
 				static function ($matches) use (& $parameters): string {

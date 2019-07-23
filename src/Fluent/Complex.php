@@ -37,7 +37,7 @@ class Complex implements \ArrayAccess
 	 */
 	public function add($condition, ...$params): self
 	{
-		if (($condition instanceof self) && \count($params) > 0) {
+		if (($condition instanceof self) && $params !== []) {
 			throw Exceptions\ComplexException::complexCantHaveParams();
 		}
 		if ($condition instanceof self) {

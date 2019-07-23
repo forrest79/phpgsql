@@ -252,7 +252,7 @@ class QueryBuilder
 			);
 		}
 
-		return \count($from) > 0 ? (' ' . \implode(' ', $from)) : '';
+		return $from !== [] ? (' ' . \implode(' ', $from)) : '';
 	}
 
 
@@ -288,7 +288,7 @@ class QueryBuilder
 			}
 		}
 
-		return \count($joins) > 0 ? (' ' . \implode(' ', $joins)) : '';
+		return $joins !== [] ? (' ' . \implode(' ', $joins)) : '';
 	}
 
 
