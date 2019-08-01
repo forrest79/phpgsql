@@ -2,7 +2,7 @@
 
 namespace Forrest79\PhPgSql\Db;
 
-class Row implements \ArrayAccess, \IteratorAggregate, \Countable
+class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializable
 {
 	/** @var array */
 	private $rawValues;
@@ -190,6 +190,12 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable
 	{
 		unset($this->rawValues[$key]);
 		unset($this->values[$key]);
+	}
+
+
+	public function jsonSerialize(): array
+	{
+		return $this->toArray();
 	}
 
 }
