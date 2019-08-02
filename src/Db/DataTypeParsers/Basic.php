@@ -23,15 +23,11 @@ class Basic implements Db\DataTypeParser
 				case '_int2':
 				case '_int4':
 				case '_int8':
-					return $this->parseArray($value, static function ($value): int {
-						return (int) $value;
-					});
+					return $this->parseArray($value, 'intval');
 				case '_float4':
 				case '_float8':
 				case '_numeric':
-					return $this->parseArray($value, static function ($value): float {
-						return (float) $value;
-					});
+					return $this->parseArray($value, 'floatval');
 				case '_bool':
 					return $this->parseArray($value, [$this, 'parseBool']);
 				case '_date':
