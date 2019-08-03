@@ -63,7 +63,7 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable
 
 	public function toArray(): array
 	{
-		foreach ($this->rawValues as $key => $value) {
+		foreach ($this->rawValues as $key => $value) { // intentionally not using array_keys($this->rawValues) as $key - this is 2x faster
 			$this->parseValue($key);
 		}
 		return $this->values;
