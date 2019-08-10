@@ -439,7 +439,7 @@ class Connection extends Db\Connection implements Sql
 	}
 
 
-	protected function fluent(): FluentExecute
+	public function fluent(): FluentExecute
 	{
 		return new FluentExecute($this);
 	}
