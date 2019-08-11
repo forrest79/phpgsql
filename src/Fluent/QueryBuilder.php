@@ -33,7 +33,7 @@ class QueryBuilder
 		$sql = $this->getPrefixSuffix(Fluent::PARAM_PREFIX, $params);
 
 		if ($this->queryType === Fluent::QUERY_SELECT) {
-			$sql .= $this->createSelect($params);
+			$sql .= $this->createSelect($params) . $this->getPrefixSuffix(Fluent::PARAM_SUFFIX, $params);
 		} else if ($this->queryType === Fluent::QUERY_INSERT) {
 			$sql .= $this->createInsert($params);
 		} else if ($this->queryType === Fluent::QUERY_UPDATE) {
@@ -41,12 +41,10 @@ class QueryBuilder
 		} else if ($this->queryType === Fluent::QUERY_DELETE) {
 			$sql .= $this->createDelete($params);
 		} else if ($this->queryType === Fluent::QUERY_TRUNCATE) {
-			$sql .= $this->createTruncate();
+			$sql .= $this->createTruncate() . $this->getPrefixSuffix(Fluent::PARAM_SUFFIX, $params);
 		} else {
 			throw Exceptions\QueryBuilderException::badQueryType($this->queryType);
 		}
-
-		$sql .= $this->getPrefixSuffix(Fluent::PARAM_SUFFIX, $params);
 
 		return new Db\Query($sql, $params);
 	}
@@ -130,7 +128,11 @@ class QueryBuilder
 			$data = \sprintf(' VALUES(%s)', \implode('), (', $rows));
 		}
 
-		return $insert . \sprintf('(%s)', \implode(', ', $columns)) . $data . $this->getReturning($params);
+		return $insert .
+			\sprintf('(%s)', \implode(', ', $columns)) .
+			$data .
+			$this->getPrefixSuffix(Fluent::PARAM_SUFFIX, $params) .
+			$this->getReturning($params);
 	}
 
 
@@ -160,6 +162,7 @@ class QueryBuilder
 			$this->getFrom($params, FALSE) .
 			$this->getJoins($params) .
 			$this->getWhere($params) .
+			$this->getPrefixSuffix(Fluent::PARAM_SUFFIX, $params) .
 			$this->getReturning($params);
 	}
 
@@ -177,6 +180,7 @@ class QueryBuilder
 				$params
 			)) .
 			$this->getWhere($params) .
+			$this->getPrefixSuffix(Fluent::PARAM_SUFFIX, $params) .
 			$this->getReturning($params);
 	}
 

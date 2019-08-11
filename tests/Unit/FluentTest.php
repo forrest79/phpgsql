@@ -453,6 +453,47 @@ class FluentTest extends Tester\TestCase
 
 		Tester\Assert::same('SELECT column FROM table WHERE column = $1 FOR UPDATE', $query->getSql());
 		Tester\Assert::same([100], $query->getParams());
+
+		$query = $this->fluent()
+			->truncate('table')
+			->sufix('CASCADE')
+			->prepareSql();
+
+		Tester\Assert::same('TRUNCATE table CASCADE', $query->getSql());
+		Tester\Assert::same([], $query->getParams());
+	}
+
+
+	public function testSuffixWithReturning(): void
+	{
+		$query = $this->fluent()
+			->insert('table')
+			->values(['column' => 'value'])
+			->sufix('ON CONFLICT (column) DO NOTHING')
+			->returning(['column'])
+			->prepareSql();
+
+		Tester\Assert::same('INSERT INTO table(column) VALUES($1) ON CONFLICT (column) DO NOTHING RETURNING column', $query->getSql());
+		Tester\Assert::same(['value'], $query->getParams());
+
+		$query = $this->fluent()
+			->update('table')
+			->set(['column' => 'value'])
+			->sufix('WHERE CURRENT OF cursor_name')
+			->returning(['column'])
+			->prepareSql();
+
+		Tester\Assert::same('UPDATE table SET column = $1 WHERE CURRENT OF cursor_name RETURNING column', $query->getSql());
+		Tester\Assert::same(['value'], $query->getParams());
+
+		$query = $this->fluent()
+			->delete('table')
+			->sufix('WHERE CURRENT OF cursor_name')
+			->returning(['column'])
+			->prepareSql();
+
+		Tester\Assert::same('DELETE FROM table WHERE CURRENT OF cursor_name RETURNING column', $query->getSql());
+		Tester\Assert::same([], $query->getParams());
 	}
 
 
