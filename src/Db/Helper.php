@@ -149,17 +149,7 @@ class Helper
 					return \substr($keys, 0, -2);
 				} else if (\is_bool($param)) {
 					return $param === TRUE ? 'TRUE' : 'FALSE';
-				} else if ($param instanceof Literal) {
-					$literalValue = (string) $param;
-					$literalParams = $param->getParams();
-					if ($literalParams === []) {
-						return $literalValue;
-					}
-					[$sqlLiteralValue, $sqlLiteralParams] = self::createSql($literalValue, $literalParams, $paramIndex);
-					$paramIndex += \count($sqlLiteralParams);
-					$parsedParams = \array_merge($parsedParams, $sqlLiteralParams);
-					return $sqlLiteralValue;
-				} else if ($param instanceof Query) {
+				} else if ($param instanceof Queryable) {
 					[$subquerySql, $subqueryParams] = self::createSql($param->getSql(), $param->getParams(), $paramIndex);
 					$paramIndex += \count($subqueryParams);
 					$parsedParams = \array_merge($parsedParams, $subqueryParams);

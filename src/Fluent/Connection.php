@@ -8,7 +8,7 @@ class Connection extends Db\Connection implements Sql
 {
 
 	/**
-	 * @param string|Sql|Db\Query $table
+	 * @param string|Sql|Db\Queryable $table
 	 * @param string|NULL $alias
 	 * @return FluentExecute
 	 * @throws Exceptions\FluentException
@@ -41,7 +41,7 @@ class Connection extends Db\Connection implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Query $from
+	 * @param string|Sql|Db\Queryable $from
 	 * @param string|NULL $alias
 	 * @return FluentExecute
 	 * @throws Exceptions\FluentException
@@ -53,7 +53,7 @@ class Connection extends Db\Connection implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Query $join table or query
+	 * @param string|Sql|Db\Queryable $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return FluentExecute
@@ -66,7 +66,7 @@ class Connection extends Db\Connection implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Query $join table or query
+	 * @param string|Sql|Db\Queryable $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return FluentExecute
@@ -79,7 +79,7 @@ class Connection extends Db\Connection implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Query $join table or query
+	 * @param string|Sql|Db\Queryable $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return FluentExecute
@@ -92,7 +92,7 @@ class Connection extends Db\Connection implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Query $join table or query
+	 * @param string|Sql|Db\Queryable $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return FluentExecute
@@ -105,7 +105,7 @@ class Connection extends Db\Connection implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Query $join table or query
+	 * @param string|Sql|Db\Queryable $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return FluentExecute
@@ -118,7 +118,7 @@ class Connection extends Db\Connection implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Query $join table or query
+	 * @param string|Sql|Db\Queryable $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return FluentExecute
@@ -131,7 +131,7 @@ class Connection extends Db\Connection implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Query $join table or query
+	 * @param string|Sql|Db\Queryable $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return FluentExecute
@@ -144,7 +144,7 @@ class Connection extends Db\Connection implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Query $join table or query
+	 * @param string|Sql|Db\Queryable $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return FluentExecute
@@ -157,7 +157,7 @@ class Connection extends Db\Connection implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Query $join table or query
+	 * @param string|Sql|Db\Queryable $join table or query
 	 * @param string|NULL $alias
 	 * @return FluentExecute
 	 * @throws Exceptions\FluentException
@@ -285,7 +285,7 @@ class Connection extends Db\Connection implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Query $query
+	 * @param string|Sql|Db\Queryable $query
 	 * @return FluentExecute
 	 */
 	public function union($query): Sql
@@ -295,7 +295,7 @@ class Connection extends Db\Connection implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Query $query
+	 * @param string|Sql|Db\Queryable $query
 	 * @return FluentExecute
 	 */
 	public function unionAll($query): Sql
@@ -305,7 +305,7 @@ class Connection extends Db\Connection implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Query $query
+	 * @param string|Sql|Db\Queryable $query
 	 * @return FluentExecute
 	 */
 	public function intersect($query): Sql
@@ -315,7 +315,7 @@ class Connection extends Db\Connection implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Query $query
+	 * @param string|Sql|Db\Queryable $query
 	 * @return FluentExecute
 	 */
 	public function except($query): Sql

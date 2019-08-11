@@ -8,7 +8,7 @@ interface Sql
 {
 
 	/**
-	 * @param string|self|Db\Query $table
+	 * @param string|self|Db\Queryable $table
 	 * @param string|NULL $alias
 	 * @return self
 	 */
@@ -22,7 +22,7 @@ interface Sql
 
 
 	/**
-	 * @param string|self|Db\Query $from
+	 * @param string|self|Db\Queryable $from
 	 * @param string|NULL $alias
 	 * @return self
 	 */
@@ -30,7 +30,7 @@ interface Sql
 
 
 	/**
-	 * @param string|self|Db\Query $join table or query
+	 * @param string|self|Db\Queryable $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return self
@@ -39,7 +39,7 @@ interface Sql
 
 
 	/**
-	 * @param string|self|Db\Query $join table or query
+	 * @param string|self|Db\Queryable $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return self
@@ -48,7 +48,7 @@ interface Sql
 
 
 	/**
-	 * @param string|self|Db\Query $join table or query
+	 * @param string|self|Db\Queryable $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return self
@@ -57,7 +57,7 @@ interface Sql
 
 
 	/**
-	 * @param string|self|Db\Query $join table or query
+	 * @param string|self|Db\Queryable $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return self
@@ -66,7 +66,7 @@ interface Sql
 
 
 	/**
-	 * @param string|self|Db\Query $join table or query
+	 * @param string|self|Db\Queryable $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return self
@@ -75,7 +75,7 @@ interface Sql
 
 
 	/**
-	 * @param string|self|Db\Query $join table or query
+	 * @param string|self|Db\Queryable $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return self
@@ -84,7 +84,7 @@ interface Sql
 
 
 	/**
-	 * @param string|self|Db\Query $join table or query
+	 * @param string|self|Db\Queryable $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return self
@@ -93,7 +93,7 @@ interface Sql
 
 
 	/**
-	 * @param string|self|Db\Query $join table or query
+	 * @param string|self|Db\Queryable $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return self
@@ -102,7 +102,7 @@ interface Sql
 
 
 	/**
-	 * @param string|self|Db\Query $join table or query
+	 * @param string|self|Db\Queryable $join table or query
 	 * @param string|NULL $alias
 	 * @return self
 	 */
@@ -158,28 +158,28 @@ interface Sql
 
 
 	/**
-	 * @param string|self|Db\Query $query
+	 * @param string|self|Db\Queryable $query
 	 * @return self
 	 */
 	function union($query): self;
 
 
 	/**
-	 * @param string|self|Db\Query $query
+	 * @param string|self|Db\Queryable $query
 	 * @return self
 	 */
 	function unionAll($query): self;
 
 
 	/**
-	 * @param string|self|Db\Query $query
+	 * @param string|self|Db\Queryable $query
 	 * @return self
 	 */
 	function intersect($query): self;
 
 
 	/**
-	 * @param string|self|Db\Query $query
+	 * @param string|self|Db\Queryable $query
 	 * @return self
 	 */
 	function except($query): self;

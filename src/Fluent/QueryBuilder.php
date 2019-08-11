@@ -211,7 +211,7 @@ class QueryBuilder
 
 		$columns = [];
 		foreach ($this->params[Fluent::PARAM_SELECT] as $key => $value) {
-			if ($value instanceof Db\Query) {
+			if ($value instanceof Db\Queryable) {
 				$params[] = $value;
 				$value = '(?)';
 			} else if ($value instanceof Fluent) {
@@ -345,7 +345,7 @@ class QueryBuilder
 
 		$columns = [];
 		foreach ($orderBy as $value) {
-			if ($value instanceof Db\Query) {
+			if ($value instanceof Db\Queryable) {
 				$params[] = $value;
 				$value = '(?)';
 			} else if ($value instanceof Fluent) {
@@ -437,7 +437,7 @@ class QueryBuilder
 		foreach ($combineQueries as $combineQuery) {
 			[$query, $type] = $combineQuery;
 
-			if ($query instanceof Db\Query) {
+			if ($query instanceof Db\Queryable) {
 				$params[] = $query;
 				$query = '?';
 			} else if ($query instanceof Fluent) {
@@ -462,7 +462,7 @@ class QueryBuilder
 		}
 		$columns = [];
 		foreach ($this->params[Fluent::PARAM_RETURNING] as $key => $value) {
-			if ($value instanceof Db\Query) {
+			if ($value instanceof Db\Queryable) {
 				$params[] = $value;
 				$value = '(?)';
 			} else if ($value instanceof Fluent) {
@@ -496,7 +496,7 @@ class QueryBuilder
 	 */
 	private function processTable(?string $type, $table, string $alias, array &$params): string
 	{
-		if ($table instanceof Db\Query) {
+		if ($table instanceof Db\Queryable) {
 			$params[] = $table;
 			$table = '(?)';
 		} else if ($table instanceof Fluent) {
@@ -524,7 +524,7 @@ class QueryBuilder
 				$cntParams = \count($conditionParams);
 				if (($cnt === 0) && ($cntParams === 1)) {
 					$param = \reset($conditionParams);
-					if (\is_array($param) || ($param instanceof Db\Query) || ($param instanceof Fluent)) {
+					if (\is_array($param) || ($param instanceof Db\Queryable) || ($param instanceof Fluent)) {
 						$condition = \sprintf('%s IN (?)', $condition);
 					} else {
 						$condition = \sprintf('%s = ?', $condition);

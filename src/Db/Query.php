@@ -2,7 +2,7 @@
 
 namespace Forrest79\PhPgSql\Db;
 
-class Query
+class Query implements Queryable
 {
 	/** @var string */
 	private $sql;

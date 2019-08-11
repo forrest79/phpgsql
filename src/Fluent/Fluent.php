@@ -82,7 +82,7 @@ class Fluent implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Query $table
+	 * @param string|Sql|Db\Queryable $table
 	 * @param string|NULL $alias
 	 * @return static
 	 * @throws Exceptions\FluentException
@@ -128,7 +128,7 @@ class Fluent implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Query $from
+	 * @param string|Sql|Db\Queryable $from
 	 * @param string|NULL $alias
 	 * @return static
 	 * @throws Exceptions\FluentException
@@ -141,7 +141,7 @@ class Fluent implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Query $join table or query
+	 * @param string|Sql|Db\Queryable $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return static
@@ -154,7 +154,7 @@ class Fluent implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Query $join table or query
+	 * @param string|Sql|Db\Queryable $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return static
@@ -167,7 +167,7 @@ class Fluent implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Query $join table or query
+	 * @param string|Sql|Db\Queryable $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return static
@@ -180,7 +180,7 @@ class Fluent implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Query $join table or query
+	 * @param string|Sql|Db\Queryable $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return static
@@ -193,7 +193,7 @@ class Fluent implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Query $join table or query
+	 * @param string|Sql|Db\Queryable $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return static
@@ -206,7 +206,7 @@ class Fluent implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Query $join table or query
+	 * @param string|Sql|Db\Queryable $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return static
@@ -219,7 +219,7 @@ class Fluent implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Query $join table or query
+	 * @param string|Sql|Db\Queryable $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return static
@@ -232,7 +232,7 @@ class Fluent implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Query $join table or query
+	 * @param string|Sql|Db\Queryable $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return static
@@ -245,7 +245,7 @@ class Fluent implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Query $join table or query
+	 * @param string|Sql|Db\Queryable $join table or query
 	 * @param string|NULL $alias
 	 * @return static
 	 * @throws Exceptions\FluentException
@@ -258,7 +258,7 @@ class Fluent implements Sql
 
 	/**
 	 * @param string $type
-	 * @param string|Sql|Db\Query $name
+	 * @param string|Sql|Db\Queryable $name
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return static
@@ -467,7 +467,7 @@ class Fluent implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Query $query
+	 * @param string|Sql|Db\Queryable $query
 	 * @return static
 	 */
 	public function union($query): Sql
@@ -477,7 +477,7 @@ class Fluent implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Query $query
+	 * @param string|Sql|Db\Queryable $query
 	 * @return static
 	 */
 	public function unionAll($query): Sql
@@ -487,7 +487,7 @@ class Fluent implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Query $query
+	 * @param string|Sql|Db\Queryable $query
 	 * @return static
 	 */
 	public function intersect($query): Sql
@@ -497,7 +497,7 @@ class Fluent implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Query $query
+	 * @param string|Sql|Db\Queryable $query
 	 * @return static
 	 */
 	public function except($query): Sql
@@ -508,7 +508,7 @@ class Fluent implements Sql
 
 	/**
 	 * @param string $type
-	 * @param string|Sql|Db\Query $query
+	 * @param string|Sql|Db\Queryable $query
 	 * @return static
 	 */
 	private function addCombine(string $type, $query): self
@@ -710,15 +710,15 @@ class Fluent implements Sql
 
 
 	/**
-	 * @param self|Db\Query|mixed $data
+	 * @param self|Db\Queryable|mixed $data
 	 * @param string|NULL $alias
 	 * @throws Exceptions\FluentException
 	 */
 	private function checkQueryable($data, ?string $alias): void
 	{
-		if ((($data instanceof self) || ($data instanceof Db\Query)) && ($alias === NULL)) {
+		if ((($data instanceof self) || ($data instanceof Db\Queryable)) && ($alias === NULL)) {
 			throw Exceptions\FluentException::queryableMustHaveAlias();
-		} else if (!\is_scalar($data) && !($data instanceof self) && !($data instanceof Db\Query)) {
+		} else if (!\is_scalar($data) && !($data instanceof self) && !($data instanceof Db\Queryable)) {
 			throw Exceptions\FluentException::columnMustBeScalarOrQueryable();
 		}
 	}

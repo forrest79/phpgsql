@@ -89,6 +89,18 @@ class FluentTest extends Tester\TestCase
 	}
 
 
+	public function testFromWithLiteral(): void
+	{
+		$query = $this->fluent()
+			->select(['gs'])
+			->from(Db\Literal::create('generate_series(?::integer, ?::integer, ?::integer)', 2, 1, -1), 'gs')
+			->prepareSql();
+
+		Tester\Assert::same('SELECT gs FROM (generate_series($1::integer, $2::integer, $3::integer)) AS gs', $query->getSql());
+		Tester\Assert::same([2, 1, -1], $query->getParams());
+	}
+
+
 	public function testJoinWithFluent(): void
 	{
 		$query = $this->fluent()

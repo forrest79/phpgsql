@@ -2,7 +2,7 @@
 
 namespace Forrest79\PhPgSql\Db;
 
-class Literal
+class Literal implements Queryable
 {
 	/** @var string */
 	private $value;
@@ -23,6 +23,12 @@ class Literal
 
 
 	public function __toString(): string
+	{
+		return $this->getSql();
+	}
+
+
+	function getSql(): string
 	{
 		return $this->value;
 	}

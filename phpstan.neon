@@ -11,7 +11,7 @@ parameters:
 		# === This is OK ===
 
 		-
-			message: '#Parameter \#1 \$table of method Forrest79\\PhPgSql\\Fluent\\Fluent::table\(\) expects Forrest79\\PhPgSql\\Db\\Query\|Forrest79\\PhPgSql\\Fluent\\Sql\|string, array<int, string> given\.#'
+			message: '#Parameter \#1 \$table of method Forrest79\\PhPgSql\\Fluent\\Fluent::table\(\) expects Forrest79\\PhPgSql\\Db\\Queryable\|Forrest79\\PhPgSql\\Fluent\\Sql\|string, array<int, string> given\.#'
 			path: %rootDir%/../../../tests/Unit/FluentTest.php
 
 		# === We know, that this can't happen ===
@@ -29,7 +29,7 @@ parameters:
 			path: %rootDir%/../../../src/Db/ResultIterator.php
 
 		-
-			message: '#Parameter \#1 \$alias of static method Forrest79\\PhPgSql\\Fluent\\Exceptions\\FluentException::tableAliasAlreadyExists\(\) expects string, Forrest79\\PhPgSql\\Db\\Query\|Forrest79\\PhPgSql\\Fluent\\Sql\|string given\.#'
+			message: '#Parameter \#1 \$alias of static method Forrest79\\PhPgSql\\Fluent\\Exceptions\\FluentException::tableAliasAlreadyExists\(\) expects string, Forrest79\\PhPgSql\\Db\\Queryable\|Forrest79\\PhPgSql\\Fluent\\Sql\|string given\.#'
 			path: %rootDir%/../../../src/Fluent/Fluent.php
 
 		-
