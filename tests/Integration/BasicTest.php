@@ -182,12 +182,30 @@ class BasicTest extends TestCase
 	}
 
 
-	public function testQueryWithParams(): void
+	public function testPassParamToQuery(): void
 	{
 		$query = $this->connection->createQuery('SELECT 1');
 		Tester\Assert::exception(function () use ($query): void {
 			$this->connection->query($query, 1);
 		}, Db\Exceptions\QueryException::class, NULL, Db\Exceptions\QueryException::CANT_PASS_PARAMS);
+	}
+
+
+	public function testQueryWithFluentWithParams(): void
+	{
+		$result = $this->connection->query(
+			'SELECT generate_series FROM ?',
+			$this->connection::literalArgs('generate_series(?::integer, ?::integer, ?::integer)', [2, 1, -1])
+		);
+
+		$rows = $result->fetchAssoc('generate_series');
+
+		Tester\Assert::same(2, \count($rows));
+
+		Tester\Assert::same(2, $rows[2]->generate_series);
+		Tester\Assert::same(1, $rows[1]->generate_series);
+
+		$result->free();
 	}
 
 

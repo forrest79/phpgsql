@@ -30,6 +30,22 @@ class BasicTest extends Tester\TestCase
 	}
 
 
+	public function testLiteral(): void
+	{
+		$literal1 = Db\Literal::create('now()');
+		Tester\Assert::same('now()', (string) $literal1);
+		Tester\Assert::same([], $literal1->getParams());
+
+		$literal2 = Db\Literal::create('generate_series(?, ?, ?)', 1, 2, 3);
+		Tester\Assert::same('generate_series(?, ?, ?)', (string) $literal2);
+		Tester\Assert::same([1, 2, 3], $literal2->getParams());
+
+		$literal3 = Db\Literal::createArgs('generate_series(?, ?, ?)', [1, 2, 3]);
+		Tester\Assert::same('generate_series(?, ?, ?)', (string) $literal3);
+		Tester\Assert::same([1, 2, 3], $literal3->getParams());
+	}
+
+
 	public function testDumpSql(): void
 	{
 		\putenv('TERM=none'); // don't use xterm in this test, if is really used

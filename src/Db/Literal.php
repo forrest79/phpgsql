@@ -7,10 +7,18 @@ class Literal
 	/** @var string */
 	private $value;
 
+	/** @var array */
+	private $params;
 
-	public function __construct(string $value)
+
+	/**
+	 * @param string $value
+	 * @param mixed ...$params
+	 */
+	public function __construct(string $value, ...$params)
 	{
 		$this->value = $value;
+		$this->params = $params;
 	}
 
 
@@ -20,9 +28,26 @@ class Literal
 	}
 
 
-	public static function create(string $value): self
+	public function getParams(): array
 	{
-		return new self($value);
+		return $this->params;
+	}
+
+
+	/**
+	 * @param string $value
+	 * @param mixed ...$params
+	 * @return self
+	 */
+	public static function create(string $value, ...$params): self
+	{
+		return new self($value, ...$params);
+	}
+
+
+	public static function createArgs(string $value, array $params): self
+	{
+		return new self($value, ...$params);
 	}
 
 }

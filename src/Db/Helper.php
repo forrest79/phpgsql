@@ -150,7 +150,15 @@ class Helper
 				} else if (\is_bool($param)) {
 					return $param === TRUE ? 'TRUE' : 'FALSE';
 				} else if ($param instanceof Literal) {
-					return (string) $param;
+					$literalValue = (string) $param;
+					$literalParams = $param->getParams();
+					if ($literalParams === []) {
+						return $literalValue;
+					}
+					[$sqlLiteralValue, $sqlLiteralParams] = self::createSql($literalValue, $literalParams, $paramIndex);
+					$paramIndex += \count($sqlLiteralParams);
+					$parsedParams = \array_merge($parsedParams, $sqlLiteralParams);
+					return $sqlLiteralValue;
 				} else if ($param instanceof Query) {
 					[$subquerySql, $subqueryParams] = self::createSql($param->getSql(), $param->getParams(), $paramIndex);
 					$paramIndex += \count($subqueryParams);

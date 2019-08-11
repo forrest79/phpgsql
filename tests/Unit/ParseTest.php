@@ -68,6 +68,14 @@ class ParseTest extends Tester\TestCase
 	}
 
 
+	public function testPrepareQueryWithLiteralWithParams(): void
+	{
+		$query = Db\Helper::prepareSql($this->connection->createQuery('SELECT * FROM ? WHERE column = ?', $this->connection::literal('function(?, ?)', 'param1', 2), 1));
+		Tester\Assert::same('SELECT * FROM function($1, $2) WHERE column = $3', $query->getSql());
+		Tester\Assert::same(['param1', 2, 1], $query->getParams());
+	}
+
+
 	public function testPrepareQueryWithArray(): void
 	{
 		$query = Db\Helper::prepareSql($this->connection->createQuery('SELECT * FROM table WHERE column IN (?)', [1, 2]));

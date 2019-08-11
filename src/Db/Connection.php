@@ -533,9 +533,20 @@ class Connection
 	}
 
 
-	public static function literal(string $value): Literal
+	/**
+	 * @param string $value
+	 * @param mixed ...$params
+	 * @return Literal
+	 */
+	public static function literal(string $value, ...$params): Literal
 	{
-		return new Literal($value);
+		return new Literal($value, ...$params);
+	}
+
+
+	public static function literalArgs(string $value, array $params): Literal
+	{
+		return new Literal($value, ...$params);
 	}
 
 }
