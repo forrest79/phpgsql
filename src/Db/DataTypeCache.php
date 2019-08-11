@@ -9,6 +9,6 @@ interface DataTypeCache
 	 * @param Connection $connection
 	 * @return array with structure [int column-oid => string column-typname] from table pg_catalog.pg_type
 	 */
-	public function load(Connection $connection): array;
+	function load(Connection $connection): array;
 
 }

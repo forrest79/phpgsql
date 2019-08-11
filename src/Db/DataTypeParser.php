@@ -10,6 +10,6 @@ interface DataTypeParser
 	 * @param string|NULL $value
 	 * @return mixed
 	 */
-	public function parse(string $type, ?string $value);
+	function parse(string $type, ?string $value);
 
 }
