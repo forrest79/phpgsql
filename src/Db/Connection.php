@@ -131,6 +131,9 @@ class Connection
 
 	public function setConnectionConfig(string $config): self
 	{
+		if ($this->isConnected()) {
+			throw Exceptions\ConnectionException::cantChangeConnectionSettings();
+		}
 		$this->connectionConfig = $config;
 		return $this;
 	}
@@ -144,6 +147,9 @@ class Connection
 
 	public function setConnectForceNew(bool $forceNew = TRUE): self
 	{
+		if ($this->isConnected()) {
+			throw Exceptions\ConnectionException::cantChangeConnectionSettings();
+		}
 		$this->connectForceNew = $forceNew;
 		return $this;
 	}
@@ -151,6 +157,9 @@ class Connection
 
 	public function setConnectAsync(bool $async = TRUE): self
 	{
+		if ($this->isConnected()) {
+			throw Exceptions\ConnectionException::cantChangeConnectionSettings();
+		}
 		$this->connectAsync = $async;
 		return $this;
 	}
@@ -158,6 +167,9 @@ class Connection
 
 	public function setConnectAsyncWaitSeconds(int $seconds): self
 	{
+		if ($this->isConnected()) {
+			throw Exceptions\ConnectionException::cantChangeConnectionSettings();
+		}
 		$this->connectAsyncWaitSeconds = $seconds;
 		return $this;
 	}
@@ -183,11 +195,17 @@ class Connection
 
 	public function close(): self
 	{
-		$this->onClose();
+		if ($this->isConnected()) {
+			$this->onClose();
+		}
+
 		if ($this->resource !== NULL) {
 			\pg_close($this->resource);
 			$this->resource = NULL;
 		}
+
+		$this->connected = FALSE;
+
 		return $this;
 	}
 

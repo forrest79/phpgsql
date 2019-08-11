@@ -68,6 +68,31 @@ class BasicTest extends TestCase
 	}
 
 
+	public function testChangeConnectionSettingsAfterConnected(): void
+	{
+		Tester\Assert::true($this->connection->ping());
+		Tester\Assert::exception(function (): void {
+			$this->connection->setConnectionConfig('');
+		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::CANT_CHANGE_CONNECTION_SETTINGS);
+		Tester\Assert::exception(function (): void {
+			$this->connection->setConnectForceNew(TRUE);
+		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::CANT_CHANGE_CONNECTION_SETTINGS);
+		Tester\Assert::exception(function (): void {
+			$this->connection->setConnectAsync(TRUE);
+		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::CANT_CHANGE_CONNECTION_SETTINGS);
+		Tester\Assert::exception(function (): void {
+			$this->connection->setConnectAsyncWaitSeconds(5);
+		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::CANT_CHANGE_CONNECTION_SETTINGS);
+
+		$this->connection->close();
+
+		$this->connection->setConnectionConfig('');
+		$this->connection->setConnectForceNew(TRUE);
+		$this->connection->setConnectAsync(TRUE);
+		$this->connection->setConnectAsyncWaitSeconds(5);
+	}
+
+
 	public function testConnectionEvents(): void
 	{
 		$connect = FALSE;

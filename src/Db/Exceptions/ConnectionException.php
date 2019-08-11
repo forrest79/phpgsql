@@ -6,16 +6,13 @@ class ConnectionException extends Exception
 {
 	public const NO_EXTENSION = 1;
 	public const NO_CONFIG = 2;
-	public const CONNECTION_FAILED = 3;
-	public const BAD_CONNECTION = 4;
-	public const ASYNC_STREAM_FAILED = 5;
-	public const ASYNC_CONNECT_FAILED = 6;
-	public const ASYNC_CONNECT_TIMEOUT = 7;
-	public const ASYNC_WAITING_RESULTS = 8;
-	public const ASYNC_NO_QUERY_WAS_SENT = 9;
-	public const ASYNC_SEND_QUERIES_FAILED = 10;
-	public const ASYNC_FLUSH_RESULTS_FAILED = 11;
-	public const ASYNC_CONSUME_INPUT_FAILED = 12;
+	public const CANT_CHANGE_CONNECTION_SETTINGS = 3;
+	public const CONNECTION_FAILED = 4;
+	public const BAD_CONNECTION = 5;
+	public const ASYNC_STREAM_FAILED = 6;
+	public const ASYNC_CONNECT_FAILED = 7;
+	public const ASYNC_CONNECT_TIMEOUT = 8;
+	public const ASYNC_NO_QUERY_WAS_SENT = 8;
 
 
 	public static function noExtensionException(): self
@@ -27,6 +24,12 @@ class ConnectionException extends Exception
 	public static function noConfigException(): self
 	{
 		return new self('No configuration was provided.', self::NO_CONFIG);
+	}
+
+
+	public static function cantChangeConnectionSettings(): self
+	{
+		return new self('You can\'t change connection settings when connected.', self::CANT_CHANGE_CONNECTION_SETTINGS);
 	}
 
 
@@ -60,33 +63,9 @@ class ConnectionException extends Exception
 	}
 
 
-	public static function asyncWaitingResultsException(): self
-	{
-		return new self('You must take results from previous async send via waitForAsyncQueriesResults().', self::ASYNC_WAITING_RESULTS);
-	}
-
-
 	public static function asyncNoQueryWasSentException(): self
 	{
 		return new self('No query was sent.', self::ASYNC_NO_QUERY_WAS_SENT);
-	}
-
-
-	public static function asyncSendQueryFailed(): self
-	{
-		return new self('Send query failed.', self::ASYNC_SEND_QUERIES_FAILED);
-	}
-
-
-	public static function asyncFlushResultsFailed(int $type): self
-	{
-		return new self(\sprintf('Flushing result failed #%s.', $type), self::ASYNC_FLUSH_RESULTS_FAILED);
-	}
-
-
-	public static function asyncConsumeInputFailed(): self
-	{
-		return new self('Consume input failed.', self::ASYNC_CONSUME_INPUT_FAILED);
 	}
 
 }
