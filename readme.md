@@ -67,7 +67,7 @@ Or with some parameters
 
 ```php
 $result = $connection->query('SELECT column FROM table WHERE id = ? AND year > ?', 1, 2000);
-$result = $connection->queryArray('SELECT column FROM table WHERE id = ? AND year > ?', [1, 2000]);
+$result = $connection->queryArgs('SELECT column FROM table WHERE id = ? AND year > ?', [1, 2000]);
 ```
 
 We can you ? for param, this work automatically and we can use some special things as pass array, literal, bool or another query. We can also use classic $1, $2, ..., but with this, no special features is available and you can't combine ? and $1.
@@ -78,7 +78,7 @@ We can pass as variable scalar, array (is rewriten to many ?, ?, ?, ...), litera
 
 ```php
 $query = $connection->prepareQuery('SELECT id FROM table WHERE year > ?', 2000);
-$query = $connection->prepareQueryArray('SELECT id FROM table WHERE year > ?', [2000]);
+$query = $connection->prepareQueryArgs('SELECT id FROM table WHERE year > ?', [2000]);
 ```
 
 And pass it:
@@ -130,11 +130,11 @@ Finally, we can free result:
 $result->free();
 ```
 
-We can also run query asynchronously. Just use this (syntax is the same as query and queryArray):
+We can also run query asynchronously. Just use this (syntax is the same as query and queryArgs):
 
 ```php
 $result = $connection->asyncQuery('SELECT * FROM table WHERE id = ?', 1);
-$result = $connection->asyncQueryArray('SELECT * FROM table WHERE id = ?', [1]);
+$result = $connection->asyncQueryArgs('SELECT * FROM table WHERE id = ?', [1]);
 ```
 
 You can run just one async query on connection, before we can run new async query, we need to get results from the first one:

@@ -248,7 +248,7 @@ class Connection
 	 */
 	public function query($query, ...$params): Result
 	{
-		return $this->queryArray($query, $params);
+		return $this->queryArgs($query, $params);
 	}
 
 
@@ -259,7 +259,7 @@ class Connection
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
-	public function queryArray($query, array $params): Result
+	public function queryArgs($query, array $params): Result
 	{
 		$query = Helper::prepareSql($this->normalizeQuery($query, $params));
 
@@ -285,11 +285,11 @@ class Connection
 	 */
 	public function createQuery(string $query, ...$params): Query
 	{
-		return $this->createQueryArray($query, $params);
+		return $this->createQueryArgs($query, $params);
 	}
 
 
-	public function createQueryArray(string $query, array $params): Query
+	public function createQueryArgs(string $query, array $params): Query
 	{
 		return new Query($query, $params);
 	}
@@ -304,7 +304,7 @@ class Connection
 	 */
 	public function asyncQuery($query, ...$params): AsyncResult
 	{
-		return $this->asyncQueryArray($query, $params);
+		return $this->asyncQueryArgs($query, $params);
 	}
 
 
@@ -315,7 +315,7 @@ class Connection
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
-	public function asyncQueryArray($query, array $params): AsyncResult
+	public function asyncQueryArgs($query, array $params): AsyncResult
 	{
 		$this->asyncQuery = $query = Helper::prepareSql($this->normalizeQuery($query, $params));
 		if (@\pg_send_query_params($this->getConnectedResource(), $query->getSql(), $query->getParams()) === FALSE) { // intentionally @
@@ -417,7 +417,7 @@ class Connection
 				throw Exceptions\QueryException::cantPassParams();
 			}
 		} else {
-			$query = $this->createQueryArray($query, $params);
+			$query = $this->createQueryArgs($query, $params);
 		}
 
 		return $query;

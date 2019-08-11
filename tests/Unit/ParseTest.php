@@ -37,7 +37,7 @@ class ParseTest extends Tester\TestCase
 		Tester\Assert::same('SELECT * FROM table WHERE column = $1', $query->getSql());
 		Tester\Assert::same([1], $query->getParams());
 
-		$query = Db\Helper::prepareSql($this->connection->createQueryArray('SELECT * FROM table WHERE column = $1', [1]));
+		$query = Db\Helper::prepareSql($this->connection->createQueryArgs('SELECT * FROM table WHERE column = $1', [1]));
 		Tester\Assert::same('SELECT * FROM table WHERE column = $1', $query->getSql());
 		Tester\Assert::same([1], $query->getParams());
 
@@ -45,7 +45,7 @@ class ParseTest extends Tester\TestCase
 		Tester\Assert::same('SELECT * FROM table WHERE column = $1', $query->getSql());
 		Tester\Assert::same([1], $query->getParams());
 
-		$query = Db\Helper::prepareSql($this->connection->createQueryArray('SELECT * FROM table WHERE column = ?', [1]));
+		$query = Db\Helper::prepareSql($this->connection->createQueryArgs('SELECT * FROM table WHERE column = ?', [1]));
 		Tester\Assert::same('SELECT * FROM table WHERE column = $1', $query->getSql());
 		Tester\Assert::same([1], $query->getParams());
 	}

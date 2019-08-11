@@ -50,7 +50,7 @@ class AsyncTest extends TestCase
 
 		Tester\Assert::same(['id' => 1, 'name' => 'name2'], $row1->toArray());
 
-		$result2 = $this->connection->asyncQueryArray('SELECT id, name FROM test WHERE id = ?', [2]);
+		$result2 = $this->connection->asyncQueryArgs('SELECT id, name FROM test WHERE id = ?', [2]);
 
 		$this->connection->waitForAsyncQuery();
 

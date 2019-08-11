@@ -32,7 +32,7 @@ class ParseDataTypeTest extends TestCase
 			);
 		');
 
-		$this->connection->queryArray('
+		$this->connection->queryArgs('
 			INSERT INTO test(type_integer)
 			VALUES (?)
 		', [NULL]);
@@ -72,7 +72,7 @@ class ParseDataTypeTest extends TestCase
 			);
 		');
 
-		$this->connection->queryArray('
+		$this->connection->queryArgs('
 			INSERT INTO test(
 					type_integer,
 					type_bigint,
@@ -170,7 +170,7 @@ class ParseDataTypeTest extends TestCase
 			);
 		');
 
-		$this->connection->queryArray('
+		$this->connection->queryArgs('
 			INSERT INTO test(
 					type_integer,
 					type_bigint,
@@ -249,7 +249,7 @@ class ParseDataTypeTest extends TestCase
 			);
 		');
 
-		$this->connection->queryArray('INSERT INTO test(type_hstore) VALUES (?)', ['a=>1']);
+		$this->connection->queryArgs('INSERT INTO test(type_hstore) VALUES (?)', ['a=>1']);
 
 		$row = $this->fetch();
 
@@ -267,7 +267,7 @@ class ParseDataTypeTest extends TestCase
 			);
 		');
 
-		$this->connection->queryArray('INSERT INTO test(type_point) VALUES (?)', ['(1,2)']);
+		$this->connection->queryArgs('INSERT INTO test(type_point) VALUES (?)', ['(1,2)']);
 
 		$row = $this->fetch();
 
@@ -285,7 +285,7 @@ class ParseDataTypeTest extends TestCase
 			);
 		');
 
-		$this->connection->queryArray('INSERT INTO test(type_tsvector) VALUES (?)', ['{\'text\'}']);
+		$this->connection->queryArgs('INSERT INTO test(type_tsvector) VALUES (?)', ['{\'text\'}']);
 
 		$row = $this->fetch();
 
@@ -303,7 +303,7 @@ class ParseDataTypeTest extends TestCase
 			);
 		');
 
-		$this->connection->queryArray('INSERT INTO test(type_money) VALUES (?)', ['{1)}']);
+		$this->connection->queryArgs('INSERT INTO test(type_money) VALUES (?)', ['{1)}']);
 
 		$row = $this->fetch();
 
@@ -336,7 +336,7 @@ class ParseDataTypeTest extends TestCase
 			);
 		');
 
-		$this->connection->queryArray('INSERT INTO test(type_point) VALUES (?)', ['(1,2)']);
+		$this->connection->queryArgs('INSERT INTO test(type_point) VALUES (?)', ['(1,2)']);
 
 		$row = $this->fetch();
 
