@@ -202,6 +202,26 @@ class FetchTest extends TestCase
 	}
 
 
+	public function testFetchAssocNoColumn(): void
+	{
+		$this->connection->query('
+			CREATE TABLE test(
+				id serial,
+				type integer
+			);
+		');
+		$this->connection->query('INSERT INTO test(type) SELECT generate_series FROM generate_series(3, 1, -1)');
+
+		$result = $this->connection->query('SELECT id, type FROM test ORDER BY id');
+
+		Tester\Assert::exception(static function () use ($result): void {
+			$result->fetchAssoc('id=types');
+		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::NO_COLUMN);
+
+		$result->free();
+	}
+
+
 	public function testFetchAssocBlank(): void
 	{
 		$this->connection->query('
