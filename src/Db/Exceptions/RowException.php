@@ -16,7 +16,7 @@ class RowException extends Exception
 
 	public static function notStringKey(): self
 	{
-		return new self('Requested key must be string.');
+		return new self('Requested key must be string.', self::NOT_STRING_KEY);
 	}
 
 }
