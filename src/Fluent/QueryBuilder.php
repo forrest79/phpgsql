@@ -489,7 +489,7 @@ class QueryBuilder
 
 	/**
 	 * @param string|NULL $type
-	 * @param string|Db\Query|Fluent $table
+	 * @param string|Db\Queryable|Fluent $table
 	 * @param string $alias
 	 * @param array $params
 	 * @return string
@@ -498,7 +498,13 @@ class QueryBuilder
 	{
 		if ($table instanceof Db\Queryable) {
 			$params[] = $table;
-			$table = '(?)';
+			if ($table instanceof Db\Query) {
+				$table = '(?)';
+			} else if ($table instanceof Db\Literal) {
+				$table = '?';
+			} else {
+				throw Exceptions\QueryBuilderException::badQueryable($table);
+			}
 		} else if ($table instanceof Fluent) {
 			$params[] = $table->getQuery();
 			$table = '(?)';

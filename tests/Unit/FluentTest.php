@@ -96,8 +96,31 @@ class FluentTest extends Tester\TestCase
 			->from(Db\Literal::create('generate_series(?::integer, ?::integer, ?::integer)', 2, 1, -1), 'gs')
 			->prepareSql();
 
-		Tester\Assert::same('SELECT gs FROM (generate_series($1::integer, $2::integer, $3::integer)) AS gs', $query->getSql());
+		Tester\Assert::same('SELECT gs FROM generate_series($1::integer, $2::integer, $3::integer) AS gs', $query->getSql());
 		Tester\Assert::same([2, 1, -1], $query->getParams());
+	}
+
+
+	public function testFromWithBadQueryable(): void
+	{
+		Tester\Assert::exception(function (): void {
+			$this->fluent()
+				->select(['qa'])
+				->from(new class implements Db\Queryable {
+
+					function getSql(): string
+					{
+						return '';
+					}
+
+					function getParams(): array
+					{
+						return [];
+					}
+
+				}, 'qa')
+				->prepareSql();
+		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::BAD_QUERYABLE);
 	}
 
 

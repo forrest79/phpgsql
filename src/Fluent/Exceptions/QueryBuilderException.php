@@ -2,6 +2,8 @@
 
 namespace Forrest79\PhPgSql\Fluent\Exceptions;
 
+use Forrest79\PhPgSql\Db;
+
 class QueryBuilderException extends Exception
 {
 	public const BAD_QUERY_TYPE = 1;
@@ -11,6 +13,7 @@ class QueryBuilderException extends Exception
 	public const NO_DATA_TO_UPDATE = 5;
 	public const NO_MAIN_TABLE = 6;
 	public const BAD_PARAMS_COUNT = 7;
+	public const BAD_QUERYABLE = 8;
 
 
 	public static function badQueryType(string $type): self
@@ -52,6 +55,12 @@ class QueryBuilderException extends Exception
 	public static function badParamsCount(string $condition, int $expected, int $actual): self
 	{
 		return new self(\sprintf('In condition \'%s\' is expected %d paramerters, but %d was passed.', $condition, $expected, $actual), self::BAD_PARAMS_COUNT);
+	}
+
+
+	public static function badQueryable(Db\Queryable $queryable): self
+	{
+		return new self(\sprintf('This queryable type \'%s\' is not supported.', \get_class($queryable)), self::BAD_QUERYABLE);
 	}
 
 }
