@@ -35,7 +35,12 @@ class ConnectionException extends Exception
 
 	public static function connectionFailedException(): self
 	{
-		return new self('Connection failed.', self::CONNECTION_FAILED);
+		$message = '.';
+		$lastPhpError = \error_get_last();
+		if ($lastPhpError !== NULL && $lastPhpError['type'] === \E_WARNING) {
+			$message = ': ' . $lastPhpError['message'];
+		}
+		return new self('Connection failed' . $message, self::CONNECTION_FAILED);
 	}
 
 
