@@ -23,7 +23,7 @@ abstract class DbLoader implements Db\DataTypeCache
 			if ($data === FALSE) {
 				break;
 			}
-			$types[(int) $data['oid']] = $data['typname'];
+			$types[$data['oid']] = $data['typname'];
 		}
 
 		return $types;
