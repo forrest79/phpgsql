@@ -57,6 +57,7 @@ class Basic implements Db\DataTypeParser
 				case 'int2':
 				case 'int4':
 				case 'int8':
+				case 'oid':
 					return (int) $value;
 				case 'float4':
 				case 'float8':
