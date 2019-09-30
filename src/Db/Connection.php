@@ -175,21 +175,24 @@ class Connection
 	}
 
 
-	public function addOnConnect(callable $callback): void
+	public function addOnConnect(callable $callback): self
 	{
 		$this->onConnect[] = $callback;
+		return $this;
 	}
 
 
-	public function addOnClose(callable $callback): void
+	public function addOnClose(callable $callback): self
 	{
 		$this->onClose[] = $callback;
+		return $this;
 	}
 
 
-	public function addOnQuery(callable $callback): void
+	public function addOnQuery(callable $callback): self
 	{
 		$this->onQuery[] = $callback;
+		return $this;
 	}
 
 
