@@ -23,6 +23,7 @@ class Basic implements Db\DataTypeParser
 				case '_int2':
 				case '_int4':
 				case '_int8':
+				case '_oid':
 					return $this->parseArray($value, 'intval');
 				case '_float4':
 				case '_float8':

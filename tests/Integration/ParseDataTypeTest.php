@@ -49,6 +49,7 @@ class ParseDataTypeTest extends TestCase
 				type_integer integer,
 				type_bigint bigint,
 				type_smallint smallint,
+				type_oid oid,
 				type_numeric numeric,
 				type_decimal decimal,
 				type_real real,
@@ -77,6 +78,7 @@ class ParseDataTypeTest extends TestCase
 					type_integer,
 					type_bigint,
 					type_smallint,
+					type_oid,
 					type_numeric,
 					type_decimal,
 					type_real,
@@ -96,11 +98,12 @@ class ParseDataTypeTest extends TestCase
 					type_tsquery,
 					type_tsvector
 				)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+			VALUES (?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 		', [
 			1,
 			2,
 			3,
+			4,
 			1.1,
 			2.2,
 			3.3,
@@ -127,6 +130,7 @@ class ParseDataTypeTest extends TestCase
 		Tester\Assert::true(\is_int($row->type_integer));
 		Tester\Assert::true(\is_int($row->type_bigint));
 		Tester\Assert::true(\is_int($row->type_smallint));
+		Tester\Assert::true(\is_int($row->type_oid));
 		Tester\Assert::true(\is_float($row->type_numeric));
 		Tester\Assert::true(\is_float($row->type_decimal));
 		Tester\Assert::true(\is_float($row->type_real));
@@ -156,6 +160,7 @@ class ParseDataTypeTest extends TestCase
 				type_integer integer[],
 				type_bigint bigint[],
 				type_smallint smallint[],
+				type_oid oid[],
 				type_numeric numeric[],
 				type_decimal decimal[],
 				type_real real[],
@@ -175,6 +180,7 @@ class ParseDataTypeTest extends TestCase
 					type_integer,
 					type_bigint,
 					type_smallint,
+					type_oid,
 					type_numeric,
 					type_decimal,
 					type_real,
@@ -187,11 +193,12 @@ class ParseDataTypeTest extends TestCase
 					type_timestamp,
 					type_timestamptz
 				)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+			VALUES (?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 		', [
 			'{1}',
 			'{2}',
 			'{3}',
+			'{4}',
 			'{1.1}',
 			'{2.2}',
 			'{3.3}',
@@ -214,6 +221,8 @@ class ParseDataTypeTest extends TestCase
 		Tester\Assert::true(\is_int($row->type_bigint[0]));
 		Tester\Assert::true(\is_array($row->type_smallint));
 		Tester\Assert::true(\is_int($row->type_smallint[0]));
+		Tester\Assert::true(\is_array($row->type_oid));
+		Tester\Assert::true(\is_int($row->type_oid[0]));
 		Tester\Assert::true(\is_array($row->type_numeric));
 		Tester\Assert::true(\is_float($row->type_numeric[0]));
 		Tester\Assert::true(\is_array($row->type_decimal));
