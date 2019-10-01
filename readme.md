@@ -51,7 +51,7 @@ $phpFileCache->clean();
 First, create connection to PostgreSQL and connect it:
 
 ```php
-$connection = new Db\Connection('host=sheep port=5432 dbname=test user=lamb password=bar');
+$connection = new Db\Connection('host=sheep port=5432 dbname=test user=lamb password=bar connect_timeout=5'); // good habit is to use connect_timeout parameter 
 $connection->connect();
 ```
 
