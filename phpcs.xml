@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<ruleset name="Geekshirts">
+<ruleset name="PhPgSql">
 	<rule ref="./vendor/consistence/coding-standard/Consistence/ruleset.xml">
 		<exclude name="Consistence.Exceptions.ExceptionDeclaration.IncorrectExceptionDirectory"/> <!-- We use Exceptions directory, not exceptions -->
 		<exclude name="Generic.Arrays.ArrayIndent.CloseBraceIncorrect"/> <!-- Used phpstorm indent -->
