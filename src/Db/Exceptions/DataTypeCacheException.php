@@ -7,9 +7,9 @@ class DataTypeCacheException extends Exception
 	public const CANT_LOAD_TYPES = 1;
 
 
-	public static function cantLoadTypes(): self
+	public static function cantLoadTypes(string $error): self
 	{
-		return new self('Can\'t load types from database.', self::CANT_LOAD_TYPES);
+		return new self(\sprintf('Can\'t load types from database: %s.', $error), self::CANT_LOAD_TYPES);
 	}
 
 }

@@ -14,7 +14,7 @@ abstract class DbLoader implements Db\DataTypeCache
 		$resource = $connection->getResource();
 		$query = @\pg_query($resource, self::LOAD_QUERY); // intentionally @
 		if ($query === FALSE) {
-			throw Db\Exceptions\DataTypeCacheException::cantLoadTypes();
+			throw Db\Exceptions\DataTypeCacheException::cantLoadTypes($connection->getLastError());
 		}
 
 		$types = [];

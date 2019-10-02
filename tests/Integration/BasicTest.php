@@ -23,6 +23,12 @@ class BasicTest extends TestCase
 	}
 
 
+	public function testGetLastErrorWithNoConnection(): void
+	{
+		Tester\Assert::same('', $this->connection->getLastError());
+	}
+
+
 	public function testPing(): void
 	{
 		Tester\Assert::true($this->connection->ping());

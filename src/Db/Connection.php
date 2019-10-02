@@ -445,9 +445,11 @@ class Connection
 	}
 
 
-	private function getLastError(): string
+	public function getLastError(): string
 	{
-		return $this->resource === NULL ? \pg_last_error() : \pg_last_error($this->resource);
+		return $this->resource === NULL
+			? \pg_last_error()
+			: \pg_last_error($this->resource);
 	}
 
 
