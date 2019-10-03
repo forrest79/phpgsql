@@ -12,17 +12,6 @@ require_once __DIR__ . '/TestCase.php';
  */
 class FetchTest extends TestCase
 {
-	/** @var Db\Connection */
-	private $connection;
-
-
-	protected function setUp(): void
-	{
-		parent::setUp();
-		$this->connection = new Db\Connection(\sprintf('%s dbname=%s', $this->getConfig(), $this->getDbName()));
-		$this->connection->connect();
-	}
-
 
 	public function testFetch(): void
 	{
@@ -579,13 +568,6 @@ class FetchTest extends TestCase
 		}
 
 		$result->free();
-	}
-
-
-	protected function tearDown(): void
-	{
-		$this->connection->close();
-		parent::tearDown();
 	}
 
 

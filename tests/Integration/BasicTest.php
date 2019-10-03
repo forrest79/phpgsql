@@ -12,16 +12,6 @@ require_once __DIR__ . '/TestCase.php';
  */
 class BasicTest extends TestCase
 {
-	/** @var Db\Connection */
-	private $connection;
-
-
-	protected function setUp(): void
-	{
-		parent::setUp();
-		$this->connection = new Db\Connection(\sprintf('%s dbname=%s', $this->getConfig(), $this->getDbName()));
-	}
-
 
 	public function testGetLastErrorWithNoConnection(): void
 	{
@@ -140,54 +130,6 @@ class BasicTest extends TestCase
 	}
 
 
-	public function testTransactions(): void
-	{
-		$this->connection->begin();
-
-		Tester\Assert::true($this->connection->isInTransaction());
-		Tester\Assert::same(1, $this->connection->query('SELECT 1')->fetchSingle());
-
-		$this->connection->commit();
-
-		Tester\Assert::false($this->connection->isInTransaction());
-
-		$this->connection->begin();
-
-		Tester\Assert::true($this->connection->isInTransaction());
-		Tester\Assert::same(1, $this->connection->query('SELECT 1')->fetchSingle());
-
-		$this->connection->rollback();
-	}
-
-
-	public function testSavepoints(): void
-	{
-		$this->connection->begin();
-
-		$this->connection->begin('test');
-
-		Tester\Assert::true($this->connection->isInTransaction());
-		Tester\Assert::same(1, $this->connection->query('SELECT 1')->fetchSingle());
-
-		$this->connection->commit('test');
-
-		$this->connection->commit();
-
-		Tester\Assert::false($this->connection->isInTransaction());
-
-		$this->connection->begin();
-
-		$this->connection->begin('test');
-
-		Tester\Assert::true($this->connection->isInTransaction());
-		Tester\Assert::same(1, $this->connection->query('SELECT 1')->fetchSingle());
-
-		$this->connection->rollback('test');
-
-		$this->connection->rollback();
-	}
-
-
 	public function testPassParamToQuery(): void
 	{
 		$query = $this->connection->createQuery('SELECT 1');
@@ -212,13 +154,6 @@ class BasicTest extends TestCase
 		Tester\Assert::same(1, $rows[1]->generate_series);
 
 		$result->free();
-	}
-
-
-	protected function tearDown(): void
-	{
-		$this->connection->close();
-		parent::tearDown();
 	}
 
 }

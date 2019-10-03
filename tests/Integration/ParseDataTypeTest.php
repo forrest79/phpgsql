@@ -12,17 +12,6 @@ require_once __DIR__ . '/TestCase.php';
  */
 class ParseDataTypeTest extends TestCase
 {
-	/** @var Db\Connection */
-	private $connection;
-
-
-	protected function setUp(): void
-	{
-		parent::setUp();
-		$this->connection = new Db\Connection(\sprintf('%s dbname=%s', $this->getConfig(), $this->getDbName()), FALSE, TRUE);
-		$this->connection->connect();
-	}
-
 
 	public function testParseNull(): void
 	{
@@ -360,13 +349,6 @@ class ParseDataTypeTest extends TestCase
 			throw new \InvalidArgumentException('Bad data were return from database');
 		}
 		return $row;
-	}
-
-
-	protected function tearDown(): void
-	{
-		$this->connection->close();
-		parent::tearDown();
 	}
 
 }

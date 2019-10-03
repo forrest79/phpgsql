@@ -12,17 +12,6 @@ require_once __DIR__ . '/TestCase.php';
  */
 class AsyncTest extends TestCase
 {
-	/** @var Db\Connection */
-	private $connection;
-
-
-	protected function setUp(): void
-	{
-		parent::setUp();
-		$this->connection = new Db\Connection(\sprintf('%s dbname=%s', $this->getConfig(), $this->getDbName()), FALSE, TRUE);
-		$this->connection->connect();
-	}
-
 
 	public function testIsConnected(): void
 	{
@@ -96,10 +85,9 @@ class AsyncTest extends TestCase
 	}
 
 
-	protected function tearDown(): void
+	protected function createConnection(): Db\Connection
 	{
-		$this->connection->close();
-		parent::tearDown();
+		return new Db\Connection($this->getTestConnectionConfig(), FALSE, TRUE);
 	}
 
 }

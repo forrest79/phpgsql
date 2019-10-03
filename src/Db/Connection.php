@@ -40,6 +40,9 @@ class Connection
 	/** @var AsyncResult|NULL */
 	private $asyncResult;
 
+	/** @var Transaction */
+	private $transaction;
+
 	/** @var callable[] function (Connection $connection) {} */
 	private $onConnect = [];
 
@@ -369,36 +372,12 @@ class Connection
 	}
 
 
-	/**
-	 * @throws Exceptions\ConnectionException
-	 * @throws Exceptions\QueryException
-	 */
-	public function begin(?string $savepoint = NULL): self
+	public function transaction(): Transaction
 	{
-		$this->query($savepoint === NULL ? 'BEGIN' : ('SAVEPOINT ' . $savepoint));
-		return $this;
-	}
-
-
-	/**
-	 * @throws Exceptions\ConnectionException
-	 * @throws Exceptions\QueryException
-	 */
-	public function commit(?string $savepoint = NULL): self
-	{
-		$this->query($savepoint === NULL ? 'COMMIT' : ('RELEASE SAVEPOINT ' . $savepoint));
-		return $this;
-	}
-
-
-	/**
-	 * @throws Exceptions\ConnectionException
-	 * @throws Exceptions\QueryException
-	 */
-	public function rollback(?string $savepoint = NULL): self
-	{
-		$this->query($savepoint === NULL ? 'ROLLBACK' : ('ROLLBACK TO SAVEPOINT ' . $savepoint));
-		return $this;
+		if ($this->transaction === NULL) {
+			$this->transaction = new Transaction($this);
+		}
+		return $this->transaction;
 	}
 
 

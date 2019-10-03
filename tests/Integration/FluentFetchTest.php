@@ -2,6 +2,7 @@
 
 namespace Forrest79\PhPgSql\Tests\Integration;
 
+use Forrest79\PhPgSql\Db;
 use Forrest79\PhPgSql\Fluent;
 use Tester;
 
@@ -9,20 +10,10 @@ require_once __DIR__ . '/TestCase.php';
 
 /**
  * @testCase
+ * @property-read Fluent\Connection $connection
  */
 class FluentFetchTest extends TestCase
 {
-	/** @var Fluent\Connection */
-	private $connection;
-
-
-	protected function setUp(): void
-	{
-		parent::setUp();
-		$this->connection = new Fluent\Connection(\sprintf('%s dbname=%s', $this->getConfig(), $this->getDbName()));
-		$this->connection->connect();
-	}
-
 
 	public function testFetch(): void
 	{
@@ -241,10 +232,9 @@ class FluentFetchTest extends TestCase
 	}
 
 
-	protected function tearDown(): void
+	protected function createConnection(): Db\Connection
 	{
-		$this->connection->close();
-		parent::tearDown();
+		return new Fluent\Connection($this->getTestConnectionConfig());
 	}
 
 }

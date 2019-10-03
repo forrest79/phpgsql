@@ -12,9 +12,6 @@ require_once __DIR__ . '/TestCase.php';
  */
 class DataTypeCacheTest extends TestCase
 {
-	/** @var Db\Connection */
-	private $connection;
-
 	/** @var string */
 	private $cacheDirectory;
 
@@ -22,7 +19,6 @@ class DataTypeCacheTest extends TestCase
 	protected function setUp(): void
 	{
 		parent::setUp();
-		$this->connection = new Db\Connection(\sprintf('%s dbname=%s', $this->getConfig(), $this->getDbName()));
 		$this->cacheDirectory = \sprintf('%s/plpgsql-data-types-cache-%s', \sys_get_temp_dir(), \uniqid());
 	}
 
@@ -86,13 +82,6 @@ class DataTypeCacheTest extends TestCase
 	private function createDataTypeCache(): Db\DataTypeCaches\PhpFile
 	{
 		return new Db\DataTypeCaches\PhpFile($this->cacheDirectory);
-	}
-
-
-	protected function tearDown(): void
-	{
-		$this->connection->close();
-		parent::tearDown();
 	}
 
 }

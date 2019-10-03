@@ -9,6 +9,9 @@ require_once __DIR__ . '/../bootstrap.php';
 
 abstract class TestCase extends Tester\TestCase
 {
+	/** @var Db\Connection */
+	protected $connection;
+
 	/** @var string */
 	private $dbname;
 
@@ -27,11 +30,14 @@ abstract class TestCase extends Tester\TestCase
 		$this->adminConnection = new Db\Connection($this->config);
 
 		$this->adminConnection->query('CREATE DATABASE ?', $this->adminConnection::literal($this->getDbName()));
+
+		$this->connection = $this->createConnection();
 	}
 
 
 	protected function tearDown(): void
 	{
+		$this->connection->close();
 		$this->adminConnection->query('DROP DATABASE ?', $this->adminConnection::literal($this->dbname));
 	}
 
@@ -45,6 +51,18 @@ abstract class TestCase extends Tester\TestCase
 	protected function getDbName(): string
 	{
 		return $this->dbname;
+	}
+
+
+	protected function getTestConnectionConfig(): string
+	{
+		return \sprintf('%s dbname=%s', $this->getConfig(), $this->getDbName());
+	}
+
+
+	protected function createConnection(): Db\Connection
+	{
+		return new Db\Connection($this->getTestConnectionConfig());
 	}
 
 }
