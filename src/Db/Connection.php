@@ -55,10 +55,6 @@ class Connection
 	 */
 	public function __construct(string $connectionConfig = '', bool $connectForceNew = FALSE, bool $connectAsync = FALSE)
 	{
-		if (!\extension_loaded('pgsql')) {
-			throw Exceptions\ConnectionException::noExtensionException();
-		}
-
 		$this->connectionConfig = $connectionConfig;
 		$this->connectForceNew = $connectForceNew;
 		$this->connectAsync = $connectAsync;

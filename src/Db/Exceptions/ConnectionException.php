@@ -4,21 +4,14 @@ namespace Forrest79\PhPgSql\Db\Exceptions;
 
 class ConnectionException extends Exception
 {
-	public const NO_EXTENSION = 1;
-	public const NO_CONFIG = 2;
-	public const CANT_CHANGE_CONNECTION_SETTINGS = 3;
-	public const CONNECTION_FAILED = 4;
-	public const BAD_CONNECTION = 5;
-	public const ASYNC_STREAM_FAILED = 6;
-	public const ASYNC_CONNECT_FAILED = 7;
-	public const ASYNC_CONNECT_TIMEOUT = 8;
+	public const NO_CONFIG = 1;
+	public const CANT_CHANGE_CONNECTION_SETTINGS = 2;
+	public const CONNECTION_FAILED = 3;
+	public const BAD_CONNECTION = 4;
+	public const ASYNC_STREAM_FAILED = 5;
+	public const ASYNC_CONNECT_FAILED = 6;
+	public const ASYNC_CONNECT_TIMEOUT = 7;
 	public const ASYNC_NO_QUERY_WAS_SENT = 8;
-
-
-	public static function noExtensionException(): self
-	{
-		return new self('PHP extension \'pgsql\' is not loaded.', self::NO_EXTENSION);
-	}
 
 
 	public static function noConfigException(): self
