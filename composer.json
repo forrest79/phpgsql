@@ -21,6 +21,9 @@
 		"consistence/coding-standard": "^3.8",
 		"slevomat/coding-standard": "^5.0"
 	},
+	"suggest": {
+		"ext-json": "Needed to support parse JSON types from PostgreSQL"
+	},
 	"autoload": {
 		"psr-4": {
 			"Forrest79\\PhPgSql\\": "src/"
