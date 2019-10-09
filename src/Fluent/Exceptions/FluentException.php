@@ -22,7 +22,7 @@ class FluentException extends Exception
 
 	public static function tableAliasAlreadyExists(string $alias): self
 	{
-		return new self(\sprintf('This table alias "%s" alread exists.', $alias), self::TABLE_ALIAS_ALREADY_EXISTS);
+		return new self(\sprintf('This table alias "%s" already exists.', $alias), self::TABLE_ALIAS_ALREADY_EXISTS);
 	}
 
 
