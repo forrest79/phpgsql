@@ -428,7 +428,5 @@ Just with table name:
 
 ## TODO
 
-- performance - test foreach vs. array_walk vs. array_map and use the best
 - better handle Fluent <-> QueryBuilder - can use own Fluent and own QueryBuilder? On Fluent just needed public constants?
 - create column data types service, that will use data type cache and that will handle rebuild cache on devel? Just once per request? Can call (optionable) pg_field_type if type is not in cache?
-- better docs (now see tests)

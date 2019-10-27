@@ -105,7 +105,11 @@ class BasicTest extends TestCase
 			Db\Connection $connection,
 			Db\Query $query,
 			float $duration
-		) use (&$hasQuery, &$hasExecute, &$queryDuration): void {
+		) use (
+			&$hasQuery,
+			&$hasExecute,
+			&$queryDuration
+		): void {
 			if ($query->getSql() === 'SELECT 1') {
 				$hasQuery = TRUE;
 			} else if ($query->getSql() === 'SELECT 2') {
