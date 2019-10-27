@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-require_once __DIR__ . '/bootstrap.php';
+require __DIR__ . '/prepare-db-config.php';
 
 $connection = \pg_connect(\PHPGSQL_CONNECTION_CONFIG);
 if ($connection !== FALSE) {
@@ -11,6 +11,3 @@ if ($connection !== FALSE) {
 		}
 	}
 }
-
-// @hack
-Tester\Assert::true(TRUE);

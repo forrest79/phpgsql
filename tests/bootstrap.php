@@ -11,4 +11,4 @@ require $loader;
 
 Tester\Environment::setup();
 
-\define('PHPGSQL_CONNECTION_CONFIG', \getenv('PHPGSQL_CONNECTION_CONFIG') ?: 'host=localhost port=5432 user=postgres password=postgres');
+require __DIR__ . '/prepare-db-config.php';
