@@ -285,7 +285,12 @@ class Connection
 
 		$start = $this->onQuery !== [] ? \microtime(TRUE) : NULL;
 
-		$resource = @\pg_query_params($this->getConnectedResource(), $query->getSql(), $query->getParams()); // intentionally @
+		$queryParams = $query->getParams();
+		if ($queryParams === []) {
+			$resource = @\pg_query($this->getConnectedResource(), $query->getSql()); // intentionally @
+		} else {
+			$resource = @\pg_query_params($this->getConnectedResource(), $query->getSql(), $queryParams); // intentionally @
+		}
 		if ($resource === FALSE) {
 			throw Exceptions\QueryException::queryFailed($query, $this->getLastError());
 		}
@@ -338,7 +343,14 @@ class Connection
 	public function asyncQueryArgs($query, array $params): AsyncResult
 	{
 		$this->asyncQuery = $query = Helper::prepareSql($this->normalizeQuery($query, $params));
-		if (@\pg_send_query_params($this->getConnectedResource(), $query->getSql(), $query->getParams()) === FALSE) { // intentionally @
+
+		$queryParams = $query->getParams();
+		if ($queryParams === []) {
+			$querySuccess = @\pg_send_query($this->getConnectedResource(), $query->getSql()); // intentionally @
+		} else {
+			$querySuccess = @\pg_send_query_params($this->getConnectedResource(), $query->getSql(), $query->getParams()); // intentionally @
+		}
+		if ($querySuccess === FALSE) {
 			throw Exceptions\QueryException::asyncQueryFailed($query, $this->getLastError());
 		}
 

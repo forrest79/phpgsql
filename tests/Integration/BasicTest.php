@@ -132,8 +132,8 @@ class BasicTest extends TestCase
 
 	public function testPassParamToQuery(): void
 	{
-		$query = $this->connection->createQuery('SELECT 1');
-		Tester\Assert::exception(function () use ($query): void {
+		Tester\Assert::exception(function (): void {
+			$query = $this->connection->createQuery('SELECT 1');
 			$this->connection->query($query, 1);
 		}, Db\Exceptions\QueryException::class, NULL, Db\Exceptions\QueryException::CANT_PASS_PARAMS);
 	}
@@ -154,6 +154,19 @@ class BasicTest extends TestCase
 		Tester\Assert::same(1, $rows[1]->generate_series);
 
 		$result->free();
+	}
+
+
+	public function testOnlyOneQueryForPreparedStatement(): void
+	{
+		Tester\Assert::exception(
+			function (): void {
+				$this->connection->query('SELECT 1 WHERE 1 = ?; SELECT 2 WHERE 2 = ?', 1, 2);
+			},
+			Db\Exceptions\QueryException::class,
+			'#^.+ERROR:  cannot insert multiple commands into a prepared statement\.$#',
+			Db\Exceptions\QueryException::QUERY_FAILED
+		);
 	}
 
 }
