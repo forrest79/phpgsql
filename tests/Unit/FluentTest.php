@@ -317,6 +317,25 @@ class FluentTest extends Tester\TestCase
 	}
 
 
+	public function testInsertMergeData(): void
+	{
+		$query = $this->fluent()
+			->insert('table')
+			->values([
+				'column1' => 3,
+				'column2' => -2, // this will be ignored, last added column have bigger priority
+			])
+			->values([
+				'column2' => 2,
+				'column3' => 1,
+			])
+			->prepareSql();
+
+		Tester\Assert::same('INSERT INTO table(column2, column3, column1) VALUES($1, $2, $3)', $query->getSql());
+		Tester\Assert::same([2, 1, 3], $query->getParams());
+	}
+
+
 	public function testInsertRows(): void
 	{
 		$query = $this->fluent()
@@ -331,6 +350,25 @@ class FluentTest extends Tester\TestCase
 
 		Tester\Assert::same('INSERT INTO table(column) VALUES($1), ($2), ($3) RETURNING column', $query->getSql());
 		Tester\Assert::same([1, 2, 3], $query->getParams());
+	}
+
+
+	public function testInsertRowsMergeData(): void
+	{
+		$query = $this->fluent()
+			->rows([
+				['column' => 1],
+				['column' => 2],
+			])
+			->rows([
+				['column' => 3],
+				['column' => 4],
+			])
+			->insert('table')
+			->prepareSql();
+
+		Tester\Assert::same('INSERT INTO table(column) VALUES($1), ($2), ($3), ($4)', $query->getSql());
+		Tester\Assert::same([1, 2, 3, 4], $query->getParams());
 	}
 
 
@@ -387,6 +425,25 @@ class FluentTest extends Tester\TestCase
 
 		Tester\Assert::same('UPDATE table AS t SET column = $1, column_from = t2.id FROM table2 AS t2 WHERE t2.column = $2 RETURNING t.column', $query->getSql());
 		Tester\Assert::same([1, 100], $query->getParams());
+	}
+
+
+	public function testUpdateMergeData(): void
+	{
+		$query = $this->fluent()
+			->update('table', 't')
+			->set([
+				'column1' => 3,
+				'column2' => -2, // this will be ignored, last added column have bigger priority
+			])
+			->set([
+				'column2' => 2,
+				'column3' => 1,
+			])
+			->prepareSql();
+
+		Tester\Assert::same('UPDATE table AS t SET column2 = $1, column3 = $2, column1 = $3', $query->getSql());
+		Tester\Assert::same([2, 1, 3], $query->getParams());
 	}
 
 

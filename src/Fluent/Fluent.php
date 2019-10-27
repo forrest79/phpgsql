@@ -549,7 +549,7 @@ class Fluent implements Sql
 	{
 		$this->updateFluent();
 		$this->queryType = self::QUERY_INSERT;
-		$this->params[self::PARAM_DATA] = $data;
+		$this->params[self::PARAM_DATA] = $data + $this->params[self::PARAM_DATA];
 		return $this;
 	}
 
@@ -564,7 +564,7 @@ class Fluent implements Sql
 		$this->updateFluent();
 
 		$this->queryType = self::QUERY_INSERT;
-		$this->params[self::PARAM_ROWS] = $rows;
+		$this->params[self::PARAM_ROWS] = \array_merge($this->params[self::PARAM_ROWS], $rows);
 
 		return $this;
 	}
@@ -599,7 +599,7 @@ class Fluent implements Sql
 	{
 		$this->updateFluent();
 		$this->queryType = self::QUERY_UPDATE;
-		$this->params[self::PARAM_DATA] = $data;
+		$this->params[self::PARAM_DATA] = $data + $this->params[self::PARAM_DATA];
 		return $this;
 	}
 
