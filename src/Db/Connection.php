@@ -366,6 +366,25 @@ class Connection
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
+	public function execute(string $sql): void
+	{
+		$start = $this->onQuery !== [] ? \microtime(TRUE) : NULL;
+
+		$resource = @\pg_query($this->getConnectedResource(), $sql); // intentionally @
+		if ($resource === FALSE) {
+			throw Exceptions\QueryException::queryFailed(new Query($sql), $this->getLastError());
+		}
+
+		if ($start !== NULL) {
+			$this->onQuery(new Query($sql), \microtime(TRUE) - $start);
+		}
+	}
+
+
+	/**
+	 * @throws Exceptions\ConnectionException
+	 * @throws Exceptions\QueryException
+	 */
 	public function waitForAsyncQuery(): self
 	{
 		if ($this->asyncResult === NULL) {

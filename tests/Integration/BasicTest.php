@@ -91,28 +91,43 @@ class BasicTest extends TestCase
 
 	public function testConnectionEvents(): void
 	{
-		$connect = FALSE;
+		$hasConnect = FALSE;
+		$hasClose = FALSE;
+		$hasQuery = FALSE;
+		$hasExecute = FALSE;
 		$queryDuration = 0;
-		$close = FALSE;
 
-		$this->connection->addOnConnect(static function (Db\Connection $connection) use (&$connect): void {
-			$connect = $connection->query('SELECT TRUE')->fetchSingle();
+		$this->connection->addOnConnect(static function (Db\Connection $connection) use (&$hasConnect): void {
+			$hasConnect = $connection->query('SELECT TRUE')->fetchSingle();
 		});
 
-		$this->connection->addOnQuery(static function (Db\Connection $connection, Db\Query $query, float $duration) use (&$queryDuration): void {
+		$this->connection->addOnQuery(static function (
+			Db\Connection $connection,
+			Db\Query $query,
+			float $duration
+		) use (&$hasQuery, &$hasExecute, &$queryDuration): void {
+			if ($query->getSql() === 'SELECT 1') {
+				$hasQuery = TRUE;
+			} else if ($query->getSql() === 'SELECT 2') {
+				$hasExecute = TRUE;
+			}
 			$queryDuration = $duration;
 		});
 
-		$this->connection->addOnClose(static function () use (&$close): void {
-			$close = TRUE;
+		$this->connection->addOnClose(static function () use (&$hasClose): void {
+			$hasClose = TRUE;
 		});
 
 		Tester\Assert::same(1, $this->connection->query('SELECT 1')->fetchSingle());
 
+		$this->connection->execute('SELECT 2');
+
 		$this->connection->close();
 
-		Tester\Assert::true($connect);
-		Tester\Assert::true($close);
+		Tester\Assert::true($hasConnect);
+		Tester\Assert::true($hasClose);
+		Tester\Assert::true($hasQuery);
+		Tester\Assert::true($hasExecute);
 		Tester\Assert::true($queryDuration > 0);
 	}
 
@@ -167,6 +182,21 @@ class BasicTest extends TestCase
 			'#^.+ERROR:  cannot insert multiple commands into a prepared statement\.$#',
 			Db\Exceptions\QueryException::QUERY_FAILED
 		);
+	}
+
+
+	public function testExecute(): void
+	{
+		$this->connection->execute('SELECT 1; SELECT 2');
+		Tester\Assert::true(TRUE); // @hack, if the query failed, an exception is thrown
+	}
+
+
+	public function testFailedExecute(): void
+	{
+		Tester\Assert::exception(function (): void {
+			$this->connection->execute('SELECT bad_column');
+		}, Db\Exceptions\QueryException::class, NULL, Db\Exceptions\QueryException::QUERY_FAILED);
 	}
 
 }
