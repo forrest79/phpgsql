@@ -21,8 +21,8 @@ before_script:
   - psql -c "ALTER ROLE postgres ENCRYPTED PASSWORD 'md53175bce1d3201d16594cebf9d7eb3f9d';" -U postgres
 
 script:
-  - vendor/bin/phpcs -s src tests
-  - vendor/bin/phpstan analyse src tests
+  - vendor/bin/phpcs -s src tests benchmarks
+  - vendor/bin/phpstan analyse src tests benchmarks
   - tests/run-tests tests
   - benchmarks/run-benchmarks.php
 

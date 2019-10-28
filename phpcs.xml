@@ -17,6 +17,7 @@
 
 	<rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
 		<exclude-pattern>tests/*</exclude-pattern>
+		<exclude-pattern>benchmarks/*</exclude-pattern>
 	</rule>
 
 	<rule ref="PSR2.Methods.FunctionCallSignature.Indent">
@@ -95,5 +96,6 @@
 	<rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
 		<exclude-pattern>src/*</exclude-pattern>
 		<exclude-pattern>tests/*</exclude-pattern>
+		<exclude-pattern>benchmarks/*</exclude-pattern>
 	</rule>
 </ruleset>

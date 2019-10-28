@@ -31,7 +31,8 @@
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"Forrest79\\PhPgSql\\Tests\\": "tests/"
+			"Forrest79\\PhPgSql\\Tests\\": "tests/",
+			"Forrest79\\PhPgSql\\Benchmarks\\": "benchmarks/"
 		}
 	}
 }
