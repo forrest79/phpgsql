@@ -4,12 +4,23 @@ namespace Forrest79\PhPgSql\Benchmarks;
 
 require __DIR__ . '/boostrap.php';
 
-class BasicPhpBenchmarkCase extends BenchmarkCase
+class BasicPhpBenchmark extends BenchmarkCase
 {
-	protected const DEFAULTE_REPEAT = 1000000;
+	/** @var int */
+	protected $defaultRepeat = 1000000;
 
 	private const TEST_ARRAY = [1, 2, 3];
 
+	/** @var callable */
+	private $updateFunction;
+
+
+	public function __construct()
+	{
+		$this->updateFunction = static function (int $x): int {
+			return $x ^ 2;
+		};
+	}
 
 	protected function title(): string
 	{
@@ -26,6 +37,16 @@ class BasicPhpBenchmarkCase extends BenchmarkCase
 		$test = \array_map(static function (int $x): int {
 			return $x ^ 2;
 		}, $test);
+	}
+
+
+	/**
+	 * @title update array with "array_map" (prepared function)
+	 */
+	public function benchmarkUpdateArrayMapPrepared(): void
+	{
+		$test = self::TEST_ARRAY;
+		$test = \array_map($this->updateFunction, $test);
 	}
 
 
@@ -127,6 +148,40 @@ class BasicPhpBenchmarkCase extends BenchmarkCase
 		}
 	}
 
+
+	/**
+	 * @title array change cast with "array_map"
+	 */
+	public function benchmarkArrayChangeCastArrayMap(): void
+	{
+		$test = self::TEST_ARRAY;
+		$test = \array_map('floatval', $test);
+	}
+
+
+	/**
+	 * @title array change cast with "array_map" (anonymous)
+	 */
+	public function benchmarkArrayChangeCastArrayMapAnonymous(): void
+	{
+		$test = self::TEST_ARRAY;
+		$test = \array_map(static function (int $x): float {
+			return \floatval($x);
+		}, $test);
+	}
+
+
+	/**
+	 * @title array change cast with "foreach"
+	 */
+	public function benchmarkArrayChangeCastForeach(): void
+	{
+		$test = self::TEST_ARRAY;
+		foreach ($test as $i => $x) {
+			$test[$i] = \floatval($x);
+		}
+	}
+
 }
 
-(new BasicPhpBenchmarkCase())->run();
+(new BasicPhpBenchmark())->run();
