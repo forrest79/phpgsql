@@ -22,6 +22,7 @@ class BasicPhpBenchmark extends BenchmarkCase
 		};
 	}
 
+
 	protected function title(): string
 	{
 		return 'Basic PHP';
