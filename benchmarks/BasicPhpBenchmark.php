@@ -6,6 +6,10 @@ require __DIR__ . '/boostrap.php';
 
 class BasicPhpBenchmark extends BenchmarkCase
 {
+	private const CONDITION = 1;
+	private const ARRAY = [1];
+	private const NULL_ARRAY = NULL;
+
 	/** @var int */
 	protected $defaultRepeat = 1000000;
 
@@ -190,6 +194,33 @@ class BasicPhpBenchmark extends BenchmarkCase
 	public function benchmarkMicrotimeMs(): void
 	{
 		\microtime(TRUE);
+	}
+
+
+	/**
+	 * @title ternary operator with array access
+	 */
+	public function benchmarkTernaryWithArrayAccess(): void
+	{
+		\rand() === self::CONDITION ? NULL : self::ARRAY[0];
+	}
+
+
+	/**
+	 * @title NULL ternary operator with array access
+	 */
+	public function benchmarkNullTernaryWithArrayAccess(): void
+	{
+		self::ARRAY[0] ?? \rand();
+	}
+
+
+	/**
+	 * @title NULL ternary operator with array access on NULL array
+	 */
+	public function benchmarkNullTernaryWithNullArrayAccess(): void
+	{
+		self::NULL_ARRAY[0] ?? \rand();
 	}
 
 }
