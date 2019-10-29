@@ -10,16 +10,16 @@ require_once __DIR__ . '/TestCase.php';
 /**
  * @testCase
  */
-class TransactionsTest extends TestCase
+class TransactionTest extends TestCase
 {
-	/** @var Db\Transactions */
+	/** @var Db\Transaction */
 	protected $transactions;
 
 
 	protected function setUp(): void
 	{
 		parent::setUp();
-		$this->transactions = $this->connection->transactions();
+		$this->transactions = $this->connection->transaction();
 	}
 
 
@@ -83,4 +83,4 @@ class TransactionsTest extends TestCase
 
 }
 
-(new TransactionsTest())->run();
+(new TransactionTest())->run();

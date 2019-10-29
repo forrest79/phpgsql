@@ -2,7 +2,7 @@
 
 namespace Forrest79\PhPgSql\Db;
 
-class Transactions
+class Transaction
 {
 	/** @var Connection */
 	protected $connection;

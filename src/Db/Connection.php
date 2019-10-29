@@ -40,8 +40,8 @@ class Connection
 	/** @var AsyncResult|NULL */
 	private $asyncResult;
 
-	/** @var Transactions */
-	private $transactions;
+	/** @var Transaction */
+	private $transaction;
 
 	/** @var callable[] function (Connection $connection) {} */
 	private $onConnect = [];
@@ -403,12 +403,12 @@ class Connection
 	}
 
 
-	public function transactions(): Transactions
+	public function transaction(): Transaction
 	{
-		if ($this->transactions === NULL) {
-			$this->transactions = new Transactions($this);
+		if ($this->transaction === NULL) {
+			$this->transaction = new Transaction($this);
 		}
-		return $this->transactions;
+		return $this->transaction;
 	}
 
 
