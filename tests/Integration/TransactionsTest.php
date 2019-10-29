@@ -10,7 +10,7 @@ require_once __DIR__ . '/TestCase.php';
 /**
  * @testCase
  */
-class TranslationsTest extends TestCase
+class TransactionsTest extends TestCase
 {
 	/** @var Db\Transactions */
 	protected $transactions;
@@ -83,4 +83,4 @@ class TranslationsTest extends TestCase
 
 }
 
-(new TranslationsTest())->run();
+(new TransactionsTest())->run();

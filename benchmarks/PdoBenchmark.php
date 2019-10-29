@@ -100,9 +100,9 @@ class PdoBenchmark extends BenchmarkCase
 		if ($queryResource === FALSE) {
 			throw new \RuntimeException('pg_query_params failed');
 		}
-		$data = \pg_fetch_assoc($queryResource);
+		$data = \pg_fetch_all($queryResource);
 		if ($data === FALSE) {
-			throw new \RuntimeException('pg_fetch_assoc failed');
+			throw new \RuntimeException('pg_fetch_all failed');
 		}
 	}
 
@@ -113,9 +113,10 @@ class PdoBenchmark extends BenchmarkCase
 	public function benchmarkParamsPdoPrepareExecute(): void
 	{
 		$queryResource = $this->pdo->prepare('SELECT ' . \rand(0, 1000) . ' WHERE 1 = ?');
-		$data = $queryResource->execute([1]);
-		if ($data === FALSE) {
-			throw new \RuntimeException('fetch failed');
+		$result = $queryResource->execute([1]);
+		$queryResource->fetchAll();
+		if ($result === FALSE) {
+			throw new \RuntimeException('PDO::execute failed');
 		}
 	}
 
@@ -126,9 +127,10 @@ class PdoBenchmark extends BenchmarkCase
 	public function benchmarkParamsPdoPrepareExecuteEmulate(): void
 	{
 		$queryResource = $this->pdoEmulate->prepare('SELECT ' . \rand(0, 1000) . ' WHERE 1 = ?');
-		$data = $queryResource->execute([1]);
-		if ($data === FALSE) {
-			throw new \RuntimeException('fetch failed');
+		$result = $queryResource->execute([1]);
+		$queryResource->fetchAll();
+		if ($result === FALSE) {
+			throw new \RuntimeException('PDO::execute failed');
 		}
 	}
 
@@ -142,9 +144,9 @@ class PdoBenchmark extends BenchmarkCase
 		if ($queryResource === FALSE) {
 			throw new \RuntimeException('pg_execute failed');
 		}
-		$data = \pg_fetch_assoc($queryResource);
+		$data = \pg_fetch_all($queryResource);
 		if ($data === FALSE) {
-			throw new \RuntimeException('pg_fetch_assoc failed');
+			throw new \RuntimeException('pg_fetch_all failed');
 		}
 	}
 
@@ -154,8 +156,9 @@ class PdoBenchmark extends BenchmarkCase
 	 */
 	public function benchmarkRepeatStatementPdoExecute(): void
 	{
-		$data = $this->pdoPrepareStatement->execute([1]);
-		if ($data === FALSE) {
+		$result = $this->pdoPrepareStatement->execute([1]);
+		$this->pdoPrepareStatement->fetchAll();
+		if ($result === FALSE) {
 			throw new \RuntimeException('PDO::execute failed');
 		}
 	}
@@ -166,8 +169,9 @@ class PdoBenchmark extends BenchmarkCase
 	 */
 	public function benchmarkRepeatStatementPdoExecuteEmulate(): void
 	{
-		$data = $this->pdoEmulatePrepareStatement->execute([1]);
-		if ($data === FALSE) {
+		$result = $this->pdoEmulatePrepareStatement->execute([1]);
+		$this->pdoEmulatePrepareStatement->fetchAll();
+		if ($result === FALSE) {
 			throw new \RuntimeException('PDO::execute failed');
 		}
 	}

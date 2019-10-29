@@ -191,8 +191,9 @@ class BasicTest extends TestCase
 
 	public function testExecute(): void
 	{
-		$this->connection->execute('SELECT 1; SELECT 2');
-		Tester\Assert::true(TRUE); // @hack, if the query failed, an exception is thrown
+		Tester\Assert::noError(function (): void {
+			$this->connection->execute('SELECT 1; SELECT 2');
+		});
 	}
 
 
