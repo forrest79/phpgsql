@@ -183,6 +183,15 @@ class BasicPhpBenchmark extends BenchmarkCase
 		}
 	}
 
+
+	/**
+	 * @title microtime with miliseconds
+	 */
+	public function benchmarkMicrotimeMs(): void
+	{
+		\microtime(TRUE);
+	}
+
 }
 
 (new BasicPhpBenchmark())->run();
