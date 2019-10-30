@@ -14,7 +14,7 @@ class QueryWithoutParametersBenchmark extends BenchmarkCase
 	{
 		$resource = \pg_connect(\PHPGSQL_CONNECTION_CONFIG);
 		if ($resource === FALSE) {
-			throw new \RuntimeException('pg_query failed');
+			throw new \RuntimeException('pg_connect failed');
 		}
 		$this->resource = $resource;
 	}
