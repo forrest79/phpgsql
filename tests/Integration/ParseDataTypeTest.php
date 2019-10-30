@@ -353,4 +353,4 @@ class ParseDataTypeTest extends TestCase
 
 }
 
-(new ParseDataTypeTest())->run();
+\run(ParseDataTypeTest::class);

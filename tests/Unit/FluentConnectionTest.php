@@ -507,4 +507,4 @@ class FluentConnectionTest extends Tester\TestCase
 
 }
 
-(new FluentConnectionTest())->run();
+\run(FluentConnectionTest::class);

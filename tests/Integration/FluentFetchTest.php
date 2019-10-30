@@ -239,4 +239,4 @@ class FluentFetchTest extends TestCase
 
 }
 
-(new FluentFetchTest())->run();
+\run(FluentFetchTest::class);

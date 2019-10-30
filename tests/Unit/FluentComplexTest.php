@@ -111,4 +111,4 @@ class FluentComplexTest extends Tester\TestCase
 
 }
 
-(new FluentComplexTest())->run();
+\run(FluentComplexTest::class);

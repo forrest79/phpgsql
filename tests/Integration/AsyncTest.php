@@ -92,4 +92,4 @@ class AsyncTest extends TestCase
 
 }
 
-(new AsyncTest())->run();
+\run(AsyncTest::class);

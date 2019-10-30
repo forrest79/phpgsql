@@ -120,4 +120,4 @@ class ParseTest extends Tester\TestCase
 
 }
 
-(new ParseTest())->run();
+\run(ParseTest::class);

@@ -54,4 +54,4 @@ class BasicTest extends Tester\TestCase
 
 }
 
-(new BasicTest())->run();
+\run(BasicTest::class);

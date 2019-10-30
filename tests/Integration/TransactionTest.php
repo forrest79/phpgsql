@@ -83,4 +83,4 @@ class TransactionTest extends TestCase
 
 }
 
-(new TransactionTest())->run();
+\run(TransactionTest::class);

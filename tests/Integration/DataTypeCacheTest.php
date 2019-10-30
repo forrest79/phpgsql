@@ -86,4 +86,4 @@ class DataTypeCacheTest extends TestCase
 
 }
 
-(new DataTypeCacheTest())->run();
+\run(DataTypeCacheTest::class);

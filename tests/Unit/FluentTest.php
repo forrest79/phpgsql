@@ -725,4 +725,4 @@ class FluentTest extends Tester\TestCase
 
 }
 
-(new FluentTest())->run();
+\run(FluentTest::class);
