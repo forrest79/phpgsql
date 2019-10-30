@@ -8,10 +8,11 @@ class ConnectionException extends Exception
 	public const CANT_CHANGE_CONNECTION_SETTINGS = 2;
 	public const CONNECTION_FAILED = 3;
 	public const BAD_CONNECTION = 4;
-	public const ASYNC_STREAM_FAILED = 5;
-	public const ASYNC_CONNECT_FAILED = 6;
-	public const ASYNC_CONNECT_TIMEOUT = 7;
-	public const ASYNC_NO_QUERY_WAS_SENT = 8;
+	public const CANT_GET_NOTICES = 5;
+	public const ASYNC_STREAM_FAILED = 6;
+	public const ASYNC_CONNECT_FAILED = 7;
+	public const ASYNC_CONNECT_TIMEOUT = 8;
+	public const ASYNC_NO_QUERY_WAS_SENT = 9;
 
 
 	public static function noConfigException(): self
@@ -40,6 +41,12 @@ class ConnectionException extends Exception
 	public static function badConnectionException(): self
 	{
 		return new self('Connection failed (bad connection).', self::BAD_CONNECTION);
+	}
+
+
+	public static function cantGetNoticesException(): self
+	{
+		return new self('Can\'t get notices from connection. Is notice message tracking not ignored in php.ini - pgsql.ignore_notice = 0 is the right value.', self::CANT_GET_NOTICES);
 	}
 
 

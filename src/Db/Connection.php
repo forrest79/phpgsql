@@ -403,6 +403,22 @@ class Connection
 	}
 
 
+	public function getNotices(bool $clearAfterRead = TRUE): array
+	{
+		/** @var array|FALSE $notices */
+		$notices = \pg_last_notice($this->getConnectedResource(), \PGSQL_NOTICE_ALL);
+		if ($notices === FALSE) {
+			throw Exceptions\ConnectionException::cantGetNoticesException();
+		}
+
+		if ($clearAfterRead) {
+			\pg_last_notice($this->getConnectedResource(), \PGSQL_NOTICE_CLEAR);
+		}
+
+		return $notices;
+	}
+
+
 	public function transaction(): Transaction
 	{
 		if ($this->transaction === NULL) {

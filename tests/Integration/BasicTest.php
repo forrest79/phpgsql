@@ -204,6 +204,22 @@ class BasicTest extends TestCase
 		}, Db\Exceptions\QueryException::class, NULL, Db\Exceptions\QueryException::QUERY_FAILED);
 	}
 
+
+	public function testGetNotifications(): void
+	{
+		$this->connection->execute('DO $BODY$ BEGIN RAISE NOTICE \'Test notice\'; END; $BODY$ LANGUAGE plpgsql;');
+		Tester\Assert::same(['NOTICE:  Test notice'], $this->connection->getNotices());
+		Tester\Assert::same([], $this->connection->getNotices());
+	}
+
+
+	public function testGetNotificationsWithouClearing(): void
+	{
+		$this->connection->execute('DO $BODY$ BEGIN RAISE NOTICE \'Test notice\'; END; $BODY$ LANGUAGE plpgsql;');
+		Tester\Assert::same(['NOTICE:  Test notice'], $this->connection->getNotices(FALSE));
+		Tester\Assert::same(['NOTICE:  Test notice'], $this->connection->getNotices());
+	}
+
 }
 
 \run(BasicTest::class);
