@@ -38,6 +38,11 @@
 		</properties>
 	</rule>
 
+	<rule ref="Squiz.WhiteSpace.FunctionSpacing.Before">
+		<exclude-pattern>tests/bootstrap.php</exclude-pattern>
+		<exclude-pattern>benchmarks/boostrap.php</exclude-pattern>
+	</rule>
+
 	<rule ref="./vendor/slevomat/coding-standard/SlevomatCodingStandard/ruleset.xml">
 		<exclude name="SlevomatCodingStandard.Classes.EmptyLinesAroundClassBraces.NoEmptyLineAfterOpeningBrace"/>
 		<exclude name="SlevomatCodingStandard.Classes.SuperfluousExceptionNaming.SuperfluousSuffix"/>
