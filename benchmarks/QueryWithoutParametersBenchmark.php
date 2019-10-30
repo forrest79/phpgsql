@@ -58,4 +58,4 @@ class QueryWithoutParametersBenchmark extends BenchmarkCase
 
 }
 
-(new QueryWithoutParametersBenchmark())->run();
+\run(QueryWithoutParametersBenchmark::class);

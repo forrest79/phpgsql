@@ -13,9 +13,9 @@ abstract class BenchmarkCase
 		$class = new \ReflectionClass($this);
 		$methods = $class->getMethods(\ReflectionMethod::IS_PUBLIC);
 
-		echo \sprintf('|----------------------------------------------------|--------------|-------------|') . \PHP_EOL;
-		echo \sprintf('| %-50s | Time per run |      Repeat |', $this->title()) . \PHP_EOL;
-		echo \sprintf('|----------------------------------------------------|--------------|-------------|') . \PHP_EOL;
+		echo \sprintf('|--------------------------------------------------------------|--------------|-------------|') . \PHP_EOL;
+		echo \sprintf('| %-60s | Time per run |      Repeat |', $this->title()) . \PHP_EOL;
+		echo \sprintf('|--------------------------------------------------------------|--------------|-------------|') . \PHP_EOL;
 
 		foreach ($methods as $method) {
 			$benchmarkMethod = $method->name;
@@ -40,7 +40,7 @@ abstract class BenchmarkCase
 			);
 		}
 
-		echo \sprintf('|----------------------------------------------------|--------------|-------------|') . \PHP_EOL . \PHP_EOL;
+		echo \sprintf('|--------------------------------------------------------------|--------------|-------------|') . \PHP_EOL . \PHP_EOL;
 
 		$this->tearDown();
 	}
@@ -60,7 +60,7 @@ abstract class BenchmarkCase
 			$method();
 		}
 
-		echo \sprintf('| %-50s | %012.10f | %11d |', \substr($title, 0, 50), (\microtime(TRUE) - $start) / $repeat, $repeat) . \PHP_EOL;
+		echo \sprintf('| %-60s | %012.10f | %11d |', \substr($title, 0, 60), (\microtime(TRUE) - $start) / $repeat, $repeat) . \PHP_EOL;
 	}
 
 
