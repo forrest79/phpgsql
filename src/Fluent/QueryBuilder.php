@@ -88,26 +88,26 @@ class QueryBuilder
 		$rows = [];
 		if ($this->params[Fluent::PARAM_DATA] !== []) {
 			$values = [];
-			\array_walk($this->params[Fluent::PARAM_DATA], static function ($value, $column) use (&$columns, &$values, &$params): void {
+			foreach ($this->params[Fluent::PARAM_DATA] as $column => $value) {
 				$columns[] = $column;
 				$values[] = '?';
 				$params[] = $value;
-			});
+			}
 			$rows[] = \implode(', ', $values);
 		} else if ($this->params[Fluent::PARAM_ROWS] !== []) {
 			$columns = $this->params[Fluent::PARAM_INSERT_COLUMNS];
-			\array_walk($this->params[Fluent::PARAM_ROWS], static function ($row) use (&$columns, &$rows, &$params): void {
+			foreach ($this->params[Fluent::PARAM_ROWS] as $row) {
 				$values = [];
 				$fillColumns = $columns === [];
-				\array_walk($row, static function ($value, $column) use ($fillColumns, &$columns, &$values, &$params): void {
+				foreach ($row as $column => $value) {
 					if ($fillColumns) {
 						$columns[] = $column;
 					}
 					$values[] = '?';
 					$params[] = $value;
-				});
+				}
 				$rows[] = \implode(', ', $values);
-			});
+			}
 		} else if ($this->params[Fluent::PARAM_SELECT] !== []) {
 			$columns = $this->params[Fluent::PARAM_INSERT_COLUMNS];
 		} else {
@@ -148,10 +148,10 @@ class QueryBuilder
 		$mainTableAlias = $this->getMainTableAlias();
 
 		$set = [];
-		\array_walk($this->params[Fluent::PARAM_DATA], static function ($value, $column) use (&$set, &$params): void {
+		foreach ($this->params[Fluent::PARAM_DATA] as $column => $value) {
 			$set[] = \sprintf('%s = ?', $column);
 			$params[] = $value;
-		});
+		}
 
 		return \sprintf('UPDATE %s SET %s', $this->processTable(
 				NULL,
@@ -402,12 +402,12 @@ class QueryBuilder
 		foreach ($items as $itemParams) {
 			$item = \array_shift($itemParams);
 
-			\array_walk($itemParams, static function ($param) use (&$params): void {
+			foreach ($itemParams as $param) {
 				if ($param instanceof Fluent) {
 					$param = $param->getQuery();
 				}
 				$params[] = $param;
-			});
+			}
 
 			$processedItems[] = $item;
 		}
@@ -546,13 +546,12 @@ class QueryBuilder
 					$condition = \sprintf('(%s)', $condition);
 				}
 
-				\array_walk($conditionParams, static function ($param) use (&$params): void {
+				foreach ($conditionParams as $param) {
 					if ($param instanceof Fluent) {
 						$param = $param->getQuery();
 					}
 					$params[] = $param;
-				});
-
+				}
 			}
 
 			$processedConditions[] = $condition;

@@ -498,25 +498,25 @@ class Connection
 
 	private function onConnect(): void
 	{
-		\array_walk($this->onConnect, function (callable $event): void {
+		foreach ($this->onConnect as $event) {
 			$event($this);
-		});
+		}
 	}
 
 
 	private function onClose(): void
 	{
-		\array_walk($this->onClose, function (callable $event): void {
+		foreach ($this->onClose as $event) {
 			$event($this);
-		});
+		}
 	}
 
 
 	private function onQuery(Query $query, ?float $time = NULL): void
 	{
-		\array_walk($this->onQuery, function (callable $event) use ($query, $time): void {
+		foreach ($this->onQuery as $event) {
 			$event($this, $query, $time);
-		});
+		}
 	}
 
 

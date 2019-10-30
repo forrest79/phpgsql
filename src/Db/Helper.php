@@ -16,9 +16,10 @@ class Helper
 		if ($array === []) {
 			return '{}';
 		}
-		return \sprintf('{"%s"}', \implode('","', \array_map(static function ($value): string {
-			return \str_replace('"', '\"', $value);
-		}, $array)));
+		foreach ($array as $i => $value) {
+			$array[$i] = \str_replace('"', '\"', $value);
+		}
+		return \sprintf('{"%s"}', \implode('","', $array));
 	}
 
 
@@ -142,9 +143,10 @@ class Helper
 
 				if (\is_array($param)) {
 					$keys = '';
-					\array_walk($param, static function () use (& $keys, & $paramIndex): void {
+					$paramCnt = \count($param);
+					for ($i = 0; $i < $paramCnt; $i++) {
 						$keys .= '$' . ++$paramIndex . ', ';
-					});
+					}
 					$parsedParams = \array_merge($parsedParams, $param);
 					return \substr($keys, 0, -2);
 				} else if (\is_bool($param)) {

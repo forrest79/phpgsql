@@ -166,11 +166,11 @@ class Complex implements \ArrayAccess
 
 	private function normalizeConditions(array $conditions): array
 	{
-		\array_walk($conditions, static function (&$value): void {
+		foreach ($conditions as $i => $value) {
 			if (!\is_array($value) && !($value instanceof self)) {
-				$value = [$value];
+				$conditions[$i] = [$value];
 			}
-		});
+		}
 		return $conditions;
 	}
 

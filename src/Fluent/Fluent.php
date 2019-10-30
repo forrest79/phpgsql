@@ -102,12 +102,12 @@ class Fluent implements Sql
 	{
 		$this->updateFluent();
 
-		\array_walk($columns, function ($column, $alias): void {
+		foreach ($columns as $alias => $column) {
 			if (\is_int($alias)) {
 				$alias = NULL;
 			}
 			$this->checkQueryable($column, $alias);
-		});
+		}
 
 		$this->params[self::PARAM_SELECT] = \array_merge($this->params[self::PARAM_SELECT], $columns);
 

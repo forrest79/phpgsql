@@ -306,14 +306,16 @@ class Result implements \Countable, \IteratorAggregate
 	private function getColumnsDataTypes(): array
 	{
 		if ($this->columnsDataTypes === NULL) {
-			$queryResource = $this->getResource();
 			$this->columnsDataTypes = [];
-			for ($i = 0; $i < \pg_num_fields($queryResource); $i++) {
-				$name = \pg_field_name($queryResource, $i);
-				$type = $this->dataTypesCache === NULL
-					? \pg_field_type($queryResource, $i)
-					: $this->dataTypesCache[\pg_field_type_oid($queryResource, $i)];
-				$this->columnsDataTypes[$name] = $type;
+			$queryResource = $this->getResource();
+			$fieldsCnt = \pg_num_fields($queryResource);
+			for ($i = 0; $i < $fieldsCnt; $i++) {
+				if ($this->dataTypesCache === NULL) {
+					$type = \pg_field_type($queryResource, $i);
+				} else {
+					$type = $this->dataTypesCache[\pg_field_type_oid($queryResource, $i)];
+				}
+				$this->columnsDataTypes[\pg_field_name($queryResource, $i)] = $type;
 			}
 		}
 		return $this->columnsDataTypes;

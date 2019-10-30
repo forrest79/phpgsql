@@ -80,9 +80,9 @@ class PhpFile extends DbLoader
 	private static function prepareCacheArray(array $data): string
 	{
 		$cache = '';
-		\array_walk($data, static function (string $typname, int $oid) use (&$cache): void {
+		foreach ($data as $oid => $typname) {
 			$cache .= \sprintf("%d=>'%s',", $oid, \str_replace("'", "\\'", $typname));
-		});
+		}
 		return $cache;
 	}
 
