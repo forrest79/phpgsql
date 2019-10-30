@@ -23,7 +23,7 @@ before_script:
 script:
   - vendor/bin/phpcs -s src tests benchmarks
   - vendor/bin/phpstan analyse src tests benchmarks
-  - tests/run-tests tests
+  - vendor/bin/tester tests
   - benchmarks/run-benchmarks.php
 
 after_failure:

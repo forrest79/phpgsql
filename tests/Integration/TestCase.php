@@ -65,4 +65,12 @@ abstract class TestCase extends Tester\TestCase
 		return new Db\Connection($this->getTestConnectionConfig());
 	}
 
+
+	protected function skipOnTravis(): void
+	{
+		if (\getenv('TRAVIS') !== FALSE) {
+			Tester\Environment::skip('This test is failing on Travis CI.');
+		}
+	}
+
 }
