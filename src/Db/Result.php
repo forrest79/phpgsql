@@ -4,7 +4,7 @@ namespace Forrest79\PhPgSql\Db;
 
 class Result implements \Countable, \IteratorAggregate
 {
-	/** @var resource|NULL */
+	/** @var resource */
 	protected $queryResource;
 
 	/** @var RowFactory */
@@ -24,7 +24,7 @@ class Result implements \Countable, \IteratorAggregate
 
 
 	/**
-	 * @param resource|NULL $queryResource
+	 * @param resource $queryResource
 	 * @param RowFactory $rowFactory
 	 * @param DataTypeParser $dataTypeParser
 	 * @param array|NULL $dataTypesCache
@@ -52,7 +52,7 @@ class Result implements \Countable, \IteratorAggregate
 
 	public function fetch(): ?Row
 	{
-		$data = \pg_fetch_assoc($this->getResource());
+		$data = \pg_fetch_assoc($this->queryResource);
 		if ($data === FALSE) {
 			return NULL;
 		}
@@ -69,7 +69,7 @@ class Result implements \Countable, \IteratorAggregate
 
 	public function free(): bool
 	{
-		return \pg_free_result($this->getResource());
+		return \pg_free_result($this->queryResource);
 	}
 
 
@@ -78,16 +78,13 @@ class Result implements \Countable, \IteratorAggregate
 	 */
 	public function getResource()
 	{
-		if ($this->queryResource === NULL) {
-			throw Exceptions\ResultException::noResource();
-		}
 		return $this->queryResource;
 	}
 
 
 	public function seek(int $row): bool
 	{
-		return \pg_result_seek($this->getResource(), $row);
+		return \pg_result_seek($this->queryResource, $row);
 	}
 
 
@@ -99,7 +96,7 @@ class Result implements \Countable, \IteratorAggregate
 
 	public function getRowCount(): int
 	{
-		return \pg_num_rows($this->getResource());
+		return \pg_num_rows($this->queryResource);
 	}
 
 
@@ -296,7 +293,7 @@ class Result implements \Countable, \IteratorAggregate
 	public function getAffectedRows(): int
 	{
 		if ($this->affectedRows === NULL) {
-			$this->affectedRows = \pg_affected_rows($this->getResource());
+			$this->affectedRows = \pg_affected_rows($this->queryResource);
 		}
 
 		return $this->affectedRows;
@@ -307,15 +304,14 @@ class Result implements \Countable, \IteratorAggregate
 	{
 		if ($this->columnsDataTypes === NULL) {
 			$this->columnsDataTypes = [];
-			$queryResource = $this->getResource();
-			$fieldsCnt = \pg_num_fields($queryResource);
+			$fieldsCnt = \pg_num_fields($this->queryResource);
 			for ($i = 0; $i < $fieldsCnt; $i++) {
 				if ($this->dataTypesCache === NULL) {
-					$type = \pg_field_type($queryResource, $i);
+					$type = \pg_field_type($this->queryResource, $i);
 				} else {
-					$type = $this->dataTypesCache[\pg_field_type_oid($queryResource, $i)];
+					$type = $this->dataTypesCache[\pg_field_type_oid($this->queryResource, $i)];
 				}
-				$this->columnsDataTypes[\pg_field_name($queryResource, $i)] = $type;
+				$this->columnsDataTypes[\pg_field_name($this->queryResource, $i)] = $type;
 			}
 		}
 		return $this->columnsDataTypes;

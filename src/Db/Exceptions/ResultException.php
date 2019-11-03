@@ -4,16 +4,9 @@ namespace Forrest79\PhPgSql\Db\Exceptions;
 
 class ResultException extends Exception
 {
-	public const NO_RESOURCE = 1;
-	public const NO_COLUMN = 2;
-	public const FETCH_ASSOC_PARSE_FAILED = 3;
-	public const FETCH_PAIRS_FAILED = 4;
-
-
-	public static function noResource(): self
-	{
-		return new self('No resource is available. Have you run on connection waitForAsyncQuery().', self::NO_RESOURCE);
-	}
+	public const NO_COLUMN = 1;
+	public const FETCH_ASSOC_PARSE_FAILED = 2;
+	public const FETCH_PAIRS_FAILED = 3;
 
 
 	public static function noColumn(string $key): self

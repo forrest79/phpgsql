@@ -37,11 +37,8 @@ class Connection
 	/** @var DataTypeCache|NULL */
 	private $dataTypeCache;
 
-	/** @var Query */
+	/** @var Query|string|NULL */
 	private $asyncQuery;
-
-	/** @var AsyncResult|NULL */
-	private $asyncResult;
 
 	/** @var Transaction */
 	private $transaction;
@@ -339,52 +336,10 @@ class Connection
 
 
 	/**
-	 * @param string|Query $query
-	 * @param mixed ...$params
-	 * @return AsyncResult
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
-	public function asyncQuery($query, ...$params): AsyncResult
-	{
-		return $this->asyncQueryArgs($query, $params);
-	}
-
-
-	/**
-	 * @param string|Query $query
-	 * @param array $params
-	 * @return AsyncResult
-	 * @throws Exceptions\ConnectionException
-	 * @throws Exceptions\QueryException
-	 */
-	public function asyncQueryArgs($query, array $params): AsyncResult
-	{
-		$this->asyncQuery = $query = Helper::prepareSql($this->normalizeQuery($query, $params));
-
-		$queryParams = $query->getParams();
-		if ($queryParams === []) {
-			$querySuccess = @\pg_send_query($this->getConnectedResource(), $query->getSql()); // intentionally @
-		} else {
-			$querySuccess = @\pg_send_query_params($this->getConnectedResource(), $query->getSql(), $query->getParams()); // intentionally @
-		}
-		if ($querySuccess === FALSE) {
-			throw Exceptions\QueryException::asyncQueryFailed($query, $this->getLastError());
-		}
-
-		if ($this->onQuery !== []) {
-			$this->onQuery($query);
-		}
-
-		return $this->asyncResult = new AsyncResult($this->getDefaultRowFactory(), $this->getDataTypeParser(), $this->getDataTypesCache());
-	}
-
-
-	/**
-	 * @throws Exceptions\ConnectionException
-	 * @throws Exceptions\QueryException
-	 */
-	public function execute(string $sql): void
+	public function execute(string $sql): self
 	{
 		$start = $this->onQuery !== [] ? \microtime(TRUE) : NULL;
 
@@ -396,6 +351,50 @@ class Connection
 		if ($start !== NULL) {
 			$this->onQuery(new Query($sql), \microtime(TRUE) - $start);
 		}
+
+		return $this;
+	}
+
+
+	/**
+	 * @param string|Query $query
+	 * @param mixed ...$params
+	 * @return self
+	 * @throws Exceptions\ConnectionException
+	 * @throws Exceptions\QueryException
+	 */
+	public function asyncQuery($query, ...$params): self
+	{
+		return $this->asyncQueryArgs($query, $params);
+	}
+
+
+	/**
+	 * @param string|Query $query
+	 * @param array $params
+	 * @return self
+	 * @throws Exceptions\ConnectionException
+	 * @throws Exceptions\QueryException
+	 */
+	public function asyncQueryArgs($query, array $params): self
+	{
+		$this->asyncQuery = $query = Helper::prepareSql($this->normalizeQuery($query, $params));
+
+		$queryParams = $query->getParams();
+		if ($queryParams === []) {
+			$querySuccess = @\pg_send_query($this->getConnectedResource(), $query->getSql()); // intentionally @
+		} else {
+			$querySuccess = @\pg_send_query_params($this->getConnectedResource(), $query->getSql(), $query->getParams()); // intentionally @
+		}
+		if ($querySuccess === FALSE) {
+			throw Exceptions\ConnectionException::asyncQueryAlreadySentException();
+		}
+
+		if ($this->onQuery !== []) {
+			$this->onQuery($query);
+		}
+
+		return $this;
 	}
 
 
@@ -403,19 +402,96 @@ class Connection
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
-	public function waitForAsyncQuery(): self
+	public function asyncExecute(string $sql): self
 	{
-		if ($this->asyncResult === NULL) {
+		$this->asyncQuery = $sql;
+
+		$querySuccess = @\pg_send_query($this->getConnectedResource(), $sql); // intentionally @
+		if ($querySuccess === FALSE) {
+			throw Exceptions\ConnectionException::asyncQueryAlreadySentException();
+		}
+
+		if ($this->onQuery !== []) {
+			$this->onQuery(new Query($sql));
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * @throws Exceptions\ConnectionException
+	 * @throws Exceptions\QueryException
+	 */
+	public function completeAsyncExecute(): self
+	{
+		if (!\is_string($this->asyncQuery)) {
+			throw Exceptions\ConnectionException::asyncNoExecuteWasSentException();
+		}
+
+		while (TRUE) {
+			$resource = \pg_get_result($this->getConnectedResource());
+			if ($resource === FALSE) {
+				break;
+			}
+			self::checkAsyncQueryResult($resource, $this->asyncQuery);
+		}
+
+		$this->asyncQuery = NULL;
+
+		return $this;
+	}
+
+
+	/**
+	 * @throws Exceptions\ConnectionException
+	 * @throws Exceptions\QueryException
+	 */
+	public function getNextAsyncQueryResult(): ?Result
+	{
+		if (!($this->asyncQuery instanceof Query)) {
 			throw Exceptions\ConnectionException::asyncNoQueryWasSentException();
 		}
 
 		$resource = \pg_get_result($this->getConnectedResource());
 		if ($resource === FALSE) {
-			throw Exceptions\QueryException::asyncQueryFailed($this->asyncQuery, $this->getLastError());
+			$this->asyncQuery = NULL;
+			return NULL;
 		}
-		$this->asyncResult->finishAsyncQuery($resource);
 
-		$this->asyncResult = NULL;
+		self::checkAsyncQueryResult($resource, $this->asyncQuery);
+
+		return new Result($resource, $this->getDefaultRowFactory(), $this->getDataTypeParser(), $this->getDataTypesCache());
+	}
+
+
+	/**
+	 * @param resource $result
+	 * @param Query|string $query
+	 * @throws Exceptions\QueryException
+	 */
+	private static function checkAsyncQueryResult($result, $query): void
+	{
+		if (\in_array(\pg_result_status($result), [\PGSQL_BAD_RESPONSE, \PGSQL_NONFATAL_ERROR, \PGSQL_FATAL_ERROR], TRUE)) {
+			throw Exceptions\QueryException::asyncQueryFailed(
+				$query instanceof Query ? $query : new Query($query),
+				(string) \pg_result_error_field($result, \PGSQL_DIAG_SQLSTATE),
+				(string) \pg_result_error($result)
+			);
+		}
+	}
+
+
+	/**
+	 * @throws Exceptions\ConnectionException
+	 */
+	public function cancelAsyncQuery(): self
+	{
+		if (!\pg_cancel_query($this->getConnectedResource())) {
+			throw Exceptions\ConnectionException::asyncCancelFailedException();
+		}
+
+		$this->asyncQuery = NULL;
 
 		return $this;
 	}
@@ -443,6 +519,15 @@ class Connection
 			$this->transaction = new Transaction($this);
 		}
 		return $this->transaction;
+	}
+
+
+	/**
+	 * @throws Exceptions\ConnectionException
+	 */
+	public function isBusy(): bool
+	{
+		return \pg_connection_busy($this->getConnectedResource());
 	}
 
 

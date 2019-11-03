@@ -45,8 +45,11 @@ class AsyncTest extends TestCase
 		');
 		$this->connection->query('INSERT INTO test(name) SELECT \'name\' || generate_series FROM generate_series(2, 1, -1)');
 
-		$result1 = $this->connection->asyncQuery('SELECT id, name FROM test WHERE id = ?', 1);
-		$this->connection->waitForAsyncQuery();
+		$this->connection->asyncQuery('SELECT id, name FROM test WHERE id = ?', 1);
+		$result1 = $this->connection->getNextAsyncQueryResult();
+		if ($result1 === NULL) {
+			throw new \RuntimeException('No data from database were returned');
+		}
 
 		$row1 = $result1->fetch();
 		if ($row1 === NULL) {
@@ -55,11 +58,14 @@ class AsyncTest extends TestCase
 
 		Tester\Assert::same(['id' => 1, 'name' => 'name2'], $row1->toArray());
 
-		$result2 = $this->connection->asyncQueryArgs('SELECT id, name FROM test WHERE id = ?', [2]);
+		$this->connection->asyncQueryArgs('SELECT id, name FROM test WHERE id = ?', [2]);
 
-		$this->connection->waitForAsyncQuery();
+		$result2 = $this->connection->getNextAsyncQueryResult();
+		if ($result2 === NULL) {
+			throw new \RuntimeException('No data from database were returned');
+		}
 
-		Tester\Assert::true($result2->isFinished());
+		Tester\Assert::false($this->connection->isBusy());
 
 		$row2 = $result2->fetch();
 		if ($row2 === NULL) {
@@ -84,20 +90,125 @@ class AsyncTest extends TestCase
 	}
 
 
-	public function testNoAsyncQuery(): void
+	public function testExecuteEvent(): void
+	{
+		$wasEvent = FALSE;
+		$this->connection->addOnQuery(static function () use (&$wasEvent): void {
+			$wasEvent = TRUE;
+		});
+		$this->connection->asyncExecute('SELECT 1')->completeAsyncExecute();
+		Tester\Assert::true($wasEvent);
+	}
+
+
+	public function testExecute(): void
+	{
+		Tester\Assert::noError(function (): void {
+			$this->connection->asyncExecute('SELECT 1')->completeAsyncExecute();
+		});
+	}
+
+
+	public function testExecutesWithNoComplete(): void
 	{
 		Tester\Assert::exception(function (): void {
-			$this->connection->waitForAsyncQuery();
+			$this->connection->asyncExecute('SELECT 1')->asyncExecute('SELECT 2');
+		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::ASYNC_QUERY_ALREADY_SENT);
+	}
+
+
+	public function testCompleteExecuteWithQuery(): void
+	{
+		Tester\Assert::exception(function (): void {
+			$this->connection->asyncQuery('SELECT 1')->completeAsyncExecute();
+		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::ASYNC_NO_EXECUTE_WAS_SENT);
+	}
+
+
+	public function testGetQueryResultWithExecute(): void
+	{
+		Tester\Assert::exception(function (): void {
+			$this->connection->asyncExecute('SELECT 1')->getNextAsyncQueryResult();
 		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::ASYNC_NO_QUERY_WAS_SENT);
 	}
 
 
-	public function testNoResource(): void
+	public function testCancelAsyncQuery(): void
 	{
-		$resource = $this->connection->asyncQuery('SELECT 1');
-		Tester\Assert::exception(static function () use ($resource): void {
-			$resource->getResource();
-		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::NO_RESOURCE);
+		$this->connection->asyncQuery('SELECT 1');
+		$this->connection->cancelAsyncQuery();
+		Tester\Assert::exception(function (): void {
+			$this->connection->getNextAsyncQueryResult();
+		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::ASYNC_NO_QUERY_WAS_SENT);
+	}
+
+
+	public function testMoreAsyncQueries(): void
+	{
+		$this->connection->asyncQuery('SELECT 1');
+		$result1 = $this->connection->getNextAsyncQueryResult();
+		if ($result1 === NULL) {
+			throw new \RuntimeException('No data from database were returned');
+		}
+
+		Tester\Assert::same(1, $result1->fetchSingle());
+		$this->connection->asyncQuery('SELECT 2');
+
+		$result2 = $this->connection->getNextAsyncQueryResult();
+		if ($result2 === NULL) {
+			throw new \RuntimeException('No data from database were returned');
+		}
+		Tester\Assert::same(2, $result2->fetchSingle());
+	}
+
+
+	public function testMoreAsyncQueriesWithoutWaitForAsyncQuery(): void
+	{
+		$this->connection->asyncQuery('SELECT 1');
+		Tester\Assert::exception(function (): void {
+			$this->connection->asyncQuery('SELECT 2');
+		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::ASYNC_QUERY_ALREADY_SENT);
+	}
+
+
+	public function testMoreAsyncQueriesInOne(): void
+	{
+		$this->connection->asyncQuery('SELECT 1; SELECT 2');
+		$result1 = $this->connection->getNextAsyncQueryResult();
+		if ($result1 === NULL) {
+			throw new \RuntimeException('No data from database were returned');
+		}
+		$result2 = $this->connection->getNextAsyncQueryResult();
+		if ($result2 === NULL) {
+			throw new \RuntimeException('No data from database were returned');
+		}
+		Tester\Assert::same(1, $result1->fetchSingle());
+		Tester\Assert::same(2, $result2->fetchSingle());
+		Tester\Assert::null($this->connection->getNextAsyncQueryResult());
+		$this->connection->asyncQuery('SELECT 3');
+		$result3 = $this->connection->getNextAsyncQueryResult();
+		if ($result3 === NULL) {
+			throw new \RuntimeException('No data from database were returned');
+		}
+		Tester\Assert::same(3, $result3->fetchSingle());
+	}
+
+
+	public function testIsBusy(): void
+	{
+		$this->connection->asyncExecute('SELECT pg_sleep(1)');
+		Tester\Assert::true($this->connection->isBusy());
+		$this->connection->completeAsyncExecute();
+		Tester\Assert::false($this->connection->isBusy());
+	}
+
+
+	public function testError(): void
+	{
+		$this->connection->asyncExecute('SELECT bad_column');
+		Tester\Assert::exception(function (): void {
+			$this->connection->completeAsyncExecute();
+		}, Db\Exceptions\QueryException::class, NULL, Db\Exceptions\QueryException::ASYNC_QUERY_FAILED);
 	}
 
 

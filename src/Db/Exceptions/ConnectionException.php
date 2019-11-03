@@ -12,7 +12,10 @@ class ConnectionException extends Exception
 	public const ASYNC_STREAM_FAILED = 6;
 	public const ASYNC_CONNECT_FAILED = 7;
 	public const ASYNC_CONNECT_TIMEOUT = 8;
-	public const ASYNC_NO_QUERY_WAS_SENT = 9;
+	public const ASYNC_CANCEL_FAILED = 9;
+	public const ASYNC_QUERY_ALREADY_SENT = 10;
+	public const ASYNC_NO_QUERY_WAS_SENT = 11;
+	public const ASYNC_NO_EXECUTE_WAS_SENT = 12;
 
 
 	public static function noConfigException(): self
@@ -68,9 +71,27 @@ class ConnectionException extends Exception
 	}
 
 
+	public static function asyncCancelFailedException(): self
+	{
+		return new self('Cancelation of async query failed.', self::ASYNC_CANCEL_FAILED);
+	}
+
+
+	public static function asyncQueryAlreadySentException(): self
+	{
+		return new self('There is already running async query. Did you call waitForAsyncQuery method before new async query?', self::ASYNC_QUERY_ALREADY_SENT);
+	}
+
+
 	public static function asyncNoQueryWasSentException(): self
 	{
-		return new self('No query was sent.', self::ASYNC_NO_QUERY_WAS_SENT);
+		return new self('No async query was sent.', self::ASYNC_NO_QUERY_WAS_SENT);
+	}
+
+
+	public static function asyncNoExecuteWasSentException(): self
+	{
+		return new self('No async execute was sent.', self::ASYNC_NO_EXECUTE_WAS_SENT);
 	}
 
 }

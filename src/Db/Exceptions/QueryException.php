@@ -34,9 +34,9 @@ class QueryException extends Exception
 	}
 
 
-	public static function asyncQueryFailed(Db\Query $query, string $error): self
+	public static function asyncQueryFailed(Db\Query $query, string $sqlState, string $error): self
 	{
-		return new self(\sprintf('Async query failed? \'%s\' with error: %s.', $query->getSql(), $error), self::ASYNC_QUERY_FAILED, $query);
+		return new self(\sprintf('Async query \'%s\' failed with state \'%s\' and error: %s.', $query->getSql(), $sqlState, $error), self::ASYNC_QUERY_FAILED, $query);
 	}
 
 
