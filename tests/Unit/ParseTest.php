@@ -84,6 +84,14 @@ class ParseTest extends Tester\TestCase
 	}
 
 
+	public function testPrepareQueryWithBlankArray(): void
+	{
+		$query = Db\Helper::prepareSql($this->connection->createQuery('SELECT * FROM table WHERE column IN (?)', []));
+		Tester\Assert::same('SELECT * FROM table WHERE column IN ()', $query->getSql());
+		Tester\Assert::same([], $query->getParams());
+	}
+
+
 	public function testPrepareQueryWithQuery(): void
 	{
 		$subquery = $this->connection->createQuery('SELECT id FROM subtable WHERE column = ?', 1);

@@ -142,13 +142,13 @@ class Helper
 				$origParamIndex++;
 
 				if (\is_array($param)) {
-					$keys = '';
+					$keys = [];
 					$paramCnt = \count($param);
 					for ($i = 0; $i < $paramCnt; $i++) {
-						$keys .= '$' . ++$paramIndex . ', ';
+						$keys[] = '$' . ++$paramIndex;
 					}
 					$parsedParams = \array_merge($parsedParams, $param);
-					return \substr($keys, 0, -2);
+					return \implode(', ', $keys);
 				} else if (\is_bool($param)) {
 					return $param === TRUE ? 'TRUE' : 'FALSE';
 				} else if ($param instanceof Queryable) {

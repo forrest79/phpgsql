@@ -223,6 +223,58 @@ class BasicPhpBenchmark extends BenchmarkCase
 		self::NULL_ARRAY[0] ?? \rand();
 	}
 
+
+	/**
+	 * @title string concatenation
+	 */
+	public function benchmarkStringConcatenation(): void
+	{
+		$keys = '';
+		for ($i = 0; $i < 10; $i++) {
+			$keys .= '$' . $i . ', ';
+		}
+		$keys = \substr($keys, 0, -2);
+	}
+
+
+	/**
+	 * @title string concatenation (with sprintf)
+	 */
+	public function benchmarkStringConcatenationSprintf(): void
+	{
+		$keys = '';
+		for ($i = 0; $i < 10; $i++) {
+			$keys .= \sprintf('$%d, ', $i);
+		}
+		$keys = \substr($keys, 0, -2);
+	}
+
+
+	/**
+	 * @title string concatenation in cycle via array
+	 */
+	public function benchmarkStringConcatenationArray(): void
+	{
+		$keys = [];
+		for ($i = 0; $i < 10; $i++) {
+			$keys[] = '$' . $i;
+		}
+		$keys = \implode(', ', $keys);
+	}
+
+
+	/**
+	 * @title string concatenation in cycle via array (with sprintf)
+	 */
+	public function benchmarkStringConcatenationArraySprintf(): void
+	{
+		$keys = [];
+		for ($i = 0; $i < 10; $i++) {
+			$keys[] = \sprintf('$%d, ', $i);
+		}
+		$keys = \implode(', ', $keys);
+	}
+
 }
 
 \run(BasicPhpBenchmark::class);
