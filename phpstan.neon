@@ -21,6 +21,10 @@ parameters:
 			path: %rootDir%/../../../src/Db/Connection.php
 
 		-
+			message: '#Parameter \#1 \$connection of function pg_set_error_verbosity expects resource, resource\|null given\.#'
+			path: %rootDir%/../../../src/Db/Connection.php
+
+		-
 			message: '#Method Forrest79\\PhPgSql\\Db\\Connection::getConnectedResource\(\) should return resource but returns resource\|null\.#'
 			path: %rootDir%/../../../src/Db/Connection.php
 

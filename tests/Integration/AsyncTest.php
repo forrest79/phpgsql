@@ -19,6 +19,22 @@ class AsyncTest extends TestCase
 	}
 
 
+	public function testSetErrorVerbosityOnConnect(): void
+	{
+		$connection = $this->createConnection();
+
+		Tester\Assert::false($connection->isConnected());
+
+		$connection->setErrorVerbosity(\PGSQL_ERRORS_VERBOSE);
+
+		Tester\Assert::exception(static function () use ($connection): void {
+			$connection->query('SELECT bad_column');
+		}, Db\Exceptions\QueryException::class, '#ERROR:  42703: column "bad_column" does not exist#', Db\Exceptions\QueryException::QUERY_FAILED);
+
+		$connection->close();
+	}
+
+
 	public function testFetch(): void
 	{
 		$this->connection->query('

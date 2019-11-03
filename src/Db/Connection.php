@@ -7,6 +7,9 @@ class Connection
 	/** @var string */
 	private $connectionConfig = '';
 
+	/** @var int */
+	private $errorVerbosity = \PGSQL_ERRORS_DEFAULT;
+
 	/** @var bool */
 	private $connectForceNew = FALSE;
 
@@ -97,6 +100,9 @@ class Connection
 			}
 			$this->asyncStream = $stream;
 		} else {
+			if ($this->errorVerbosity !== \PGSQL_ERRORS_DEFAULT) {
+				\pg_set_error_verbosity($this->resource, $this->errorVerbosity);
+			}
 			$this->connected = TRUE;
 			if ($this->onConnect !== []) {
 				$this->onConnect();
@@ -170,6 +176,18 @@ class Connection
 			throw Exceptions\ConnectionException::cantChangeConnectionSettings();
 		}
 		$this->connectAsyncWaitSeconds = $seconds;
+		return $this;
+	}
+
+
+	public function setErrorVerbosity(int $errorVerbosity): self
+	{
+		if ($this->errorVerbosity !== $errorVerbosity) {
+			$this->errorVerbosity = $errorVerbosity;
+			if ($this->isConnected()) {
+				\pg_set_error_verbosity($this->getConnectedResource(), $this->errorVerbosity);
+			}
+		}
 		return $this;
 	}
 
@@ -500,6 +518,9 @@ class Connection
 						throw Exceptions\ConnectionException::asyncConnectFailedException();
 					case \PGSQL_POLLING_OK:
 					case \PGSQL_POLLING_ACTIVE: // this can't happen?
+						if ($this->errorVerbosity !== \PGSQL_ERRORS_DEFAULT) {
+							\pg_set_error_verbosity($this->resource, $this->errorVerbosity);
+						}
 						$this->connected = TRUE;
 						$this->onConnect();
 						return $this->resource;

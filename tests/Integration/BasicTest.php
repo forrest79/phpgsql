@@ -19,6 +19,43 @@ class BasicTest extends TestCase
 	}
 
 
+	public function testSetErrorVerbosity(): void
+	{
+		// PGSQL_ERRORS_DEFAULT
+		Tester\Assert::exception(function (): void {
+			$this->connection->query('SELECT bad_column');
+		}, Db\Exceptions\QueryException::class, '#ERROR:  column "bad_column" does not exist#', Db\Exceptions\QueryException::QUERY_FAILED);
+
+		// PGSQL_ERRORS_TERSE
+		$this->connection->setErrorVerbosity(\PGSQL_ERRORS_TERSE);
+		Tester\Assert::exception(function (): void {
+			$this->connection->query('SELECT bad_column');
+		}, Db\Exceptions\QueryException::class, '#ERROR:  column "bad_column" does not exist#', Db\Exceptions\QueryException::QUERY_FAILED);
+
+		// PGSQL_ERRORS_VERBOSE
+		$this->connection->setErrorVerbosity(\PGSQL_ERRORS_VERBOSE);
+		Tester\Assert::exception(function (): void {
+			$this->connection->query('SELECT bad_column');
+		}, Db\Exceptions\QueryException::class, '#ERROR:  42703: column "bad_column" does not exist#', Db\Exceptions\QueryException::QUERY_FAILED);
+	}
+
+
+	public function testSetErrorVerbosityOnConnect(): void
+	{
+		$connection = $this->createConnection();
+
+		Tester\Assert::false($connection->isConnected());
+
+		$connection->setErrorVerbosity(\PGSQL_ERRORS_VERBOSE);
+
+		Tester\Assert::exception(static function () use ($connection): void {
+			$connection->query('SELECT bad_column');
+		}, Db\Exceptions\QueryException::class, '#ERROR:  42703: column "bad_column" does not exist#', Db\Exceptions\QueryException::QUERY_FAILED);
+
+		$connection->close();
+	}
+
+
 	public function testPing(): void
 	{
 		Tester\Assert::true($this->connection->ping());
