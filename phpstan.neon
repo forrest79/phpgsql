@@ -1,5 +1,6 @@
 includes:
-	- vendor/phpstan/phpstan-strict-rules/rules.neon
+	- %rootDir%/conf/bleedingEdge.neon
+	- %rootDir%/../phpstan-strict-rules/rules.neon
 
 parameters:
 	level: max
@@ -13,6 +14,14 @@ parameters:
 		-
 			message: '#Parameter \#1 \$table of method Forrest79\\PhPgSql\\Fluent\\Fluent::table\(\) expects Forrest79\\PhPgSql\\Db\\Queryable\|Forrest79\\PhPgSql\\Fluent\\Sql\|string, array<int, string> given\.#'
 			path: %rootDir%/../../../tests/Unit/FluentTest.php
+
+		-
+			message: '#Expression ".+" on a separate line does not do anything\.#'
+			path: %rootDir%/../../../tests/Integration/FetchTest.php
+
+		-
+			message: '#Expression ".+" on a separate line does not do anything\.#'
+			path: %rootDir%/../../../tests/Integration/ParseDataTypeTest.php
 
 		# === We know, that this can't happen ===
 
