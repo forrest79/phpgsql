@@ -10,6 +10,7 @@ if (!\file_exists($loader)) {
 require $loader;
 
 if (!\function_exists('run')) {
+
 	function run(string $class): void
 	{
 		if (\defined('__PHPSTAN_RUNNING__')) {
@@ -21,6 +22,7 @@ if (!\function_exists('run')) {
 			$benchmark->run();
 		}
 	}
+
 }
 
 require __DIR__ . '/../tests/prepare-db-config.php';

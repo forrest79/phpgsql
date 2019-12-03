@@ -93,7 +93,7 @@ class Helper
 		if ($parameters !== []) {
 			$sql = (string) \preg_replace_callback( // intentionally (string), other can't be returned
 				'/\$(\d+)/',
-				static function ($matches) use (& $parameters): string {
+				static function ($matches) use (&$parameters): string {
 					$i = $matches[1] - 1;
 
 					if (\array_key_exists($i, $parameters)) {
@@ -128,7 +128,7 @@ class Helper
 		$parsedParams = [];
 		$sql = \preg_replace_callback(
 			'/([\\\\]?)\?/',
-			static function ($matches) use (& $params, & $parsedParams, & $origParamIndex, & $paramIndex): string {
+			static function ($matches) use (&$params, &$parsedParams, &$origParamIndex, &$paramIndex): string {
 				if ($matches[1] === '\\') {
 					return '?';
 				}
