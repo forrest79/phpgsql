@@ -171,4 +171,16 @@ class FluentExecute extends Fluent implements \Countable, \IteratorAggregate
 		return $this->execute()->fetchPairs($key, $value);
 	}
 
+
+	/**
+	 * @throws Db\Exceptions\ConnectionException
+	 * @throws Db\Exceptions\QueryException
+	 * @throws Exceptions\FluentException
+	 * @throws Exceptions\QueryBuilderException
+	 */
+	public function asyncExecute(): void
+	{
+		$this->connection->asyncQuery($this->getQuery());
+	}
+
 }

@@ -140,6 +140,16 @@ class FluentFetchTest extends TestCase
 	}
 
 
+	public function testAsyncExecute(): void
+	{
+		$this->connection->select(['1'])->asyncExecute();
+
+		$data = $this->connection->getNextAsyncQueryResult()->fetchSingle();
+
+		Tester\Assert::same(1, $data);
+	}
+
+
 	public function testResultIterator(): void
 	{
 		$this->connection->query('
