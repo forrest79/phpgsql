@@ -532,6 +532,9 @@ class QueryBuilder
 					$param = \reset($conditionParams);
 					if (\is_array($param) || ($param instanceof Db\Queryable) || ($param instanceof Fluent)) {
 						$condition = \sprintf('%s IN (?)', $condition);
+					} else if ($param === NULL) {
+						$condition = \sprintf('%s IS NULL', $condition);
+						\array_shift($conditionParams);
 					} else {
 						$condition = \sprintf('%s = ?', $condition);
 					}

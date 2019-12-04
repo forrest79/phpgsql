@@ -21,13 +21,14 @@ class FluentTest extends Tester\TestCase
 			->distinct()
 			->from('table', 't')
 			->where('column', 100)
+			->where('text', NULL)
 			->groupBy(['column'])
 			->orderBy(['column'])
 			->limit(10)
 			->offset(20)
 			->prepareSql();
 
-		Tester\Assert::same('SELECT DISTINCT column FROM table AS t WHERE column = $1 GROUP BY column ORDER BY column LIMIT $2 OFFSET $3', $query->getSql());
+		Tester\Assert::same('SELECT DISTINCT column FROM table AS t WHERE (column = $1) AND (text IS NULL) GROUP BY column ORDER BY column LIMIT $2 OFFSET $3', $query->getSql());
 		Tester\Assert::same([100, 10, 20], $query->getParams());
 	}
 
