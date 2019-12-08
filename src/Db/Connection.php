@@ -37,7 +37,7 @@ class Connection
 	/** @var DataTypeCache|NULL */
 	private $dataTypeCache;
 
-	/** @var Query|string|NULL */
+	/** @var AsyncQuery|string|NULL */
 	private $asyncQuery;
 
 	/** @var Transaction */
@@ -314,6 +314,16 @@ class Connection
 			$this->onQuery($query, \microtime(TRUE) - $start);
 		}
 
+		return $this->createResult($resource);
+	}
+
+
+	/**
+	 * @param resource $resource
+	 * @return Result
+	 */
+	private function createResult($resource): Result
+	{
 		return new Result($resource, $this->getDefaultRowFactory(), $this->getDataTypeParser(), $this->getDataTypesCache());
 	}
 
@@ -359,11 +369,11 @@ class Connection
 	/**
 	 * @param string|Query $query
 	 * @param mixed ...$params
-	 * @return self
+	 * @return AsyncQuery
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
-	public function asyncQuery($query, ...$params): self
+	public function asyncQuery($query, ...$params): AsyncQuery
 	{
 		return $this->asyncQueryArgs($query, $params);
 	}
@@ -372,13 +382,14 @@ class Connection
 	/**
 	 * @param string|Query $query
 	 * @param array $params
-	 * @return self
+	 * @return AsyncQuery
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
-	public function asyncQueryArgs($query, array $params): self
+	public function asyncQueryArgs($query, array $params): AsyncQuery
 	{
-		$this->asyncQuery = $query = Helper::prepareSql($this->normalizeQuery($query, $params));
+		$query = Helper::prepareSql($this->normalizeQuery($query, $params));
+		$this->asyncQuery = new AsyncQuery($this, $query);
 
 		$queryParams = $query->getParams();
 		if ($queryParams === []) {
@@ -394,7 +405,7 @@ class Connection
 			$this->onQuery($query);
 		}
 
-		return $this;
+		return $this->asyncQuery;
 	}
 
 
@@ -444,24 +455,34 @@ class Connection
 
 
 	/**
+	 * @return AsyncQuery|string|NULL
+	 */
+	public function getAsyncQuery()
+	{
+		return $this->asyncQuery;
+	}
+
+
+	/**
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
-	public function getNextAsyncQueryResult(): ?Result
+	public function getNextAsyncQueryResult(): Result
 	{
-		if (!($this->asyncQuery instanceof Query)) {
+		if (!($this->asyncQuery instanceof AsyncQuery)) {
 			throw Exceptions\ConnectionException::asyncNoQueryWasSentException();
 		}
 
 		$resource = \pg_get_result($this->getConnectedResource());
 		if ($resource === FALSE) {
+			$query = $this->asyncQuery->getQuery();
 			$this->asyncQuery = NULL;
-			return NULL;
+			throw Exceptions\ResultException::noOtherAsyncResult($query);
 		}
 
-		self::checkAsyncQueryResult($resource, $this->asyncQuery);
+		self::checkAsyncQueryResult($resource, $this->asyncQuery->getQuery());
 
-		return new Result($resource, $this->getDefaultRowFactory(), $this->getDataTypeParser(), $this->getDataTypesCache());
+		return $this->createResult($resource);
 	}
 
 

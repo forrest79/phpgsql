@@ -178,9 +178,9 @@ class FluentExecute extends Fluent implements \Countable, \IteratorAggregate
 	 * @throws Exceptions\FluentException
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	public function asyncExecute(): void
+	public function asyncExecute(): Db\AsyncQuery
 	{
-		$this->connection->asyncQuery($this->getQuery());
+		return $this->connection->asyncQuery($this->getQuery());
 	}
 
 }

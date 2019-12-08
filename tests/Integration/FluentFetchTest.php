@@ -142,12 +142,9 @@ class FluentFetchTest extends TestCase
 
 	public function testAsyncExecute(): void
 	{
-		$this->connection->select(['1'])->asyncExecute();
+		$asyncQuery = $this->connection->select(['1'])->asyncExecute();
 
-		$result = $this->connection->getNextAsyncQueryResult();
-		if ($result === NULL) {
-			throw new \RuntimeException('No result for async query');
-		}
+		$result = $asyncQuery->getNextResult();
 		$data = $result->fetchSingle();
 
 		Tester\Assert::same(1, $data);
