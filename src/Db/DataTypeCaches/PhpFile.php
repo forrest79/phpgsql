@@ -27,7 +27,7 @@ class PhpFile extends DbLoader
 			$cacheFile = $this->getCacheFile($connectionConfig);
 			if (!\is_file($cacheFile)) {
 				if (!\is_dir($this->cacheDirectory)) {
-					\mkdir($this->cacheDirectory, 0777, TRUE);
+					@\mkdir($this->cacheDirectory, 0777, TRUE); // @ - dir may already exist
 				}
 
 				$lockFile = $cacheFile . '.lock';
