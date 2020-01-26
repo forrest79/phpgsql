@@ -7,15 +7,22 @@ use Forrest79\PhPgSql\Db;
 class ResultException extends Exception
 {
 	public const NO_COLUMN = 1;
-	public const FETCH_ASSOC_PARSE_FAILED = 2;
-	public const FETCH_PAIRS_FAILED = 3;
-	public const NO_OTHER_ASYNC_RESULT = 4;
-	public const ANOTHER_ASYNC_QUERY_IS_RUNNING = 5;
+	public const COLUMN_NAME_IS_ALREADY_IN_USE = 2;
+	public const FETCH_ASSOC_PARSE_FAILED = 3;
+	public const FETCH_PAIRS_FAILED = 4;
+	public const NO_OTHER_ASYNC_RESULT = 5;
+	public const ANOTHER_ASYNC_QUERY_IS_RUNNING = 6;
 
 
 	public static function noColumn(string $key): self
 	{
 		return new self(\sprintf('There is no key \'%s\'.', $key), self::NO_COLUMN);
+	}
+
+
+	public static function columnNameIsAlreadyInUse(string $key): self
+	{
+		return new self(\sprintf('Key \'%s\' is already used in result.', $key), self::COLUMN_NAME_IS_ALREADY_IN_USE);
 	}
 
 

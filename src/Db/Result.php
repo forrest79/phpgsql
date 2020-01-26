@@ -306,12 +306,16 @@ class Result implements \Countable, \IteratorAggregate
 			$this->columnsDataTypes = [];
 			$fieldsCnt = \pg_num_fields($this->queryResource);
 			for ($i = 0; $i < $fieldsCnt; $i++) {
+				$name = \pg_field_name($this->queryResource, $i);
+				if (isset($this->columnsDataTypes[$name])) {
+					throw Exceptions\ResultException::columnNameIsAlreadyInUse($name);
+				}
 				if ($this->dataTypesCache === NULL) {
 					$type = \pg_field_type($this->queryResource, $i);
 				} else {
 					$type = $this->dataTypesCache[\pg_field_type_oid($this->queryResource, $i)];
 				}
-				$this->columnsDataTypes[\pg_field_name($this->queryResource, $i)] = $type;
+				$this->columnsDataTypes[$name] = $type;
 			}
 		}
 		return $this->columnsDataTypes;

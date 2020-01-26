@@ -452,6 +452,18 @@ class FetchTest extends TestCase
 	}
 
 
+	public function testResultColumnIsAlreadyInUse(): void
+	{
+		$result = $this->connection->query('SELECT 1 AS column, 2 AS column');
+
+		Tester\Assert::exception(static function () use ($result): void {
+			$result->fetch();
+		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::COLUMN_NAME_IS_ALREADY_IN_USE);
+
+		$result->free();
+	}
+
+
 	public function testCustomRowFactoryOnConnection(): void
 	{
 		$this->connection->setDefaultRowFactory($this->createCustomRowFactory());
