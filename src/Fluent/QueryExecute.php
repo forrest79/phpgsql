@@ -4,7 +4,7 @@ namespace Forrest79\PhPgSql\Fluent;
 
 use Forrest79\PhPgSql\Db;
 
-class FluentExecute extends Fluent implements \Countable, \IteratorAggregate
+class QueryExecute extends Query implements \Countable, \IteratorAggregate
 {
 	/** @var Db\Connection */
 	private $connection;
@@ -20,21 +20,21 @@ class FluentExecute extends Fluent implements \Countable, \IteratorAggregate
 
 
 	/**
-	 * @throws Exceptions\FluentException
+	 * @throws Exceptions\QueryException
 	 */
-	protected function updateFluent(): void
+	protected function updateQuery(): void
 	{
 		if ($this->result !== NULL) {
-			throw Exceptions\FluentException::cantUpdateFluentAfterExecute();
+			throw Exceptions\QueryException::cantUpdateQueryAfterExecute();
 		}
-		parent::updateFluent();
+		parent::updateQuery();
 	}
 
 
 	/**
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
-	 * @throws Exceptions\FluentException
+	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
 	 */
 	public function execute(): Db\Result
@@ -49,7 +49,7 @@ class FluentExecute extends Fluent implements \Countable, \IteratorAggregate
 	/**
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
-	 * @throws Exceptions\FluentException
+	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
 	 */
 	public function reexecute(): Db\Result
@@ -63,12 +63,12 @@ class FluentExecute extends Fluent implements \Countable, \IteratorAggregate
 
 
 	/**
-	 * @throws Exceptions\FluentException
+	 * @throws Exceptions\QueryException
 	 */
 	public function free(): bool
 	{
 		if ($this->result === NULL) {
-			throw Exceptions\FluentException::youMustExecuteFluentBeforeThat();
+			throw Exceptions\QueryException::youMustExecuteQueryBeforeThat();
 		}
 		return $this->result->free();
 	}
@@ -77,7 +77,7 @@ class FluentExecute extends Fluent implements \Countable, \IteratorAggregate
 	/**
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
-	 * @throws Exceptions\FluentException
+	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
 	 */
 	public function count(): int
@@ -89,7 +89,7 @@ class FluentExecute extends Fluent implements \Countable, \IteratorAggregate
 	/**
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
-	 * @throws Exceptions\FluentException
+	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
 	 */
 	public function getIterator(): Db\ResultIterator
@@ -101,7 +101,7 @@ class FluentExecute extends Fluent implements \Countable, \IteratorAggregate
 	/**
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
-	 * @throws Exceptions\FluentException
+	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
 	 */
 	public function getAffectedRows(): int
@@ -113,7 +113,7 @@ class FluentExecute extends Fluent implements \Countable, \IteratorAggregate
 	/**
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
-	 * @throws Exceptions\FluentException
+	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
 	 */
 	public function fetch(): ?Db\Row
@@ -123,11 +123,11 @@ class FluentExecute extends Fluent implements \Countable, \IteratorAggregate
 
 
 	/**
+	 * @return mixed value on success, NULL if no next record
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
-	 * @throws Exceptions\FluentException
+	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
-	 * @return mixed value on success, NULL if no next record
 	 */
 	public function fetchSingle()
 	{
@@ -136,11 +136,11 @@ class FluentExecute extends Fluent implements \Countable, \IteratorAggregate
 
 
 	/**
+	 * @return Db\Row[]
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
-	 * @throws Exceptions\FluentException
+	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
-	 * @return Db\Row[]
 	 */
 	public function fetchAll(?int $offset = NULL, ?int $limit = NULL): array
 	{
@@ -151,7 +151,7 @@ class FluentExecute extends Fluent implements \Countable, \IteratorAggregate
 	/**
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
-	 * @throws Exceptions\FluentException
+	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
 	 */
 	public function fetchAssoc(string $assoc): array
@@ -163,7 +163,7 @@ class FluentExecute extends Fluent implements \Countable, \IteratorAggregate
 	/**
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
-	 * @throws Exceptions\FluentException
+	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
 	 */
 	public function fetchPairs(?string $key = NULL, ?string $value = NULL): array
@@ -175,7 +175,7 @@ class FluentExecute extends Fluent implements \Countable, \IteratorAggregate
 	/**
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
-	 * @throws Exceptions\FluentException
+	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
 	 */
 	public function asyncExecute(): Db\AsyncQuery

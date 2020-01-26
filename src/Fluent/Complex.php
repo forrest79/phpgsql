@@ -10,8 +10,8 @@ class Complex implements \ArrayAccess
 	/** @var Complex|NULL */
 	private $parent;
 
-	/** @var Fluent|NULL */
-	private $fluent;
+	/** @var Query|NULL */
+	private $query;
 
 	/** @var string */
 	private $type;
@@ -20,12 +20,12 @@ class Complex implements \ArrayAccess
 	private $conditions;
 
 
-	private function __construct(string $type, array $conditions, ?Complex $parent = NULL, ?Fluent $fluent = NULL)
+	private function __construct(string $type, array $conditions, ?Complex $parent = NULL, ?Query $query = NULL)
 	{
 		$this->type = $type;
 		$this->conditions = $this->normalizeConditions($conditions);
 		$this->parent = $parent;
-		$this->fluent = $fluent;
+		$this->query = $query;
 	}
 
 
@@ -52,7 +52,7 @@ class Complex implements \ArrayAccess
 
 	public function addComplexAnd(array $conditions = []): Complex
 	{
-		$complexAnd = self::createAnd($conditions, $this, $this->fluent);
+		$complexAnd = self::createAnd($conditions, $this, $this->query);
 		$this->add($complexAnd);
 		return $complexAnd;
 	}
@@ -60,7 +60,7 @@ class Complex implements \ArrayAccess
 
 	public function addComplexOr(array $conditions = []): Complex
 	{
-		$complexOr = self::createOr($conditions, $this, $this->fluent);
+		$complexOr = self::createOr($conditions, $this, $this->query);
 		$this->add($complexOr);
 		return $complexOr;
 	}
@@ -91,27 +91,27 @@ class Complex implements \ArrayAccess
 
 
 	/**
+	 * @return Query|QueryExecute
 	 * @throws Exceptions\ComplexException
-	 * @return Fluent|FluentExecute
 	 */
-	public function fluent(): Fluent
+	public function query(): Query
 	{
-		if ($this->fluent === NULL) {
-			throw Exceptions\ComplexException::noFluent();
+		if ($this->query === NULL) {
+			throw Exceptions\ComplexException::noQuery();
 		}
-		return $this->fluent;
+		return $this->query;
 	}
 
 
-	public static function createAnd(array $conditions = [], ?Complex $parent = NULL, ?Fluent $fluent = NULL): self
+	public static function createAnd(array $conditions = [], ?Complex $parent = NULL, ?Query $query = NULL): self
 	{
-		return new self(self::TYPE_AND, $conditions, $parent, $fluent);
+		return new self(self::TYPE_AND, $conditions, $parent, $query);
 	}
 
 
-	public static function createOr(array $conditions = [], ?Complex $parent = NULL, ?Fluent $fluent = NULL): self
+	public static function createOr(array $conditions = [], ?Complex $parent = NULL, ?Query $query = NULL): self
 	{
-		return new self(self::TYPE_OR, $conditions, $parent, $fluent);
+		return new self(self::TYPE_OR, $conditions, $parent, $query);
 	}
 
 

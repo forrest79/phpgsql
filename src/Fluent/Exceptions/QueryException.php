@@ -2,16 +2,15 @@
 
 namespace Forrest79\PhPgSql\Fluent\Exceptions;
 
-class FluentException extends Exception
+class QueryException extends Exception
 {
 	public const ONLY_ONE_MAIN_TABLE = 1;
 	public const TABLE_ALIAS_ALREADY_EXISTS = 2;
 	public const NON_EXISTING_PARAM_TO_RESET = 3;
 	public const QUERYABLE_MUST_HAVE_ALIAS = 4;
 	public const PARAM_MUST_BE_SCALAR_OR_QUERYABLE = 5;
-	public const CANT_UPDATE_FLUENT_AFTER_EXECUTE = 6;
-	public const YOU_MUST_EXECUTE_FLUENT_BEFORE_THAT = 7;
-	public const BAD_PARAM = 7;
+	public const CANT_UPDATE_QUERY_AFTER_EXECUTE = 6;
+	public const YOU_MUST_EXECUTE_QUERY_BEFORE_THAT = 7;
 
 
 	public static function onlyOneMainTable(): self
@@ -44,21 +43,21 @@ class FluentException extends Exception
 	}
 
 
-	public static function cantUpdateFluentAfterExecute(): self
+	public static function cantUpdateQueryAfterExecute(): self
 	{
-		return new self('Can\'t update fluent after execute.', self::CANT_UPDATE_FLUENT_AFTER_EXECUTE);
+		return new self('Can\'t update query after execute.', self::CANT_UPDATE_QUERY_AFTER_EXECUTE);
 	}
 
 
-	public static function youMustExecuteFluentBeforeThat(): self
+	public static function youMustExecuteQueryBeforeThat(): self
 	{
-		return new self('You must execute fluent before that', self::YOU_MUST_EXECUTE_FLUENT_BEFORE_THAT);
+		return new self('You must execute query before that', self::YOU_MUST_EXECUTE_QUERY_BEFORE_THAT);
 	}
 
 
 	public static function badParam(string $param, string $value, array $validValues): self
 	{
-		return new self(\sprintf('Bad param \'%s\' with value \'%s\'. Valid values are \'%s\'.', $param, $value, \implode('\', \'', $validValues)), self::YOU_MUST_EXECUTE_FLUENT_BEFORE_THAT);
+		return new self(\sprintf('Bad param \'%s\' with value \'%s\'. Valid values are \'%s\'.', $param, $value, \implode('\', \'', $validValues)), self::YOU_MUST_EXECUTE_QUERY_BEFORE_THAT);
 	}
 
 }

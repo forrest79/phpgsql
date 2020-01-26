@@ -31,18 +31,18 @@ class FluentComplexTest extends Tester\TestCase
 
 	public function testFluent(): void
 	{
-		$fluent = new Fluent\Fluent();
-		$parentComplex = Fluent\Complex::createAnd([], NULL, $fluent);
+		$query = new Fluent\Query();
+		$parentComplex = Fluent\Complex::createAnd([], NULL, $query);
 
-		Tester\Assert::same($fluent, $parentComplex->addComplexOr()->fluent());
+		Tester\Assert::same($query, $parentComplex->addComplexOr()->query());
 	}
 
 
 	public function testNoFluent(): void
 	{
 		Tester\Assert::exception(static function (): void {
-			Fluent\Complex::createAnd()->fluent();
-		}, Fluent\Exceptions\ComplexException::class, NULL, Fluent\Exceptions\ComplexException::NO_FLUENT);
+			Fluent\Complex::createAnd()->query();
+		}, Fluent\Exceptions\ComplexException::class, NULL, Fluent\Exceptions\ComplexException::NO_QUERY);
 	}
 
 

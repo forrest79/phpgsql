@@ -217,7 +217,7 @@ class FluentConnectionTest extends Tester\TestCase
 	{
 		$query = $this->fluentConnection
 			->whereAnd(['column = 1', 'another = 2'])
-				->fluent()
+				->query()
 			->select([1])
 			->prepareSql();
 
@@ -230,7 +230,7 @@ class FluentConnectionTest extends Tester\TestCase
 	{
 		$query = $this->fluentConnection
 			->whereOr(['column = 1', 'another = 2'])
-				->fluent()
+				->query()
 			->select([1])
 			->prepareSql();
 
@@ -270,7 +270,7 @@ class FluentConnectionTest extends Tester\TestCase
 	{
 		$query = $this->fluentConnection
 			->havingAnd(['column = 1', 'another = 2'])
-				->fluent()
+				->query()
 			->select(['*'])
 			->from('table')
 			->groupBy(['column', 'another'])
@@ -285,7 +285,7 @@ class FluentConnectionTest extends Tester\TestCase
 	{
 		$query = $this->fluentConnection
 			->havingOr(['column = 1', 'another = 2'])
-				->fluent()
+				->query()
 			->select(['*'])
 			->from('table')
 			->groupBy(['column', 'another'])

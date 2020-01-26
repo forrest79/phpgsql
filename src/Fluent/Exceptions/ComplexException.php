@@ -5,7 +5,7 @@ namespace Forrest79\PhPgSql\Fluent\Exceptions;
 class ComplexException extends Exception
 {
 	public const NO_PARENT = 1;
-	public const NO_FLUENT = 2;
+	public const NO_QUERY = 2;
 	public const COMPLEX_CANT_HAVE_PARAMS = 3;
 
 
@@ -15,9 +15,9 @@ class ComplexException extends Exception
 	}
 
 
-	public static function noFluent(): self
+	public static function noQuery(): self
 	{
-		return new self('This complex has no fluent assigned.', self::NO_FLUENT);
+		return new self('This complex has no query assigned.', self::NO_QUERY);
 	}
 
 

@@ -11,12 +11,12 @@ require_once __DIR__ . '/../bootstrap.php';
 /**
  * @testCase
  */
-class FluentTest extends Tester\TestCase
+class FluentQueryTest extends Tester\TestCase
 {
 
 	public function testSelect(): void
 	{
-		$query = $this->fluent()
+		$query = $this->query()
 			->select(['column'])
 			->distinct()
 			->from('table', 't')
@@ -33,10 +33,10 @@ class FluentTest extends Tester\TestCase
 	}
 
 
-	public function testSelectWithFluent(): void
+	public function testSelectWithFluentQuery(): void
 	{
-		$query = $this->fluent()
-			->select(['column' => $this->fluent()->select([1])])
+		$query = $this->query()
+			->select(['column' => $this->query()->select([1])])
 			->prepareSql();
 
 		Tester\Assert::same('SELECT (SELECT 1) AS column', $query->getSql());
@@ -46,7 +46,7 @@ class FluentTest extends Tester\TestCase
 
 	public function testSelectWithQuery(): void
 	{
-		$query = $this->fluent()
+		$query = $this->query()
 			->select(['column' => new Db\Query('SELECT 1')])
 			->prepareSql();
 
@@ -57,7 +57,7 @@ class FluentTest extends Tester\TestCase
 
 	public function testSelectColumnAliases(): void
 	{
-		$query = $this->fluent()
+		$query = $this->query()
 			->select(['column' => 'another', 'next', 10 => 'column_with_integer_key', '1' => 'column_with_integer_in_string_key', 'a' => 'b'])
 			->prepareSql();
 
@@ -66,11 +66,11 @@ class FluentTest extends Tester\TestCase
 	}
 
 
-	public function testFromWithFluent(): void
+	public function testFromWithFluentQuery(): void
 	{
-		$query = $this->fluent()
+		$query = $this->query()
 			->select(['x.column'])
-			->from($this->fluent()->select(['column' => 1]), 'x')
+			->from($this->query()->select(['column' => 1]), 'x')
 			->prepareSql();
 
 		Tester\Assert::same('SELECT x.column FROM (SELECT 1 AS column) AS x', $query->getSql());
@@ -80,7 +80,7 @@ class FluentTest extends Tester\TestCase
 
 	public function testFromWithQuery(): void
 	{
-		$query = $this->fluent()
+		$query = $this->query()
 			->select(['x.column'])
 			->from(new Db\Query('SELECT 1 AS column'), 'x')
 			->prepareSql();
@@ -92,7 +92,7 @@ class FluentTest extends Tester\TestCase
 
 	public function testFromWithLiteral(): void
 	{
-		$query = $this->fluent()
+		$query = $this->query()
 			->select(['gs'])
 			->from(Db\Literal::create('generate_series(?::integer, ?::integer, ?::integer)', 2, 1, -1), 'gs')
 			->prepareSql();
@@ -105,7 +105,7 @@ class FluentTest extends Tester\TestCase
 	public function testFromWithBadQueryable(): void
 	{
 		Tester\Assert::exception(function (): void {
-			$this->fluent()
+			$this->query()
 				->select(['qa'])
 				->from(new class implements Db\Queryable {
 
@@ -125,12 +125,12 @@ class FluentTest extends Tester\TestCase
 	}
 
 
-	public function testJoinWithFluent(): void
+	public function testJoinWithFluentQuery(): void
 	{
-		$query = $this->fluent()
+		$query = $this->query()
 			->select(['x.column'])
 			->from('table', 't')
-			->join($this->fluent()->select(['column' => 1]), 'x', 'x.column = t.id')
+			->join($this->query()->select(['column' => 1]), 'x', 'x.column = t.id')
 			->prepareSql();
 
 		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN (SELECT 1 AS column) AS x ON x.column = t.id', $query->getSql());
@@ -140,7 +140,7 @@ class FluentTest extends Tester\TestCase
 
 	public function testJoinWithQuery(): void
 	{
-		$query = $this->fluent()
+		$query = $this->query()
 			->select(['x.column'])
 			->from('table', 't')
 			->join(new Db\Query('SELECT 1 AS column'), 'x', 'x.column = t.id')
@@ -153,7 +153,7 @@ class FluentTest extends Tester\TestCase
 
 	public function testJoinWithArrayOn(): void
 	{
-		$query = $this->fluent()
+		$query = $this->query()
 			->select(['x.column'])
 			->from('table', 't')
 			->join('another', 'x', [['x.column = t.id'], ['x.id = 2']])
@@ -166,7 +166,7 @@ class FluentTest extends Tester\TestCase
 
 	public function testJoinWithArrayParamsOn(): void
 	{
-		$query = $this->fluent()
+		$query = $this->query()
 			->select(['x.column'])
 			->from('table', 't')
 			->join('another', 'x', [['x.column = t.id'], ['x.id', 2]])
@@ -179,7 +179,7 @@ class FluentTest extends Tester\TestCase
 
 	public function testJoinWithAddOn(): void
 	{
-		$query = $this->fluent()
+		$query = $this->query()
 			->select(['x.column'])
 			->from('table', 't')
 			->join('another', 'x', 'x.column = t.id')
@@ -201,7 +201,7 @@ class FluentTest extends Tester\TestCase
 				->parent()
 			->add('x.column = 3');
 
-		$query = $this->fluent()
+		$query = $this->query()
 			->select(['x.column'])
 			->from('table', 't')
 			->join('another', 'x', $complexOn)
@@ -215,7 +215,7 @@ class FluentTest extends Tester\TestCase
 	public function testJoinNoOn(): void
 	{
 		Tester\Assert::exception(function (): void {
-			$this->fluent()
+			$this->query()
 				->select(['x.column'])
 				->from('table', 't')
 				->join('another', 'x')
@@ -226,7 +226,7 @@ class FluentTest extends Tester\TestCase
 
 	public function testSelectCombine(): void
 	{
-		$query = $this->fluent()
+		$query = $this->query()
 			->from('table', 't')
 			->select(['column'])
 			->union('SELECT column FROM table2 AS t2')
@@ -239,11 +239,11 @@ class FluentTest extends Tester\TestCase
 
 	public function testSelectCombineFluent(): void
 	{
-		$query = $this->fluent()
+		$query = $this->query()
 			->from('table', 't')
 			->select(['column'])
 			->union(
-				$this->fluent()
+				$this->query()
 					->select(['column'])
 					->from('table2', 't2')
 			)
@@ -256,7 +256,7 @@ class FluentTest extends Tester\TestCase
 
 	public function testSelectCombineQuery(): void
 	{
-		$query = $this->fluent()
+		$query = $this->query()
 			->from('table', 't')
 			->select(['column'])
 			->union(new Db\Query('SELECT column FROM table2 AS t2'))
@@ -270,7 +270,7 @@ class FluentTest extends Tester\TestCase
 	public function testSelectNoColumns(): void
 	{
 		Tester\Assert::exception(function (): void {
-			$this->fluent()
+			$this->query()
 				->from('table')
 				->prepareSql();
 		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::NO_COLUMNS_TO_SELECT);
@@ -279,10 +279,10 @@ class FluentTest extends Tester\TestCase
 
 	public function testOrderByFluent(): void
 	{
-		$query = $this->fluent()
+		$query = $this->query()
 			->select(['column'])
 			->from('table', 't')
-			->orderBy([$this->fluent()->select(['sort_by_value(column)'])])
+			->orderBy([$this->query()->select(['sort_by_value(column)'])])
 			->prepareSql();
 
 		Tester\Assert::same('SELECT column FROM table AS t ORDER BY (SELECT sort_by_value(column))', $query->getSql());
@@ -292,7 +292,7 @@ class FluentTest extends Tester\TestCase
 
 	public function testOrderByQuery(): void
 	{
-		$query = $this->fluent()
+		$query = $this->query()
 			->select(['column'])
 			->from('table', 't')
 			->orderBy([new Db\Query('sort_by_value(column)')])
@@ -305,7 +305,7 @@ class FluentTest extends Tester\TestCase
 
 	public function testInsertRow(): void
 	{
-		$query = $this->fluent()
+		$query = $this->query()
 			->values([
 				'column' => 1,
 			])
@@ -320,7 +320,7 @@ class FluentTest extends Tester\TestCase
 
 	public function testInsertMergeData(): void
 	{
-		$query = $this->fluent()
+		$query = $this->query()
 			->insert('table')
 			->values([
 				'column1' => 3,
@@ -339,7 +339,7 @@ class FluentTest extends Tester\TestCase
 
 	public function testInsertRows(): void
 	{
-		$query = $this->fluent()
+		$query = $this->query()
 			->rows([
 				['column' => 1],
 				['column' => 2],
@@ -356,7 +356,7 @@ class FluentTest extends Tester\TestCase
 
 	public function testInsertRowsMergeData(): void
 	{
-		$query = $this->fluent()
+		$query = $this->query()
 			->rows([
 				['column' => 1],
 				['column' => 2],
@@ -375,7 +375,7 @@ class FluentTest extends Tester\TestCase
 
 	public function testInsertSelect(): void
 	{
-		$query = $this->fluent()
+		$query = $this->query()
 			->insert('table', ['name'])
 			->select(['column'])
 			->from('table2', 't2')
@@ -389,7 +389,7 @@ class FluentTest extends Tester\TestCase
 
 	public function testInsertSelectDetectColumnsFromSelect(): void
 	{
-		$query = $this->fluent()
+		$query = $this->query()
 			->insert('table')
 			->select(['column', 'name' => 'column2'])
 			->from('table2', 't2')
@@ -404,7 +404,7 @@ class FluentTest extends Tester\TestCase
 	public function testInsertNoData(): void
 	{
 		Tester\Assert::exception(function (): void {
-			$this->fluent()
+			$this->query()
 				->insert('table')
 				->prepareSql();
 		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::NO_DATA_TO_INSERT);
@@ -413,7 +413,7 @@ class FluentTest extends Tester\TestCase
 
 	public function testUpdate(): void
 	{
-		$query = $this->fluent()
+		$query = $this->query()
 			->update('table', 't')
 			->set([
 				'column' => 1,
@@ -431,7 +431,7 @@ class FluentTest extends Tester\TestCase
 
 	public function testUpdateMergeData(): void
 	{
-		$query = $this->fluent()
+		$query = $this->query()
 			->update('table', 't')
 			->set([
 				'column1' => 3,
@@ -451,7 +451,7 @@ class FluentTest extends Tester\TestCase
 	public function testUpdateNoData(): void
 	{
 		Tester\Assert::exception(function (): void {
-			$this->fluent()
+			$this->query()
 				->update('table')
 				->prepareSql();
 		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::NO_DATA_TO_UPDATE);
@@ -461,7 +461,7 @@ class FluentTest extends Tester\TestCase
 	public function testNoMainTable(): void
 	{
 		Tester\Assert::exception(function (): void {
-			$this->fluent()
+			$this->query()
 				->update()
 				->set(['column' => 1])
 				->prepareSql();
@@ -471,7 +471,7 @@ class FluentTest extends Tester\TestCase
 
 	public function testDelete(): void
 	{
-		$query = $this->fluent()
+		$query = $this->query()
 			->delete('table', 't')
 			->where('column', 100)
 			->returning(['c' => 'column'])
@@ -484,18 +484,18 @@ class FluentTest extends Tester\TestCase
 
 	public function testTruncate(): void
 	{
-		$query = $this->fluent()->truncate('table')->prepareSql();
+		$query = $this->query()->truncate('table')->prepareSql();
 		Tester\Assert::same('TRUNCATE table', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
 	}
 
 
-	public function testReturningFluent(): void
+	public function testReturningFluentQuery(): void
 	{
-		$query = $this->fluent()
+		$query = $this->query()
 			->delete('table', 't')
 			->where('column', 100)
-			->returning(['c' => $this->fluent()->select(['to_value(column)'])])
+			->returning(['c' => $this->query()->select(['to_value(column)'])])
 			->prepareSql();
 
 		Tester\Assert::same('DELETE FROM table AS t WHERE column = $1 RETURNING (SELECT to_value(column)) AS c', $query->getSql());
@@ -505,7 +505,7 @@ class FluentTest extends Tester\TestCase
 
 	public function testReturningQuery(): void
 	{
-		$query = $this->fluent()
+		$query = $this->query()
 			->delete('table', 't')
 			->where('column', 100)
 			->returning(['c' => new Db\Query('to_value(column)')])
@@ -518,12 +518,12 @@ class FluentTest extends Tester\TestCase
 
 	public function testParamsPrefix(): void
 	{
-		$withQuery = $this->fluent()
+		$withQuery = $this->query()
 			->select(['columnWith'])
 			->from('tableWith')
 			->where('columnWith > ?', 5);
 
-		$query = $this->fluent()
+		$query = $this->query()
 			->select(['column'])
 			->from('table')
 			->where('column', 100)
@@ -537,7 +537,7 @@ class FluentTest extends Tester\TestCase
 
 	public function testSimpleSuffix(): void
 	{
-		$query = $this->fluent()
+		$query = $this->query()
 			->select(['column'])
 			->from('table')
 			->where('column', 100)
@@ -547,7 +547,7 @@ class FluentTest extends Tester\TestCase
 		Tester\Assert::same('SELECT column FROM table WHERE column = $1 FOR UPDATE', $query->getSql());
 		Tester\Assert::same([100], $query->getParams());
 
-		$query = $this->fluent()
+		$query = $this->query()
 			->truncate('table')
 			->sufix('CASCADE')
 			->prepareSql();
@@ -559,7 +559,7 @@ class FluentTest extends Tester\TestCase
 
 	public function testSuffixWithReturning(): void
 	{
-		$query = $this->fluent()
+		$query = $this->query()
 			->insert('table')
 			->values(['column' => 'value'])
 			->sufix('ON CONFLICT (column) DO NOTHING')
@@ -569,7 +569,7 @@ class FluentTest extends Tester\TestCase
 		Tester\Assert::same('INSERT INTO table(column) VALUES($1) ON CONFLICT (column) DO NOTHING RETURNING column', $query->getSql());
 		Tester\Assert::same(['value'], $query->getParams());
 
-		$query = $this->fluent()
+		$query = $this->query()
 			->update('table')
 			->set(['column' => 'value'])
 			->sufix('WHERE CURRENT OF cursor_name')
@@ -579,7 +579,7 @@ class FluentTest extends Tester\TestCase
 		Tester\Assert::same('UPDATE table SET column = $1 WHERE CURRENT OF cursor_name RETURNING column', $query->getSql());
 		Tester\Assert::same(['value'], $query->getParams());
 
-		$query = $this->fluent()
+		$query = $this->query()
 			->delete('table')
 			->sufix('WHERE CURRENT OF cursor_name')
 			->returning(['column'])
@@ -592,15 +592,15 @@ class FluentTest extends Tester\TestCase
 
 	public function testComplexWhere(): void
 	{
-		$complexOr = $this->fluent()->whereOr();
+		$complexOr = $this->query()->whereOr();
 		$complexOr->add('column', 1);
 		$complexOr->add('column2', [2, 3]);
 		$complexAnd = $complexOr->addComplexAnd();
-		$complexAnd->add('column', $this->fluent()->select([1]));
+		$complexAnd->add('column', $this->query()->select([1]));
 		$complexAnd->add('column2 = ANY(?)', new Db\Query('SELECT 2'));
 		$complexOr->add('column3 IS NOT NULL');
 
-		$query = $complexOr->fluent()
+		$query = $complexOr->query()
 			->select(['*'])
 			->from('table')
 			->prepareSql();
@@ -612,15 +612,15 @@ class FluentTest extends Tester\TestCase
 
 	public function testComplexHaving(): void
 	{
-		$complexOr = $this->fluent()->havingOr();
+		$complexOr = $this->query()->havingOr();
 		$complexOr->add('column', 1);
 		$complexOr->add('column2', [2, 3]);
 		$complexAnd = $complexOr->addComplexAnd();
-		$complexAnd->add('column', $this->fluent()->select([1]));
+		$complexAnd->add('column', $this->query()->select([1]));
 		$complexAnd->add('column2 = ANY(?)', new Db\Query('SELECT 2'));
 		$complexOr->add('column3 IS NOT NULL');
 
-		$query = $complexOr->fluent()
+		$query = $complexOr->query()
 			->select(['*'])
 			->from('table')
 			->groupBy(['column', 'column2'])
@@ -634,10 +634,10 @@ class FluentTest extends Tester\TestCase
 	public function testComplexBadParams(): void
 	{
 		Tester\Assert::exception(function (): void {
-			$this->fluent()
+			$this->query()
 				->whereOr()
 					->add('columns = ? AND column2 = ?', 1, 2, 3)
-				->fluent()
+				->query()
 				->select(['*'])
 				->prepareSql();
 		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::BAD_PARAMS_COUNT);
@@ -646,36 +646,36 @@ class FluentTest extends Tester\TestCase
 
 	public function testOnlyOneMainTable(): void
 	{
-		$fluent = $this->fluent()->table('table');
+		$query = $this->query()->table('table');
 
-		Tester\Assert::exception(static function () use ($fluent): void {
-			$fluent->table('another');
-		}, Fluent\Exceptions\FluentException::class, NULL, Fluent\Exceptions\FluentException::ONLY_ONE_MAIN_TABLE);
+		Tester\Assert::exception(static function () use ($query): void {
+			$query->table('another');
+		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::ONLY_ONE_MAIN_TABLE);
 	}
 
 
 	public function testTableAliasAlreadyExists(): void
 	{
-		$fluent = $this->fluent()->table('table', 't');
+		$query = $this->query()->table('table', 't');
 
-		Tester\Assert::exception(static function () use ($fluent): void {
-			$fluent->from('another', 't');
-		}, Fluent\Exceptions\FluentException::class, NULL, Fluent\Exceptions\FluentException::TABLE_ALIAS_ALREADY_EXISTS);
+		Tester\Assert::exception(static function () use ($query): void {
+			$query->from('another', 't');
+		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::TABLE_ALIAS_ALREADY_EXISTS);
 	}
 
 
 	public function testReset(): void
 	{
-		$fluent = $this->fluent()
+		$query = $this->query()
 			->select([1]);
 
-		$query = $fluent->prepareSql();
+		$sql = $query->prepareSql();
 
-		Tester\Assert::same('SELECT 1', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('SELECT 1', $sql->getSql());
+		Tester\Assert::same([], $sql->getParams());
 
-		$query2 = $fluent
-			->reset(Fluent\Fluent::PARAM_SELECT)
+		$query2 = $query
+			->reset(Fluent\Query::PARAM_SELECT)
 			->select([2])
 			->prepareSql();
 
@@ -687,27 +687,27 @@ class FluentTest extends Tester\TestCase
 	public function testResetBadParam(): void
 	{
 		Tester\Assert::exception(function (): void {
-			$this->fluent()
+			$this->query()
 				->select([1])
 				->reset('table');
-		}, Fluent\Exceptions\FluentException::class);
+		}, Fluent\Exceptions\QueryException::class);
 	}
 
 
 	public function testQueyableMustHaveAlias(): void
 	{
 		Tester\Assert::exception(function (): void {
-			$this->fluent()
-				->table($this->fluent()->select([1]));
-		}, Fluent\Exceptions\FluentException::class, NULL, Fluent\Exceptions\FluentException::QUERYABLE_MUST_HAVE_ALIAS);
+			$this->query()
+				->table($this->query()->select([1]));
+		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::QUERYABLE_MUST_HAVE_ALIAS);
 	}
 
 
 	public function testParamMustBeScalarOrQueryable(): void
 	{
 		Tester\Assert::exception(function (): void {
-			$this->fluent()->table(['table'], 't');
-		}, Fluent\Exceptions\FluentException::class, NULL, Fluent\Exceptions\FluentException::PARAM_MUST_BE_SCALAR_OR_QUERYABLE);
+			$this->query()->table(['table'], 't');
+		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::PARAM_MUST_BE_SCALAR_OR_QUERYABLE);
 	}
 
 
@@ -719,11 +719,11 @@ class FluentTest extends Tester\TestCase
 	}
 
 
-	private function fluent(): Fluent\Fluent
+	private function query(): Fluent\Query
 	{
-		return new Fluent\Fluent();
+		return new Fluent\Query();
 	}
 
 }
 
-\run(FluentTest::class);
+\run(FluentQueryTest::class);

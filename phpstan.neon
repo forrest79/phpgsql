@@ -12,8 +12,8 @@ parameters:
 		# === This is OK ===
 
 		-
-			message: '#Parameter \#1 \$table of method Forrest79\\PhPgSql\\Fluent\\Fluent::table\(\) expects Forrest79\\PhPgSql\\Db\\Queryable\|Forrest79\\PhPgSql\\Fluent\\Sql\|string, array<int, string> given\.#'
-			path: %rootDir%/../../../tests/Unit/FluentTest.php
+			message: '#Parameter \#1 \$table of method Forrest79\\PhPgSql\\Fluent\\Query::table\(\) expects Forrest79\\PhPgSql\\Db\\Queryable\|Forrest79\\PhPgSql\\Fluent\\Sql\|string, array<int, string> given\.#'
+			path: %rootDir%/../../../tests/Unit/FluentQueryTest.php
 
 		-
 			message: '#Expression ".+" on a separate line does not do anything\.#'
@@ -22,6 +22,14 @@ parameters:
 		-
 			message: '#Expression ".+" on a separate line does not do anything\.#'
 			path: %rootDir%/../../../tests/Integration/ParseDataTypeTest.php
+
+		-
+			message: '#Result of \|\| is always (true|false)\.#'
+			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
+
+		-
+			message: "#Call to function array_key_exists\\(\\) with '.+' and array\\(.+\\) will always evaluate to (true|false)\\.#"
+			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
 
 		# === We know, that this can't happen ===
 
@@ -42,8 +50,8 @@ parameters:
 			path: %rootDir%/../../../src/Db/ResultIterator.php
 
 		-
-			message: '#Parameter \#1 \$alias of static method Forrest79\\PhPgSql\\Fluent\\Exceptions\\FluentException::tableAliasAlreadyExists\(\) expects string, Forrest79\\PhPgSql\\Db\\Queryable\|Forrest79\\PhPgSql\\Fluent\\Sql\|string given\.#'
-			path: %rootDir%/../../../src/Fluent/Fluent.php
+			message: '#Parameter \#1 \$alias of static method Forrest79\\PhPgSql\\Fluent\\Exceptions\\QueryException::tableAliasAlreadyExists\(\) expects string, Forrest79\\PhPgSql\\Db\\Queryable\|Forrest79\\PhPgSql\\Fluent\\Sql\|string given\.#'
+			path: %rootDir%/../../../src/Fluent/Query.php
 
 		-
 			message: '#Parameter \#2 \$expected of static method Forrest79\\PhPgSql\\Fluent\\Exceptions\\QueryBuilderException::badParamsCount\(\) expects int, int\|false given\.#'

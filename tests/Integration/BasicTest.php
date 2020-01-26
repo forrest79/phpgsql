@@ -189,7 +189,7 @@ class BasicTest extends TestCase
 	public function testPassParamToQuery(): void
 	{
 		Tester\Assert::exception(function (): void {
-			$query = $this->connection->createQuery('SELECT 1');
+			$query = $this->connection::createQuery('SELECT 1');
 			$this->connection->query($query, 1);
 		}, Db\Exceptions\QueryException::class, NULL, Db\Exceptions\QueryException::CANT_PASS_PARAMS);
 	}

@@ -30,18 +30,18 @@ class QueryBuilder
 	{
 		$params = [];
 
-		$sql = $this->getPrefixSuffix(Fluent::PARAM_PREFIX, $params);
+		$sql = $this->getPrefixSuffix(Query::PARAM_PREFIX, $params);
 
-		if ($this->queryType === Fluent::QUERY_SELECT) {
-			$sql .= $this->createSelect($params) . $this->getPrefixSuffix(Fluent::PARAM_SUFFIX, $params);
-		} else if ($this->queryType === Fluent::QUERY_INSERT) {
+		if ($this->queryType === Query::QUERY_SELECT) {
+			$sql .= $this->createSelect($params) . $this->getPrefixSuffix(Query::PARAM_SUFFIX, $params);
+		} else if ($this->queryType === Query::QUERY_INSERT) {
 			$sql .= $this->createInsert($params);
-		} else if ($this->queryType === Fluent::QUERY_UPDATE) {
+		} else if ($this->queryType === Query::QUERY_UPDATE) {
 			$sql .= $this->createUpdate($params);
-		} else if ($this->queryType === Fluent::QUERY_DELETE) {
+		} else if ($this->queryType === Query::QUERY_DELETE) {
 			$sql .= $this->createDelete($params);
-		} else if ($this->queryType === Fluent::QUERY_TRUNCATE) {
-			$sql .= $this->createTruncate() . $this->getPrefixSuffix(Fluent::PARAM_SUFFIX, $params);
+		} else if ($this->queryType === Query::QUERY_TRUNCATE) {
+			$sql .= $this->createTruncate() . $this->getPrefixSuffix(Query::PARAM_SUFFIX, $params);
 		} else {
 			throw Exceptions\QueryBuilderException::badQueryType($this->queryType);
 		}
@@ -79,24 +79,24 @@ class QueryBuilder
 
 		$insert = \sprintf('INSERT %s', $this->processTable(
 			'INTO',
-			$this->params[Fluent::PARAM_TABLES][$mainTableAlias][self::TABLE_NAME],
+			$this->params[Query::PARAM_TABLES][$mainTableAlias][self::TABLE_NAME],
 			$mainTableAlias,
 			$params
 		));
 
 		$columns = [];
 		$rows = [];
-		if ($this->params[Fluent::PARAM_DATA] !== []) {
+		if ($this->params[Query::PARAM_DATA] !== []) {
 			$values = [];
-			foreach ($this->params[Fluent::PARAM_DATA] as $column => $value) {
+			foreach ($this->params[Query::PARAM_DATA] as $column => $value) {
 				$columns[] = $column;
 				$values[] = '?';
 				$params[] = $value;
 			}
 			$rows[] = \implode(', ', $values);
-		} else if ($this->params[Fluent::PARAM_ROWS] !== []) {
-			$columns = $this->params[Fluent::PARAM_INSERT_COLUMNS];
-			foreach ($this->params[Fluent::PARAM_ROWS] as $row) {
+		} else if ($this->params[Query::PARAM_ROWS] !== []) {
+			$columns = $this->params[Query::PARAM_INSERT_COLUMNS];
+			foreach ($this->params[Query::PARAM_ROWS] as $row) {
 				$values = [];
 				$fillColumns = $columns === [];
 				foreach ($row as $column => $value) {
@@ -108,13 +108,13 @@ class QueryBuilder
 				}
 				$rows[] = \implode(', ', $values);
 			}
-		} else if ($this->params[Fluent::PARAM_SELECT] !== []) {
-			$columns = $this->params[Fluent::PARAM_INSERT_COLUMNS];
+		} else if ($this->params[Query::PARAM_SELECT] !== []) {
+			$columns = $this->params[Query::PARAM_INSERT_COLUMNS];
 		} else {
 			throw Exceptions\QueryBuilderException::noDataToInsert();
 		}
 
-		if ($this->params[Fluent::PARAM_SELECT] !== []) {
+		if ($this->params[Query::PARAM_SELECT] !== []) {
 			$data = ' SELECT ' .
 				$this->getSelectDistinct() .
 				($columns === [] ? $this->getSelectColumns($params, $columns) : $this->getSelectColumns($params)) .
@@ -131,7 +131,7 @@ class QueryBuilder
 		return $insert .
 			\sprintf('(%s)', \implode(', ', $columns)) .
 			$data .
-			$this->getPrefixSuffix(Fluent::PARAM_SUFFIX, $params) .
+			$this->getPrefixSuffix(Query::PARAM_SUFFIX, $params) .
 			$this->getReturning($params);
 	}
 
@@ -141,28 +141,28 @@ class QueryBuilder
 	 */
 	private function createUpdate(array &$params): string
 	{
-		if ($this->params[Fluent::PARAM_DATA] === []) {
+		if ($this->params[Query::PARAM_DATA] === []) {
 			throw Exceptions\QueryBuilderException::noDataToUpdate();
 		}
 
 		$mainTableAlias = $this->getMainTableAlias();
 
 		$set = [];
-		foreach ($this->params[Fluent::PARAM_DATA] as $column => $value) {
+		foreach ($this->params[Query::PARAM_DATA] as $column => $value) {
 			$set[] = \sprintf('%s = ?', $column);
 			$params[] = $value;
 		}
 
 		return \sprintf('UPDATE %s SET %s', $this->processTable(
 				NULL,
-				$this->params[Fluent::PARAM_TABLES][$mainTableAlias][self::TABLE_NAME],
+				$this->params[Query::PARAM_TABLES][$mainTableAlias][self::TABLE_NAME],
 				$mainTableAlias,
 				$params
 			), \implode(', ', $set)) .
 			$this->getFrom($params, FALSE) .
 			$this->getJoins($params) .
 			$this->getWhere($params) .
-			$this->getPrefixSuffix(Fluent::PARAM_SUFFIX, $params) .
+			$this->getPrefixSuffix(Query::PARAM_SUFFIX, $params) .
 			$this->getReturning($params);
 	}
 
@@ -175,12 +175,12 @@ class QueryBuilder
 		$mainTableAlias = $this->getMainTableAlias();
 		return \sprintf('DELETE %s', $this->processTable(
 				'FROM',
-				$this->params[Fluent::PARAM_TABLES][$mainTableAlias][self::TABLE_NAME],
+				$this->params[Query::PARAM_TABLES][$mainTableAlias][self::TABLE_NAME],
 				$mainTableAlias,
 				$params
 			)) .
 			$this->getWhere($params) .
-			$this->getPrefixSuffix(Fluent::PARAM_SUFFIX, $params) .
+			$this->getPrefixSuffix(Query::PARAM_SUFFIX, $params) .
 			$this->getReturning($params);
 	}
 
@@ -190,13 +190,13 @@ class QueryBuilder
 	 */
 	private function createTruncate(): string
 	{
-		return \sprintf('TRUNCATE %s', $this->params[Fluent::PARAM_TABLES][$this->getMainTableAlias()][self::TABLE_NAME]);
+		return \sprintf('TRUNCATE %s', $this->params[Query::PARAM_TABLES][$this->getMainTableAlias()][self::TABLE_NAME]);
 	}
 
 
 	private function getSelectDistinct(): string
 	{
-		return $this->params[Fluent::PARAM_DISTINCT] === TRUE ? 'DISTINCT ' : '';
+		return $this->params[Query::PARAM_DISTINCT] === TRUE ? 'DISTINCT ' : '';
 	}
 
 
@@ -205,16 +205,16 @@ class QueryBuilder
 	 */
 	private function getSelectColumns(array &$params, ?array &$columnNames = NULL): string
 	{
-		if ($this->params[Fluent::PARAM_SELECT] === []) {
+		if ($this->params[Query::PARAM_SELECT] === []) {
 			throw Exceptions\QueryBuilderException::noColumnsToSelect();
 		}
 
 		$columns = [];
-		foreach ($this->params[Fluent::PARAM_SELECT] as $key => $value) {
+		foreach ($this->params[Query::PARAM_SELECT] as $key => $value) {
 			if ($value instanceof Db\Queryable) {
 				$params[] = $value;
 				$value = '(?)';
-			} else if ($value instanceof Fluent) {
+			} else if ($value instanceof Query) {
 				$params[] = $value->getQuery();
 				$value = '(?)';
 			}
@@ -236,21 +236,21 @@ class QueryBuilder
 		$from = [];
 
 		if ($useMainTable === TRUE) {
-			$mainTableAlias = $this->params[Fluent::PARAM_TABLE_TYPES][Fluent::TABLE_TYPE_MAIN];
+			$mainTableAlias = $this->params[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_MAIN];
 			if ($mainTableAlias !== NULL) {
 				$from[] = $this->processTable(
 					'FROM',
-					$this->params[Fluent::PARAM_TABLES][$mainTableAlias][self::TABLE_NAME],
+					$this->params[Query::PARAM_TABLES][$mainTableAlias][self::TABLE_NAME],
 					$mainTableAlias,
 					$params
 				);
 			}
 		}
 
-		foreach ($this->params[Fluent::PARAM_TABLE_TYPES][Fluent::TABLE_TYPE_FROM] as $tableAlias) {
+		foreach ($this->params[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_FROM] as $tableAlias) {
 			$from[] = $this->processTable(
 				'FROM',
-				$this->params[Fluent::PARAM_TABLES][$tableAlias][self::TABLE_NAME],
+				$this->params[Query::PARAM_TABLES][$tableAlias][self::TABLE_NAME],
 				$tableAlias,
 				$params
 			);
@@ -267,27 +267,27 @@ class QueryBuilder
 	{
 		$joins = [];
 
-		foreach ($this->params[Fluent::PARAM_TABLE_TYPES][Fluent::TABLE_TYPE_JOINS] as $tableAlias) {
-			$joinType = $this->params[Fluent::PARAM_TABLES][$tableAlias][self::TABLE_TYPE];
+		foreach ($this->params[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_JOINS] as $tableAlias) {
+			$joinType = $this->params[Query::PARAM_TABLES][$tableAlias][self::TABLE_TYPE];
 
 			$table = $this->processTable(
 				$joinType,
-				$this->params[Fluent::PARAM_TABLES][$tableAlias][self::TABLE_NAME],
+				$this->params[Query::PARAM_TABLES][$tableAlias][self::TABLE_NAME],
 				$tableAlias,
 				$params
 			);
 
-			if ($joinType === Fluent::JOIN_CROSS) {
+			if ($joinType === Query::JOIN_CROSS) {
 				$joins[] = $table;
 			} else {
-				if (!isset($this->params[Fluent::PARAM_JOIN_CONDITIONS][$tableAlias])) {
+				if (!isset($this->params[Query::PARAM_JOIN_CONDITIONS][$tableAlias])) {
 					throw Exceptions\QueryBuilderException::noJoinConditions($tableAlias);
 				}
 
 				$joins[] = \sprintf(
 					'%s ON %s',
 					$table,
-					$this->processComplex(Complex::createAnd($this->params[Fluent::PARAM_JOIN_CONDITIONS][$tableAlias]), $params)
+					$this->processComplex(Complex::createAnd($this->params[Query::PARAM_JOIN_CONDITIONS][$tableAlias]), $params)
 				);
 			}
 		}
@@ -301,7 +301,7 @@ class QueryBuilder
 	 */
 	private function getWhere(array &$params): string
 	{
-		$where = $this->params[Fluent::PARAM_WHERE];
+		$where = $this->params[Query::PARAM_WHERE];
 
 		if ($where === []) {
 			return '';
@@ -313,7 +313,7 @@ class QueryBuilder
 
 	private function getGroupBy(): string
 	{
-		return $this->params[Fluent::PARAM_GROUPBY] === [] ? '' : \sprintf(' GROUP BY %s', \implode(', ', $this->params[Fluent::PARAM_GROUPBY]));
+		return $this->params[Query::PARAM_GROUPBY] === [] ? '' : \sprintf(' GROUP BY %s', \implode(', ', $this->params[Query::PARAM_GROUPBY]));
 	}
 
 
@@ -322,7 +322,7 @@ class QueryBuilder
 	 */
 	private function getHaving(array &$params): string
 	{
-		$having = $this->params[Fluent::PARAM_HAVING];
+		$having = $this->params[Query::PARAM_HAVING];
 
 		if ($having === []) {
 			return '';
@@ -337,7 +337,7 @@ class QueryBuilder
 	 */
 	private function getOrderBy(array &$params): string
 	{
-		$orderBy = $this->params[Fluent::PARAM_ORDERBY];
+		$orderBy = $this->params[Query::PARAM_ORDERBY];
 
 		if ($orderBy === []) {
 			return '';
@@ -348,7 +348,7 @@ class QueryBuilder
 			if ($value instanceof Db\Queryable) {
 				$params[] = $value;
 				$value = '(?)';
-			} else if ($value instanceof Fluent) {
+			} else if ($value instanceof Query) {
 				$params[] = $value->getQuery();
 				$value = '(?)';
 			}
@@ -361,7 +361,7 @@ class QueryBuilder
 
 	private function getLimit(array &$params): string
 	{
-		$limit = $this->params[Fluent::PARAM_LIMIT];
+		$limit = $this->params[Query::PARAM_LIMIT];
 
 		if ($limit === NULL) {
 			return '';
@@ -375,7 +375,7 @@ class QueryBuilder
 
 	private function getOffset(array &$params): string
 	{
-		$offset = $this->params[Fluent::PARAM_OFFSET];
+		$offset = $this->params[Query::PARAM_OFFSET];
 
 		if ($offset === NULL) {
 			return '';
@@ -403,7 +403,7 @@ class QueryBuilder
 			$item = \array_shift($itemParams);
 
 			foreach ($itemParams as $param) {
-				if ($param instanceof Fluent) {
+				if ($param instanceof Query) {
 					$param = $param->getQuery();
 				}
 				$params[] = $param;
@@ -412,13 +412,13 @@ class QueryBuilder
 			$processedItems[] = $item;
 		}
 
-		if ($type === Fluent::PARAM_PREFIX) {
+		if ($type === Query::PARAM_PREFIX) {
 			return \sprintf('%s ', \implode(' ', $processedItems));
-		} else if ($type === Fluent::PARAM_SUFFIX) {
+		} else if ($type === Query::PARAM_SUFFIX) {
 			return \sprintf(' %s', \implode(' ', $processedItems));
 		}
 
-		throw Exceptions\FluentException::badParam('$type', $type, [Fluent::PARAM_PREFIX, Fluent::PARAM_SUFFIX]);
+		throw Exceptions\QueryException::badParam('$type', $type, [Query::PARAM_PREFIX, Query::PARAM_SUFFIX]);
 	}
 
 
@@ -427,7 +427,7 @@ class QueryBuilder
 	 */
 	private function combine(array &$params): string
 	{
-		$combineQueries = $this->params[Fluent::PARAM_COMBINE_QUERIES];
+		$combineQueries = $this->params[Query::PARAM_COMBINE_QUERIES];
 
 		if ($combineQueries === []) {
 			return '';
@@ -440,7 +440,7 @@ class QueryBuilder
 			if ($query instanceof Db\Queryable) {
 				$params[] = $query;
 				$query = '?';
-			} else if ($query instanceof Fluent) {
+			} else if ($query instanceof Query) {
 				$params[] = $query->getQuery();
 				$query = '?';
 			}
@@ -457,15 +457,15 @@ class QueryBuilder
 	 */
 	private function getReturning(array &$params): string
 	{
-		if ($this->params[Fluent::PARAM_RETURNING] === []) {
+		if ($this->params[Query::PARAM_RETURNING] === []) {
 			return '';
 		}
 		$columns = [];
-		foreach ($this->params[Fluent::PARAM_RETURNING] as $key => $value) {
+		foreach ($this->params[Query::PARAM_RETURNING] as $key => $value) {
 			if ($value instanceof Db\Queryable) {
 				$params[] = $value;
 				$value = '(?)';
-			} else if ($value instanceof Fluent) {
+			} else if ($value instanceof Query) {
 				$params[] = $value->getQuery();
 				$value = '(?)';
 			}
@@ -480,16 +480,16 @@ class QueryBuilder
 	 */
 	private function getMainTableAlias(): string
 	{
-		if ($this->params[Fluent::PARAM_TABLE_TYPES][Fluent::TABLE_TYPE_MAIN] === NULL) {
+		if ($this->params[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_MAIN] === NULL) {
 			throw Exceptions\QueryBuilderException::noMainTable();
 		}
-		return $this->params[Fluent::PARAM_TABLE_TYPES][Fluent::TABLE_TYPE_MAIN];
+		return $this->params[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_MAIN];
 	}
 
 
 	/**
 	 * @param string|NULL $type
-	 * @param string|Db\Queryable|Fluent $table
+	 * @param string|Db\Queryable|Query $table
 	 * @param string $alias
 	 * @param array $params
 	 * @return string
@@ -505,7 +505,7 @@ class QueryBuilder
 			} else {
 				throw Exceptions\QueryBuilderException::badQueryable($table);
 			}
-		} else if ($table instanceof Fluent) {
+		} else if ($table instanceof Query) {
 			$params[] = $table->getQuery();
 			$table = '(?)';
 		}
@@ -530,7 +530,7 @@ class QueryBuilder
 				$cntParams = \count($conditionParams);
 				if (($cnt === 0) && ($cntParams === 1)) {
 					$param = \reset($conditionParams);
-					if (\is_array($param) || ($param instanceof Db\Queryable) || ($param instanceof Fluent)) {
+					if (\is_array($param) || ($param instanceof Db\Queryable) || ($param instanceof Query)) {
 						$condition = \sprintf('%s IN (?)', $condition);
 					} else if ($param === NULL) {
 						$condition = \sprintf('%s IS NULL', $condition);
@@ -550,7 +550,7 @@ class QueryBuilder
 				}
 
 				foreach ($conditionParams as $param) {
-					if ($param instanceof Fluent) {
+					if ($param instanceof Query) {
 						$param = $param->getQuery();
 					}
 					$params[] = $param;

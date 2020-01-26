@@ -12,7 +12,7 @@ require_once __DIR__ . '/TestCase.php';
  * @testCase
  * @property-read Fluent\Connection $connection
  */
-class FluentFetchTest extends TestCase
+class QueryExecuteFetchTest extends TestCase
 {
 
 	public function testFetch(): void
@@ -227,7 +227,7 @@ class FluentFetchTest extends TestCase
 	{
 		Tester\Assert::exception(function (): void {
 			$this->connection->select([1])->free();
-		}, Fluent\Exceptions\FluentException::class, NULL, Fluent\Exceptions\FluentException::YOU_MUST_EXECUTE_FLUENT_BEFORE_THAT);
+		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::YOU_MUST_EXECUTE_QUERY_BEFORE_THAT);
 	}
 
 
@@ -239,7 +239,7 @@ class FluentFetchTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($query): void {
 			$query->from('table');
-		}, Fluent\Exceptions\FluentException::class, NULL, Fluent\Exceptions\FluentException::CANT_UPDATE_FLUENT_AFTER_EXECUTE);
+		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::CANT_UPDATE_QUERY_AFTER_EXECUTE);
 	}
 
 
@@ -250,4 +250,4 @@ class FluentFetchTest extends TestCase
 
 }
 
-\run(FluentFetchTest::class);
+\run(QueryExecuteFetchTest::class);

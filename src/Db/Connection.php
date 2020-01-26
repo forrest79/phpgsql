@@ -329,23 +329,6 @@ class Connection
 
 
 	/**
-	 * @param string $query
-	 * @param mixed ...$params
-	 * @return Query
-	 */
-	public function createQuery(string $query, ...$params): Query
-	{
-		return $this->createQueryArgs($query, $params);
-	}
-
-
-	public function createQueryArgs(string $query, array $params): Query
-	{
-		return new Query($query, $params);
-	}
-
-
-	/**
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
@@ -584,7 +567,7 @@ class Connection
 				throw Exceptions\QueryException::cantPassParams();
 			}
 		} else {
-			$query = $this->createQueryArgs($query, $params);
+			$query = self::createQueryArgs($query, $params);
 		}
 
 		return $query;
@@ -684,6 +667,23 @@ class Connection
 		$write = [$stream];
 		$read = $ex = [];
 		return (bool) \stream_select($read, $write, $ex, $usec = 1, 0);
+	}
+
+
+	/**
+	 * @param string $query
+	 * @param mixed ...$params
+	 * @return Query
+	 */
+	public static function createQuery(string $query, ...$params): Query
+	{
+		return self::createQueryArgs($query, $params);
+	}
+
+
+	public static function createQueryArgs(string $query, array $params): Query
+	{
+		return new Query($query, $params);
 	}
 
 
