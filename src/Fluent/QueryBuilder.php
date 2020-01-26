@@ -239,7 +239,7 @@ class QueryBuilder
 			$mainTableAlias = $this->params[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_MAIN];
 			if ($mainTableAlias !== NULL) {
 				$from[] = $this->processTable(
-					'FROM',
+					NULL,
 					$this->params[Query::PARAM_TABLES][$mainTableAlias][self::TABLE_NAME],
 					$mainTableAlias,
 					$params
@@ -249,14 +249,14 @@ class QueryBuilder
 
 		foreach ($this->params[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_FROM] as $tableAlias) {
 			$from[] = $this->processTable(
-				'FROM',
+				NULL,
 				$this->params[Query::PARAM_TABLES][$tableAlias][self::TABLE_NAME],
 				$tableAlias,
 				$params
 			);
 		}
 
-		return $from !== [] ? (' ' . \implode(' ', $from)) : '';
+		return $from !== [] ? (' FROM ' . \implode(', ', $from)) : '';
 	}
 
 

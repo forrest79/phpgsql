@@ -102,6 +102,19 @@ class FluentQueryTest extends Tester\TestCase
 	}
 
 
+	public function testMoreFrom(): void
+	{
+		$query = $this->query()
+			->select(['column'])
+			->from('table1', 't1')
+			->from('table2', 't2')
+			->prepareSql();
+
+		Tester\Assert::same('SELECT column FROM table1 AS t1, table2 AS t2', $query->getSql());
+		Tester\Assert::same([], $query->getParams());
+	}
+
+
 	public function testFromWithBadQueryable(): void
 	{
 		Tester\Assert::exception(function (): void {
