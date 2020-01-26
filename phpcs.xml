@@ -43,6 +43,10 @@
 		<exclude-pattern>benchmarks/boostrap.php</exclude-pattern>
 	</rule>
 
+	<rule ref="Squiz.Strings.DoubleQuoteUsage.ContainsVar">
+		<exclude-pattern>benchmarks/BasicPhpBenchmark.php</exclude-pattern>
+	</rule>
+
 	<rule ref="./vendor/slevomat/coding-standard/SlevomatCodingStandard/ruleset.xml">
 		<exclude name="SlevomatCodingStandard.Classes.EmptyLinesAroundClassBraces.NoEmptyLineAfterOpeningBrace"/>
 		<exclude name="SlevomatCodingStandard.Classes.SuperfluousExceptionNaming.SuperfluousSuffix"/>

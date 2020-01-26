@@ -238,6 +238,19 @@ class BasicPhpBenchmark extends BenchmarkCase
 
 
 	/**
+	 * @title string concatenation (double quotes)
+	 */
+	public function benchmarkStringConcatenationDoubleQuotes(): void
+	{
+		$keys = '';
+		for ($i = 0; $i < 10; $i++) {
+			$keys .= "$$i, ";
+		}
+		$keys = \substr($keys, 0, -2);
+	}
+
+
+	/**
 	 * @title string concatenation (with sprintf)
 	 */
 	public function benchmarkStringConcatenationSprintf(): void
@@ -273,6 +286,61 @@ class BasicPhpBenchmark extends BenchmarkCase
 			$keys[] = \sprintf('$%d, ', $i);
 		}
 		$keys = \implode(', ', $keys);
+	}
+
+
+	/**
+	 * @title string detect not set items in array (array_key_exists)
+	 */
+	public function benchmarkDetectNotSetItemsInArray(): void
+	{
+		$keys = ['testKey1' => NULL, 'testKey2' => ''];
+		\array_key_exists('testKey1', $keys);
+		\array_key_exists('testKey2', $keys);
+	}
+
+
+	/**
+	 * @title string detect not set items in array (isset || array_key_exists) (no items)
+	 */
+	public function benchmarkDetectNotSetItemsInArrayNoItems(): void
+	{
+		$keys = ['testKey1' => NULL, 'testKey2' => ''];
+		isset($keys['testKey']) || \array_key_exists('testKey', $keys);
+		isset($keys['testKey']) || \array_key_exists('testKey', $keys);
+	}
+
+
+	/**
+	 * @title string detect not set items in array (isset || array_key_exists) (mixed items)
+	 */
+	public function benchmarkDetectNotSetItemsInArrayNullsAndNoItems(): void
+	{
+		$keys = ['testKey1' => NULL, 'testKey2' => ''];
+		isset($keys['testKey1']) || \array_key_exists('testKey1', $keys);
+		isset($keys['testKey2']) || \array_key_exists('testKey2', $keys);
+	}
+
+
+	/**
+	 * @title string detect not set items in array (isset || array_key_exists) (NULL items)
+	 */
+	public function benchmarkDetectNotSetItemsInArrayNulls(): void
+	{
+		$keys = ['testKey1' => NULL, 'testKey2' => ''];
+		isset($keys['testKey1']) || \array_key_exists('testKey1', $keys);
+		isset($keys['testKey1']) || \array_key_exists('testKey1', $keys);
+	}
+
+
+	/**
+	 * @title string detect not set items in array (isset || array_key_exists) (all items)
+	 */
+	public function benchmarkDetectNotSetItemsInArrayAll(): void
+	{
+		$keys = ['testKey1' => NULL, 'testKey2' => ''];
+		isset($keys['testKey2']) || \array_key_exists('testKey2', $keys);
+		isset($keys['testKey2']) || \array_key_exists('testKey2', $keys);
 	}
 
 }
