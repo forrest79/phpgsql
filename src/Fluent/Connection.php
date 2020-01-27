@@ -18,7 +18,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function table($table, ?string $alias = NULL): Sql
 	{
-		return $this->createFluentQuery()->table($table, $alias);
+		return $this->createQuery()->table($table, $alias);
 	}
 
 
@@ -29,7 +29,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function select(array $columns): Sql
 	{
-		return $this->createFluentQuery()->select($columns);
+		return $this->createQuery()->select($columns);
 	}
 
 
@@ -39,7 +39,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function distinct(): Sql
 	{
-		return $this->createFluentQuery()->distinct();
+		return $this->createQuery()->distinct();
 	}
 
 
@@ -51,7 +51,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function from($from, ?string $alias = NULL): Sql
 	{
-		return $this->createFluentQuery()->from($from, $alias);
+		return $this->createQuery()->from($from, $alias);
 	}
 
 
@@ -64,7 +64,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function join($join, ?string $alias = NULL, $onCondition = NULL): Sql
 	{
-		return $this->createFluentQuery()->join($join, $alias, $onCondition);
+		return $this->createQuery()->join($join, $alias, $onCondition);
 	}
 
 
@@ -77,7 +77,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function innerJoin($join, ?string $alias = NULL, $onCondition = NULL): Sql
 	{
-		return $this->createFluentQuery()->innerJoin($join, $alias, $onCondition);
+		return $this->createQuery()->innerJoin($join, $alias, $onCondition);
 	}
 
 
@@ -90,7 +90,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function leftJoin($join, ?string $alias = NULL, $onCondition = NULL): Sql
 	{
-		return $this->createFluentQuery()->leftJoin($join, $alias, $onCondition);
+		return $this->createQuery()->leftJoin($join, $alias, $onCondition);
 	}
 
 
@@ -103,7 +103,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function leftOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Sql
 	{
-		return $this->createFluentQuery()->leftOuterJoin($join, $alias, $onCondition);
+		return $this->createQuery()->leftOuterJoin($join, $alias, $onCondition);
 	}
 
 
@@ -116,7 +116,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function rightJoin($join, ?string $alias = NULL, $onCondition = NULL): Sql
 	{
-		return $this->createFluentQuery()->rightJoin($join, $alias, $onCondition);
+		return $this->createQuery()->rightJoin($join, $alias, $onCondition);
 	}
 
 
@@ -129,7 +129,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function rightOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Sql
 	{
-		return $this->createFluentQuery()->rightOuterJoin($join, $alias, $onCondition);
+		return $this->createQuery()->rightOuterJoin($join, $alias, $onCondition);
 	}
 
 
@@ -142,7 +142,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function fullJoin($join, ?string $alias = NULL, $onCondition = NULL): Sql
 	{
-		return $this->createFluentQuery()->fullJoin($join, $alias, $onCondition);
+		return $this->createQuery()->fullJoin($join, $alias, $onCondition);
 	}
 
 
@@ -155,7 +155,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function fullOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Sql
 	{
-		return $this->createFluentQuery()->fullOuterJoin($join, $alias, $onCondition);
+		return $this->createQuery()->fullOuterJoin($join, $alias, $onCondition);
 	}
 
 
@@ -167,7 +167,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function crossJoin($join, ?string $alias = NULL): Sql
 	{
-		return $this->createFluentQuery()->crossJoin($join, $alias);
+		return $this->createQuery()->crossJoin($join, $alias);
 	}
 
 
@@ -179,7 +179,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function on(string $alias, $condition): Sql
 	{
-		return $this->createFluentQuery()->on($alias, $condition);
+		return $this->createQuery()->on($alias, $condition);
 	}
 
 
@@ -191,7 +191,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function where($condition, ...$params): Sql
 	{
-		return $this->createFluentQuery()->where($condition, ...$params);
+		return $this->createQuery()->where($condition, ...$params);
 	}
 
 
@@ -200,7 +200,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function whereAnd(array $conditions = []): Complex
 	{
-		return $this->createFluentQuery()->whereAnd($conditions);
+		return $this->createQuery()->whereAnd($conditions);
 	}
 
 
@@ -209,7 +209,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function whereOr(array $conditions = []): Complex
 	{
-		return $this->createFluentQuery()->whereOr($conditions);
+		return $this->createQuery()->whereOr($conditions);
 	}
 
 
@@ -220,7 +220,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function groupBy(array $columns): Sql
 	{
-		return $this->createFluentQuery()->groupBy($columns);
+		return $this->createQuery()->groupBy($columns);
 	}
 
 
@@ -232,7 +232,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function having($condition, ...$params): Sql
 	{
-		return $this->createFluentQuery()->having($condition, ...$params);
+		return $this->createQuery()->having($condition, ...$params);
 	}
 
 
@@ -241,7 +241,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function havingAnd(array $conditions = []): Complex
 	{
-		return $this->createFluentQuery()->havingAnd($conditions);
+		return $this->createQuery()->havingAnd($conditions);
 	}
 
 
@@ -250,7 +250,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function havingOr(array $conditions = []): Complex
 	{
-		return $this->createFluentQuery()->havingOr($conditions);
+		return $this->createQuery()->havingOr($conditions);
 	}
 
 
@@ -261,7 +261,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function orderBy(array $colums): Sql
 	{
-		return $this->createFluentQuery()->orderBy($colums);
+		return $this->createQuery()->orderBy($colums);
 	}
 
 
@@ -272,7 +272,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function limit(int $limit): Sql
 	{
-		return $this->createFluentQuery()->limit($limit);
+		return $this->createQuery()->limit($limit);
 	}
 
 
@@ -283,7 +283,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function offset(int $offset): Sql
 	{
-		return $this->createFluentQuery()->offset($offset);
+		return $this->createQuery()->offset($offset);
 	}
 
 
@@ -293,7 +293,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function union($query): Sql
 	{
-		return $this->createFluentQuery()->union($query);
+		return $this->createQuery()->union($query);
 	}
 
 
@@ -303,7 +303,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function unionAll($query): Sql
 	{
-		return $this->createFluentQuery()->unionAll($query);
+		return $this->createQuery()->unionAll($query);
 	}
 
 
@@ -313,7 +313,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function intersect($query): Sql
 	{
-		return $this->createFluentQuery()->intersect($query);
+		return $this->createQuery()->intersect($query);
 	}
 
 
@@ -323,7 +323,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function except($query): Sql
 	{
-		return $this->createFluentQuery()->except($query);
+		return $this->createQuery()->except($query);
 	}
 
 
@@ -335,7 +335,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function insert(?string $into = NULL, ?array $columns = []): Sql
 	{
-		return $this->createFluentQuery()->insert($into, $columns);
+		return $this->createQuery()->insert($into, $columns);
 	}
 
 
@@ -346,7 +346,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function values(array $data): Sql
 	{
-		return $this->createFluentQuery()->values($data);
+		return $this->createQuery()->values($data);
 	}
 
 
@@ -357,7 +357,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function rows(array $rows): Sql
 	{
-		return $this->createFluentQuery()->rows($rows);
+		return $this->createQuery()->rows($rows);
 	}
 
 
@@ -369,7 +369,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function update(?string $table = NULL, ?string $alias = NULL): Sql
 	{
-		return $this->createFluentQuery()->update($table, $alias);
+		return $this->createQuery()->update($table, $alias);
 	}
 
 
@@ -380,7 +380,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function set(array $data): Sql
 	{
-		return $this->createFluentQuery()->set($data);
+		return $this->createQuery()->set($data);
 	}
 
 
@@ -392,7 +392,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function delete(?string $from = NULL, ?string $alias = NULL): Sql
 	{
-		return $this->createFluentQuery()->delete($from, $alias);
+		return $this->createQuery()->delete($from, $alias);
 	}
 
 
@@ -403,7 +403,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function returning(array $returning): Sql
 	{
-		return $this->createFluentQuery()->returning($returning);
+		return $this->createQuery()->returning($returning);
 	}
 
 
@@ -414,7 +414,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function truncate(?string $table = NULL): Sql
 	{
-		return $this->createFluentQuery()->truncate($table);
+		return $this->createQuery()->truncate($table);
 	}
 
 
@@ -426,7 +426,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function prefix(string $queryPrefix, ...$params): Sql
 	{
-		return $this->createFluentQuery()->prefix($queryPrefix, ...$params);
+		return $this->createQuery()->prefix($queryPrefix, ...$params);
 	}
 
 
@@ -438,7 +438,7 @@ class Connection extends Db\Connection implements Sql
 	 */
 	public function sufix(string $querySufix, ...$params): Sql
 	{
-		return $this->createFluentQuery()->sufix($querySufix, ...$params);
+		return $this->createQuery()->sufix($querySufix, ...$params);
 	}
 
 
@@ -452,7 +452,7 @@ class Connection extends Db\Connection implements Sql
 	}
 
 
-	public function createFluentQuery(): QueryExecute
+	public function createQuery(): QueryExecute
 	{
 		return new QueryExecute($this->getQueryBuilder(), $this);
 	}

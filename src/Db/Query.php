@@ -29,4 +29,21 @@ class Query implements Queryable
 		return $this->params;
 	}
 
+
+	/**
+	 * @param string $sql
+	 * @param mixed ...$params
+	 * @return self
+	 */
+	public static function create(string $sql, ...$params): self
+	{
+		return new self($sql, $params);
+	}
+
+
+	public static function createArgs(string $sql, array $params): self
+	{
+		return new self($sql, $params);
+	}
+
 }
