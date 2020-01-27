@@ -13,9 +13,10 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 	private $result;
 
 
-	public function __construct(Db\Connection $connection)
+	public function __construct(QueryBuilder $queryBuilder, Db\Connection $connection)
 	{
 		$this->connection = $connection;
+		parent::__construct($queryBuilder);
 	}
 
 

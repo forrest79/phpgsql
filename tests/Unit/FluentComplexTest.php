@@ -31,7 +31,7 @@ class FluentComplexTest extends Tester\TestCase
 
 	public function testFluent(): void
 	{
-		$query = new Fluent\Query();
+		$query = new Fluent\Query(new Fluent\QueryBuilder());
 		$parentComplex = Fluent\Complex::createAnd([], NULL, $query);
 
 		Tester\Assert::same($query, $parentComplex->addComplexOr()->query());

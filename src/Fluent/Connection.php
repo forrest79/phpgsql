@@ -6,6 +6,9 @@ use Forrest79\PhPgSql\Db;
 
 class Connection extends Db\Connection implements Sql
 {
+	/** @var QueryBuilder */
+	private $queryBuilder;
+
 
 	/**
 	 * @param string|Sql|Db\Queryable $table
@@ -439,9 +442,19 @@ class Connection extends Db\Connection implements Sql
 	}
 
 
+	protected function getQueryBuilder(): QueryBuilder
+	{
+		if ($this->queryBuilder === NULL) {
+			$this->queryBuilder = new QueryBuilder();
+		}
+
+		return $this->queryBuilder;
+	}
+
+
 	public function createFluentQuery(): QueryExecute
 	{
-		return new QueryExecute($this);
+		return new QueryExecute($this->getQueryBuilder(), $this);
 	}
 
 }

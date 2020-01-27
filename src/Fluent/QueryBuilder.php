@@ -9,43 +9,36 @@ class QueryBuilder
 	private const TABLE_NAME = 0;
 	private const TABLE_TYPE = 1;
 
-	/** @var string */
-	private $queryType;
-
-	/** @var array */
-	private $params;
-
-
-	public function __construct(string $queryType, array $params)
-	{
-		$this->queryType = $queryType;
-		$this->params = $params;
-	}
-
 
 	/**
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	public function createQuery(): Db\Query
+	public function createQuery(string $queryType, array $queryParams): Db\Query
 	{
 		$params = [];
 
-		$sql = $this->getPrefixSuffix(Query::PARAM_PREFIX, $params);
+		$sql = $this->getPrefixSuffix($queryParams, Query::PARAM_PREFIX, $params);
 
-		if ($this->queryType === Query::QUERY_SELECT) {
-			$sql .= $this->createSelect($params) . $this->getPrefixSuffix(Query::PARAM_SUFFIX, $params);
-		} else if ($this->queryType === Query::QUERY_INSERT) {
-			$sql .= $this->createInsert($params);
-		} else if ($this->queryType === Query::QUERY_UPDATE) {
-			$sql .= $this->createUpdate($params);
-		} else if ($this->queryType === Query::QUERY_DELETE) {
-			$sql .= $this->createDelete($params);
-		} else if ($this->queryType === Query::QUERY_TRUNCATE) {
-			$sql .= $this->createTruncate() . $this->getPrefixSuffix(Query::PARAM_SUFFIX, $params);
+		if ($queryType === Query::QUERY_SELECT) {
+			$sql .= $this->createSelect($queryParams, $params) . $this->getPrefixSuffix($queryParams, Query::PARAM_SUFFIX, $params);
+		} else if ($queryType === Query::QUERY_INSERT) {
+			$sql .= $this->createInsert($queryParams, $params);
+		} else if ($queryType === Query::QUERY_UPDATE) {
+			$sql .= $this->createUpdate($queryParams, $params);
+		} else if ($queryType === Query::QUERY_DELETE) {
+			$sql .= $this->createDelete($queryParams, $params);
+		} else if ($queryType === Query::QUERY_TRUNCATE) {
+			$sql .= $this->createTruncate($queryParams) . $this->getPrefixSuffix($queryParams, Query::PARAM_SUFFIX, $params);
 		} else {
-			throw Exceptions\QueryBuilderException::badQueryType($this->queryType);
+			throw Exceptions\QueryBuilderException::badQueryType($queryType);
 		}
 
+		return $this->prepareQuery($sql, $params);
+	}
+
+
+	protected function prepareQuery(string $sql, array $params): Db\Query
+	{
 		return new Db\Query($sql, $params);
 	}
 
@@ -53,50 +46,50 @@ class QueryBuilder
 	/**
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	private function createSelect(array &$params): string
+	private function createSelect(array $queryParams, array &$params): string
 	{
 		return 'SELECT ' .
-			$this->getSelectDistinct() .
-			$this->getSelectColumns($params) .
-			$this->getFrom($params) .
-			$this->getJoins($params) .
-			$this->getWhere($params) .
-			$this->getGroupBy() .
-			$this->getHaving($params) .
-			$this->getOrderBy($params) .
-			$this->getLimit($params) .
-			$this->getOffset($params) .
-			$this->combine($params);
+			$this->getSelectDistinct($queryParams) .
+			$this->getSelectColumns($queryParams, $params) .
+			$this->getFrom($queryParams, $params) .
+			$this->getJoins($queryParams, $params) .
+			$this->getWhere($queryParams, $params) .
+			$this->getGroupBy($queryParams) .
+			$this->getHaving($queryParams, $params) .
+			$this->getOrderBy($queryParams, $params) .
+			$this->getLimit($queryParams, $params) .
+			$this->getOffset($queryParams, $params) .
+			$this->combine($queryParams, $params);
 	}
 
 
 	/**
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	private function createInsert(array &$params): string
+	private function createInsert(array $queryParams, array &$params): string
 	{
-		$mainTableAlias = $this->getMainTableAlias();
+		$mainTableAlias = $this->getMainTableAlias($queryParams);
 
 		$insert = \sprintf('INSERT %s', $this->processTable(
 			'INTO',
-			$this->params[Query::PARAM_TABLES][$mainTableAlias][self::TABLE_NAME],
+			$queryParams[Query::PARAM_TABLES][$mainTableAlias][self::TABLE_NAME],
 			$mainTableAlias,
 			$params
 		));
 
 		$columns = [];
 		$rows = [];
-		if ($this->params[Query::PARAM_DATA] !== []) {
+		if ($queryParams[Query::PARAM_DATA] !== []) {
 			$values = [];
-			foreach ($this->params[Query::PARAM_DATA] as $column => $value) {
+			foreach ($queryParams[Query::PARAM_DATA] as $column => $value) {
 				$columns[] = $column;
 				$values[] = '?';
 				$params[] = $value;
 			}
 			$rows[] = \implode(', ', $values);
-		} else if ($this->params[Query::PARAM_ROWS] !== []) {
-			$columns = $this->params[Query::PARAM_INSERT_COLUMNS];
-			foreach ($this->params[Query::PARAM_ROWS] as $row) {
+		} else if ($queryParams[Query::PARAM_ROWS] !== []) {
+			$columns = $queryParams[Query::PARAM_INSERT_COLUMNS];
+			foreach ($queryParams[Query::PARAM_ROWS] as $row) {
 				$values = [];
 				$fillColumns = $columns === [];
 				foreach ($row as $column => $value) {
@@ -108,22 +101,22 @@ class QueryBuilder
 				}
 				$rows[] = \implode(', ', $values);
 			}
-		} else if ($this->params[Query::PARAM_SELECT] !== []) {
-			$columns = $this->params[Query::PARAM_INSERT_COLUMNS];
+		} else if ($queryParams[Query::PARAM_SELECT] !== []) {
+			$columns = $queryParams[Query::PARAM_INSERT_COLUMNS];
 		} else {
 			throw Exceptions\QueryBuilderException::noDataToInsert();
 		}
 
-		if ($this->params[Query::PARAM_SELECT] !== []) {
+		if ($queryParams[Query::PARAM_SELECT] !== []) {
 			$data = ' SELECT ' .
-				$this->getSelectDistinct() .
-				($columns === [] ? $this->getSelectColumns($params, $columns) : $this->getSelectColumns($params)) .
-				$this->getFrom($params, FALSE) .
-				$this->getJoins($params) .
-				$this->getWhere($params) .
-				$this->getGroupBy() .
-				$this->getHaving($params) .
-				$this->combine($params);
+				$this->getSelectDistinct($queryParams) .
+				($columns === [] ? $this->getSelectColumns($queryParams, $params, $columns) : $this->getSelectColumns($queryParams, $params)) .
+				$this->getFrom($queryParams, $params, FALSE) .
+				$this->getJoins($queryParams, $params) .
+				$this->getWhere($queryParams, $params) .
+				$this->getGroupBy($queryParams) .
+				$this->getHaving($queryParams, $params) .
+				$this->combine($queryParams, $params);
 		} else {
 			$data = \sprintf(' VALUES(%s)', \implode('), (', $rows));
 		}
@@ -131,86 +124,86 @@ class QueryBuilder
 		return $insert .
 			\sprintf('(%s)', \implode(', ', $columns)) .
 			$data .
-			$this->getPrefixSuffix(Query::PARAM_SUFFIX, $params) .
-			$this->getReturning($params);
+			$this->getPrefixSuffix($queryParams, Query::PARAM_SUFFIX, $params) .
+			$this->getReturning($queryParams, $params);
 	}
 
 
 	/**
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	private function createUpdate(array &$params): string
+	private function createUpdate(array $queryParams, array &$params): string
 	{
-		if ($this->params[Query::PARAM_DATA] === []) {
+		if ($queryParams[Query::PARAM_DATA] === []) {
 			throw Exceptions\QueryBuilderException::noDataToUpdate();
 		}
 
-		$mainTableAlias = $this->getMainTableAlias();
+		$mainTableAlias = $this->getMainTableAlias($queryParams);
 
 		$set = [];
-		foreach ($this->params[Query::PARAM_DATA] as $column => $value) {
+		foreach ($queryParams[Query::PARAM_DATA] as $column => $value) {
 			$set[] = \sprintf('%s = ?', $column);
 			$params[] = $value;
 		}
 
 		return \sprintf('UPDATE %s SET %s', $this->processTable(
 				NULL,
-				$this->params[Query::PARAM_TABLES][$mainTableAlias][self::TABLE_NAME],
+				$queryParams[Query::PARAM_TABLES][$mainTableAlias][self::TABLE_NAME],
 				$mainTableAlias,
 				$params
 			), \implode(', ', $set)) .
-			$this->getFrom($params, FALSE) .
-			$this->getJoins($params) .
-			$this->getWhere($params) .
-			$this->getPrefixSuffix(Query::PARAM_SUFFIX, $params) .
-			$this->getReturning($params);
+			$this->getFrom($queryParams, $params, FALSE) .
+			$this->getJoins($queryParams, $params) .
+			$this->getWhere($queryParams, $params) .
+			$this->getPrefixSuffix($queryParams, Query::PARAM_SUFFIX, $params) .
+			$this->getReturning($queryParams, $params);
 	}
 
 
 	/**
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	private function createDelete(array &$params): string
+	private function createDelete(array $queryParams, array &$params): string
 	{
-		$mainTableAlias = $this->getMainTableAlias();
+		$mainTableAlias = $this->getMainTableAlias($queryParams);
 		return \sprintf('DELETE %s', $this->processTable(
 				'FROM',
-				$this->params[Query::PARAM_TABLES][$mainTableAlias][self::TABLE_NAME],
+				$queryParams[Query::PARAM_TABLES][$mainTableAlias][self::TABLE_NAME],
 				$mainTableAlias,
 				$params
 			)) .
-			$this->getWhere($params) .
-			$this->getPrefixSuffix(Query::PARAM_SUFFIX, $params) .
-			$this->getReturning($params);
+			$this->getWhere($queryParams, $params) .
+			$this->getPrefixSuffix($queryParams, Query::PARAM_SUFFIX, $params) .
+			$this->getReturning($queryParams, $params);
 	}
 
 
 	/**
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	private function createTruncate(): string
+	private function createTruncate(array $queryParams): string
 	{
-		return \sprintf('TRUNCATE %s', $this->params[Query::PARAM_TABLES][$this->getMainTableAlias()][self::TABLE_NAME]);
+		return \sprintf('TRUNCATE %s', $queryParams[Query::PARAM_TABLES][$this->getMainTableAlias($queryParams)][self::TABLE_NAME]);
 	}
 
 
-	private function getSelectDistinct(): string
+	private function getSelectDistinct(array $queryParams): string
 	{
-		return $this->params[Query::PARAM_DISTINCT] === TRUE ? 'DISTINCT ' : '';
+		return $queryParams[Query::PARAM_DISTINCT] === TRUE ? 'DISTINCT ' : '';
 	}
 
 
 	/**
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	private function getSelectColumns(array &$params, ?array &$columnNames = NULL): string
+	private function getSelectColumns(array $queryParams, array &$params, ?array &$columnNames = NULL): string
 	{
-		if ($this->params[Query::PARAM_SELECT] === []) {
+		if ($queryParams[Query::PARAM_SELECT] === []) {
 			throw Exceptions\QueryBuilderException::noColumnsToSelect();
 		}
 
 		$columns = [];
-		foreach ($this->params[Query::PARAM_SELECT] as $key => $value) {
+		foreach ($queryParams[Query::PARAM_SELECT] as $key => $value) {
 			if ($value instanceof Db\Queryable) {
 				$params[] = $value;
 				$value = '(?)';
@@ -231,26 +224,26 @@ class QueryBuilder
 	/**
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	private function getFrom(array &$params, bool $useMainTable = TRUE): string
+	private function getFrom(array $queryParams, array &$params, bool $useMainTable = TRUE): string
 	{
 		$from = [];
 
 		if ($useMainTable === TRUE) {
-			$mainTableAlias = $this->params[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_MAIN];
+			$mainTableAlias = $queryParams[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_MAIN];
 			if ($mainTableAlias !== NULL) {
 				$from[] = $this->processTable(
 					NULL,
-					$this->params[Query::PARAM_TABLES][$mainTableAlias][self::TABLE_NAME],
+					$queryParams[Query::PARAM_TABLES][$mainTableAlias][self::TABLE_NAME],
 					$mainTableAlias,
 					$params
 				);
 			}
 		}
 
-		foreach ($this->params[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_FROM] as $tableAlias) {
+		foreach ($queryParams[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_FROM] as $tableAlias) {
 			$from[] = $this->processTable(
 				NULL,
-				$this->params[Query::PARAM_TABLES][$tableAlias][self::TABLE_NAME],
+				$queryParams[Query::PARAM_TABLES][$tableAlias][self::TABLE_NAME],
 				$tableAlias,
 				$params
 			);
@@ -263,16 +256,16 @@ class QueryBuilder
 	/**
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	private function getJoins(array &$params): string
+	private function getJoins(array $queryParams, array &$params): string
 	{
 		$joins = [];
 
-		foreach ($this->params[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_JOINS] as $tableAlias) {
-			$joinType = $this->params[Query::PARAM_TABLES][$tableAlias][self::TABLE_TYPE];
+		foreach ($queryParams[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_JOINS] as $tableAlias) {
+			$joinType = $queryParams[Query::PARAM_TABLES][$tableAlias][self::TABLE_TYPE];
 
 			$table = $this->processTable(
 				$joinType,
-				$this->params[Query::PARAM_TABLES][$tableAlias][self::TABLE_NAME],
+				$queryParams[Query::PARAM_TABLES][$tableAlias][self::TABLE_NAME],
 				$tableAlias,
 				$params
 			);
@@ -280,14 +273,14 @@ class QueryBuilder
 			if ($joinType === Query::JOIN_CROSS) {
 				$joins[] = $table;
 			} else {
-				if (!isset($this->params[Query::PARAM_JOIN_CONDITIONS][$tableAlias])) {
+				if (!isset($queryParams[Query::PARAM_JOIN_CONDITIONS][$tableAlias])) {
 					throw Exceptions\QueryBuilderException::noJoinConditions($tableAlias);
 				}
 
 				$joins[] = \sprintf(
 					'%s ON %s',
 					$table,
-					$this->processComplex(Complex::createAnd($this->params[Query::PARAM_JOIN_CONDITIONS][$tableAlias]), $params)
+					$this->processComplex(Complex::createAnd($queryParams[Query::PARAM_JOIN_CONDITIONS][$tableAlias]), $params)
 				);
 			}
 		}
@@ -299,9 +292,9 @@ class QueryBuilder
 	/**
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	private function getWhere(array &$params): string
+	private function getWhere(array $queryParams, array &$params): string
 	{
-		$where = $this->params[Query::PARAM_WHERE];
+		$where = $queryParams[Query::PARAM_WHERE];
 
 		if ($where === []) {
 			return '';
@@ -311,18 +304,20 @@ class QueryBuilder
 	}
 
 
-	private function getGroupBy(): string
+	private function getGroupBy(array $queryParams): string
 	{
-		return $this->params[Query::PARAM_GROUPBY] === [] ? '' : \sprintf(' GROUP BY %s', \implode(', ', $this->params[Query::PARAM_GROUPBY]));
+		return $queryParams[Query::PARAM_GROUPBY] === []
+			? ''
+			: \sprintf(' GROUP BY %s', \implode(', ', $queryParams[Query::PARAM_GROUPBY]));
 	}
 
 
 	/**
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	private function getHaving(array &$params): string
+	private function getHaving(array $queryParams, array &$params): string
 	{
-		$having = $this->params[Query::PARAM_HAVING];
+		$having = $queryParams[Query::PARAM_HAVING];
 
 		if ($having === []) {
 			return '';
@@ -335,9 +330,9 @@ class QueryBuilder
 	/**
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	private function getOrderBy(array &$params): string
+	private function getOrderBy(array $queryParams, array &$params): string
 	{
-		$orderBy = $this->params[Query::PARAM_ORDERBY];
+		$orderBy = $queryParams[Query::PARAM_ORDERBY];
 
 		if ($orderBy === []) {
 			return '';
@@ -359,9 +354,9 @@ class QueryBuilder
 	}
 
 
-	private function getLimit(array &$params): string
+	private function getLimit(array $queryParams, array &$params): string
 	{
-		$limit = $this->params[Query::PARAM_LIMIT];
+		$limit = $queryParams[Query::PARAM_LIMIT];
 
 		if ($limit === NULL) {
 			return '';
@@ -373,9 +368,9 @@ class QueryBuilder
 	}
 
 
-	private function getOffset(array &$params): string
+	private function getOffset(array $queryParams, array &$params): string
 	{
-		$offset = $this->params[Query::PARAM_OFFSET];
+		$offset = $queryParams[Query::PARAM_OFFSET];
 
 		if ($offset === NULL) {
 			return '';
@@ -390,9 +385,9 @@ class QueryBuilder
 	/**
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	private function getPrefixSuffix(string $type, array &$params): string
+	private function getPrefixSuffix(array $queryParams, string $type, array &$params): string
 	{
-		$items = $this->params[$type] ?? [];
+		$items = $queryParams[$type] ?? [];
 
 		if ($items === []) {
 			return '';
@@ -425,9 +420,9 @@ class QueryBuilder
 	/**
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	private function combine(array &$params): string
+	private function combine(array $queryParams, array &$params): string
 	{
-		$combineQueries = $this->params[Query::PARAM_COMBINE_QUERIES];
+		$combineQueries = $queryParams[Query::PARAM_COMBINE_QUERIES];
 
 		if ($combineQueries === []) {
 			return '';
@@ -455,13 +450,13 @@ class QueryBuilder
 	/**
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	private function getReturning(array &$params): string
+	private function getReturning(array $queryParams, array &$params): string
 	{
-		if ($this->params[Query::PARAM_RETURNING] === []) {
+		if ($queryParams[Query::PARAM_RETURNING] === []) {
 			return '';
 		}
 		$columns = [];
-		foreach ($this->params[Query::PARAM_RETURNING] as $key => $value) {
+		foreach ($queryParams[Query::PARAM_RETURNING] as $key => $value) {
 			if ($value instanceof Db\Queryable) {
 				$params[] = $value;
 				$value = '(?)';
@@ -478,12 +473,12 @@ class QueryBuilder
 	/**
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	private function getMainTableAlias(): string
+	private function getMainTableAlias(array $queryParams): string
 	{
-		if ($this->params[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_MAIN] === NULL) {
+		if ($queryParams[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_MAIN] === NULL) {
 			throw Exceptions\QueryBuilderException::noMainTable();
 		}
-		return $this->params[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_MAIN];
+		return $queryParams[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_MAIN];
 	}
 
 

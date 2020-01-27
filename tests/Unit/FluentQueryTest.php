@@ -727,14 +727,14 @@ class FluentQueryTest extends Tester\TestCase
 	public function testBadQueryBuilderType(): void
 	{
 		Tester\Assert::exception(static function (): void {
-			(new Fluent\QueryBuilder('table', []))->createQuery();
+			(new Fluent\QueryBuilder())->createQuery('table', []);
 		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::BAD_QUERY_TYPE);
 	}
 
 
 	private function query(): Fluent\Query
 	{
-		return new Fluent\Query();
+		return new Fluent\Query(new Fluent\QueryBuilder());
 	}
 
 }

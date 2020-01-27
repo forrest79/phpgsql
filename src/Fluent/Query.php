@@ -80,6 +80,15 @@ class Query implements Sql
 	/** @var Db\Query|NULL */
 	private $query;
 
+	/** @var QueryBuilder */
+	private $queryBuilder;
+
+
+	public function __construct(QueryBuilder $queryBuilder)
+	{
+		$this->queryBuilder = $queryBuilder;
+	}
+
 
 	/**
 	 * @param string|Sql|Db\Queryable $table
@@ -730,7 +739,7 @@ class Query implements Sql
 	public function getQuery(): Db\Query
 	{
 		if ($this->query === NULL) {
-			$this->query = $this->createQueryBuilder()->createQuery();
+			$this->query = $this->queryBuilder->createQuery($this->queryType, $this->params);
 		}
 		return $this->query;
 	}
@@ -742,12 +751,6 @@ class Query implements Sql
 	public function prepareSql(): Db\Query
 	{
 		return Db\Helper::prepareSql($this->getQuery());
-	}
-
-
-	protected function createQueryBuilder(): QueryBuilder
-	{
-		return new QueryBuilder($this->queryType, $this->params);
 	}
 
 }
