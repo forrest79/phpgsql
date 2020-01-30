@@ -94,12 +94,16 @@
 		</properties>
 	</rule>
 
-	<rule ref="SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter">
-		<exclude-pattern>tests/*</exclude-pattern>
-	</rule>
-
 	<rule ref="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingReturnTypeHint">
 		<exclude-pattern>src/Fluent/Complex.php</exclude-pattern>
+	</rule>
+
+	<rule ref="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.UselessDocComment">
+		<exclude-pattern>src/Db/Row.php</exclude-pattern>
+	</rule>
+
+	<rule ref="SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter">
+		<exclude-pattern>tests/*</exclude-pattern>
 	</rule>
 
 	<rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">

@@ -76,6 +76,9 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 	}
 
 
+	/**
+	 * @return \ArrayIterator<mixed>
+	 */
 	public function getIterator(): \ArrayIterator
 	{
 		return new \ArrayIterator($this->toArray());
