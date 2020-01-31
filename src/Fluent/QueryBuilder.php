@@ -214,7 +214,7 @@ class QueryBuilder
 			if ($columnNames !== NULL) {
 				$columnNames[] = \is_int($key) ? $value : $key;
 			}
-			$columns[] = \sprintf('%s%s', $value, \is_int($key) ? '' : \sprintf(' AS %s', $key));
+			$columns[] = $value . (\is_int($key) ? '' : \sprintf(' AS "%s"', $key));
 		}
 
 		return \implode(', ', $columns);
@@ -464,7 +464,7 @@ class QueryBuilder
 				$params[] = $value->createSqlQuery();
 				$value = '(?)';
 			}
-			$columns[] = \sprintf('%s%s', $value, \is_int($key) ? '' : \sprintf(' AS %s', $key));
+			$columns[] = $value . (\is_int($key) ? '' : \sprintf(' AS "%s"', $key));
 		}
 		return \sprintf(' RETURNING %s', \implode(', ', $columns));
 	}

@@ -39,7 +39,7 @@ class FluentQueryTest extends Tester\TestCase
 			->select(['column' => $this->query()->select([1])])
 			->createQuery();
 
-		Tester\Assert::same('SELECT (SELECT 1) AS column', $query->getSql());
+		Tester\Assert::same('SELECT (SELECT 1) AS "column"', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
 	}
 
@@ -50,7 +50,7 @@ class FluentQueryTest extends Tester\TestCase
 			->select(['column' => new Db\Sql\Query('SELECT 1')])
 			->createQuery();
 
-		Tester\Assert::same('SELECT (SELECT 1) AS column', $query->getSql());
+		Tester\Assert::same('SELECT (SELECT 1) AS "column"', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
 	}
 
@@ -61,7 +61,7 @@ class FluentQueryTest extends Tester\TestCase
 			->select(['column' => 'another', 'next', 10 => 'column_with_integer_key', '1' => 'column_with_integer_in_string_key', 'a' => 'b'])
 			->createQuery();
 
-		Tester\Assert::same('SELECT another AS column, next, column_with_integer_key, column_with_integer_in_string_key, b AS a', $query->getSql());
+		Tester\Assert::same('SELECT another AS "column", next, column_with_integer_key, column_with_integer_in_string_key, b AS "a"', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
 	}
 
@@ -73,7 +73,7 @@ class FluentQueryTest extends Tester\TestCase
 			->from($this->query()->select(['column' => 1]), 'x')
 			->createQuery();
 
-		Tester\Assert::same('SELECT x.column FROM (SELECT 1 AS column) AS x', $query->getSql());
+		Tester\Assert::same('SELECT x.column FROM (SELECT 1 AS "column") AS x', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
 	}
 
@@ -123,7 +123,7 @@ class FluentQueryTest extends Tester\TestCase
 			->join($this->query()->select(['column' => 1]), 'x', 'x.column = t.id')
 			->createQuery();
 
-		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN (SELECT 1 AS column) AS x ON x.column = t.id', $query->getSql());
+		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN (SELECT 1 AS "column") AS x ON x.column = t.id', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
 	}
 
@@ -386,7 +386,7 @@ class FluentQueryTest extends Tester\TestCase
 			->returning(['column'])
 			->createQuery();
 
-		Tester\Assert::same('INSERT INTO table(column, name) SELECT column, column2 AS name FROM table2 AS t2 RETURNING column', $query->getSql());
+		Tester\Assert::same('INSERT INTO table(column, name) SELECT column, column2 AS "name" FROM table2 AS t2 RETURNING column', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
 	}
 
@@ -467,7 +467,7 @@ class FluentQueryTest extends Tester\TestCase
 			->returning(['c' => 'column'])
 			->createQuery();
 
-		Tester\Assert::same('DELETE FROM table AS t WHERE column = $1 RETURNING column AS c', $query->getSql());
+		Tester\Assert::same('DELETE FROM table AS t WHERE column = $1 RETURNING column AS "c"', $query->getSql());
 		Tester\Assert::same([100], $query->getParams());
 	}
 
@@ -488,7 +488,7 @@ class FluentQueryTest extends Tester\TestCase
 			->returning(['c' => $this->query()->select(['to_value(column)'])])
 			->createQuery();
 
-		Tester\Assert::same('DELETE FROM table AS t WHERE column = $1 RETURNING (SELECT to_value(column)) AS c', $query->getSql());
+		Tester\Assert::same('DELETE FROM table AS t WHERE column = $1 RETURNING (SELECT to_value(column)) AS "c"', $query->getSql());
 		Tester\Assert::same([100], $query->getParams());
 	}
 
@@ -501,7 +501,7 @@ class FluentQueryTest extends Tester\TestCase
 			->returning(['c' => new Db\Sql\Query('to_value(column)')])
 			->createQuery();
 
-		Tester\Assert::same('DELETE FROM table AS t WHERE column = $1 RETURNING (to_value(column)) AS c', $query->getSql());
+		Tester\Assert::same('DELETE FROM table AS t WHERE column = $1 RETURNING (to_value(column)) AS "c"', $query->getSql());
 		Tester\Assert::same([100], $query->getParams());
 	}
 
