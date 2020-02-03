@@ -2,7 +2,7 @@
 
 namespace Forrest79\PhPgSql\Db;
 
-interface Queryable
+interface Sql
 {
 
 	function getSql(): string;

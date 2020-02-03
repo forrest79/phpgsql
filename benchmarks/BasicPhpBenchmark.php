@@ -2,6 +2,8 @@
 
 namespace Forrest79\PhPgSql\Benchmarks;
 
+use Forrest79\PhPgSql\Db;
+
 require __DIR__ . '/boostrap.php';
 
 class BasicPhpBenchmark extends BenchmarkCase
@@ -341,6 +343,24 @@ class BasicPhpBenchmark extends BenchmarkCase
 		$keys = ['testKey1' => NULL, 'testKey2' => ''];
 		isset($keys['testKey2']) || \array_key_exists('testKey2', $keys);
 		isset($keys['testKey2']) || \array_key_exists('testKey2', $keys);
+	}
+
+
+	/**
+	 * @title create new instance via new operator
+	 */
+	public function benchmarkCreateNewInstanceViaNewOperator(): void
+	{
+		new Db\Sql\Literal('now()');
+	}
+
+
+	/**
+	 * @title create new instance via static method
+	 */
+	public function benchmarkCreateNewInstanceViaStaticMethod(): void
+	{
+		Db\Sql\Literal::create('now()');
 	}
 
 }

@@ -2,7 +2,7 @@
 
 namespace Forrest79\PhPgSql\Db;
 
-class Query implements Queryable
+final class Query
 {
 	/** @var string */
 	private $sql;
@@ -11,7 +11,7 @@ class Query implements Queryable
 	private $params;
 
 
-	public function __construct(string $sql, array $params = [])
+	public function __construct(string $sql, array $params)
 	{
 		$this->sql = $sql;
 		$this->params = $params;
@@ -27,23 +27,6 @@ class Query implements Queryable
 	public function getParams(): array
 	{
 		return $this->params;
-	}
-
-
-	/**
-	 * @param string $sql
-	 * @param mixed ...$params
-	 * @return self
-	 */
-	public static function create(string $sql, ...$params): self
-	{
-		return new self($sql, $params);
-	}
-
-
-	public static function createArgs(string $sql, array $params): self
-	{
-		return new self($sql, $params);
 	}
 
 }

@@ -28,7 +28,7 @@ class FluentConnectionTest extends Tester\TestCase
 		$query = $this->fluentConnection
 			->table('table')
 			->select(['*'])
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('SELECT * FROM table', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
@@ -39,7 +39,7 @@ class FluentConnectionTest extends Tester\TestCase
 	{
 		$query = $this->fluentConnection
 			->select([1])
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('SELECT 1', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
@@ -51,7 +51,7 @@ class FluentConnectionTest extends Tester\TestCase
 		$query = $this->fluentConnection
 			->distinct()
 			->select([1])
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('SELECT DISTINCT 1', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
@@ -63,7 +63,7 @@ class FluentConnectionTest extends Tester\TestCase
 		$query = $this->fluentConnection
 			->from('table')
 			->select(['*'])
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('SELECT * FROM table', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
@@ -76,7 +76,7 @@ class FluentConnectionTest extends Tester\TestCase
 			->join('another_table', 'at', 'at.id = t.another_id')
 			->from('table', 't')
 			->select(['*'])
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('SELECT * FROM table AS t INNER JOIN another_table AS at ON at.id = t.another_id', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
@@ -89,7 +89,7 @@ class FluentConnectionTest extends Tester\TestCase
 			->innerJoin('another_table', 'at', 'at.id = t.another_id')
 			->from('table', 't')
 			->select(['*'])
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('SELECT * FROM table AS t INNER JOIN another_table AS at ON at.id = t.another_id', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
@@ -102,7 +102,7 @@ class FluentConnectionTest extends Tester\TestCase
 			->leftJoin('another_table', 'at', 'at.id = t.another_id')
 			->from('table', 't')
 			->select(['*'])
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('SELECT * FROM table AS t LEFT OUTER JOIN another_table AS at ON at.id = t.another_id', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
@@ -115,7 +115,7 @@ class FluentConnectionTest extends Tester\TestCase
 			->leftOuterJoin('another_table', 'at', 'at.id = t.another_id')
 			->from('table', 't')
 			->select(['*'])
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('SELECT * FROM table AS t LEFT OUTER JOIN another_table AS at ON at.id = t.another_id', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
@@ -128,7 +128,7 @@ class FluentConnectionTest extends Tester\TestCase
 			->rightJoin('another_table', 'at', 'at.id = t.another_id')
 			->from('table', 't')
 			->select(['*'])
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('SELECT * FROM table AS t RIGHT OUTER JOIN another_table AS at ON at.id = t.another_id', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
@@ -141,7 +141,7 @@ class FluentConnectionTest extends Tester\TestCase
 			->rightOuterJoin('another_table', 'at', 'at.id = t.another_id')
 			->from('table', 't')
 			->select(['*'])
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('SELECT * FROM table AS t RIGHT OUTER JOIN another_table AS at ON at.id = t.another_id', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
@@ -154,7 +154,7 @@ class FluentConnectionTest extends Tester\TestCase
 			->fullJoin('another_table', 'at', 'at.id = t.another_id')
 			->from('table', 't')
 			->select(['*'])
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('SELECT * FROM table AS t FULL OUTER JOIN another_table AS at ON at.id = t.another_id', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
@@ -167,7 +167,7 @@ class FluentConnectionTest extends Tester\TestCase
 			->fullOuterJoin('another_table', 'at', 'at.id = t.another_id')
 			->from('table', 't')
 			->select(['*'])
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('SELECT * FROM table AS t FULL OUTER JOIN another_table AS at ON at.id = t.another_id', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
@@ -180,7 +180,7 @@ class FluentConnectionTest extends Tester\TestCase
 			->crossJoin('another_table', 'at')
 			->from('table', 't')
 			->select(['*'])
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('SELECT * FROM table AS t CROSS JOIN another_table AS at', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
@@ -194,7 +194,7 @@ class FluentConnectionTest extends Tester\TestCase
 			->innerJoin('another_table', 'at')
 			->from('table', 't')
 			->select(['*'])
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('SELECT * FROM table AS t INNER JOIN another_table AS at ON at.id = t.another_id', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
@@ -206,7 +206,7 @@ class FluentConnectionTest extends Tester\TestCase
 		$query = $this->fluentConnection
 			->where('TRUE')
 			->select([1])
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('SELECT 1 WHERE TRUE', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
@@ -219,7 +219,7 @@ class FluentConnectionTest extends Tester\TestCase
 			->whereAnd(['column = 1', 'another = 2'])
 				->query()
 			->select([1])
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('SELECT 1 WHERE (column = 1) AND (another = 2)', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
@@ -232,7 +232,7 @@ class FluentConnectionTest extends Tester\TestCase
 			->whereOr(['column = 1', 'another = 2'])
 				->query()
 			->select([1])
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('SELECT 1 WHERE (column = 1) OR (another = 2)', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
@@ -245,7 +245,7 @@ class FluentConnectionTest extends Tester\TestCase
 			->groupBy(['column'])
 			->from('table')
 			->select(['*'])
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('SELECT * FROM table GROUP BY column', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
@@ -259,7 +259,7 @@ class FluentConnectionTest extends Tester\TestCase
 			->select(['*'])
 			->from('table')
 			->groupBy(['column'])
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('SELECT * FROM table GROUP BY column HAVING column = 1', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
@@ -274,7 +274,7 @@ class FluentConnectionTest extends Tester\TestCase
 			->select(['*'])
 			->from('table')
 			->groupBy(['column', 'another'])
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('SELECT * FROM table GROUP BY column, another HAVING (column = 1) AND (another = 2)', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
@@ -289,7 +289,7 @@ class FluentConnectionTest extends Tester\TestCase
 			->select(['*'])
 			->from('table')
 			->groupBy(['column', 'another'])
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('SELECT * FROM table GROUP BY column, another HAVING (column = 1) OR (another = 2)', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
@@ -302,7 +302,7 @@ class FluentConnectionTest extends Tester\TestCase
 			->orderBy(['column'])
 			->select(['*'])
 			->from('table')
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('SELECT * FROM table ORDER BY column', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
@@ -315,7 +315,7 @@ class FluentConnectionTest extends Tester\TestCase
 			->limit(100)
 			->select(['*'])
 			->from('table')
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('SELECT * FROM table LIMIT $1', $query->getSql());
 		Tester\Assert::same([100], $query->getParams());
@@ -328,7 +328,7 @@ class FluentConnectionTest extends Tester\TestCase
 			->offset(100)
 			->select(['*'])
 			->from('table')
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('SELECT * FROM table OFFSET $1', $query->getSql());
 		Tester\Assert::same([100], $query->getParams());
@@ -340,7 +340,7 @@ class FluentConnectionTest extends Tester\TestCase
 		$query = $this->fluentConnection
 			->union('SELECT 2')
 			->select([1])
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('SELECT 1 UNION (SELECT 2)', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
@@ -352,7 +352,7 @@ class FluentConnectionTest extends Tester\TestCase
 		$query = $this->fluentConnection
 			->unionAll('SELECT 2')
 			->select([1])
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('SELECT 1 UNION ALL (SELECT 2)', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
@@ -364,7 +364,7 @@ class FluentConnectionTest extends Tester\TestCase
 		$query = $this->fluentConnection
 			->intersect('SELECT 2')
 			->select([1])
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('SELECT 1 INTERSECT (SELECT 2)', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
@@ -376,7 +376,7 @@ class FluentConnectionTest extends Tester\TestCase
 		$query = $this->fluentConnection
 			->except('SELECT 2')
 			->select([1])
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('SELECT 1 EXCEPT (SELECT 2)', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
@@ -388,7 +388,7 @@ class FluentConnectionTest extends Tester\TestCase
 		$query = $this->fluentConnection
 			->insert('table')
 			->values(['column' => 1])
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('INSERT INTO table(column) VALUES($1)', $query->getSql());
 		Tester\Assert::same([1], $query->getParams());
@@ -400,7 +400,7 @@ class FluentConnectionTest extends Tester\TestCase
 		$query = $this->fluentConnection
 			->values(['column' => 1])
 			->insert('table')
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('INSERT INTO table(column) VALUES($1)', $query->getSql());
 		Tester\Assert::same([1], $query->getParams());
@@ -415,7 +415,7 @@ class FluentConnectionTest extends Tester\TestCase
 				['column' => 2],
 			])
 			->insert('table')
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('INSERT INTO table(column) VALUES($1), ($2)', $query->getSql());
 		Tester\Assert::same([1, 2], $query->getParams());
@@ -427,7 +427,7 @@ class FluentConnectionTest extends Tester\TestCase
 		$query = $this->fluentConnection
 			->update('table')
 			->set(['column' => 1])
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('UPDATE table SET column = $1', $query->getSql());
 		Tester\Assert::same([1], $query->getParams());
@@ -439,7 +439,7 @@ class FluentConnectionTest extends Tester\TestCase
 		$query = $this->fluentConnection
 			->set(['column' => 1])
 			->update('table')
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('UPDATE table SET column = $1', $query->getSql());
 		Tester\Assert::same([1], $query->getParams());
@@ -450,7 +450,7 @@ class FluentConnectionTest extends Tester\TestCase
 	{
 		$query = $this->fluentConnection
 			->delete('table')
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('DELETE FROM table', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
@@ -463,7 +463,7 @@ class FluentConnectionTest extends Tester\TestCase
 			->returning(['column'])
 			->insert('table')
 			->values(['column' => 1])
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('INSERT INTO table(column) VALUES($1) RETURNING column', $query->getSql());
 		Tester\Assert::same([1], $query->getParams());
@@ -474,7 +474,7 @@ class FluentConnectionTest extends Tester\TestCase
 	{
 		$query = $this->fluentConnection
 			->truncate('table')
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('TRUNCATE table', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
@@ -486,7 +486,7 @@ class FluentConnectionTest extends Tester\TestCase
 		$query = $this->fluentConnection
 			->prefix('WITH cte')
 			->select([1])
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('WITH cte SELECT 1', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
@@ -499,7 +499,7 @@ class FluentConnectionTest extends Tester\TestCase
 			->sufix('FOR UPDATE')
 			->select(['column'])
 			->from('table')
-			->prepareSql();
+			->createQuery();
 
 		Tester\Assert::same('SELECT column FROM table FOR UPDATE', $query->getSql());
 		Tester\Assert::same([], $query->getParams());

@@ -15,7 +15,7 @@ class ParseTest extends Tester\TestCase
 
 	public function testPrepareQuery(): void
 	{
-		$query = Db\Helper::prepareSql(Db\Query::create('SELECT * FROM table'));
+		$query = Db\Sql\Query::create('SELECT * FROM table')->createQuery();
 		Tester\Assert::same('SELECT * FROM table', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
 	}
@@ -23,19 +23,19 @@ class ParseTest extends Tester\TestCase
 
 	public function testPrepareQueryWithParams(): void
 	{
-		$query = Db\Helper::prepareSql(Db\Query::create('SELECT * FROM table WHERE column = $1', 1));
+		$query = Db\Sql\Query::create('SELECT * FROM table WHERE column = $1', 1)->createQuery();
 		Tester\Assert::same('SELECT * FROM table WHERE column = $1', $query->getSql());
 		Tester\Assert::same([1], $query->getParams());
 
-		$query = Db\Helper::prepareSql(Db\Query::createArgs('SELECT * FROM table WHERE column = $1', [1]));
+		$query = Db\Sql\Query::createArgs('SELECT * FROM table WHERE column = $1', [1])->createQuery();
 		Tester\Assert::same('SELECT * FROM table WHERE column = $1', $query->getSql());
 		Tester\Assert::same([1], $query->getParams());
 
-		$query = Db\Helper::prepareSql(Db\Query::create('SELECT * FROM table WHERE column = ?', 1));
+		$query = Db\Sql\Query::create('SELECT * FROM table WHERE column = ?', 1)->createQuery();
 		Tester\Assert::same('SELECT * FROM table WHERE column = $1', $query->getSql());
 		Tester\Assert::same([1], $query->getParams());
 
-		$query = Db\Helper::prepareSql(Db\Query::createArgs('SELECT * FROM table WHERE column = ?', [1]));
+		$query = Db\Sql\Query::createArgs('SELECT * FROM table WHERE column = ?', [1])->createQuery();
 		Tester\Assert::same('SELECT * FROM table WHERE column = $1', $query->getSql());
 		Tester\Assert::same([1], $query->getParams());
 	}
@@ -44,7 +44,7 @@ class ParseTest extends Tester\TestCase
 	public function testPrepareQueryWithBadParams(): void
 	{
 		Tester\Assert::exception(static function (): void {
-			$query = Db\Helper::prepareSql(Db\Query::create('SELECT * FROM table WHERE column = ? AND column2 = ?', 1));
+			$query = Db\Sql\Query::create('SELECT * FROM table WHERE column = ? AND column2 = ?', 1)->createQuery();
 			$query->getSql();
 		}, Db\Exceptions\QueryException::class, NULL, Db\Exceptions\QueryException::NO_PARAM);
 	}
@@ -52,7 +52,7 @@ class ParseTest extends Tester\TestCase
 
 	public function testPrepareQueryWithLiteral(): void
 	{
-		$query = Db\Helper::prepareSql(Db\Query::create('SELECT * FROM ? WHERE column = ?', Db\Literal::create('table'), 1));
+		$query = Db\Sql\Query::create('SELECT * FROM ? WHERE column = ?', Db\Sql\Literal::create('table'), 1)->createQuery();
 		Tester\Assert::same('SELECT * FROM table WHERE column = $1', $query->getSql());
 		Tester\Assert::same([1], $query->getParams());
 	}
@@ -60,7 +60,7 @@ class ParseTest extends Tester\TestCase
 
 	public function testPrepareQueryWithLiteralWithParams(): void
 	{
-		$query = Db\Helper::prepareSql(Db\Query::create('SELECT * FROM ? WHERE column = ?', Db\Literal::create('function(?, ?)', 'param1', 2), 1));
+		$query = Db\Sql\Query::create('SELECT * FROM ? WHERE column = ?', Db\Sql\Expression::create('function(?, ?)', 'param1', 2), 1)->createQuery();
 		Tester\Assert::same('SELECT * FROM function($1, $2) WHERE column = $3', $query->getSql());
 		Tester\Assert::same(['param1', 2, 1], $query->getParams());
 	}
@@ -68,7 +68,7 @@ class ParseTest extends Tester\TestCase
 
 	public function testPrepareQueryWithArray(): void
 	{
-		$query = Db\Helper::prepareSql(Db\Query::create('SELECT * FROM table WHERE column IN (?)', [1, 2]));
+		$query = Db\Sql\Query::create('SELECT * FROM table WHERE column IN (?)', [1, 2])->createQuery();
 		Tester\Assert::same('SELECT * FROM table WHERE column IN ($1, $2)', $query->getSql());
 		Tester\Assert::same([1, 2], $query->getParams());
 	}
@@ -76,7 +76,7 @@ class ParseTest extends Tester\TestCase
 
 	public function testPrepareQueryWithBlankArray(): void
 	{
-		$query = Db\Helper::prepareSql(Db\Query::create('SELECT * FROM table WHERE column IN (?)', []));
+		$query = Db\Sql\Query::create('SELECT * FROM table WHERE column IN (?)', [])->createQuery();
 		Tester\Assert::same('SELECT * FROM table WHERE column IN ()', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
 	}
@@ -84,8 +84,8 @@ class ParseTest extends Tester\TestCase
 
 	public function testPrepareQueryWithQuery(): void
 	{
-		$subquery = Db\Query::create('SELECT id FROM subtable WHERE column = ?', 1);
-		$query = Db\Helper::prepareSql(Db\Query::create('SELECT * FROM table WHERE id IN (?)', $subquery));
+		$subquery = Db\Sql\Query::create('SELECT id FROM subtable WHERE column = ?', 1);
+		$query = Db\Sql\Query::create('SELECT * FROM table WHERE id IN (?)', $subquery)->createQuery();
 		Tester\Assert::same('SELECT * FROM table WHERE id IN (SELECT id FROM subtable WHERE column = $1)', $query->getSql());
 		Tester\Assert::same([1], $query->getParams());
 	}
@@ -93,7 +93,7 @@ class ParseTest extends Tester\TestCase
 
 	public function testPrepareQueryEscapeQuestionmark(): void
 	{
-		$query = Db\Helper::prepareSql(Db\Query::create('SELECT * FROM table WHERE column = ? AND text ILIKE \'What\?\'', 1));
+		$query = Db\Sql\Query::create('SELECT * FROM table WHERE column = ? AND text ILIKE \'What\?\'', 1)->createQuery();
 		Tester\Assert::same('SELECT * FROM table WHERE column = $1 AND text ILIKE \'What?\'', $query->getSql());
 		Tester\Assert::same([1], $query->getParams());
 	}
@@ -101,17 +101,17 @@ class ParseTest extends Tester\TestCase
 
 	public function testPrepareQueryComplex(): void
 	{
-		$subquery = Db\Query::create(
+		$subquery = Db\Sql\Query::create(
 			'SELECT id FROM subtable WHERE when = ? AND text ILIKE \'When\?\' AND year > ?',
-			Db\Literal::create('now()'),
+			Db\Sql\Literal::create('now()'),
 			2005
 		);
-		$query = Db\Helper::prepareSql(Db\Query::create(
+		$query = Db\Sql\Query::create(
 			'SELECT * FROM table WHERE column = ? OR id IN (?) OR type IN (?)',
 			'yes',
 			$subquery,
 			[3, 2, 1]
-		));
+		)->createQuery();
 		Tester\Assert::same('SELECT * FROM table WHERE column = $1 OR id IN (SELECT id FROM subtable WHERE when = now() AND text ILIKE \'When?\' AND year > $2) OR type IN ($3, $4, $5)', $query->getSql());
 		Tester\Assert::same(['yes', 2005, 3, 2, 1], $query->getParams());
 	}

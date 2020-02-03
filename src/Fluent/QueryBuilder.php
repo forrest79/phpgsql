@@ -13,7 +13,7 @@ class QueryBuilder
 	/**
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	public function createQuery(string $queryType, array $queryParams): Db\Query
+	public function createSqlQuery(string $queryType, array $queryParams): Db\Sql\Query
 	{
 		$params = [];
 
@@ -33,13 +33,13 @@ class QueryBuilder
 			throw Exceptions\QueryBuilderException::badQueryType($queryType);
 		}
 
-		return $this->prepareQuery($sql, $params);
+		return $this->prepareSqlQuery($sql, $params);
 	}
 
 
-	protected function prepareQuery(string $sql, array $params): Db\Query
+	protected function prepareSqlQuery(string $sql, array $params): Db\Sql\Query
 	{
-		return new Db\Query($sql, $params);
+		return new Db\Sql\Query($sql, $params);
 	}
 
 
@@ -204,11 +204,11 @@ class QueryBuilder
 
 		$columns = [];
 		foreach ($queryParams[Query::PARAM_SELECT] as $key => $value) {
-			if ($value instanceof Db\Queryable) {
+			if ($value instanceof Db\Sql) {
 				$params[] = $value;
 				$value = '(?)';
 			} else if ($value instanceof Query) {
-				$params[] = $value->getQuery();
+				$params[] = $value->createSqlQuery();
 				$value = '(?)';
 			}
 			if ($columnNames !== NULL) {
@@ -340,11 +340,11 @@ class QueryBuilder
 
 		$columns = [];
 		foreach ($orderBy as $value) {
-			if ($value instanceof Db\Queryable) {
+			if ($value instanceof Db\Sql) {
 				$params[] = $value;
 				$value = '(?)';
 			} else if ($value instanceof Query) {
-				$params[] = $value->getQuery();
+				$params[] = $value->createSqlQuery();
 				$value = '(?)';
 			}
 			$columns[] = $value;
@@ -399,7 +399,7 @@ class QueryBuilder
 
 			foreach ($itemParams as $param) {
 				if ($param instanceof Query) {
-					$param = $param->getQuery();
+					$param = $param->createSqlQuery();
 				}
 				$params[] = $param;
 			}
@@ -432,11 +432,11 @@ class QueryBuilder
 		foreach ($combineQueries as $combineQuery) {
 			[$query, $type] = $combineQuery;
 
-			if ($query instanceof Db\Queryable) {
+			if ($query instanceof Db\Sql) {
 				$params[] = $query;
 				$query = '?';
 			} else if ($query instanceof Query) {
-				$params[] = $query->getQuery();
+				$params[] = $query->createSqlQuery();
 				$query = '?';
 			}
 
@@ -457,11 +457,11 @@ class QueryBuilder
 		}
 		$columns = [];
 		foreach ($queryParams[Query::PARAM_RETURNING] as $key => $value) {
-			if ($value instanceof Db\Queryable) {
+			if ($value instanceof Db\Sql) {
 				$params[] = $value;
 				$value = '(?)';
 			} else if ($value instanceof Query) {
-				$params[] = $value->getQuery();
+				$params[] = $value->createSqlQuery();
 				$value = '(?)';
 			}
 			$columns[] = \sprintf('%s%s', $value, \is_int($key) ? '' : \sprintf(' AS %s', $key));
@@ -484,24 +484,22 @@ class QueryBuilder
 
 	/**
 	 * @param string|NULL $type
-	 * @param string|Db\Queryable|Query $table
+	 * @param string|Db\Sql|Query $table
 	 * @param string $alias
 	 * @param array $params
 	 * @return string
 	 */
 	private function processTable(?string $type, $table, string $alias, array &$params): string
 	{
-		if ($table instanceof Db\Queryable) {
+		if ($table instanceof Db\Sql) {
 			$params[] = $table;
-			if ($table instanceof Db\Query) {
+			if ($table instanceof Db\Sql\Query) {
 				$table = '(?)';
-			} else if ($table instanceof Db\Literal) {
-				$table = '?';
 			} else {
-				throw Exceptions\QueryBuilderException::badQueryable($table);
+				$table = '?';
 			}
 		} else if ($table instanceof Query) {
-			$params[] = $table->getQuery();
+			$params[] = $table->createSqlQuery();
 			$table = '(?)';
 		}
 		return (($type === NULL) ? '' : ($type . ' ')) . ($table === $alias ? $table : \sprintf('%s AS %s', $table, $alias));
@@ -525,7 +523,7 @@ class QueryBuilder
 				$cntParams = \count($conditionParams);
 				if (($cnt === 0) && ($cntParams === 1)) {
 					$param = \reset($conditionParams);
-					if (\is_array($param) || ($param instanceof Db\Queryable) || ($param instanceof Query)) {
+					if (\is_array($param) || ($param instanceof Db\Sql) || ($param instanceof Query)) {
 						$condition = \sprintf('%s IN (?)', $condition);
 					} else if ($param === NULL) {
 						$condition = \sprintf('%s IS NULL', $condition);
@@ -546,7 +544,7 @@ class QueryBuilder
 
 				foreach ($conditionParams as $param) {
 					if ($param instanceof Query) {
-						$param = $param->getQuery();
+						$param = $param->createSqlQuery();
 					}
 					$params[] = $param;
 				}

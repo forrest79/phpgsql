@@ -275,28 +275,28 @@ class Connection
 
 
 	/**
-	 * @param string|Query $query
+	 * @param string|Sql\Query $sqlQuery
 	 * @param mixed ...$params
 	 * @return Result
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
-	public function query($query, ...$params): Result
+	public function query($sqlQuery, ...$params): Result
 	{
-		return $this->queryArgs($query, $params);
+		return $this->queryArgs($sqlQuery, $params);
 	}
 
 
 	/**
-	 * @param string|Query $query
+	 * @param string|Sql\Query $sqlQuery
 	 * @param array $params
 	 * @return Result
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
-	public function queryArgs($query, array $params): Result
+	public function queryArgs($sqlQuery, array $params): Result
 	{
-		$query = Helper::prepareSql($this->normalizeQuery($query, $params));
+		$query = $this->normalizeSqlQuery($sqlQuery, $params)->createQuery();
 
 		$start = $this->onQuery !== [] ? \microtime(TRUE) : NULL;
 
@@ -338,11 +338,11 @@ class Connection
 
 		$resource = @\pg_query($this->getConnectedResource(), $sql); // intentionally @
 		if ($resource === FALSE) {
-			throw Exceptions\QueryException::queryFailed(new Query($sql), $this->getLastError());
+			throw Exceptions\QueryException::queryFailed(new Query($sql, []), $this->getLastError());
 		}
 
 		if ($start !== NULL) {
-			$this->onQuery(new Query($sql), \microtime(TRUE) - $start);
+			$this->onQuery(new Query($sql, []), \microtime(TRUE) - $start);
 		}
 
 		return $this;
@@ -350,28 +350,28 @@ class Connection
 
 
 	/**
-	 * @param string|Query $query
+	 * @param string|Sql\Query $sqlQuery
 	 * @param mixed ...$params
 	 * @return AsyncQuery
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
-	public function asyncQuery($query, ...$params): AsyncQuery
+	public function asyncQuery($sqlQuery, ...$params): AsyncQuery
 	{
-		return $this->asyncQueryArgs($query, $params);
+		return $this->asyncQueryArgs($sqlQuery, $params);
 	}
 
 
 	/**
-	 * @param string|Query $query
+	 * @param string|Sql\Query $sqlQuery
 	 * @param array $params
 	 * @return AsyncQuery
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
-	public function asyncQueryArgs($query, array $params): AsyncQuery
+	public function asyncQueryArgs($sqlQuery, array $params): AsyncQuery
 	{
-		$query = Helper::prepareSql($this->normalizeQuery($query, $params));
+		$query = $this->normalizeSqlQuery($sqlQuery, $params)->createQuery();
 		$this->asyncQuery = new AsyncQuery($this, $query);
 
 		$queryParams = $query->getParams();
@@ -406,7 +406,7 @@ class Connection
 		}
 
 		if ($this->onQuery !== []) {
-			$this->onQuery(new Query($sql));
+			$this->onQuery(new Query($sql, []));
 		}
 
 		return $this;
@@ -478,7 +478,7 @@ class Connection
 	{
 		if (\in_array(\pg_result_status($result), [\PGSQL_BAD_RESPONSE, \PGSQL_NONFATAL_ERROR, \PGSQL_FATAL_ERROR], TRUE)) {
 			throw Exceptions\QueryException::asyncQueryFailed(
-				$query instanceof Query ? $query : new Query($query),
+				$query instanceof Query ? $query : new Query($query, []),
 				(string) \pg_result_error_field($result, \PGSQL_DIAG_SQLSTATE),
 				(string) \pg_result_error($result)
 			);
@@ -555,19 +555,19 @@ class Connection
 
 
 	/**
-	 * @param string|Query $query
+	 * @param string|Sql\Query $query
 	 * @param array $params
-	 * @return Query
+	 * @return Sql\Query
 	 * @throws Exceptions\QueryException
 	 */
-	private function normalizeQuery($query, array $params): Query
+	private function normalizeSqlQuery($query, array $params): Sql\Query
 	{
-		if ($query instanceof Query) {
+		if ($query instanceof Sql\Query) {
 			if ($params !== []) {
 				throw Exceptions\QueryException::cantPassParams();
 			}
 		} else {
-			$query = Query::createArgs($query, $params);
+			$query = new Sql\Query($query, $params);
 		}
 
 		return $query;

@@ -189,7 +189,7 @@ class BasicTest extends TestCase
 	public function testPassParamToQuery(): void
 	{
 		Tester\Assert::exception(function (): void {
-			$query = Db\Query::create('SELECT 1');
+			$query = Db\Sql\Query::create('SELECT 1');
 			$this->connection->query($query, 1);
 		}, Db\Exceptions\QueryException::class, NULL, Db\Exceptions\QueryException::CANT_PASS_PARAMS);
 	}
@@ -199,7 +199,7 @@ class BasicTest extends TestCase
 	{
 		$result = $this->connection->query(
 			'SELECT generate_series FROM ?',
-			Db\Literal::createArgs('generate_series(?::integer, ?::integer, ?::integer)', [2, 1, -1])
+			Db\Sql\Expression::createArgs('generate_series(?::integer, ?::integer, ?::integer)', [2, 1, -1])
 		);
 
 		$rows = $result->fetchAssoc('generate_series');

@@ -12,7 +12,7 @@ parameters:
 		# === This is OK ===
 
 		-
-			message: '#Parameter \#1 \$table of method Forrest79\\PhPgSql\\Fluent\\Query::table\(\) expects Forrest79\\PhPgSql\\Db\\Queryable\|Forrest79\\PhPgSql\\Fluent\\Sql\|string, array<int, string> given\.#'
+			message: '#Parameter \#1 \$table of method Forrest79\\PhPgSql\\Fluent\\Query::table\(\) expects Forrest79\\PhPgSql\\Db\\Sql\|Forrest79\\PhPgSql\\Fluent\\Fluent\|string, array<int, string> given\.#'
 			path: %rootDir%/../../../tests/Unit/FluentQueryTest.php
 
 		-
@@ -50,7 +50,7 @@ parameters:
 			path: %rootDir%/../../../src/Db/ResultIterator.php
 
 		-
-			message: '#Parameter \#1 \$alias of static method Forrest79\\PhPgSql\\Fluent\\Exceptions\\QueryException::tableAliasAlreadyExists\(\) expects string, Forrest79\\PhPgSql\\Db\\Queryable\|Forrest79\\PhPgSql\\Fluent\\Sql\|string given\.#'
+			message: '#Parameter \#1 \$alias of static method Forrest79\\PhPgSql\\Fluent\\Exceptions\\QueryException::tableAliasAlreadyExists\(\) expects string, Forrest79\\PhPgSql\\Db\\Sql\|Forrest79\\PhPgSql\\Fluent\\Fluent\|string given\.#'
 			path: %rootDir%/../../../src/Fluent/Query.php
 
 		-

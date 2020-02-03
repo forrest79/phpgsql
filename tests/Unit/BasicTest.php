@@ -32,17 +32,21 @@ class BasicTest extends Tester\TestCase
 
 	public function testLiteral(): void
 	{
-		$literal1 = Db\Literal::create('now()');
-		Tester\Assert::same('now()', (string) $literal1);
+		$literal1 = Db\Sql\Literal::create('now()');
+		Tester\Assert::same('now()', $literal1->getSql());
 		Tester\Assert::same([], $literal1->getParams());
+	}
 
-		$literal2 = Db\Literal::create('generate_series(?, ?, ?)', 1, 2, 3);
-		Tester\Assert::same('generate_series(?, ?, ?)', (string) $literal2);
-		Tester\Assert::same([1, 2, 3], $literal2->getParams());
 
-		$literal3 = Db\Literal::createArgs('generate_series(?, ?, ?)', [1, 2, 3]);
-		Tester\Assert::same('generate_series(?, ?, ?)', (string) $literal3);
-		Tester\Assert::same([1, 2, 3], $literal3->getParams());
+	public function testExpression(): void
+	{
+		$expression = Db\Sql\Expression::create('generate_series(?, ?, ?)', 1, 2, 3);
+		Tester\Assert::same('generate_series(?, ?, ?)', $expression->getSql());
+		Tester\Assert::same([1, 2, 3], $expression->getParams());
+
+		$expression2 = Db\Sql\Expression::createArgs('generate_series(?, ?, ?)', [1, 2, 3]);
+		Tester\Assert::same('generate_series(?, ?, ?)', $expression2->getSql());
+		Tester\Assert::same([1, 2, 3], $expression2->getParams());
 	}
 
 

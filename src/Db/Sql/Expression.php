@@ -1,11 +1,13 @@
 <?php declare(strict_types=1);
 
-namespace Forrest79\PhPgSql\Db;
+namespace Forrest79\PhPgSql\Db\Sql;
 
-class Literal implements Queryable
+use Forrest79\PhPgSql\Db;
+
+class Expression implements Db\Sql
 {
 	/** @var string */
-	private $value;
+	private $sql;
 
 	/** @var array */
 	private $params;
@@ -13,24 +15,18 @@ class Literal implements Queryable
 
 	/**
 	 * @param string $value
-	 * @param mixed ...$params
+	 * @param mixed[] $params
 	 */
-	public function __construct(string $value, ...$params)
+	public function __construct(string $value, array $params)
 	{
-		$this->value = $value;
+		$this->sql = $value;
 		$this->params = $params;
-	}
-
-
-	public function __toString(): string
-	{
-		return $this->getSql();
 	}
 
 
 	function getSql(): string
 	{
-		return $this->value;
+		return $this->sql;
 	}
 
 
@@ -47,13 +43,13 @@ class Literal implements Queryable
 	 */
 	public static function create(string $value, ...$params): self
 	{
-		return new self($value, ...$params);
+		return new self($value, $params);
 	}
 
 
 	public static function createArgs(string $value, array $params): self
 	{
-		return new self($value, ...$params);
+		return new self($value, $params);
 	}
 
 }

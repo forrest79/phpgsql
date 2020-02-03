@@ -4,7 +4,7 @@ namespace Forrest79\PhPgSql\Fluent;
 
 use Forrest79\PhPgSql\Db;
 
-class Query implements Sql
+class Query implements Fluent
 {
 	public const QUERY_SELECT = 'select';
 	public const QUERY_INSERT = 'insert';
@@ -77,7 +77,7 @@ class Query implements Sql
 	/** @var array */
 	private $params = self::DEFAULT_PARAMS;
 
-	/** @var Db\Query|NULL */
+	/** @var Db\Sql\Query|NULL */
 	private $query;
 
 	/** @var QueryBuilder */
@@ -91,12 +91,12 @@ class Query implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Queryable $table
+	 * @param string|Fluent|Db\Sql $table
 	 * @param string|NULL $alias
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function table($table, ?string $alias = NULL): Sql
+	public function table($table, ?string $alias = NULL): Fluent
 	{
 		return $this->addTable(self::TABLE_TYPE_MAIN, $table, $alias);
 	}
@@ -107,7 +107,7 @@ class Query implements Sql
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function select(array $columns): Sql
+	public function select(array $columns): Fluent
 	{
 		$this->updateQuery();
 
@@ -128,7 +128,7 @@ class Query implements Sql
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function distinct(): Sql
+	public function distinct(): Fluent
 	{
 		$this->updateQuery();
 		$this->params[self::PARAM_DISTINCT] = TRUE;
@@ -137,12 +137,12 @@ class Query implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Queryable $from
+	 * @param string|Fluent|Db\Sql $from
 	 * @param string|NULL $alias
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function from($from, ?string $alias = NULL): Sql
+	public function from($from, ?string $alias = NULL): Fluent
 	{
 		return $this->addTable(self::TABLE_TYPE_FROM, $from, $alias);
 	}
@@ -150,116 +150,116 @@ class Query implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Queryable $join table or query
+	 * @param string|Fluent|Db\Sql $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function join($join, ?string $alias = NULL, $onCondition = NULL): Sql
+	public function join($join, ?string $alias = NULL, $onCondition = NULL): Fluent
 	{
 		return $this->innerJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @param string|Sql|Db\Queryable $join table or query
+	 * @param string|Fluent|Db\Sql $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function innerJoin($join, ?string $alias = NULL, $onCondition = NULL): Sql
+	public function innerJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent
 	{
 		return $this->addTable(self::JOIN_INNER, $join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @param string|Sql|Db\Queryable $join table or query
+	 * @param string|Fluent|Db\Sql $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function leftJoin($join, ?string $alias = NULL, $onCondition = NULL): Sql
+	public function leftJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent
 	{
 		return $this->leftOuterJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @param string|Sql|Db\Queryable $join table or query
+	 * @param string|Fluent|Db\Sql $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function leftOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Sql
+	public function leftOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent
 	{
 		return $this->addTable(self::JOIN_LEFT_OUTER, $join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @param string|Sql|Db\Queryable $join table or query
+	 * @param string|Fluent|Db\Sql $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function rightJoin($join, ?string $alias = NULL, $onCondition = NULL): Sql
+	public function rightJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent
 	{
 		return $this->rightOuterJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @param string|Sql|Db\Queryable $join table or query
+	 * @param string|Fluent|Db\Sql $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function rightOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Sql
+	public function rightOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent
 	{
 		return $this->addTable(self::JOIN_RIGHT_OUTER, $join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @param string|Sql|Db\Queryable $join table or query
+	 * @param string|Fluent|Db\Sql $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function fullJoin($join, ?string $alias = NULL, $onCondition = NULL): Sql
+	public function fullJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent
 	{
 		return $this->fullOuterJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @param string|Sql|Db\Queryable $join table or query
+	 * @param string|Fluent|Db\Sql $join table or query
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function fullOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Sql
+	public function fullOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent
 	{
 		return $this->addTable(self::JOIN_FULL_OUTER, $join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @param string|Sql|Db\Queryable $join table or query
+	 * @param string|Fluent|Db\Sql $join table or query
 	 * @param string|NULL $alias
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function crossJoin($join, ?string $alias = NULL): Sql
+	public function crossJoin($join, ?string $alias = NULL): Fluent
 	{
 		return $this->addTable(self::JOIN_CROSS, $join, $alias);
 	}
@@ -267,7 +267,7 @@ class Query implements Sql
 
 	/**
 	 * @param string $type
-	 * @param string|Sql|Db\Queryable $name
+	 * @param string|Fluent|Db\Sql $name
 	 * @param string|NULL $alias
 	 * @param string|array|Complex|NULL $onCondition
 	 * @return static
@@ -316,7 +316,7 @@ class Query implements Sql
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function on(string $alias, $condition): Sql
+	public function on(string $alias, $condition): Fluent
 	{
 		$this->updateQuery();
 
@@ -359,7 +359,7 @@ class Query implements Sql
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function where($condition, ...$params): Sql
+	public function where($condition, ...$params): Fluent
 	{
 		$this->updateQuery();
 		\array_unshift($params, $condition);
@@ -393,7 +393,7 @@ class Query implements Sql
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function groupBy(array $columns): Sql
+	public function groupBy(array $columns): Fluent
 	{
 		$this->updateQuery();
 		$this->params[self::PARAM_GROUPBY] = \array_merge($this->params[self::PARAM_GROUPBY], $columns);
@@ -407,7 +407,7 @@ class Query implements Sql
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function having($condition, ...$params): Sql
+	public function having($condition, ...$params): Fluent
 	{
 		$this->updateQuery();
 		\array_unshift($params, $condition);
@@ -441,7 +441,7 @@ class Query implements Sql
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function orderBy(array $columns): Sql
+	public function orderBy(array $columns): Fluent
 	{
 		$this->updateQuery();
 		$this->params[self::PARAM_ORDERBY] = \array_merge($this->params[self::PARAM_ORDERBY], $columns);
@@ -454,7 +454,7 @@ class Query implements Sql
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function limit(int $limit): Sql
+	public function limit(int $limit): Fluent
 	{
 		$this->updateQuery();
 		$this->params[self::PARAM_LIMIT] = $limit;
@@ -467,7 +467,7 @@ class Query implements Sql
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function offset(int $offset): Sql
+	public function offset(int $offset): Fluent
 	{
 		$this->updateQuery();
 		$this->params[self::PARAM_OFFSET] = $offset;
@@ -476,40 +476,40 @@ class Query implements Sql
 
 
 	/**
-	 * @param string|Sql|Db\Queryable $query
+	 * @param string|Fluent|Db\Sql $query
 	 * @return static
 	 */
-	public function union($query): Sql
+	public function union($query): Fluent
 	{
 		return $this->addCombine(self::COMBINE_UNION, $query);
 	}
 
 
 	/**
-	 * @param string|Sql|Db\Queryable $query
+	 * @param string|Fluent|Db\Sql $query
 	 * @return static
 	 */
-	public function unionAll($query): Sql
+	public function unionAll($query): Fluent
 	{
 		return $this->addCombine(self::COMBINE_UNION_ALL, $query);
 	}
 
 
 	/**
-	 * @param string|Sql|Db\Queryable $query
+	 * @param string|Fluent|Db\Sql $query
 	 * @return static
 	 */
-	public function intersect($query): Sql
+	public function intersect($query): Fluent
 	{
 		return $this->addCombine(self::COMBINE_INTERSECT, $query);
 	}
 
 
 	/**
-	 * @param string|Sql|Db\Queryable $query
+	 * @param string|Fluent|Db\Sql $query
 	 * @return static
 	 */
-	public function except($query): Sql
+	public function except($query): Fluent
 	{
 		return $this->addCombine(self::COMBINE_EXCEPT, $query);
 	}
@@ -517,7 +517,7 @@ class Query implements Sql
 
 	/**
 	 * @param string $type
-	 * @param string|Sql|Db\Queryable $query
+	 * @param string|Fluent|Db\Sql $query
 	 * @return static
 	 */
 	private function addCombine(string $type, $query): self
@@ -533,7 +533,7 @@ class Query implements Sql
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function insert(?string $into = NULL, ?array $columns = []): Sql
+	public function insert(?string $into = NULL, ?array $columns = []): Fluent
 	{
 		$this->updateQuery();
 
@@ -554,7 +554,7 @@ class Query implements Sql
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function values(array $data): Sql
+	public function values(array $data): Fluent
 	{
 		$this->updateQuery();
 		$this->queryType = self::QUERY_INSERT;
@@ -568,7 +568,7 @@ class Query implements Sql
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function rows(array $rows): Sql
+	public function rows(array $rows): Fluent
 	{
 		$this->updateQuery();
 
@@ -585,7 +585,7 @@ class Query implements Sql
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function update(?string $table = NULL, ?string $alias = NULL): Sql
+	public function update(?string $table = NULL, ?string $alias = NULL): Fluent
 	{
 		$this->updateQuery();
 
@@ -604,7 +604,7 @@ class Query implements Sql
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function set(array $data): Sql
+	public function set(array $data): Fluent
 	{
 		$this->updateQuery();
 		$this->queryType = self::QUERY_UPDATE;
@@ -619,7 +619,7 @@ class Query implements Sql
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function delete(?string $from = NULL, ?string $alias = NULL): Sql
+	public function delete(?string $from = NULL, ?string $alias = NULL): Fluent
 	{
 		$this->updateQuery();
 
@@ -638,7 +638,7 @@ class Query implements Sql
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function returning(array $returning): Sql
+	public function returning(array $returning): Fluent
 	{
 		$this->updateQuery();
 		$this->params[self::PARAM_RETURNING] = \array_merge($this->params[self::PARAM_RETURNING], $returning);
@@ -651,7 +651,7 @@ class Query implements Sql
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function truncate(?string $table = NULL): Sql
+	public function truncate(?string $table = NULL): Fluent
 	{
 		$this->updateQuery();
 
@@ -671,7 +671,7 @@ class Query implements Sql
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function prefix(string $queryPrefix, ...$params): Sql
+	public function prefix(string $queryPrefix, ...$params): Fluent
 	{
 		$this->updateQuery();
 		\array_unshift($params, $queryPrefix);
@@ -686,7 +686,7 @@ class Query implements Sql
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function sufix(string $querySufix, ...$params): Sql
+	public function sufix(string $querySufix, ...$params): Fluent
 	{
 		$this->updateQuery();
 		\array_unshift($params, $querySufix);
@@ -719,15 +719,15 @@ class Query implements Sql
 
 
 	/**
-	 * @param self|Db\Queryable|mixed $data
+	 * @param self|Db\Sql|mixed $data
 	 * @param string|NULL $alias
 	 * @throws Exceptions\QueryException
 	 */
 	private function checkQueryable($data, ?string $alias): void
 	{
-		if ((($data instanceof self) || ($data instanceof Db\Queryable)) && ($alias === NULL)) {
+		if ((($data instanceof self) || ($data instanceof Db\Sql)) && ($alias === NULL)) {
 			throw Exceptions\QueryException::queryableMustHaveAlias();
-		} else if (!\is_scalar($data) && !($data instanceof self) && !($data instanceof Db\Queryable)) {
+		} else if (!\is_scalar($data) && !($data instanceof self) && !($data instanceof Db\Sql)) {
 			throw Exceptions\QueryException::columnMustBeScalarOrQueryable();
 		}
 	}
@@ -736,10 +736,10 @@ class Query implements Sql
 	/**
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	public function getQuery(): Db\Query
+	public function createSqlQuery(): Db\Sql\Query
 	{
 		if ($this->query === NULL) {
-			$this->query = $this->queryBuilder->createQuery($this->queryType, $this->params);
+			$this->query = $this->queryBuilder->createSqlQuery($this->queryType, $this->params);
 		}
 		return $this->query;
 	}
@@ -748,9 +748,9 @@ class Query implements Sql
 	/**
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	public function prepareSql(): Db\Query
+	public function createQuery(): Db\Query
 	{
-		return Db\Helper::prepareSql($this->getQuery());
+		return $this->createSqlQuery()->createQuery();
 	}
 
 }
