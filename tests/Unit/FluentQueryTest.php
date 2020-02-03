@@ -26,6 +26,7 @@ class FluentQueryTest extends Tester\TestCase
 			->orderBy(['column'])
 			->limit(10)
 			->offset(20)
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('SELECT DISTINCT column FROM table AS t WHERE (column = $1) AND (text IS NULL) GROUP BY column ORDER BY column LIMIT $2 OFFSET $3', $query->getSql());
@@ -37,6 +38,7 @@ class FluentQueryTest extends Tester\TestCase
 	{
 		$query = $this->query()
 			->select(['column' => $this->query()->select([1])])
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('SELECT (SELECT 1) AS "column"', $query->getSql());
@@ -48,6 +50,7 @@ class FluentQueryTest extends Tester\TestCase
 	{
 		$query = $this->query()
 			->select(['column' => new Db\Sql\Query('SELECT 1')])
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('SELECT (SELECT 1) AS "column"', $query->getSql());
@@ -59,6 +62,7 @@ class FluentQueryTest extends Tester\TestCase
 	{
 		$query = $this->query()
 			->select(['column' => 'another', 'next', 10 => 'column_with_integer_key', '1' => 'column_with_integer_in_string_key', 'a' => 'b'])
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('SELECT another AS "column", next, column_with_integer_key, column_with_integer_in_string_key, b AS "a"', $query->getSql());
@@ -71,6 +75,7 @@ class FluentQueryTest extends Tester\TestCase
 		$query = $this->query()
 			->select(['x.column'])
 			->from($this->query()->select(['column' => 1]), 'x')
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('SELECT x.column FROM (SELECT 1 AS "column") AS x', $query->getSql());
@@ -83,6 +88,7 @@ class FluentQueryTest extends Tester\TestCase
 		$query = $this->query()
 			->select(['x.column'])
 			->from(new Db\Sql\Query('SELECT 1 AS column'), 'x')
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('SELECT x.column FROM (SELECT 1 AS column) AS x', $query->getSql());
@@ -95,6 +101,7 @@ class FluentQueryTest extends Tester\TestCase
 		$query = $this->query()
 			->select(['gs'])
 			->from(Db\Sql\Expression::create('generate_series(?::integer, ?::integer, ?::integer)', 2, 1, -1), 'gs')
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('SELECT gs FROM generate_series($1::integer, $2::integer, $3::integer) AS gs', $query->getSql());
@@ -108,6 +115,7 @@ class FluentQueryTest extends Tester\TestCase
 			->select(['column'])
 			->from('table1', 't1')
 			->from('table2', 't2')
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('SELECT column FROM table1 AS t1, table2 AS t2', $query->getSql());
@@ -121,6 +129,7 @@ class FluentQueryTest extends Tester\TestCase
 			->select(['x.column'])
 			->from('table', 't')
 			->join($this->query()->select(['column' => 1]), 'x', 'x.column = t.id')
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN (SELECT 1 AS "column") AS x ON x.column = t.id', $query->getSql());
@@ -134,6 +143,7 @@ class FluentQueryTest extends Tester\TestCase
 			->select(['x.column'])
 			->from('table', 't')
 			->join(new Db\Sql\Query('SELECT 1 AS column'), 'x', 'x.column = t.id')
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN (SELECT 1 AS column) AS x ON x.column = t.id', $query->getSql());
@@ -147,6 +157,7 @@ class FluentQueryTest extends Tester\TestCase
 			->select(['x.column'])
 			->from('table', 't')
 			->join('another', 'x', [['x.column = t.id'], ['x.id = 2']])
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another AS x ON (x.column = t.id) AND (x.id = 2)', $query->getSql());
@@ -160,6 +171,7 @@ class FluentQueryTest extends Tester\TestCase
 			->select(['x.column'])
 			->from('table', 't')
 			->join('another', 'x', [['x.column = t.id'], ['x.id', 2]])
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another AS x ON (x.column = t.id) AND (x.id = $1)', $query->getSql());
@@ -175,6 +187,7 @@ class FluentQueryTest extends Tester\TestCase
 			->join('another', 'x', 'x.column = t.id')
 				->on('x', ['x.id', 2])
 				->on('x', 'x.id = 3')
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another AS x ON (x.column = t.id) AND (x.id = $1) AND (x.id = 3)', $query->getSql());
@@ -195,6 +208,7 @@ class FluentQueryTest extends Tester\TestCase
 			->select(['x.column'])
 			->from('table', 't')
 			->join('another', 'x', $complexOn)
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another AS x ON ((x.column = t.id) AND (x.id IN ($1, $2))) OR (x.column = 3)', $query->getSql());
@@ -209,7 +223,7 @@ class FluentQueryTest extends Tester\TestCase
 				->select(['x.column'])
 				->from('table', 't')
 				->join('another', 'x')
-				->createQuery();
+				->createSqlQuery();
 		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::NO_JOIN_CONDITIONS);
 	}
 
@@ -220,6 +234,7 @@ class FluentQueryTest extends Tester\TestCase
 			->from('table', 't')
 			->select(['column'])
 			->union('SELECT column FROM table2 AS t2')
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('SELECT column FROM table AS t UNION (SELECT column FROM table2 AS t2)', $query->getSql());
@@ -237,6 +252,7 @@ class FluentQueryTest extends Tester\TestCase
 					->select(['column'])
 					->from('table2', 't2')
 			)
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('SELECT column FROM table AS t UNION (SELECT column FROM table2 AS t2)', $query->getSql());
@@ -250,6 +266,7 @@ class FluentQueryTest extends Tester\TestCase
 			->from('table', 't')
 			->select(['column'])
 			->union(new Db\Sql\Query('SELECT column FROM table2 AS t2'))
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('SELECT column FROM table AS t UNION (SELECT column FROM table2 AS t2)', $query->getSql());
@@ -262,7 +279,7 @@ class FluentQueryTest extends Tester\TestCase
 		Tester\Assert::exception(function (): void {
 			$this->query()
 				->from('table')
-				->createQuery();
+				->createSqlQuery();
 		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::NO_COLUMNS_TO_SELECT);
 	}
 
@@ -273,6 +290,7 @@ class FluentQueryTest extends Tester\TestCase
 			->select(['column'])
 			->from('table', 't')
 			->orderBy([$this->query()->select(['sort_by_value(column)'])])
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('SELECT column FROM table AS t ORDER BY (SELECT sort_by_value(column))', $query->getSql());
@@ -286,6 +304,7 @@ class FluentQueryTest extends Tester\TestCase
 			->select(['column'])
 			->from('table', 't')
 			->orderBy([new Db\Sql\Query('sort_by_value(column)')])
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('SELECT column FROM table AS t ORDER BY (sort_by_value(column))', $query->getSql());
@@ -301,6 +320,7 @@ class FluentQueryTest extends Tester\TestCase
 			])
 			->insert('table')
 			->returning(['column'])
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('INSERT INTO table(column) VALUES($1) RETURNING column', $query->getSql());
@@ -320,6 +340,7 @@ class FluentQueryTest extends Tester\TestCase
 				'column2' => 2,
 				'column3' => 1,
 			])
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('INSERT INTO table(column2, column3, column1) VALUES($1, $2, $3)', $query->getSql());
@@ -337,6 +358,7 @@ class FluentQueryTest extends Tester\TestCase
 			])
 			->insert('table')
 			->returning(['column'])
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('INSERT INTO table(column) VALUES($1), ($2), ($3) RETURNING column', $query->getSql());
@@ -356,6 +378,7 @@ class FluentQueryTest extends Tester\TestCase
 				['column' => 4],
 			])
 			->insert('table')
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('INSERT INTO table(column) VALUES($1), ($2), ($3), ($4)', $query->getSql());
@@ -370,6 +393,7 @@ class FluentQueryTest extends Tester\TestCase
 			->select(['column'])
 			->from('table2', 't2')
 			->returning(['name'])
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('INSERT INTO table(name) SELECT column FROM table2 AS t2 RETURNING name', $query->getSql());
@@ -384,6 +408,7 @@ class FluentQueryTest extends Tester\TestCase
 			->select(['column', 'name' => 'column2'])
 			->from('table2', 't2')
 			->returning(['column'])
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('INSERT INTO table(column, name) SELECT column, column2 AS "name" FROM table2 AS t2 RETURNING column', $query->getSql());
@@ -396,7 +421,7 @@ class FluentQueryTest extends Tester\TestCase
 		Tester\Assert::exception(function (): void {
 			$this->query()
 				->insert('table')
-				->createQuery();
+				->createSqlQuery();
 		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::NO_DATA_TO_INSERT);
 	}
 
@@ -412,6 +437,7 @@ class FluentQueryTest extends Tester\TestCase
 			->from('table2', 't2')
 			->where('t2.column', 100)
 			->returning(['t.column'])
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('UPDATE table AS t SET column = $1, column_from = t2.id FROM table2 AS t2 WHERE t2.column = $2 RETURNING t.column', $query->getSql());
@@ -431,6 +457,7 @@ class FluentQueryTest extends Tester\TestCase
 				'column2' => 2,
 				'column3' => 1,
 			])
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('UPDATE table AS t SET column2 = $1, column3 = $2, column1 = $3', $query->getSql());
@@ -443,7 +470,7 @@ class FluentQueryTest extends Tester\TestCase
 		Tester\Assert::exception(function (): void {
 			$this->query()
 				->update('table')
-				->createQuery();
+				->createSqlQuery();
 		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::NO_DATA_TO_UPDATE);
 	}
 
@@ -454,7 +481,7 @@ class FluentQueryTest extends Tester\TestCase
 			$this->query()
 				->update()
 				->set(['column' => 1])
-				->createQuery();
+				->createSqlQuery();
 		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::NO_MAIN_TABLE);
 	}
 
@@ -465,6 +492,7 @@ class FluentQueryTest extends Tester\TestCase
 			->delete('table', 't')
 			->where('column', 100)
 			->returning(['c' => 'column'])
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('DELETE FROM table AS t WHERE column = $1 RETURNING column AS "c"', $query->getSql());
@@ -474,7 +502,7 @@ class FluentQueryTest extends Tester\TestCase
 
 	public function testTruncate(): void
 	{
-		$query = $this->query()->truncate('table')->createQuery();
+		$query = $this->query()->truncate('table')->createSqlQuery()->createQuery();
 		Tester\Assert::same('TRUNCATE table', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
 	}
@@ -486,6 +514,7 @@ class FluentQueryTest extends Tester\TestCase
 			->delete('table', 't')
 			->where('column', 100)
 			->returning(['c' => $this->query()->select(['to_value(column)'])])
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('DELETE FROM table AS t WHERE column = $1 RETURNING (SELECT to_value(column)) AS "c"', $query->getSql());
@@ -499,6 +528,7 @@ class FluentQueryTest extends Tester\TestCase
 			->delete('table', 't')
 			->where('column', 100)
 			->returning(['c' => new Db\Sql\Query('to_value(column)')])
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('DELETE FROM table AS t WHERE column = $1 RETURNING (to_value(column)) AS "c"', $query->getSql());
@@ -518,6 +548,7 @@ class FluentQueryTest extends Tester\TestCase
 			->from('table')
 			->where('column', 100)
 			->prefix('WITH cte AS (?)', $withQuery)
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('WITH cte AS (SELECT columnWith FROM tableWith WHERE columnWith > $1) SELECT column FROM table WHERE column = $2', $query->getSql());
@@ -532,6 +563,7 @@ class FluentQueryTest extends Tester\TestCase
 			->from('table')
 			->where('column', 100)
 			->sufix('FOR UPDATE')
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('SELECT column FROM table WHERE column = $1 FOR UPDATE', $query->getSql());
@@ -540,6 +572,7 @@ class FluentQueryTest extends Tester\TestCase
 		$query = $this->query()
 			->truncate('table')
 			->sufix('CASCADE')
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('TRUNCATE table CASCADE', $query->getSql());
@@ -554,6 +587,7 @@ class FluentQueryTest extends Tester\TestCase
 			->values(['column' => 'value'])
 			->sufix('ON CONFLICT (column) DO NOTHING')
 			->returning(['column'])
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('INSERT INTO table(column) VALUES($1) ON CONFLICT (column) DO NOTHING RETURNING column', $query->getSql());
@@ -564,6 +598,7 @@ class FluentQueryTest extends Tester\TestCase
 			->set(['column' => 'value'])
 			->sufix('WHERE CURRENT OF cursor_name')
 			->returning(['column'])
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('UPDATE table SET column = $1 WHERE CURRENT OF cursor_name RETURNING column', $query->getSql());
@@ -573,6 +608,7 @@ class FluentQueryTest extends Tester\TestCase
 			->delete('table')
 			->sufix('WHERE CURRENT OF cursor_name')
 			->returning(['column'])
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('DELETE FROM table WHERE CURRENT OF cursor_name RETURNING column', $query->getSql());
@@ -593,6 +629,7 @@ class FluentQueryTest extends Tester\TestCase
 		$query = $complexOr->query()
 			->select(['*'])
 			->from('table')
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('SELECT * FROM table WHERE (column = $1) OR (column2 IN ($2, $3)) OR ((column IN (SELECT 1)) AND (column2 = ANY(SELECT 2))) OR (column3 IS NOT NULL)', $query->getSql());
@@ -614,6 +651,7 @@ class FluentQueryTest extends Tester\TestCase
 			->select(['*'])
 			->from('table')
 			->groupBy(['column', 'column2'])
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('SELECT * FROM table GROUP BY column, column2 HAVING (column = $1) OR (column2 IN ($2, $3)) OR ((column IN (SELECT 1)) AND (column2 = ANY(SELECT 2))) OR (column3 IS NOT NULL)', $query->getSql());
@@ -629,7 +667,7 @@ class FluentQueryTest extends Tester\TestCase
 					->add('columns = ? AND column2 = ?', 1, 2, 3)
 				->query()
 				->select(['*'])
-				->createQuery();
+				->createSqlQuery();
 		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::BAD_PARAMS_COUNT);
 	}
 
@@ -659,7 +697,7 @@ class FluentQueryTest extends Tester\TestCase
 		$query = $this->query()
 			->select([1]);
 
-		$sql = $query->createQuery();
+		$sql = $query->createSqlQuery()->createQuery();
 
 		Tester\Assert::same('SELECT 1', $sql->getSql());
 		Tester\Assert::same([], $sql->getParams());
@@ -667,6 +705,7 @@ class FluentQueryTest extends Tester\TestCase
 		$query2 = $query
 			->reset(Fluent\Query::PARAM_SELECT)
 			->select([2])
+			->createSqlQuery()
 			->createQuery();
 
 		Tester\Assert::same('SELECT 2', $query2->getSql());

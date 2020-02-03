@@ -744,13 +744,4 @@ class Query implements Fluent
 		return $this->query;
 	}
 
-
-	/**
-	 * @throws Exceptions\QueryBuilderException
-	 */
-	public function createQuery(): Db\Query
-	{
-		return $this->createSqlQuery()->createQuery();
-	}
-
 }
