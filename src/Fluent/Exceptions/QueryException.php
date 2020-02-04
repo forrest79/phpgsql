@@ -54,10 +54,4 @@ class QueryException extends Exception
 		return new self('You must execute query before that', self::YOU_MUST_EXECUTE_QUERY_BEFORE_THAT);
 	}
 
-
-	public static function badParam(string $param, string $value, array $validValues): self
-	{
-		return new self(\sprintf('Bad param \'%s\' with value \'%s\'. Valid values are \'%s\'.', $param, $value, \implode('\', \'', $validValues)), self::YOU_MUST_EXECUTE_QUERY_BEFORE_THAT);
-	}
-
 }

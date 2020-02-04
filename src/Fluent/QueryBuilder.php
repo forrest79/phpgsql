@@ -413,7 +413,7 @@ class QueryBuilder
 			return \sprintf(' %s', \implode(' ', $processedItems));
 		}
 
-		throw Exceptions\QueryException::badParam('$type', $type, [Query::PARAM_PREFIX, Query::PARAM_SUFFIX]);
+		throw Exceptions\QueryBuilderException::badParam('$type', $type, [Query::PARAM_PREFIX, Query::PARAM_SUFFIX]);
 	}
 
 

@@ -242,6 +242,14 @@ class BasicTest extends TestCase
 	}
 
 
+	public function testResultGetResource(): void
+	{
+		$result = $this->connection->query('SELECT 1');
+
+		Tester\Assert::same(1, \pg_num_fields($result->getResource()));
+	}
+
+
 	public function testGetNotifications(): void
 	{
 		$this->skipOnTravis();

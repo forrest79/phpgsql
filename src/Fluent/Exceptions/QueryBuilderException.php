@@ -11,6 +11,7 @@ class QueryBuilderException extends Exception
 	public const NO_DATA_TO_UPDATE = 5;
 	public const NO_MAIN_TABLE = 6;
 	public const BAD_PARAMS_COUNT = 7;
+	public const BAD_PARAM = 8;
 
 
 	public static function badQueryType(string $type): self
@@ -52,6 +53,12 @@ class QueryBuilderException extends Exception
 	public static function badParamsCount(string $condition, int $expected, int $actual): self
 	{
 		return new self(\sprintf('In condition \'%s\' is expected %d paramerters, but %d was passed.', $condition, $expected, $actual), self::BAD_PARAMS_COUNT);
+	}
+
+
+	public static function badParam(string $param, string $value, array $validValues): self
+	{
+		return new self(\sprintf('Bad param \'%s\' with value \'%s\'. Valid values are \'%s\'.', $param, $value, \implode('\', \'', $validValues)), self::BAD_PARAM);
 	}
 
 }

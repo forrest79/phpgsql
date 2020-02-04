@@ -305,6 +305,47 @@ class FetchTest extends TestCase
 	}
 
 
+	public function testFetchRowAsJson(): void
+	{
+		$result = $this->connection->query('SELECT 1 AS number_column, \'test\'::text AS text_column, TRUE AS boolean_column, NULL AS null_column');
+
+		$row = $result->fetch();
+
+		Tester\Assert::same(
+			'{"number_column":1,"text_column":"test","boolean_column":true,"null_column":null}',
+			\json_encode($row)
+		);
+
+		$result->free();
+	}
+
+
+	public function testFetchBadOffset(): void
+	{
+		$result = $this->connection->query('SELECT 1');
+
+		$row = $result->fetch();
+
+		Tester\Assert::exception(static function () use ($row): void {
+			$row[1];
+		}, Db\Exceptions\RowException::class, NULL, Db\Exceptions\RowException::NOT_STRING_KEY);
+
+		Tester\Assert::exception(static function () use ($row): void {
+			$row[1] = 'value';
+		}, Db\Exceptions\RowException::class, NULL, Db\Exceptions\RowException::NOT_STRING_KEY);
+
+		Tester\Assert::exception(static function () use ($row): void {
+			isset($row[1]);
+		}, Db\Exceptions\RowException::class, NULL, Db\Exceptions\RowException::NOT_STRING_KEY);
+
+		Tester\Assert::exception(static function () use ($row): void {
+			unset($row[1]);
+		}, Db\Exceptions\RowException::class, NULL, Db\Exceptions\RowException::NOT_STRING_KEY);
+
+		$result->free();
+	}
+
+
 	public function testFetchPairsBadKeyOrValue(): void
 	{
 		$this->connection->query('
