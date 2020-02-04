@@ -442,6 +442,13 @@ class Connection extends Db\Connection implements Fluent
 	}
 
 
+	public function setQueryBuilder(QueryBuilder $queryBuilder): self
+	{
+		$this->queryBuilder = $queryBuilder;
+		return $this;
+	}
+
+
 	protected function getQueryBuilder(): QueryBuilder
 	{
 		if ($this->queryBuilder === NULL) {
