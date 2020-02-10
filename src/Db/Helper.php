@@ -19,7 +19,7 @@ class Helper
 		foreach ($array as $i => $value) {
 			$array[$i] = \str_replace('"', '\"', $value);
 		}
-		return \sprintf('{"%s"}', \implode('","', $array));
+		return '{"' . \implode('","', $array) . '"}';
 	}
 
 
@@ -28,7 +28,7 @@ class Helper
 		if ($array === []) {
 			return '{}';
 		}
-		return \sprintf('{%s}', \implode(',', $array));
+		return '{' . \implode(',', $array) . '}';
 	}
 
 
@@ -41,7 +41,7 @@ class Helper
 		static $keywords2 = 'ALL|DISTINCT|IGNORE|AS|USING|ON|AND|OR|IN|IS|NOT|NULL|LIKE|ILIKE|TRUE|FALSE';
 
 		// insert new lines
-		$sql = \sprintf(' %s ', $sql);
+		$sql = ' ' . $sql . ' ';
 		$sql = (string) \preg_replace(\sprintf('#(?<=[\\s,(])(%s)(?=[\\s,)])#i', $keywords1), "\n\$1", $sql); // intentionally (string), other can't be returned
 
 		// reduce spaces

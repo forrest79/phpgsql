@@ -64,7 +64,7 @@ class DataTypeCacheTest extends TestCase
 
 		\file_put_contents(
 			$this->getDataTypeCacheFile($this->connection),
-			'<?php declare(strict_types=1);' . \PHP_EOL . \sprintf('return [1=>\'%s\'];', $type)
+			'<?php declare(strict_types=1);' . \PHP_EOL . 'return [1=>\'' . $type . '\'];'
 		);
 
 		$dataTypeCacheNew = $this->createDataTypeCache();

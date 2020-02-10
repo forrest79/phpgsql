@@ -70,12 +70,12 @@ class QueryBuilder
 	{
 		$mainTableAlias = $this->getMainTableAlias($queryParams);
 
-		$insert = \sprintf('INSERT %s', $this->processTable(
+		$insert = 'INSERT ' . $this->processTable(
 			'INTO',
 			$queryParams[Query::PARAM_TABLES][$mainTableAlias][self::TABLE_NAME],
 			$mainTableAlias,
 			$params
-		));
+		);
 
 		$columns = [];
 		$rows = [];
@@ -118,11 +118,11 @@ class QueryBuilder
 				$this->getHaving($queryParams, $params) .
 				$this->combine($queryParams, $params);
 		} else {
-			$data = \sprintf(' VALUES(%s)', \implode('), (', $rows));
+			$data = ' VALUES(' . \implode('), (', $rows) . ')';
 		}
 
 		return $insert .
-			\sprintf('(%s)', \implode(', ', $columns)) .
+			'(' . \implode(', ', $columns) . ')' .
 			$data .
 			$this->getPrefixSuffix($queryParams, Query::PARAM_SUFFIX, $params) .
 			$this->getReturning($queryParams, $params);
@@ -142,16 +142,16 @@ class QueryBuilder
 
 		$set = [];
 		foreach ($queryParams[Query::PARAM_DATA] as $column => $value) {
-			$set[] = \sprintf('%s = ?', $column);
+			$set[] = $column . ' = ?';
 			$params[] = $value;
 		}
 
-		return \sprintf('UPDATE %s SET %s', $this->processTable(
+		return 'UPDATE ' . $this->processTable(
 				NULL,
 				$queryParams[Query::PARAM_TABLES][$mainTableAlias][self::TABLE_NAME],
 				$mainTableAlias,
 				$params
-			), \implode(', ', $set)) .
+			) . ' SET ' . \implode(', ', $set) .
 			$this->getFrom($queryParams, $params, FALSE) .
 			$this->getJoins($queryParams, $params) .
 			$this->getWhere($queryParams, $params) .
@@ -166,12 +166,12 @@ class QueryBuilder
 	private function createDelete(array $queryParams, array &$params): string
 	{
 		$mainTableAlias = $this->getMainTableAlias($queryParams);
-		return \sprintf('DELETE %s', $this->processTable(
+		return 'DELETE ' . $this->processTable(
 				'FROM',
 				$queryParams[Query::PARAM_TABLES][$mainTableAlias][self::TABLE_NAME],
 				$mainTableAlias,
 				$params
-			)) .
+			) .
 			$this->getWhere($queryParams, $params) .
 			$this->getPrefixSuffix($queryParams, Query::PARAM_SUFFIX, $params) .
 			$this->getReturning($queryParams, $params);
@@ -183,7 +183,7 @@ class QueryBuilder
 	 */
 	private function createTruncate(array $queryParams): string
 	{
-		return \sprintf('TRUNCATE %s', $queryParams[Query::PARAM_TABLES][$this->getMainTableAlias($queryParams)][self::TABLE_NAME]);
+		return 'TRUNCATE ' . $queryParams[Query::PARAM_TABLES][$this->getMainTableAlias($queryParams)][self::TABLE_NAME];
 	}
 
 
@@ -214,7 +214,7 @@ class QueryBuilder
 			if ($columnNames !== NULL) {
 				$columnNames[] = \is_int($key) ? $value : $key;
 			}
-			$columns[] = $value . (\is_int($key) ? '' : \sprintf(' AS "%s"', $key));
+			$columns[] = $value . (\is_int($key) ? '' : (' AS "' . $key . '"'));
 		}
 
 		return \implode(', ', $columns);
@@ -277,10 +277,9 @@ class QueryBuilder
 					throw Exceptions\QueryBuilderException::noJoinConditions($tableAlias);
 				}
 
-				$joins[] = \sprintf(
-					'%s ON %s',
-					$table,
-					$this->processComplex(Complex::createAnd($queryParams[Query::PARAM_JOIN_CONDITIONS][$tableAlias]), $params)
+				$joins[] = $table . ' ON ' . $this->processComplex(
+					Complex::createAnd($queryParams[Query::PARAM_JOIN_CONDITIONS][$tableAlias]),
+					$params
 				);
 			}
 		}
@@ -300,7 +299,7 @@ class QueryBuilder
 			return '';
 		}
 
-		return \sprintf(' WHERE %s', $this->processComplex(Complex::createAnd($where), $params));
+		return ' WHERE ' . $this->processComplex(Complex::createAnd($where), $params);
 	}
 
 
@@ -308,7 +307,7 @@ class QueryBuilder
 	{
 		return $queryParams[Query::PARAM_GROUPBY] === []
 			? ''
-			: \sprintf(' GROUP BY %s', \implode(', ', $queryParams[Query::PARAM_GROUPBY]));
+			: ' GROUP BY ' . \implode(', ', $queryParams[Query::PARAM_GROUPBY]);
 	}
 
 
@@ -323,7 +322,7 @@ class QueryBuilder
 			return '';
 		}
 
-		return \sprintf(' HAVING %s', $this->processComplex(Complex::createAnd($having), $params));
+		return ' HAVING ' . $this->processComplex(Complex::createAnd($having), $params);
 	}
 
 
@@ -350,7 +349,7 @@ class QueryBuilder
 			$columns[] = $value;
 		}
 
-		return \sprintf(' ORDER BY %s', \implode(', ', $columns));
+		return ' ORDER BY ' . \implode(', ', $columns);
 	}
 
 
@@ -408,9 +407,9 @@ class QueryBuilder
 		}
 
 		if ($type === Query::PARAM_PREFIX) {
-			return \sprintf('%s ', \implode(' ', $processedItems));
+			return \implode(' ', $processedItems) . ' ';
 		} else if ($type === Query::PARAM_SUFFIX) {
-			return \sprintf(' %s', \implode(' ', $processedItems));
+			return ' ' . \implode(' ', $processedItems);
 		}
 
 		throw Exceptions\QueryBuilderException::badParam('$type', $type, [Query::PARAM_PREFIX, Query::PARAM_SUFFIX]);
@@ -440,7 +439,7 @@ class QueryBuilder
 				$query = '?';
 			}
 
-			$combines[] = \sprintf('%s (%s)', $type, $query);
+			$combines[] = $type . ' (' . $query . ')';
 		}
 
 		return ' ' . \implode(' ', $combines);
@@ -464,9 +463,9 @@ class QueryBuilder
 				$params[] = $value->createSqlQuery();
 				$value = '(?)';
 			}
-			$columns[] = $value . (\is_int($key) ? '' : \sprintf(' AS "%s"', $key));
+			$columns[] = $value . (\is_int($key) ? '' : (' AS "' . $key . '"'));
 		}
-		return \sprintf(' RETURNING %s', \implode(', ', $columns));
+		return ' RETURNING ' . \implode(', ', $columns);
 	}
 
 
@@ -502,7 +501,7 @@ class QueryBuilder
 			$params[] = $table->createSqlQuery();
 			$table = '(?)';
 		}
-		return (($type === NULL) ? '' : ($type . ' ')) . ($table === $alias ? $table : \sprintf('%s AS %s', $table, $alias));
+		return (($type === NULL) ? '' : ($type . ' ')) . ($table === $alias ? $table : ($table . ' AS ' . $alias));
 	}
 
 
@@ -524,12 +523,12 @@ class QueryBuilder
 				if (($cnt === 0) && ($cntParams === 1)) {
 					$param = \reset($conditionParams);
 					if (\is_array($param) || ($param instanceof Db\Sql) || ($param instanceof Query)) {
-						$condition = \sprintf('%s IN (?)', $condition);
+						$condition .= ' IN (?)';
 					} else if ($param === NULL) {
-						$condition = \sprintf('%s IS NULL', $condition);
+						$condition .= ' IS NULL';
 						\array_shift($conditionParams);
 					} else {
-						$condition = \sprintf('%s = ?', $condition);
+						$condition .= ' = ?';
 					}
 					$cnt = 1;
 				}
@@ -539,7 +538,7 @@ class QueryBuilder
 				}
 
 				if ($withoutParentheses === FALSE) {
-					$condition = \sprintf('(%s)', $condition);
+					$condition = '(' . $condition . ')';
 				}
 
 				foreach ($conditionParams as $param) {
@@ -553,7 +552,7 @@ class QueryBuilder
 			$processedConditions[] = $condition;
 		}
 
-		return \implode(\sprintf(' %s ', $complex->getType()), $processedConditions);
+		return \implode(' ' . $complex->getType() . ' ', $processedConditions);
 	}
 
 }

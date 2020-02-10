@@ -81,7 +81,7 @@ class PhpFile extends DbLoader
 	{
 		$cache = '';
 		foreach ($data as $oid => $typname) {
-			$cache .= \sprintf("%d=>'%s',", $oid, \str_replace("'", "\\'", $typname));
+			$cache .= $oid . '=>\'' . \str_replace("'", "\\'", $typname) . '\',';
 		}
 		return $cache;
 	}

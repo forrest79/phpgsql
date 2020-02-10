@@ -231,11 +231,8 @@ class BasicPhpBenchmark extends BenchmarkCase
 	 */
 	public function benchmarkStringConcatenation(): void
 	{
-		$keys = '';
-		for ($i = 0; $i < 10; $i++) {
-			$keys .= '$' . $i . ', ';
-		}
-		$keys = \substr($keys, 0, -2);
+		$i = 'a';
+		$i = '$' . $i . ', ';
 	}
 
 
@@ -244,11 +241,8 @@ class BasicPhpBenchmark extends BenchmarkCase
 	 */
 	public function benchmarkStringConcatenationDoubleQuotes(): void
 	{
-		$keys = '';
-		for ($i = 0; $i < 10; $i++) {
-			$keys .= "$$i, ";
-		}
-		$keys = \substr($keys, 0, -2);
+		$i = 'a';
+		$i = "$$i, ";
 	}
 
 
@@ -257,11 +251,53 @@ class BasicPhpBenchmark extends BenchmarkCase
 	 */
 	public function benchmarkStringConcatenationSprintf(): void
 	{
-		$keys = '';
-		for ($i = 0; $i < 10; $i++) {
-			$keys .= \sprintf('$%d, ', $i);
-		}
-		$keys = \substr($keys, 0, -2);
+		$i = 'a';
+		$i = \sprintf('$%d, ', $i);
+	}
+
+
+	/**
+	 * @title more strings concatenation
+	 */
+	public function benchmarkMoreStringsConcatenation(): void
+	{
+		$x1 = 'a';
+		$y1 = 'b';
+		$z1 = 'c';
+		$x2 = 'a';
+		$y2 = 'b';
+		$z2 = 'c';
+		$z2 = '$' . $x1 . ', $' . $y1 . ', $' . $z1 . ', $' . $x2 . ', $' . $y2 . ', $' . $z2;
+	}
+
+
+	/**
+	 * @title more strings concatenation (double quotes)
+	 */
+	public function benchmarkMoreStringsConcatenationDoubleQuotes(): void
+	{
+		$x1 = 'a';
+		$y1 = 'b';
+		$z1 = 'c';
+		$x2 = 'a';
+		$y2 = 'b';
+		$z2 = 'c';
+		$z2 = "$$x1, $$y1, $$z1, $$x2, $$y2, $$z2";
+	}
+
+
+	/**
+	 * @title more strings concatenation (with sprintf)
+	 */
+	public function benchmarkMoreStringsConcatenationSprintf(): void
+	{
+		$x1 = 'a';
+		$y1 = 'b';
+		$z1 = 'c';
+		$x2 = 'a';
+		$y2 = 'b';
+		$z2 = 'c';
+		$z2 = \sprintf('$%d, $%d, $%d, $%d, $%d, $%d', $x1, $y1, $z1, $x2, $y2, $z2);
 	}
 
 
