@@ -260,7 +260,7 @@ class FluentConnectionTest extends Tester\TestCase
 	public function testGroupBy(): void
 	{
 		$query = $this->fluentConnection
-			->groupBy(['column'])
+			->groupBy('column')
 			->from('table')
 			->select(['*'])
 			->createSqlQuery()
@@ -277,7 +277,7 @@ class FluentConnectionTest extends Tester\TestCase
 			->having('column = 1')
 			->select(['*'])
 			->from('table')
-			->groupBy(['column'])
+			->groupBy('column')
 			->createSqlQuery()
 			->createQuery();
 
@@ -293,7 +293,7 @@ class FluentConnectionTest extends Tester\TestCase
 				->query()
 			->select(['*'])
 			->from('table')
-			->groupBy(['column', 'another'])
+			->groupBy('column', 'another')
 			->createSqlQuery()
 			->createQuery();
 
@@ -309,7 +309,7 @@ class FluentConnectionTest extends Tester\TestCase
 				->query()
 			->select(['*'])
 			->from('table')
-			->groupBy(['column', 'another'])
+			->groupBy('column', 'another')
 			->createSqlQuery()
 			->createQuery();
 
@@ -321,13 +321,13 @@ class FluentConnectionTest extends Tester\TestCase
 	public function testOrderBy(): void
 	{
 		$query = $this->fluentConnection
-			->orderBy(['column'])
+			->orderBy('column', 'subcolumn DESC')
 			->select(['*'])
 			->from('table')
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('SELECT * FROM table ORDER BY column', $query->getSql());
+		Tester\Assert::same('SELECT * FROM table ORDER BY column, subcolumn DESC', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
 	}
 

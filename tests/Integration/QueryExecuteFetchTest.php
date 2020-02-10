@@ -77,7 +77,7 @@ class QueryExecuteFetchTest extends TestCase
 		$query = $this->connection
 			->select(['id', 'type', 'name'])
 			->from('test')
-			->orderBy(['id']);
+			->orderBy('id');
 
 		Tester\Assert::same(3, $query->count());
 
@@ -105,7 +105,7 @@ class QueryExecuteFetchTest extends TestCase
 		$query = $this->connection
 			->select(['id', 'type', 'name'])
 			 ->from('test')
-			 ->orderBy(['id']);
+			 ->orderBy('id');
 
 		$rows = $query->fetchAssoc('type');
 
@@ -130,7 +130,7 @@ class QueryExecuteFetchTest extends TestCase
 		$query = $this->connection
 			->select(['id', 'name'])
 			->from('test')
-			->orderBy(['id']);
+			->orderBy('id');
 
 		$rows = $query->fetchPairs();
 
@@ -164,7 +164,7 @@ class QueryExecuteFetchTest extends TestCase
 		$query = $this->connection
 			->select(['id', 'name'])
 			->from('test')
-			->orderBy(['id']);
+			->orderBy('id');
 
 		Tester\Assert::same(3, \count($query));
 

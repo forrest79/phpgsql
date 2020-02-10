@@ -22,8 +22,8 @@ class FluentQueryTest extends Tester\TestCase
 			->from('table', 't')
 			->where('column', 100)
 			->where('text', NULL)
-			->groupBy(['column'])
-			->orderBy(['column'])
+			->groupBy('column')
+			->orderBy('column')
 			->limit(10)
 			->offset(20)
 			->createSqlQuery()
@@ -289,7 +289,7 @@ class FluentQueryTest extends Tester\TestCase
 		$query = $this->query()
 			->select(['column'])
 			->from('table', 't')
-			->orderBy([$this->query()->select(['sort_by_value(column)'])])
+			->orderBy($this->query()->select(['sort_by_value(column)']))
 			->createSqlQuery()
 			->createQuery();
 
@@ -303,7 +303,7 @@ class FluentQueryTest extends Tester\TestCase
 		$query = $this->query()
 			->select(['column'])
 			->from('table', 't')
-			->orderBy([new Db\Sql\Query('sort_by_value(column)')])
+			->orderBy(Db\Sql\Query::create('sort_by_value(column)'))
 			->createSqlQuery()
 			->createQuery();
 
@@ -650,7 +650,7 @@ class FluentQueryTest extends Tester\TestCase
 		$query = $complexOr->query()
 			->select(['*'])
 			->from('table')
-			->groupBy(['column', 'column2'])
+			->groupBy('column', 'column2')
 			->createSqlQuery()
 			->createQuery();
 

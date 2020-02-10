@@ -389,11 +389,11 @@ class Query implements Fluent
 
 
 	/**
-	 * @param array $columns
+	 * @param string ...$columns
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function groupBy(array $columns): Fluent
+	public function groupBy(string ...$columns): Fluent
 	{
 		$this->updateQuery();
 		$this->params[self::PARAM_GROUPBY] = \array_merge($this->params[self::PARAM_GROUPBY], $columns);
@@ -437,11 +437,11 @@ class Query implements Fluent
 
 
 	/**
-	 * @param array $columns
+	 * @param string|Query|Db\Sql ...$columns
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function orderBy(array $columns): Fluent
+	public function orderBy(...$columns): Fluent
 	{
 		$this->updateQuery();
 		$this->params[self::PARAM_ORDERBY] = \array_merge($this->params[self::PARAM_ORDERBY], $columns);

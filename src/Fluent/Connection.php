@@ -214,13 +214,13 @@ class Connection extends Db\Connection implements Fluent
 
 
 	/**
-	 * @param array $columns
+	 * @param string ...$columns
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function groupBy(array $columns): Fluent
+	public function groupBy(string ...$columns): Fluent
 	{
-		return $this->createQuery()->groupBy($columns);
+		return $this->createQuery()->groupBy(...$columns);
 	}
 
 
@@ -255,13 +255,13 @@ class Connection extends Db\Connection implements Fluent
 
 
 	/**
-	 * @param array $colums
+	 * @param string|Query|Db\Sql ...$columns
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function orderBy(array $colums): Fluent
+	public function orderBy(...$columns): Fluent
 	{
-		return $this->createQuery()->orderBy($colums);
+		return $this->createQuery()->orderBy(...$columns);
 	}
 
 

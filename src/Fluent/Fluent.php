@@ -131,7 +131,7 @@ interface Fluent
 	function whereOr(array $conditions = []): Complex;
 
 
-	function groupBy(array $columns): self;
+	function groupBy(string ...$columns): self;
 
 
 	/**
@@ -148,7 +148,11 @@ interface Fluent
 	function havingOr(array $conditions = []): Complex;
 
 
-	function orderBy(array $colums): self;
+	/**
+	 * @param string|Query|Db\Sql ...$columns
+	 * @return self
+	 */
+	function orderBy(...$columns): self;
 
 
 	function limit(int $limit): self;
