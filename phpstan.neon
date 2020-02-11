@@ -20,6 +20,10 @@ parameters:
 			path: %rootDir%/../../../tests/Unit/FluentQueryTest.php
 
 		-
+			message: '#Parameter \#1 \$condition of method Forrest79\\PhPgSql\\Fluent\\Query::having\(\) expects Forrest79\\PhPgSql\\Db\\Sql\|Forrest79\\PhPgSql\\Fluent\\Complex\|string(\|null)?, Forrest79\\PhPgSql\\Db\\Query given\.#'
+			path: %rootDir%/../../../tests/Unit/FluentQueryTest.php
+
+		-
 			message: '#Expression ".+" on a separate line does not do anything\.#'
 			path: %rootDir%/../../../tests/Integration/FetchTest.php
 
@@ -39,11 +43,11 @@ parameters:
 
 		-
 			message: '#Call to function is_string\(\) with string will always evaluate to true\.#'
-			path: %rootDir%/../../../src/Fluent/Query.php
+			path: %rootDir%/../../../src/Fluent/Complex.php
 
 		-
-			message: '#Unreachable statement - code above always terminates\.#'
-			path: %rootDir%/../../../src/Fluent/Query.php
+			message: '#Else branch is unreachable because previous condition is always true\.#'
+			path: %rootDir%/../../../src/Fluent/Complex.php
 
 		# === We know, that this can't happen ===
 
@@ -62,10 +66,6 @@ parameters:
 		-
 			message: '#Method Forrest79\\PhPgSql\\Db\\ResultIterator::current\(\) should return Forrest79\\PhPgSql\\Db\\Row but returns Forrest79\\PhPgSql\\Db\\Row\|null\.#'
 			path: %rootDir%/../../../src/Db/ResultIterator.php
-
-		-
-			message: '#Parameter \#1 \$alias of static method Forrest79\\PhPgSql\\Fluent\\Exceptions\\QueryException::tableAliasAlreadyExists\(\) expects string, Forrest79\\PhPgSql\\Db\\Sql\|Forrest79\\PhPgSql\\Fluent\\Fluent\|string given\.#'
-			path: %rootDir%/../../../src/Fluent/Query.php
 
 		-
 			message: '#Parameter \#2 \$expected of static method Forrest79\\PhPgSql\\Fluent\\Exceptions\\QueryBuilderException::badParamsCount\(\) expects int, int\|false given\.#'

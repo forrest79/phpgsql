@@ -8,11 +8,9 @@ class QueryException extends Exception
 	public const TABLE_ALIAS_ALREADY_EXISTS = 2;
 	public const NON_EXISTING_PARAM_TO_RESET = 3;
 	public const QUERYABLE_MUST_HAVE_ALIAS = 4;
-	public const PARAM_MUST_BE_SCALAR_OR_QUERYABLE = 5;
+	public const PARAM_MUST_BE_SCALAR_OR_EXPRESSION = 5;
 	public const CANT_UPDATE_QUERY_AFTER_EXECUTE = 6;
 	public const YOU_MUST_EXECUTE_QUERY_BEFORE_THAT = 7;
-	public const UNSUPPORTED_CONDITION_TYPE = 8;
-	public const ONLY_STRING_CONDITION_CAN_HAVE_PARAMS = 9;
 
 
 	public static function onlyOneMainTable(): self
@@ -39,9 +37,9 @@ class QueryException extends Exception
 	}
 
 
-	public static function columnMustBeScalarOrQueryable(): self
+	public static function columnMustBeScalarOrExpression(): self
 	{
-		return new self('Column must be scalar or queryable.', self::PARAM_MUST_BE_SCALAR_OR_QUERYABLE);
+		return new self('Column must be scalar, Fluent\Query or Db\Sql.', self::PARAM_MUST_BE_SCALAR_OR_EXPRESSION);
 	}
 
 
@@ -54,29 +52,6 @@ class QueryException extends Exception
 	public static function youMustExecuteQueryBeforeThat(): self
 	{
 		return new self('You must execute query before that', self::YOU_MUST_EXECUTE_QUERY_BEFORE_THAT);
-	}
-
-
-	/**
-	 * @param mixed $onCondition
-	 * @return static
-	 */
-	public static function unsupportedConditionType($onCondition): self
-	{
-		$type = \gettype($onCondition);
-		if (!\is_scalar($onCondition) && !\is_array($onCondition)) {
-			$type = \get_class($onCondition);
-		}
-		return new self(
-			\sprintf('Only string, Fluent\Complex or Db\Sql can be used in on condition. Type \'%s\' was given.', $type),
-			self::UNSUPPORTED_CONDITION_TYPE
-		);
-	}
-
-
-	public static function onlyStringConditionCanHaveParams(): self
-	{
-		return new self('Only string condition can be add with params.', self::ONLY_STRING_CONDITION_CAN_HAVE_PARAMS);
 	}
 
 }

@@ -46,9 +46,11 @@ class Complex implements \ArrayAccess
 			$this->conditions[] = $condition;
 		} else if ($condition instanceof Db\Sql) {
 			$this->conditions[] = \array_merge([$condition->getSql()], $condition->getParams());
-		} else {
+		} else if (\is_string($condition)) {
 			\array_unshift($params, $condition);
 			$this->conditions[] = $params;
+		} else {
+			throw Exceptions\ComplexException::unsupportedConditionType($condition);
 		}
 		return $this;
 	}

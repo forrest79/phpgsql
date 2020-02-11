@@ -56,9 +56,9 @@ class Query implements Fluent
 			self::TABLE_TYPE_JOINS => [],
 		],
 		self::PARAM_JOIN_CONDITIONS => [],
-		self::PARAM_WHERE => [],
+		self::PARAM_WHERE => NULL,
 		self::PARAM_GROUPBY => [],
-		self::PARAM_HAVING => [],
+		self::PARAM_HAVING => NULL,
 		self::PARAM_ORDERBY => [],
 		self::PARAM_LIMIT => NULL,
 		self::PARAM_OFFSET => NULL,
@@ -115,7 +115,7 @@ class Query implements Fluent
 			if (\is_int($alias)) {
 				$alias = NULL;
 			}
-			$this->checkQueryable($column, $alias);
+			$this->checkAlias($column, $alias);
 		}
 
 		$this->params[self::PARAM_SELECT] = \array_merge($this->params[self::PARAM_SELECT], $columns);
@@ -277,13 +277,14 @@ class Query implements Fluent
 	{
 		$this->updateQuery();
 
-		$this->checkQueryable($name, $alias);
+		$this->checkAlias($name, $alias);
 
 		if (($type === self::TABLE_TYPE_MAIN) && ($this->params[self::PARAM_TABLE_TYPES][self::TABLE_TYPE_MAIN] !== NULL)) {
 			throw Exceptions\QueryException::onlyOneMainTable();
 		}
 
 		if ($alias === NULL) {
+			\assert(\is_string($name));
 			$alias = $name;
 		}
 
@@ -300,10 +301,7 @@ class Query implements Fluent
 		}
 
 		if ($onCondition !== NULL) {
-			$this->params[self::PARAM_JOIN_CONDITIONS][$alias] = \array_merge(
-				$this->params[self::PARAM_JOIN_CONDITIONS][$alias] ?? [],
-				[$this->normalizeCondition($onCondition)]
-			);
+			$this->getComplexParam(self::PARAM_JOIN_CONDITIONS, $alias)->add($onCondition);
 		}
 
 		return $this;
@@ -320,12 +318,7 @@ class Query implements Fluent
 	public function on(string $alias, $condition, ...$params): Fluent
 	{
 		$this->updateQuery();
-
-		$this->params[self::PARAM_JOIN_CONDITIONS][$alias] = \array_merge(
-			$this->params[self::PARAM_JOIN_CONDITIONS][$alias] ?? [],
-			[$this->normalizeCondition($condition, $params)]
-		);
-
+		$this->getComplexParam(self::PARAM_JOIN_CONDITIONS, $alias)->add($condition, ...$params);
 		return $this;
 	}
 
@@ -339,7 +332,7 @@ class Query implements Fluent
 	public function where($condition, ...$params): Fluent
 	{
 		$this->updateQuery();
-		$this->params[self::PARAM_WHERE][] = $this->normalizeCondition($condition, $params);
+		$this->getComplexParam(self::PARAM_WHERE)->add($condition, ...$params);
 		return $this;
 	}
 
@@ -350,7 +343,9 @@ class Query implements Fluent
 	public function whereAnd(array $conditions = []): Complex
 	{
 		$this->updateQuery();
-		return $this->params[self::PARAM_WHERE][] = Complex::createAnd($conditions, NULL, $this);
+		$complex = Complex::createAnd($conditions, NULL, $this);
+		$this->getComplexParam(self::PARAM_WHERE)->add($complex);
+		return $complex;
 	}
 
 
@@ -360,7 +355,9 @@ class Query implements Fluent
 	public function whereOr(array $conditions = []): Complex
 	{
 		$this->updateQuery();
-		return $this->params[self::PARAM_WHERE][] = Complex::createOr($conditions, NULL, $this);
+		$complex = Complex::createOr($conditions, NULL, $this);
+		$this->getComplexParam(self::PARAM_WHERE)->add($complex);
+		return $complex;
 	}
 
 
@@ -386,7 +383,7 @@ class Query implements Fluent
 	public function having($condition, ...$params): Fluent
 	{
 		$this->updateQuery();
-		$this->params[self::PARAM_HAVING][] = $this->normalizeCondition($condition, $params);
+		$this->getComplexParam(self::PARAM_HAVING)->add($condition, ...$params);
 		return $this;
 	}
 
@@ -397,7 +394,9 @@ class Query implements Fluent
 	public function havingAnd(array $conditions = []): Complex
 	{
 		$this->updateQuery();
-		return $this->params[self::PARAM_HAVING][] = Complex::createAnd($conditions, NULL, $this);
+		$complex = Complex::createAnd($conditions, NULL, $this);
+		$this->getComplexParam(self::PARAM_HAVING)->add($complex);
+		return $complex;
 	}
 
 
@@ -407,34 +406,25 @@ class Query implements Fluent
 	public function havingOr(array $conditions = []): Complex
 	{
 		$this->updateQuery();
-		return $this->params[self::PARAM_HAVING][] = Complex::createOr($conditions, NULL, $this);
+		$complex = Complex::createOr($conditions, NULL, $this);
+		$this->getComplexParam(self::PARAM_HAVING)->add($complex);
+		return $complex;
 	}
 
 
-	/**
-	 * @param string|Complex|Db\Sql $condition
-	 * @param array $params
-	 * @return array|Complex
-	 */
-	private function normalizeCondition($condition, array $params = [])
+	private function getComplexParam(string $param, ?string $alias = NULL): Complex
 	{
-		if ((($condition instanceof Complex) || ($condition instanceof Db\Sql)) && $params !== []) {
-			throw Exceptions\QueryException::onlyStringConditionCanHaveParams();
+		if ($alias === NULL) {
+			if ($this->params[$param] === NULL) {
+				$this->params[$param] = Complex::createAnd();
+			}
+			return $this->params[$param];
 		}
 
-		if ($condition instanceof Complex) {
-			return $condition;
+		if (!isset($this->params[$param][$alias])) {
+			$this->params[$param][$alias] = Complex::createAnd();
 		}
-
-		if ($condition instanceof Db\Sql) {
-			return \array_merge([$condition->getSql()], $condition->getParams());
-		}
-
-		if (\is_string($condition)) {
-			return \array_merge([$condition], $params);
-		}
-
-		throw Exceptions\QueryException::unsupportedConditionType($condition);
+		return $this->params[$param][$alias];
 	}
 
 
@@ -725,12 +715,12 @@ class Query implements Fluent
 	 * @param string|NULL $alias
 	 * @throws Exceptions\QueryException
 	 */
-	private function checkQueryable($data, ?string $alias): void
+	private function checkAlias($data, ?string $alias): void
 	{
 		if ((($data instanceof self) || ($data instanceof Db\Sql)) && ($alias === NULL)) {
 			throw Exceptions\QueryException::queryableMustHaveAlias();
 		} else if (!\is_scalar($data) && !($data instanceof self) && !($data instanceof Db\Sql)) {
-			throw Exceptions\QueryException::columnMustBeScalarOrQueryable();
+			throw Exceptions\QueryException::columnMustBeScalarOrExpression();
 		}
 	}
 

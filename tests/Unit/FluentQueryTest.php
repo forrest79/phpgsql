@@ -187,7 +187,7 @@ class FluentQueryTest extends Tester\TestCase
 	{
 		Tester\Assert::exception(function (): void {
 			$this->query()->where(['x.id = 1']);
-		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::UNSUPPORTED_CONDITION_TYPE);
+		}, Fluent\Exceptions\ComplexException::class, NULL, Fluent\Exceptions\ComplexException::UNSUPPORTED_CONDITION_TYPE);
 	}
 
 
@@ -195,7 +195,7 @@ class FluentQueryTest extends Tester\TestCase
 	{
 		Tester\Assert::exception(function (): void {
 			$this->query()->where(Db\Sql\Expression::create('x.column = ?'), 1);
-		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::ONLY_STRING_CONDITION_CAN_HAVE_PARAMS);
+		}, Fluent\Exceptions\ComplexException::class, NULL, Fluent\Exceptions\ComplexException::ONLY_STRING_CONDITION_CAN_HAVE_PARAMS);
 	}
 
 
@@ -335,7 +335,7 @@ class FluentQueryTest extends Tester\TestCase
 	{
 		Tester\Assert::exception(function (): void {
 			$this->query()->having(new Db\Query('x.id = 1', []));
-		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::UNSUPPORTED_CONDITION_TYPE);
+		}, Fluent\Exceptions\ComplexException::class, NULL, Fluent\Exceptions\ComplexException::UNSUPPORTED_CONDITION_TYPE);
 	}
 
 
@@ -343,7 +343,7 @@ class FluentQueryTest extends Tester\TestCase
 	{
 		Tester\Assert::exception(function (): void {
 			$this->query()->having(Db\Sql\Expression::create('x.column = ?'), 1);
-		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::ONLY_STRING_CONDITION_CAN_HAVE_PARAMS);
+		}, Fluent\Exceptions\ComplexException::class, NULL, Fluent\Exceptions\ComplexException::ONLY_STRING_CONDITION_CAN_HAVE_PARAMS);
 	}
 
 
@@ -497,7 +497,7 @@ class FluentQueryTest extends Tester\TestCase
 	{
 		Tester\Assert::exception(function (): void {
 			$this->query()->join('another', 'x', ['x.column = t.id']);
-		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::UNSUPPORTED_CONDITION_TYPE);
+		}, Fluent\Exceptions\ComplexException::class, NULL, Fluent\Exceptions\ComplexException::UNSUPPORTED_CONDITION_TYPE);
 	}
 
 
@@ -527,7 +527,7 @@ class FluentQueryTest extends Tester\TestCase
 	{
 		Tester\Assert::exception(function (): void {
 			$this->query()->on('x', ['x.id = 1']);
-		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::UNSUPPORTED_CONDITION_TYPE);
+		}, Fluent\Exceptions\ComplexException::class, NULL, Fluent\Exceptions\ComplexException::UNSUPPORTED_CONDITION_TYPE);
 	}
 
 
@@ -535,7 +535,7 @@ class FluentQueryTest extends Tester\TestCase
 	{
 		Tester\Assert::exception(function (): void {
 			$this->query()->on('x', Db\Sql\Expression::create('x.column = ?'), 1);
-		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::ONLY_STRING_CONDITION_CAN_HAVE_PARAMS);
+		}, Fluent\Exceptions\ComplexException::class, NULL, Fluent\Exceptions\ComplexException::ONLY_STRING_CONDITION_CAN_HAVE_PARAMS);
 	}
 
 
@@ -1059,7 +1059,7 @@ class FluentQueryTest extends Tester\TestCase
 	{
 		Tester\Assert::exception(function (): void {
 			$this->query()->table(['table'], 't');
-		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::PARAM_MUST_BE_SCALAR_OR_QUERYABLE);
+		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::PARAM_MUST_BE_SCALAR_OR_EXPRESSION);
 	}
 
 

@@ -278,7 +278,7 @@ class QueryBuilder
 				}
 
 				$joins[] = $table . ' ON ' . $this->processComplex(
-					Complex::createAnd($queryParams[Query::PARAM_JOIN_CONDITIONS][$tableAlias]),
+					$queryParams[Query::PARAM_JOIN_CONDITIONS][$tableAlias],
 					$params
 				);
 			}
@@ -295,11 +295,11 @@ class QueryBuilder
 	{
 		$where = $queryParams[Query::PARAM_WHERE];
 
-		if ($where === []) {
+		if ($where === NULL) {
 			return '';
 		}
 
-		return ' WHERE ' . $this->processComplex(Complex::createAnd($where), $params);
+		return ' WHERE ' . $this->processComplex($where, $params);
 	}
 
 
@@ -318,11 +318,11 @@ class QueryBuilder
 	{
 		$having = $queryParams[Query::PARAM_HAVING];
 
-		if ($having === []) {
+		if ($having === NULL) {
 			return '';
 		}
 
-		return ' HAVING ' . $this->processComplex(Complex::createAnd($having), $params);
+		return ' HAVING ' . $this->processComplex($having, $params);
 	}
 
 
