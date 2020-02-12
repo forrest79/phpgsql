@@ -32,7 +32,7 @@ interface Fluent
 	/**
 	 * @param string|self|Db\Sql $join table or query
 	 * @param string|NULL $alias
-	 * @param string|array|Complex|NULL $onCondition
+	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return self
 	 */
 	function join($join, ?string $alias = NULL, $onCondition = NULL): self;
@@ -41,7 +41,7 @@ interface Fluent
 	/**
 	 * @param string|self|Db\Sql $join table or query
 	 * @param string|NULL $alias
-	 * @param string|array|Complex|NULL $onCondition
+	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return self
 	 */
 	function innerJoin($join, ?string $alias = NULL, $onCondition = NULL): self;
@@ -50,7 +50,7 @@ interface Fluent
 	/**
 	 * @param string|self|Db\Sql $join table or query
 	 * @param string|NULL $alias
-	 * @param string|array|Complex|NULL $onCondition
+	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return self
 	 */
 	function leftJoin($join, ?string $alias = NULL, $onCondition = NULL): self;
@@ -59,7 +59,7 @@ interface Fluent
 	/**
 	 * @param string|self|Db\Sql $join table or query
 	 * @param string|NULL $alias
-	 * @param string|array|Complex|NULL $onCondition
+	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return self
 	 */
 	function leftOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): self;
@@ -68,7 +68,7 @@ interface Fluent
 	/**
 	 * @param string|self|Db\Sql $join table or query
 	 * @param string|NULL $alias
-	 * @param string|array|Complex|NULL $onCondition
+	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return self
 	 */
 	function rightJoin($join, ?string $alias = NULL, $onCondition = NULL): self;
@@ -77,7 +77,7 @@ interface Fluent
 	/**
 	 * @param string|self|Db\Sql $join table or query
 	 * @param string|NULL $alias
-	 * @param string|array|Complex|NULL $onCondition
+	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return self
 	 */
 	function rightOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): self;
@@ -86,7 +86,7 @@ interface Fluent
 	/**
 	 * @param string|self|Db\Sql $join table or query
 	 * @param string|NULL $alias
-	 * @param string|array|Complex|NULL $onCondition
+	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return self
 	 */
 	function fullJoin($join, ?string $alias = NULL, $onCondition = NULL): self;
@@ -95,7 +95,7 @@ interface Fluent
 	/**
 	 * @param string|self|Db\Sql $join table or query
 	 * @param string|NULL $alias
-	 * @param string|array|Complex|NULL $onCondition
+	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return self
 	 */
 	function fullOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): self;
@@ -111,14 +111,15 @@ interface Fluent
 
 	/**
 	 * @param string $alias
-	 * @param string|array|Complex $condition
+	 * @param string|Complex|Db\Sql $condition
+	 * @param mixed ...$params
 	 * @return self
 	 */
-	function on(string $alias, $condition): self;
+	function on(string $alias, $condition, ...$params): self;
 
 
 	/**
-	 * @param string|Complex $condition
+	 * @param string|Complex|Db\Sql $condition
 	 * @param mixed ...$params
 	 * @return self
 	 */
@@ -135,7 +136,7 @@ interface Fluent
 
 
 	/**
-	 * @param string|Complex $condition
+	 * @param string|Complex|Db\Sql $condition
 	 * @param mixed ...$params
 	 * @return self
 	 */

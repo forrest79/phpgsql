@@ -152,7 +152,7 @@ class Query implements Fluent
 	/**
 	 * @param string|Fluent|Db\Sql $join table or query
 	 * @param string|NULL $alias
-	 * @param string|array|Complex|NULL $onCondition
+	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
@@ -165,7 +165,7 @@ class Query implements Fluent
 	/**
 	 * @param string|Fluent|Db\Sql $join table or query
 	 * @param string|NULL $alias
-	 * @param string|array|Complex|NULL $onCondition
+	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
@@ -178,7 +178,7 @@ class Query implements Fluent
 	/**
 	 * @param string|Fluent|Db\Sql $join table or query
 	 * @param string|NULL $alias
-	 * @param string|array|Complex|NULL $onCondition
+	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
@@ -191,7 +191,7 @@ class Query implements Fluent
 	/**
 	 * @param string|Fluent|Db\Sql $join table or query
 	 * @param string|NULL $alias
-	 * @param string|array|Complex|NULL $onCondition
+	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
@@ -204,7 +204,7 @@ class Query implements Fluent
 	/**
 	 * @param string|Fluent|Db\Sql $join table or query
 	 * @param string|NULL $alias
-	 * @param string|array|Complex|NULL $onCondition
+	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
@@ -217,7 +217,7 @@ class Query implements Fluent
 	/**
 	 * @param string|Fluent|Db\Sql $join table or query
 	 * @param string|NULL $alias
-	 * @param string|array|Complex|NULL $onCondition
+	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
@@ -230,7 +230,7 @@ class Query implements Fluent
 	/**
 	 * @param string|Fluent|Db\Sql $join table or query
 	 * @param string|NULL $alias
-	 * @param string|array|Complex|NULL $onCondition
+	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
@@ -243,7 +243,7 @@ class Query implements Fluent
 	/**
 	 * @param string|Fluent|Db\Sql $join table or query
 	 * @param string|NULL $alias
-	 * @param string|array|Complex|NULL $onCondition
+	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
@@ -269,7 +269,7 @@ class Query implements Fluent
 	 * @param string $type
 	 * @param string|Fluent|Db\Sql $name
 	 * @param string|NULL $alias
-	 * @param string|array|Complex|NULL $onCondition
+	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
@@ -302,7 +302,7 @@ class Query implements Fluent
 		if ($onCondition !== NULL) {
 			$this->params[self::PARAM_JOIN_CONDITIONS][$alias] = \array_merge(
 				$this->params[self::PARAM_JOIN_CONDITIONS][$alias] ?? [],
-				$this->normalizeOn($onCondition)
+				[$this->normalizeCondition($onCondition)]
 			);
 		}
 
@@ -312,17 +312,18 @@ class Query implements Fluent
 
 	/**
 	 * @param string $alias
-	 * @param string|array|Complex $condition
+	 * @param string|Complex|Db\Sql $condition
+	 * @param mixed ...$params
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function on(string $alias, $condition): Fluent
+	public function on(string $alias, $condition, ...$params): Fluent
 	{
 		$this->updateQuery();
 
 		$this->params[self::PARAM_JOIN_CONDITIONS][$alias] = \array_merge(
 			$this->params[self::PARAM_JOIN_CONDITIONS][$alias] ?? [],
-			$this->normalizeOn($condition)
+			[$this->normalizeCondition($condition, $params)]
 		);
 
 		return $this;
@@ -330,31 +331,7 @@ class Query implements Fluent
 
 
 	/**
-	 * @param string|array|Complex $condition
-	 * @return array
-	 */
-	private function normalizeOn($condition): array
-	{
-		if ($condition instanceof Complex) {
-			return [$condition];
-		}
-
-		if (!\is_array($condition)) {
-			return [[$condition]];
-		}
-
-		$first = \reset($condition);
-
-		if (\is_array($first)) {
-			return $condition;
-		}
-
-		return [$condition];
-	}
-
-
-	/**
-	 * @param string|Complex $condition
+	 * @param string|Complex|Db\Sql $condition
 	 * @param mixed ...$params
 	 * @return static
 	 * @throws Exceptions\QueryException
@@ -362,8 +339,7 @@ class Query implements Fluent
 	public function where($condition, ...$params): Fluent
 	{
 		$this->updateQuery();
-		\array_unshift($params, $condition);
-		$this->params[self::PARAM_WHERE][] = $params;
+		$this->params[self::PARAM_WHERE][] = $this->normalizeCondition($condition, $params);
 		return $this;
 	}
 
@@ -402,7 +378,7 @@ class Query implements Fluent
 
 
 	/**
-	 * @param string|Complex $condition
+	 * @param string|Complex|Db\Sql $condition
 	 * @param mixed ...$params
 	 * @return static
 	 * @throws Exceptions\QueryException
@@ -410,8 +386,7 @@ class Query implements Fluent
 	public function having($condition, ...$params): Fluent
 	{
 		$this->updateQuery();
-		\array_unshift($params, $condition);
-		$this->params[self::PARAM_HAVING][] = $params;
+		$this->params[self::PARAM_HAVING][] = $this->normalizeCondition($condition, $params);
 		return $this;
 	}
 
@@ -433,6 +408,33 @@ class Query implements Fluent
 	{
 		$this->updateQuery();
 		return $this->params[self::PARAM_HAVING][] = Complex::createOr($conditions, NULL, $this);
+	}
+
+
+	/**
+	 * @param string|Complex|Db\Sql $condition
+	 * @param array $params
+	 * @return array|Complex
+	 */
+	private function normalizeCondition($condition, array $params = [])
+	{
+		if ((($condition instanceof Complex) || ($condition instanceof Db\Sql)) && $params !== []) {
+			throw Exceptions\QueryException::onlyStringConditionCanHaveParams();
+		}
+
+		if ($condition instanceof Complex) {
+			return $condition;
+		}
+
+		if ($condition instanceof Db\Sql) {
+			return \array_merge([$condition->getSql()], $condition->getParams());
+		}
+
+		if (\is_string($condition)) {
+			return \array_merge([$condition], $params);
+		}
+
+		throw Exceptions\QueryException::unsupportedConditionType($condition);
 	}
 
 

@@ -50,7 +50,7 @@ class FluentComplexTest extends Tester\TestCase
 	{
 		Tester\Assert::exception(static function (): void {
 			Fluent\Complex::createAnd()->add(Fluent\Complex::createAnd(), 'param1');
-		}, Fluent\Exceptions\ComplexException::class, NULL, Fluent\Exceptions\ComplexException::COMPLEX_CANT_HAVE_PARAMS);
+		}, Fluent\Exceptions\ComplexException::class, NULL, Fluent\Exceptions\ComplexException::ONLY_STRING_CONDITION_CAN_HAVE_PARAMS);
 	}
 
 

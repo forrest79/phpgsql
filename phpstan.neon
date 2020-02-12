@@ -9,10 +9,14 @@ parameters:
 	autoload_files:
 		- %rootDir%/../../../tests/bootstrap.php
 	ignoreErrors:
-		# === This is OK ===
+		# === This is OK (just for tests or benchmarks) ===
 
 		-
 			message: '#Parameter \#1 \$table of method Forrest79\\PhPgSql\\Fluent\\Query::table\(\) expects Forrest79\\PhPgSql\\Db\\Sql\|Forrest79\\PhPgSql\\Fluent\\Fluent\|string, array<int, string> given\.#'
+			path: %rootDir%/../../../tests/Unit/FluentQueryTest.php
+
+		-
+			message: '#Parameter \#(1|2|3) \$(c|onC)ondition of method Forrest79\\PhPgSql\\Fluent\\Query::(where|having|join|on)\(\) expects Forrest79\\PhPgSql\\Db\\Sql\|Forrest79\\PhPgSql\\Fluent\\Complex\|string(\|null)?, array<int, string> given\.#'
 			path: %rootDir%/../../../tests/Unit/FluentQueryTest.php
 
 		-
@@ -30,6 +34,16 @@ parameters:
 		-
 			message: "#Call to function array_key_exists\\(\\) with '.+' and array\\(.+\\) will always evaluate to (true|false)\\.#"
 			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
+
+		# === We know, that this can happen ===
+
+		-
+			message: '#Call to function is_string\(\) with string will always evaluate to true\.#'
+			path: %rootDir%/../../../src/Fluent/Query.php
+
+		-
+			message: '#Unreachable statement - code above always terminates\.#'
+			path: %rootDir%/../../../src/Fluent/Query.php
 
 		# === We know, that this can't happen ===
 

@@ -123,6 +123,302 @@ class FluentQueryTest extends Tester\TestCase
 	}
 
 
+	public function testWhereSimple(): void
+	{
+		$query = $this->query()
+			->select(['x.column'])
+			->from('table', 't')
+			->where('x.column = t.id')
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('SELECT x.column FROM table AS t WHERE x.column = t.id', $query->getSql());
+		Tester\Assert::same([], $query->getParams());
+	}
+
+
+	public function testWhereParameters(): void
+	{
+		$query = $this->query()
+			->select(['x.column'])
+			->from('table', 't')
+			->where('x.column', 1)
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('SELECT x.column FROM table AS t WHERE x.column = $1', $query->getSql());
+		Tester\Assert::same([1], $query->getParams());
+	}
+
+
+	public function testWhereWithComplex(): void
+	{
+		$complex = Fluent\Complex::createAnd()
+			->add('x.column = t.id')
+			->add('x.id', [1, 2]);
+
+		$query = $this->query()
+			->select(['x.column'])
+			->from('table', 't')
+			->where($complex)
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('SELECT x.column FROM table AS t WHERE (x.column = t.id) AND (x.id IN ($1, $2))', $query->getSql());
+		Tester\Assert::same([1, 2], $query->getParams());
+	}
+
+
+	public function testWhereWithSql(): void
+	{
+		$query = $this->query()
+			->select(['x.column'])
+			->from('table', 't')
+			->where(Db\Sql\Expression::create('x.id', [1, 2]))
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('SELECT x.column FROM table AS t WHERE x.id IN ($1, $2)', $query->getSql());
+		Tester\Assert::same([1, 2], $query->getParams());
+	}
+
+
+	public function testWhereWithBadType(): void
+	{
+		Tester\Assert::exception(function (): void {
+			$this->query()->where(['x.id = 1']);
+		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::UNSUPPORTED_CONDITION_TYPE);
+	}
+
+
+	public function testWhereWithBadTypeWithParameters(): void
+	{
+		Tester\Assert::exception(function (): void {
+			$this->query()->where(Db\Sql\Expression::create('x.column = ?'), 1);
+		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::ONLY_STRING_CONDITION_CAN_HAVE_PARAMS);
+	}
+
+
+	public function testWhereAnd(): void
+	{
+		$complex = Fluent\Complex::createAnd()
+			->add('x.type = t.id')
+			->add('x.test', [3, 5]);
+
+		$query = $this->query()
+			->select(['x.column'])
+			->from('table', 't')
+			->whereAnd([
+				'x.column = t.id',
+				['x.column', 1],
+				$complex,
+				Db\Sql\Expression::create('x.id', 7),
+			])
+			->query()
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('SELECT x.column FROM table AS t WHERE (x.column = t.id) AND (x.column = $1) AND ((x.type = t.id) AND (x.test IN ($2, $3))) AND (x.id = $4)', $query->getSql());
+		Tester\Assert::same([1, 3, 5, 7], $query->getParams());
+	}
+
+
+	public function testWhereAndContinue(): void
+	{
+		$sourceQuery = $this->query()
+			->select(['x.column'])
+			->from('table', 't');
+
+		$complex = $sourceQuery->whereAnd([
+			'x.column = t.id',
+			Db\Sql\Expression::create('x.id', 7),
+		]);
+
+		$complex
+			->add(Fluent\Complex::createAnd()->add('x.type = t.id')->add('x.test', [3, 5]))
+			->add('x.column', 1);
+
+		$query = $sourceQuery
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('SELECT x.column FROM table AS t WHERE (x.column = t.id) AND (x.id = $1) AND ((x.type = t.id) AND (x.test IN ($2, $3))) AND (x.column = $4)', $query->getSql());
+		Tester\Assert::same([7, 3, 5, 1], $query->getParams());
+	}
+
+
+	public function testWhereOr(): void
+	{
+		$complex = Fluent\Complex::createAnd()
+			->add('x.type = t.id')
+			->add('x.test', [3, 5]);
+
+		$query = $this->query()
+			->select(['x.column'])
+			->from('table', 't')
+			->whereOr([
+				'x.column = t.id',
+				['x.column', 1],
+				$complex,
+				Db\Sql\Expression::create('x.id', 7),
+			])
+			->query()
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('SELECT x.column FROM table AS t WHERE (x.column = t.id) OR (x.column = $1) OR ((x.type = t.id) AND (x.test IN ($2, $3))) OR (x.id = $4)', $query->getSql());
+		Tester\Assert::same([1, 3, 5, 7], $query->getParams());
+	}
+
+
+	public function testHavingSimple(): void
+	{
+		$query = $this->query()
+			->select(['x.column'])
+			->from('table', 't')
+			->having('x.column = t.id')
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('SELECT x.column FROM table AS t HAVING x.column = t.id', $query->getSql());
+		Tester\Assert::same([], $query->getParams());
+	}
+
+
+	public function testHavingParameters(): void
+	{
+		$query = $this->query()
+			->select(['x.column'])
+			->from('table', 't')
+			->having('x.column', 1)
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('SELECT x.column FROM table AS t HAVING x.column = $1', $query->getSql());
+		Tester\Assert::same([1], $query->getParams());
+	}
+
+
+	public function testHavingWithComplex(): void
+	{
+		$complex = Fluent\Complex::createAnd()
+			->add('x.column = t.id')
+			->add('x.id', [1, 2]);
+
+		$query = $this->query()
+			->select(['x.column'])
+			->from('table', 't')
+			->having($complex)
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('SELECT x.column FROM table AS t HAVING (x.column = t.id) AND (x.id IN ($1, $2))', $query->getSql());
+		Tester\Assert::same([1, 2], $query->getParams());
+	}
+
+
+	public function testHavingWithSql(): void
+	{
+		$query = $this->query()
+			->select(['x.column'])
+			->from('table', 't')
+			->having(Db\Sql\Expression::create('x.id', [1, 2]))
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('SELECT x.column FROM table AS t HAVING x.id IN ($1, $2)', $query->getSql());
+		Tester\Assert::same([1, 2], $query->getParams());
+	}
+
+
+	public function testHavingWithBadType(): void
+	{
+		Tester\Assert::exception(function (): void {
+			$this->query()->having(new Db\Query('x.id = 1', []));
+		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::UNSUPPORTED_CONDITION_TYPE);
+	}
+
+
+	public function testHavingWithBadTypeWithParameters(): void
+	{
+		Tester\Assert::exception(function (): void {
+			$this->query()->having(Db\Sql\Expression::create('x.column = ?'), 1);
+		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::ONLY_STRING_CONDITION_CAN_HAVE_PARAMS);
+	}
+
+
+	public function testHavingAnd(): void
+	{
+		$complex = Fluent\Complex::createAnd()
+			->add('x.type = t.id')
+			->add('x.test', [3, 5]);
+
+		$query = $this->query()
+			->select(['x.column'])
+			->from('table', 't')
+			->havingAnd([
+				'x.column = t.id',
+				['x.column', 1],
+				$complex,
+				Db\Sql\Expression::create('x.id', 7),
+			])
+			->query()
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('SELECT x.column FROM table AS t HAVING (x.column = t.id) AND (x.column = $1) AND ((x.type = t.id) AND (x.test IN ($2, $3))) AND (x.id = $4)', $query->getSql());
+		Tester\Assert::same([1, 3, 5, 7], $query->getParams());
+	}
+
+
+	public function testHavingOr(): void
+	{
+		$complex = Fluent\Complex::createAnd()
+			->add('x.type = t.id')
+			->add('x.test', [3, 5]);
+
+		$query = $this->query()
+			->select(['x.column'])
+			->from('table', 't')
+			->havingOr([
+				'x.column = t.id',
+				['x.column', 1],
+				$complex,
+				Db\Sql\Expression::create('x.id', 7),
+			])
+			->query()
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('SELECT x.column FROM table AS t HAVING (x.column = t.id) OR (x.column = $1) OR ((x.type = t.id) AND (x.test IN ($2, $3))) OR (x.id = $4)', $query->getSql());
+		Tester\Assert::same([1, 3, 5, 7], $query->getParams());
+	}
+
+
+	public function testHavingOrContinue(): void
+	{
+		$sourceQuery = $this->query()
+			->select(['x.column'])
+			->from('table', 't');
+
+		$complex = $sourceQuery->havingOr([
+			'x.column = t.id',
+			Db\Sql\Expression::create('x.id', 7),
+		]);
+
+		$complex
+			->add(Fluent\Complex::createAnd()->add('x.type = t.id')->add('x.test', [3, 5]))
+			->add('x.column', 1);
+
+		$query = $sourceQuery
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('SELECT x.column FROM table AS t HAVING (x.column = t.id) OR (x.id = $1) OR ((x.type = t.id) AND (x.test IN ($2, $3))) OR (x.column = $4)', $query->getSql());
+		Tester\Assert::same([7, 3, 5, 1], $query->getParams());
+	}
+
+
 	public function testJoinWithFluentQuery(): void
 	{
 		$query = $this->query()
@@ -151,58 +447,25 @@ class FluentQueryTest extends Tester\TestCase
 	}
 
 
-	public function testJoinWithArrayOn(): void
-	{
-		$query = $this->query()
-			->select(['x.column'])
-			->from('table', 't')
-			->join('another', 'x', [['x.column = t.id'], ['x.id = 2']])
-			->createSqlQuery()
-			->createQuery();
-
-		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another AS x ON (x.column = t.id) AND (x.id = 2)', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
-	}
-
-
-	public function testJoinWithArrayParamsOn(): void
-	{
-		$query = $this->query()
-			->select(['x.column'])
-			->from('table', 't')
-			->join('another', 'x', [['x.column = t.id'], ['x.id', 2]])
-			->createSqlQuery()
-			->createQuery();
-
-		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another AS x ON (x.column = t.id) AND (x.id = $1)', $query->getSql());
-		Tester\Assert::same([2], $query->getParams());
-	}
-
-
-	public function testJoinWithAddOn(): void
+	public function testJoinWithStringOn(): void
 	{
 		$query = $this->query()
 			->select(['x.column'])
 			->from('table', 't')
 			->join('another', 'x', 'x.column = t.id')
-				->on('x', ['x.id', 2])
-				->on('x', 'x.id = 3')
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another AS x ON (x.column = t.id) AND (x.id = $1) AND (x.id = 3)', $query->getSql());
-		Tester\Assert::same([2], $query->getParams());
+		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another AS x ON x.column = t.id', $query->getSql());
+		Tester\Assert::same([], $query->getParams());
 	}
 
 
 	public function testJoinWithComplexOn(): void
 	{
-		$complexOn = Fluent\Complex::createOr()
-			->addComplexAnd()
-				->add('x.column = t.id')
-				->add('x.id', [1, 2])
-				->parent()
-			->add('x.column = 3');
+		$complexOn = Fluent\Complex::createAnd()
+			->add('x.column = t.id')
+			->add('x.id', [1, 2]);
 
 		$query = $this->query()
 			->select(['x.column'])
@@ -211,8 +474,68 @@ class FluentQueryTest extends Tester\TestCase
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another AS x ON ((x.column = t.id) AND (x.id IN ($1, $2))) OR (x.column = 3)', $query->getSql());
+		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another AS x ON (x.column = t.id) AND (x.id IN ($1, $2))', $query->getSql());
 		Tester\Assert::same([1, 2], $query->getParams());
+	}
+
+
+	public function testJoinWithSqlOn(): void
+	{
+		$query = $this->query()
+			->select(['x.column'])
+			->from('table', 't')
+			->join('another', 'x', Db\Sql\Expression::create('(x.column = t.id) AND (x.id = ?)', 2))
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another AS x ON (x.column = t.id) AND (x.id = $1)', $query->getSql());
+		Tester\Assert::same([2], $query->getParams());
+	}
+
+
+	public function testJoinWithBadTypeOn(): void
+	{
+		Tester\Assert::exception(function (): void {
+			$this->query()->join('another', 'x', ['x.column = t.id']);
+		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::UNSUPPORTED_CONDITION_TYPE);
+	}
+
+
+	public function testJoinWithAddOn(): void
+	{
+		$complexOn = Fluent\Complex::createOr()
+			->add('x.complex_id = t.id')
+			->add('x.complex_id', [3, 4]);
+
+		$query = $this->query()
+			->select(['x.column'])
+			->from('table', 't')
+			->join('another', 'x', 'x.column = t.id')
+				->on('x', 'x.id = 1')
+				->on('x', 'x.id = ?', 2)
+				->on('x', Db\Sql\Expression::create('x.type_id = ?', 'test'))
+				->on('x', $complexOn)
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another AS x ON (x.column = t.id) AND (x.id = 1) AND (x.id = $1) AND (x.type_id = $2) AND ((x.complex_id = t.id) OR (x.complex_id IN ($3, $4)))', $query->getSql());
+		Tester\Assert::same([2, 'test', 3, 4], $query->getParams());
+	}
+
+
+	public function testJoinWithAddOnWithBadType(): void
+	{
+		Tester\Assert::exception(function (): void {
+			$this->query()->on('x', ['x.id = 1']);
+		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::UNSUPPORTED_CONDITION_TYPE);
+	}
+
+
+	public function testJoinWithBadTypeWithParameters(): void
+	{
+		Tester\Assert::exception(function (): void {
+			$this->query()->on('x', Db\Sql\Expression::create('x.column = ?'), 1);
+		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::ONLY_STRING_CONDITION_CAN_HAVE_PARAMS);
 	}
 
 

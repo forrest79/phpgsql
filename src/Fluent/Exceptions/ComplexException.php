@@ -6,7 +6,7 @@ class ComplexException extends Exception
 {
 	public const NO_PARENT = 1;
 	public const NO_QUERY = 2;
-	public const COMPLEX_CANT_HAVE_PARAMS = 3;
+	public const ONLY_STRING_CONDITION_CAN_HAVE_PARAMS = 3;
 
 
 	public static function noParent(): self
@@ -21,9 +21,9 @@ class ComplexException extends Exception
 	}
 
 
-	public static function complexCantHaveParams(): self
+	public static function onlyStringConditionCanHaveParams(): self
 	{
-		return new self('Complex can\'t be add with params.', self::COMPLEX_CANT_HAVE_PARAMS);
+		return new self('Only string condition can be add with params.', self::ONLY_STRING_CONDITION_CAN_HAVE_PARAMS);
 	}
 
 }

@@ -58,7 +58,7 @@ class Connection extends Db\Connection implements Fluent
 	/**
 	 * @param string|Fluent|Db\Sql $join table or query
 	 * @param string|NULL $alias
-	 * @param string|array|Complex|NULL $onCondition
+	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
@@ -71,7 +71,7 @@ class Connection extends Db\Connection implements Fluent
 	/**
 	 * @param string|Fluent|Db\Sql $join table or query
 	 * @param string|NULL $alias
-	 * @param string|array|Complex|NULL $onCondition
+	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
@@ -84,7 +84,7 @@ class Connection extends Db\Connection implements Fluent
 	/**
 	 * @param string|Fluent|Db\Sql $join table or query
 	 * @param string|NULL $alias
-	 * @param string|array|Complex|NULL $onCondition
+	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
@@ -97,7 +97,7 @@ class Connection extends Db\Connection implements Fluent
 	/**
 	 * @param string|Fluent|Db\Sql $join table or query
 	 * @param string|NULL $alias
-	 * @param string|array|Complex|NULL $onCondition
+	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
@@ -110,7 +110,7 @@ class Connection extends Db\Connection implements Fluent
 	/**
 	 * @param string|Fluent|Db\Sql $join table or query
 	 * @param string|NULL $alias
-	 * @param string|array|Complex|NULL $onCondition
+	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
@@ -123,7 +123,7 @@ class Connection extends Db\Connection implements Fluent
 	/**
 	 * @param string|Fluent|Db\Sql $join table or query
 	 * @param string|NULL $alias
-	 * @param string|array|Complex|NULL $onCondition
+	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
@@ -136,7 +136,7 @@ class Connection extends Db\Connection implements Fluent
 	/**
 	 * @param string|Fluent|Db\Sql $join table or query
 	 * @param string|NULL $alias
-	 * @param string|array|Complex|NULL $onCondition
+	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
@@ -149,7 +149,7 @@ class Connection extends Db\Connection implements Fluent
 	/**
 	 * @param string|Fluent|Db\Sql $join table or query
 	 * @param string|NULL $alias
-	 * @param string|array|Complex|NULL $onCondition
+	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
@@ -173,18 +173,19 @@ class Connection extends Db\Connection implements Fluent
 
 	/**
 	 * @param string $alias
-	 * @param string|array|Complex $condition
+	 * @param string|Complex|Db\Sql $condition
+	 * @param mixed ...$params
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function on(string $alias, $condition): Fluent
+	public function on(string $alias, $condition, ...$params): Fluent
 	{
-		return $this->createQuery()->on($alias, $condition);
+		return $this->createQuery()->on($alias, $condition, ...$params);
 	}
 
 
 	/**
-	 * @param string|Complex $condition
+	 * @param string|Complex|Db\Sql $condition
 	 * @param mixed ...$params
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
@@ -225,7 +226,7 @@ class Connection extends Db\Connection implements Fluent
 
 
 	/**
-	 * @param string|Complex $condition
+	 * @param string|Complex|Db\Sql $condition
 	 * @param mixed ...$params
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException

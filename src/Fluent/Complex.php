@@ -2,6 +2,8 @@
 
 namespace Forrest79\PhPgSql\Fluent;
 
+use Forrest79\PhPgSql\Db;
+
 class Complex implements \ArrayAccess
 {
 	public const TYPE_AND = 'AND';
@@ -30,18 +32,20 @@ class Complex implements \ArrayAccess
 
 
 	/**
-	 * @param string|self $condition
+	 * @param string|self|Db\Sql $condition
 	 * @param mixed ...$params
 	 * @return self
 	 * @throws Exceptions\ComplexException
 	 */
 	public function add($condition, ...$params): self
 	{
-		if (($condition instanceof self) && $params !== []) {
-			throw Exceptions\ComplexException::complexCantHaveParams();
+		if ((($condition instanceof self) || ($condition instanceof Db\Sql)) && $params !== []) {
+			throw Exceptions\ComplexException::onlyStringConditionCanHaveParams();
 		}
 		if ($condition instanceof self) {
 			$this->conditions[] = $condition;
+		} else if ($condition instanceof Db\Sql) {
+			$this->conditions[] = \array_merge([$condition->getSql()], $condition->getParams());
 		} else {
 			\array_unshift($params, $condition);
 			$this->conditions[] = $params;
@@ -167,7 +171,9 @@ class Complex implements \ArrayAccess
 	private function normalizeConditions(array $conditions): array
 	{
 		foreach ($conditions as $i => $value) {
-			if (!\is_array($value) && !($value instanceof self)) {
+			if ($value instanceof Db\Sql) {
+				$conditions[$i] = \array_merge([$value->getSql()], $value->getParams());
+			} else if (!\is_array($value) && !($value instanceof self)) {
 				$conditions[$i] = [$value];
 			}
 		}
