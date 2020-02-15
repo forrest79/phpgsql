@@ -237,6 +237,12 @@ class ParseDataTypeTest extends TestCase
 	}
 
 
+	public function testParseBlankArrays(): void
+	{
+		Tester\Assert::same([], $this->connection->query('SELECT ARRAY[]::integer[] AS arr')->fetchSingle());
+	}
+
+
 	public function testParseHstore(): void
 	{
 		$this->connection->query('CREATE EXTENSION hstore;');

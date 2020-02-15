@@ -96,7 +96,12 @@ class Basic implements Db\DataTypeParser
 
 	protected function parseArray(string $value, ?callable $typeFnc = NULL): array
 	{
-		$array = \explode(',', \substr($value, 1, -1));
+		$value = \substr($value, 1, -1);
+		if ($value === '') {
+			return [];
+		}
+
+		$array = \explode(',', $value);
 
 		if ($typeFnc !== NULL) {
 			$array = \array_map($typeFnc, $array);
