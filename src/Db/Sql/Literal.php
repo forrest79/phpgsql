@@ -22,6 +22,9 @@ class Literal implements Db\Sql
 	}
 
 
+	/**
+	 * @return array<mixed>
+	 */
 	public function getParams(): array
 	{
 		return [];

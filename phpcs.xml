@@ -7,7 +7,9 @@
 		<exclude name="Generic.PHP.LowerCaseConstant.Found"/>
 		<exclude name="PEAR.WhiteSpace.ObjectOperatorIndent.Incorrect"/> <!-- Used phpstorm indent -->
 		<exclude name="PSR2.ControlStructures.ElseIfDeclaration.NotAllowed"/>
+		<exclude name="Squiz.Commenting.FunctionComment.InvalidTypeHint"/> <!-- PHPStan check this-->
 		<exclude name="Squiz.Commenting.FunctionComment.MissingParamTag"/>
+		<exclude name="Squiz.Commenting.FunctionComment.ParamNameNoMatch"/> <!-- PHPStan check this-->
 		<exclude name="Squiz.Scope.MethodScope.Missing"/> <!-- We ignore visibility on interfaces -->
 	</rule>
 
@@ -51,16 +53,22 @@
 		<exclude name="SlevomatCodingStandard.Classes.EmptyLinesAroundClassBraces.NoEmptyLineAfterOpeningBrace"/>
 		<exclude name="SlevomatCodingStandard.Classes.SuperfluousExceptionNaming.SuperfluousSuffix"/>
 		<exclude name="SlevomatCodingStandard.Commenting.DisallowOneLinePropertyDocComment.OneLinePropertyComment"/>
-		<exclude name="SlevomatCodingStandard.ControlStructures.ControlStructureSpacing"/>
 		<exclude name="SlevomatCodingStandard.ControlStructures.DisallowShortTernaryOperator.DisallowedShortTernaryOperator"/>
+		<exclude name="SlevomatCodingStandard.ControlStructures.JumpStatementsSpacing.IncorrectLinesCountBeforeControlStructure"/>
 		<exclude name="SlevomatCodingStandard.ControlStructures.NewWithoutParentheses.UselessParentheses"/> <!-- Already used parentheses -->
 		<exclude name="SlevomatCodingStandard.ControlStructures.RequireYodaComparison.RequiredYodaComparison"/>
 		<exclude name="SlevomatCodingStandard.ControlStructures.RequireMultiLineTernaryOperator.MultiLineTernaryOperatorNotUsed"/>
+		<exclude name="SlevomatCodingStandard.Functions.TrailingCommaInCall.MissingTrailingComma"/><!-- PHP 7.3 -->
+		<exclude name="SlevomatCodingStandard.Functions.RequireArrowFunction.RequiredArrowFunction"/><!-- PHP 7.4 -->
 		<exclude name="SlevomatCodingStandard.Operators.DisallowIncrementAndDecrementOperators.DisallowedPostIncrementOperator"/>
 		<exclude name="SlevomatCodingStandard.Operators.DisallowIncrementAndDecrementOperators.DisallowedPostDecrementOperator"/>
 		<exclude name="SlevomatCodingStandard.Operators.DisallowIncrementAndDecrementOperators.DisallowedPreIncrementOperator"/>
 		<exclude name="SlevomatCodingStandard.Operators.RequireOnlyStandaloneIncrementAndDecrementOperators.PreIncrementOperatorNotUsedStandalone"/>
-		<exclude name="SlevomatCodingStandard.PHP.UselessParentheses.UselessParentheses"/> <!-- Not a strict rule for us -->
+		<exclude name="SlevomatCodingStandard.PHP.DisallowReference.DisallowedAssigningByReference"/>
+		<exclude name="SlevomatCodingStandard.PHP.DisallowReference.DisallowedInheritingVariableByReference"/>
+		<exclude name="SlevomatCodingStandard.PHP.DisallowReference.DisallowedPassingByReference"/>
+		<exclude name="SlevomatCodingStandard.PHP.RequireExplicitAssertion.RequiredExplicitAssertion"/>
+		<exclude name="SlevomatCodingStandard.PHP.UselessParentheses.UselessParentheses"/>
 		<exclude name="SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameAfterKeyword"/>
 		<exclude name="SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameInAnnotation.NonFullyQualifiedClassName"/>
 		<exclude name="SlevomatCodingStandard.Namespaces.FullyQualifiedExceptions.NonFullyQualifiedException"/>
@@ -68,17 +76,20 @@
 		<exclude name="SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName"/>
 		<exclude name="SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedNameWithoutNamespace"/>
 		<exclude name="SlevomatCodingStandard.Namespaces.UseOnlyWhitelistedNamespaces"/>
-		<exclude name="SlevomatCodingStandard.TypeHints.DisallowArrayTypeHintSyntax.DisallowedArrayTypeHintSyntax"/>
+		<exclude name="SlevomatCodingStandard.Numbers.RequireNumericLiteralSeparator.RequiredNumericLiteralSeparator"/>
 		<exclude name="SlevomatCodingStandard.TypeHints.DisallowMixedTypeHint.DisallowedMixedTypeHint"/>
 		<exclude name="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingTraversableParameterTypeHintSpecification"/>
 		<exclude name="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingTraversablePropertyTypeHintSpecification"/>
 		<exclude name="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingTraversableReturnTypeHintSpecification"/>
-		<exclude name="SlevomatCodingStandard.Functions.TrailingCommaInCall.MissingTrailingComma"/><!-- PHP 7.3 -->
 
-		<!-- @hack Internal errors -->
+		<!-- @hack these don't support "else if" -->
 		<exclude name="SlevomatCodingStandard.ControlStructures.EarlyExit"/>
 		<exclude name="SlevomatCodingStandard.ControlStructures.RequireTernaryOperator"/>
-		<exclude name="SlevomatCodingStandard.ControlStructures.UselessIfConditionWithReturn"/>
+		<exclude name="SlevomatCodingStandard.ControlStructures.UselessIfConditionWithReturn.UselessIfCondition"/>
+		<exclude name="SlevomatCodingStandard.ControlStructures.BlockControlStructureSpacing"/>
+		<exclude name="SlevomatCodingStandard.ControlStructures.JumpStatementsSpacing.IncorrectLinesCountBeforeFirstControlStructure"/>
+		<exclude name="SlevomatCodingStandard.ControlStructures.JumpStatementsSpacing.IncorrectLinesCountAfterControlStructure"/>
+		<exclude name="SlevomatCodingStandard.ControlStructures.JumpStatementsSpacing.IncorrectLinesCountAfterLastControlStructure"/>
 	</rule>
 
 	<rule ref="SlevomatCodingStandard.TypeHints.DeclareStrictTypes">
@@ -94,12 +105,12 @@
 		</properties>
 	</rule>
 
-	<rule ref="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingReturnTypeHint">
+	<rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint">
 		<exclude-pattern>src/Fluent/Complex.php</exclude-pattern>
 	</rule>
 
-	<rule ref="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.UselessDocComment">
-		<exclude-pattern>src/Db/Row.php</exclude-pattern>
+	<rule ref="SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.MissingVariable">
+		<exclude-pattern>src/Fluent/Complex.php</exclude-pattern>
 	</rule>
 
 	<rule ref="SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter">

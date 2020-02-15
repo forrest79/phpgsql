@@ -74,7 +74,7 @@ class Query implements Fluent
 	/** @var string */
 	private $queryType = self::QUERY_SELECT;
 
-	/** @var array */
+	/** @var array<string, mixed> */
 	private $params = self::DEFAULT_PARAMS;
 
 	/** @var Db\Sql\Query|NULL */
@@ -92,7 +92,6 @@ class Query implements Fluent
 
 	/**
 	 * @param string|Fluent|Db\Sql $table
-	 * @param string|NULL $alias
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
@@ -103,7 +102,7 @@ class Query implements Fluent
 
 
 	/**
-	 * @param array $columns
+	 * @param array<int|string, string|int|Query|Db\Sql> $columns
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
@@ -138,7 +137,6 @@ class Query implements Fluent
 
 	/**
 	 * @param string|Fluent|Db\Sql $from
-	 * @param string|NULL $alias
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
@@ -151,7 +149,6 @@ class Query implements Fluent
 
 	/**
 	 * @param string|Fluent|Db\Sql $join table or query
-	 * @param string|NULL $alias
 	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return static
 	 * @throws Exceptions\QueryException
@@ -164,7 +161,6 @@ class Query implements Fluent
 
 	/**
 	 * @param string|Fluent|Db\Sql $join table or query
-	 * @param string|NULL $alias
 	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return static
 	 * @throws Exceptions\QueryException
@@ -177,7 +173,6 @@ class Query implements Fluent
 
 	/**
 	 * @param string|Fluent|Db\Sql $join table or query
-	 * @param string|NULL $alias
 	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return static
 	 * @throws Exceptions\QueryException
@@ -190,7 +185,6 @@ class Query implements Fluent
 
 	/**
 	 * @param string|Fluent|Db\Sql $join table or query
-	 * @param string|NULL $alias
 	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return static
 	 * @throws Exceptions\QueryException
@@ -203,7 +197,6 @@ class Query implements Fluent
 
 	/**
 	 * @param string|Fluent|Db\Sql $join table or query
-	 * @param string|NULL $alias
 	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return static
 	 * @throws Exceptions\QueryException
@@ -216,7 +209,6 @@ class Query implements Fluent
 
 	/**
 	 * @param string|Fluent|Db\Sql $join table or query
-	 * @param string|NULL $alias
 	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return static
 	 * @throws Exceptions\QueryException
@@ -229,7 +221,6 @@ class Query implements Fluent
 
 	/**
 	 * @param string|Fluent|Db\Sql $join table or query
-	 * @param string|NULL $alias
 	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return static
 	 * @throws Exceptions\QueryException
@@ -242,7 +233,6 @@ class Query implements Fluent
 
 	/**
 	 * @param string|Fluent|Db\Sql $join table or query
-	 * @param string|NULL $alias
 	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return static
 	 * @throws Exceptions\QueryException
@@ -255,7 +245,6 @@ class Query implements Fluent
 
 	/**
 	 * @param string|Fluent|Db\Sql $join table or query
-	 * @param string|NULL $alias
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
@@ -266,9 +255,7 @@ class Query implements Fluent
 
 
 	/**
-	 * @param string $type
 	 * @param string|Fluent|Db\Sql $name
-	 * @param string|NULL $alias
 	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return static
 	 * @throws Exceptions\QueryException
@@ -284,7 +271,7 @@ class Query implements Fluent
 		}
 
 		if ($alias === NULL) {
-			\assert(\is_string($name));
+			/** @var string $alias */
 			$alias = $name;
 		}
 
@@ -309,7 +296,6 @@ class Query implements Fluent
 
 
 	/**
-	 * @param string $alias
 	 * @param string|Complex|Db\Sql $condition
 	 * @param mixed ...$params
 	 * @return static
@@ -338,6 +324,7 @@ class Query implements Fluent
 
 
 	/**
+	 * @param array<int, string|array|Db\Sql|Complex> $conditions
 	 * @throws Exceptions\QueryException
 	 */
 	public function whereAnd(array $conditions = []): Complex
@@ -350,6 +337,7 @@ class Query implements Fluent
 
 
 	/**
+	 * @param array<int, string|array|Db\Sql|Complex> $conditions
 	 * @throws Exceptions\QueryException
 	 */
 	public function whereOr(array $conditions = []): Complex
@@ -389,6 +377,7 @@ class Query implements Fluent
 
 
 	/**
+	 * @param array<int, string|array|Db\Sql|Complex> $conditions
 	 * @throws Exceptions\QueryException
 	 */
 	public function havingAnd(array $conditions = []): Complex
@@ -401,6 +390,7 @@ class Query implements Fluent
 
 
 	/**
+	 * @param array<int, string|array|Db\Sql|Complex> $conditions
 	 * @throws Exceptions\QueryException
 	 */
 	public function havingOr(array $conditions = []): Complex
@@ -442,7 +432,6 @@ class Query implements Fluent
 
 
 	/**
-	 * @param int $limit
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
@@ -455,7 +444,6 @@ class Query implements Fluent
 
 
 	/**
-	 * @param int $offset
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
@@ -508,7 +496,6 @@ class Query implements Fluent
 
 
 	/**
-	 * @param string $type
 	 * @param string|Fluent|Db\Sql $query
 	 * @return static
 	 */
@@ -520,8 +507,7 @@ class Query implements Fluent
 
 
 	/**
-	 * @param string|NULL $into
-	 * @param array|NULL $columns
+	 * @param array<string>|NULL $columns
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
@@ -542,7 +528,7 @@ class Query implements Fluent
 
 
 	/**
-	 * @param array $data
+	 * @param array<string, mixed> $data
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
@@ -556,7 +542,7 @@ class Query implements Fluent
 
 
 	/**
-	 * @param array $rows
+	 * @param array<int, array<string, mixed>> $rows
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
@@ -572,8 +558,6 @@ class Query implements Fluent
 
 
 	/**
-	 * @param string|NULL $table
-	 * @param string|NULL $alias
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
@@ -592,7 +576,7 @@ class Query implements Fluent
 
 
 	/**
-	 * @param array $data
+	 * @param array<string, mixed> $data
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
@@ -606,8 +590,6 @@ class Query implements Fluent
 
 
 	/**
-	 * @param string|NULL $from
-	 * @param string|NULL $alias
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
@@ -626,7 +608,7 @@ class Query implements Fluent
 
 
 	/**
-	 * @param array $returning
+	 * @param array<int|string, string|int|Query|Db\Sql> $returning
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
@@ -639,7 +621,6 @@ class Query implements Fluent
 
 
 	/**
-	 * @param string|NULL $table
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
@@ -658,7 +639,6 @@ class Query implements Fluent
 
 
 	/**
-	 * @param string $queryPrefix
 	 * @param mixed ...$params
 	 * @return static
 	 * @throws Exceptions\QueryException
@@ -673,7 +653,6 @@ class Query implements Fluent
 
 
 	/**
-	 * @param string $querySufix
 	 * @param mixed ...$params
 	 * @return static
 	 * @throws Exceptions\QueryException
@@ -712,7 +691,6 @@ class Query implements Fluent
 
 	/**
 	 * @param self|Db\Sql|mixed $data
-	 * @param string|NULL $alias
 	 * @throws Exceptions\QueryException
 	 */
 	private function checkAlias($data, ?string $alias): void

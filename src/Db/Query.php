@@ -7,10 +7,13 @@ final class Query
 	/** @var string */
 	private $sql;
 
-	/** @var array */
+	/** @var array<mixed> */
 	private $params;
 
 
+	/**
+	 * @param array<mixed> $params
+	 */
 	public function __construct(string $sql, array $params)
 	{
 		$this->sql = $sql;
@@ -24,6 +27,9 @@ final class Query
 	}
 
 
+	/**
+	 * @return array<mixed>
+	 */
 	public function getParams(): array
 	{
 		return $this->params;

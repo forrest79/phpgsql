@@ -6,7 +6,7 @@ use Forrest79\PhPgSql\Db;
 
 class PhpFile extends DbLoader
 {
-	/** @var array */
+	/** @var array<string, array<int, string>> */
 	private $cache = [];
 
 	/** @var string */
@@ -19,6 +19,9 @@ class PhpFile extends DbLoader
 	}
 
 
+	/**
+	 * @return array<int, string>
+	 */
 	public function load(Db\Connection $connection): array
 	{
 		$connectionConfig = $connection->getConnectionConfig();
@@ -77,6 +80,9 @@ class PhpFile extends DbLoader
 	}
 
 
+	/**
+	 * @param array<int, string> $data
+	 */
 	private static function prepareCacheArray(array $data): string
 	{
 		$cache = '';

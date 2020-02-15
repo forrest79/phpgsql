@@ -11,6 +11,9 @@ class Helper
 	}
 
 
+	/**
+	 * @param array<mixed> $array
+	 */
 	public static function createStringPgArray(array $array): string
 	{
 		if ($array === []) {
@@ -23,6 +26,9 @@ class Helper
 	}
 
 
+	/**
+	 * @param array<mixed> $array
+	 */
 	public static function createPgArray(array $array): string
 	{
 		if ($array === []) {
@@ -33,6 +39,7 @@ class Helper
 
 
 	/**
+	 * @param array<int, mixed> $parameters
 	 * @credit https://github.com/dg/dibi/blob/master/src/Dibi/Helpers.php
 	 */
 	public static function dump(string $sql, array $parameters = []): string

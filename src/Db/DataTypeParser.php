@@ -6,8 +6,6 @@ interface DataTypeParser
 {
 
 	/**
-	 * @param string $type
-	 * @param string|NULL $value
 	 * @return mixed
 	 */
 	function parse(string $type, ?string $value);

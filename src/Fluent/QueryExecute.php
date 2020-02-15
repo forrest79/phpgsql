@@ -4,6 +4,9 @@ namespace Forrest79\PhPgSql\Fluent;
 
 use Forrest79\PhPgSql\Db;
 
+/**
+ * @implements \IteratorAggregate<int, Db\Row>
+ */
 class QueryExecute extends Query implements \Countable, \IteratorAggregate
 {
 	/** @var Db\Connection */
@@ -137,7 +140,7 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 
 
 	/**
-	 * @return Db\Row[]
+	 * @return array<Db\Row>
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
 	 * @throws Exceptions\QueryException
@@ -150,6 +153,7 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 
 
 	/**
+	 * @return array<int|string, mixed>
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
 	 * @throws Exceptions\QueryException
@@ -162,6 +166,7 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 
 
 	/**
+	 * @return array<mixed, mixed>
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
 	 * @throws Exceptions\QueryException

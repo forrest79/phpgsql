@@ -25,6 +25,9 @@ class QueryException extends Exception
 	}
 
 
+	/**
+	 * @param array<string> $params
+	 */
 	public static function nonExistingParamToReset(string $param, array $params): self
 	{
 		return new self(\sprintf('Non existing parameter "%s" to reset. You can reset only these parameters "%s".', $param, \implode(', ', $params)), self::NON_EXISTING_PARAM_TO_RESET);

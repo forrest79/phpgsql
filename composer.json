@@ -16,10 +16,10 @@
 	},
 	"require-dev": {
 		"nette/tester": "~2",
-		"phpstan/phpstan": "^0.11",
-		"phpstan/phpstan-strict-rules": "^0.11",
-		"consistence/coding-standard": "^3.8",
-		"slevomat/coding-standard": "^5.0"
+		"phpstan/phpstan": "^0.12",
+		"phpstan/phpstan-strict-rules": "^0.12",
+		"consistence/coding-standard": "^3.10",
+		"slevomat/coding-standard": "^6.0"
 	},
 	"suggest": {
 		"ext-json": "Needed to support parse JSON types from PostgreSQL"

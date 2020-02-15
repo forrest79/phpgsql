@@ -43,13 +43,13 @@ class Connection
 	/** @var Transaction */
 	private $transaction;
 
-	/** @var callable[] function (Connection $connection) {} */
+	/** @var array<callable> function (Connection $connection) {} */
 	private $onConnect = [];
 
-	/** @var callable[] function (Connection $connection) {} */
+	/** @var array<callable> function (Connection $connection) {} */
 	private $onClose = [];
 
-	/** @var callable[] function (Connection $connection, Query $query, float $time) {} */
+	/** @var array<callable> function (Connection $connection, Query $query, float $time) {} */
 	private $onQuery = [];
 
 
@@ -268,6 +268,9 @@ class Connection
 	}
 
 
+	/**
+	 * @return array<int, string>|NULL
+	 */
 	private function getDataTypesCache(): ?array
 	{
 		return $this->dataTypeCache === NULL ? NULL : $this->dataTypeCache->load($this);
@@ -277,7 +280,6 @@ class Connection
 	/**
 	 * @param string|Sql\Query $sqlQuery
 	 * @param mixed ...$params
-	 * @return Result
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
@@ -289,8 +291,7 @@ class Connection
 
 	/**
 	 * @param string|Sql\Query $sqlQuery
-	 * @param array $params
-	 * @return Result
+	 * @param array<mixed> $params
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
@@ -320,7 +321,6 @@ class Connection
 
 	/**
 	 * @param resource $resource
-	 * @return Result
 	 */
 	private function createResult($resource): Result
 	{
@@ -352,7 +352,6 @@ class Connection
 	/**
 	 * @param string|Sql\Query $sqlQuery
 	 * @param mixed ...$params
-	 * @return AsyncQuery
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
@@ -364,15 +363,14 @@ class Connection
 
 	/**
 	 * @param string|Sql\Query $sqlQuery
-	 * @param array $params
-	 * @return AsyncQuery
+	 * @param array<mixed> $params
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
 	public function asyncQueryArgs($sqlQuery, array $params): AsyncQuery
 	{
 		$query = $this->normalizeSqlQuery($sqlQuery, $params)->createQuery();
-		$this->asyncQuery = new AsyncQuery($this, $query);
+		$asyncQuery = new AsyncQuery($this, $query);
 
 		$queryParams = $query->getParams();
 		if ($queryParams === []) {
@@ -388,7 +386,9 @@ class Connection
 			$this->onQuery($query);
 		}
 
-		return $this->asyncQuery;
+		$this->asyncQuery = $asyncQuery;
+
+		return $asyncQuery;
 	}
 
 
@@ -501,9 +501,12 @@ class Connection
 	}
 
 
+	/**
+	 * @return array<string>
+	 */
 	public function getNotices(bool $clearAfterRead = TRUE): array
 	{
-		/** @var array|FALSE $notices */
+		/** @var array<string>|FALSE $notices */
 		$notices = \pg_last_notice($this->getConnectedResource(), \PGSQL_NOTICE_ALL);
 		if ($notices === FALSE) {
 			throw Exceptions\ConnectionException::cantGetNoticesException();
@@ -556,8 +559,7 @@ class Connection
 
 	/**
 	 * @param string|Sql\Query $query
-	 * @param array $params
-	 * @return Sql\Query
+	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryException
 	 */
 	private function normalizeSqlQuery($query, array $params): Sql\Query
@@ -648,7 +650,6 @@ class Connection
 
 	/**
 	 * @param resource $stream
-	 * @return bool
 	 */
 	private static function isReadable($stream): bool
 	{
@@ -660,7 +661,6 @@ class Connection
 
 	/**
 	 * @param resource $stream
-	 * @return bool
 	 */
 	private static function isWritable($stream): bool
 	{

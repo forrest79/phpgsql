@@ -7,6 +7,10 @@ interface Sql
 
 	function getSql(): string;
 
+
+	/**
+	 * @return array<mixed>
+	 */
 	function getParams(): array;
 
 }

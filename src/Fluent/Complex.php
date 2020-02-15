@@ -4,6 +4,9 @@ namespace Forrest79\PhPgSql\Fluent;
 
 use Forrest79\PhPgSql\Db;
 
+/**
+ * @implements \ArrayAccess<int, string|array|self|Db\Sql>
+ */
 class Complex implements \ArrayAccess
 {
 	public const TYPE_AND = 'AND';
@@ -18,10 +21,13 @@ class Complex implements \ArrayAccess
 	/** @var string */
 	private $type;
 
-	/** @var array */
+	/** @var array<int, self|array<mixed>> */
 	private $conditions;
 
 
+	/**
+	 * @param array<int, self|string|array<mixed>|Db\Sql> $conditions
+	 */
 	private function __construct(string $type, array $conditions, ?Complex $parent = NULL, ?Query $query = NULL)
 	{
 		$this->type = $type;
@@ -32,9 +38,8 @@ class Complex implements \ArrayAccess
 
 
 	/**
-	 * @param string|self|Db\Sql $condition
+	 * @param self|string|Db\Sql $condition
 	 * @param mixed ...$params
-	 * @return self
 	 * @throws Exceptions\ComplexException
 	 */
 	public function add($condition, ...$params): self
@@ -56,6 +61,9 @@ class Complex implements \ArrayAccess
 	}
 
 
+	/**
+	 * @param array<int, self|string|array<mixed>|Db\Sql> $conditions
+	 */
 	public function addComplexAnd(array $conditions = []): Complex
 	{
 		$complexAnd = self::createAnd($conditions, $this, $this->query);
@@ -64,6 +72,9 @@ class Complex implements \ArrayAccess
 	}
 
 
+	/**
+	 * @param array<int, self|string|array<mixed>|Db\Sql> $conditions
+	 */
 	public function addComplexOr(array $conditions = []): Complex
 	{
 		$complexOr = self::createOr($conditions, $this, $this->query);
@@ -78,6 +89,9 @@ class Complex implements \ArrayAccess
 	}
 
 
+	/**
+	 * @return array<int, self|array<mixed>>
+	 */
 	public function getConditions(): array
 	{
 		return $this->conditions;
@@ -109,12 +123,18 @@ class Complex implements \ArrayAccess
 	}
 
 
+	/**
+	 * @param array<int, self|string|array<mixed>|Db\Sql> $conditions
+	 */
 	public static function createAnd(array $conditions = [], ?Complex $parent = NULL, ?Query $query = NULL): self
 	{
 		return new self(self::TYPE_AND, $conditions, $parent, $query);
 	}
 
 
+	/**
+	 * @param array<int, self|string|array<mixed>|Db\Sql> $conditions
+	 */
 	public static function createOr(array $conditions = [], ?Complex $parent = NULL, ?Query $query = NULL): self
 	{
 		return new self(self::TYPE_OR, $conditions, $parent, $query);
@@ -122,18 +142,17 @@ class Complex implements \ArrayAccess
 
 
 	/**
-	 * @param mixed $offset
-	 * @return bool
+	 * @param int $offset
 	 */
-	public function offsetExists($offset)
+	public function offsetExists($offset): bool
 	{
 		return isset($this->conditions[$offset]);
 	}
 
 
 	/**
-	 * @param mixed $offset
-	 * @return mixed|NULL
+	 * @param int $offset
+	 * @return string|array<mixed>|self|Db\Sql|NULL
 	 */
 	public function offsetGet($offset)
 	{
@@ -142,11 +161,10 @@ class Complex implements \ArrayAccess
 
 
 	/**
-	 * @param mixed $offset
-	 * @param mixed $value
-	 * @return void
+	 * @param int|NULL $offset
+	 * @param string|array<mixed>|self|Db\Sql $value
 	 */
-	public function offsetSet($offset, $value)
+	public function offsetSet($offset, $value): void
 	{
 		if (!\is_array($value)) {
 			$value = [$value];
@@ -161,15 +179,18 @@ class Complex implements \ArrayAccess
 
 
 	/**
-	 * @param mixed $offset
-	 * @return void
+	 * @param int $offset
 	 */
-	public function offsetUnset($offset)
+	public function offsetUnset($offset): void
 	{
 		unset($this->conditions[$offset]);
 	}
 
 
+	/**
+	 * @param array<int, self|string|array<mixed>|Db\Sql> $conditions
+	 * @return array<int, self|array<mixed>>
+	 */
 	private function normalizeConditions(array $conditions): array
 	{
 		foreach ($conditions as $i => $value) {
@@ -179,6 +200,8 @@ class Complex implements \ArrayAccess
 				$conditions[$i] = [$value];
 			}
 		}
+
+		/** @var array<int, self|array<mixed>> $conditions */
 		return $conditions;
 	}
 

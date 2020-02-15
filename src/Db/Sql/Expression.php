@@ -9,13 +9,13 @@ class Expression implements Db\Sql
 	/** @var string */
 	private $sql;
 
-	/** @var array */
+	/** @var array<mixed> */
 	private $params;
 
 
 	/**
 	 * @param string $value
-	 * @param mixed[] $params
+	 * @param array<mixed> $params
 	 */
 	public function __construct(string $value, array $params)
 	{
@@ -30,6 +30,9 @@ class Expression implements Db\Sql
 	}
 
 
+	/**
+	 * @return array<mixed>
+	 */
 	public function getParams(): array
 	{
 		return $this->params;
@@ -37,7 +40,6 @@ class Expression implements Db\Sql
 
 
 	/**
-	 * @param string $value
 	 * @param mixed ...$params
 	 * @return self
 	 */
@@ -47,6 +49,9 @@ class Expression implements Db\Sql
 	}
 
 
+	/**
+	 * @param array<mixed> $params
+	 */
 	public static function createArgs(string $value, array $params): self
 	{
 		return new self($value, $params);

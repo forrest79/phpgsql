@@ -550,6 +550,9 @@ class FluentConnectionTest extends Tester\TestCase
 		$customQueryBuilder = new class extends Fluent\QueryBuilder
 		{
 
+			/**
+			 * @param array<mixed> $params
+			 */
 			protected function prepareSqlQuery(string $sql, array $params): Db\Sql\Query
 			{
 				return parent::prepareSqlQuery('SELECT custom_column FROM ?', ['custom_table']);

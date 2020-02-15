@@ -2,6 +2,9 @@
 
 namespace Forrest79\PhPgSql\Db;
 
+/**
+ * @implements \IteratorAggregate<int, Row>
+ */
 class Result implements \Countable, \IteratorAggregate
 {
 	/** @var resource */
@@ -13,21 +16,19 @@ class Result implements \Countable, \IteratorAggregate
 	/** @var DataTypeParser */
 	private $dataTypeParser;
 
-	/** @var array|NULL */
+	/** @var array<int, string>|NULL */
 	private $dataTypesCache;
 
 	/** @var int */
 	private $affectedRows;
 
-	/** @var array */
+	/** @var array<string, string> */
 	private $columnsDataTypes;
 
 
 	/**
 	 * @param resource $queryResource
-	 * @param RowFactory $rowFactory
-	 * @param DataTypeParser $dataTypeParser
-	 * @param array|NULL $dataTypesCache
+	 * @param array<int, string>|NULL $dataTypesCache
 	 */
 	public function __construct(
 		$queryResource,
@@ -119,12 +120,12 @@ class Result implements \Countable, \IteratorAggregate
 	/**
 	 * Fetches all records from table.
 	 *
-	 * @return Row[]
+	 * @return array<Row>
 	 */
 	public function fetchAll(?int $offset = NULL, ?int $limit = NULL): array
 	{
 		$limit = $limit ?? -1;
-		$this->seek($offset ?: 0);
+		$this->seek($offset ?? 0);
 		$row = $this->fetch();
 		if ($row === NULL) {
 			return [];  // empty result set
@@ -153,6 +154,7 @@ class Result implements \Countable, \IteratorAggregate
 	 * - associative descriptor: col1|col2=col3
 	 *   builds a tree:          $tree[$val1][$val2] = val2
 	 *
+	 * @return array<int|string, mixed>
 	 * @throws Exceptions\ResultException
 	 * @credit dibi (https://dibiphp.com/) | David Grudl
 	 */
@@ -184,18 +186,18 @@ class Result implements \Countable, \IteratorAggregate
 
 		// make associative tree
 		do {
-			$x = & $data;
+			$x = &$data;
 
 			// iterative deepening
 			foreach ($assoc as $i => $as) {
 				if ($as === '[]') { // indexed-array node
-					$x = & $x[];
+					$x = &$x[];
 				} else if ($as === '=') { // "value" node
 					$x = $row->{$assoc[$i + 1]};
 					$row = $this->fetch();
 					continue 2;
 				} else if ($as !== '|') { // associative-array node
-					$x = & $x[$row->$as];
+					$x = &$x[$row->$as];
 				}
 			}
 
@@ -214,6 +216,7 @@ class Result implements \Countable, \IteratorAggregate
 	/**
 	 * Fetches all records from table like $key => $value pairs.
 	 *
+	 * @return array<mixed, mixed>
 	 * @throws Exceptions\ResultException
 	 * @credit dibi (https://dibiphp.com/) | David Grudl
 	 */
@@ -284,6 +287,9 @@ class Result implements \Countable, \IteratorAggregate
 	}
 
 
+	/**
+	 * @return array<string>
+	 */
 	public function getColumns(): array
 	{
 		return \array_keys($this->getColumnsDataTypes());
@@ -300,6 +306,9 @@ class Result implements \Countable, \IteratorAggregate
 	}
 
 
+	/**
+	 * @return array<string, string>
+	 */
 	private function getColumnsDataTypes(): array
 	{
 		if ($this->columnsDataTypes === NULL) {

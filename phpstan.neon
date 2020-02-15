@@ -39,6 +39,10 @@ parameters:
 			message: "#Call to function array_key_exists\\(\\) with '.+' and array\\(.+\\) will always evaluate to (true|false)\\.#"
 			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
 
+		-
+			message: '#Call to function array_key_exists\(\) on a separate line has no effect\.#'
+			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
+
 		# === We know, that this can happen ===
 
 		-

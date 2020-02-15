@@ -2,21 +2,29 @@
 
 namespace Forrest79\PhPgSql\Db;
 
+/**
+ * @implements \ArrayAccess<string, mixed>
+ * @implements \IteratorAggregate<string, mixed>
+ */
 class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializable
 {
-	/** @var array */
+	/** @var array<string, string|NULL> */
 	private $rawValues;
 
-	/** @var array */
+	/** @var array<string, string> */
 	private $columnsDataTypes;
 
 	/** @var DataTypeParser */
 	private $dataTypeParser;
 
-	/** @var array */
+	/** @var array<string, mixed> */
 	private $values;
 
 
+	/**
+	 * @param array<string, mixed> $values
+	 * @param array<string, string> $columnsDataTypes
+	 */
 	public function __construct(array $values, array $columnsDataTypes, DataTypeParser $dataTypeParser)
 	{
 		$this->rawValues = $values;
@@ -28,7 +36,6 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 
 
 	/**
-	 * @param string $key
 	 * @return mixed
 	 * @throws Exceptions\RowException
 	 */
@@ -39,9 +46,7 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 
 
 	/**
-	 * @param string $key
 	 * @param mixed $value
-	 * @return void
 	 */
 	public function __set(string $key, $value): void
 	{
@@ -61,6 +66,9 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 	}
 
 
+	/**
+	 * @return array<string, mixed>
+	 */
 	public function toArray(): array
 	{
 		foreach ($this->rawValues as $key => $value) { // intentionally not using array_keys($this->rawValues) as $key - this is 2x faster
@@ -77,7 +85,7 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 
 
 	/**
-	 * @return \ArrayIterator<mixed>
+	 * @return \ArrayIterator<string, mixed>
 	 */
 	public function getIterator(): \ArrayIterator
 	{
@@ -102,7 +110,6 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 	/**
 	 * @param mixed $key
 	 * @param mixed $value
-	 * @return void
 	 */
 	public function offsetSet($key, $value): void
 	{
@@ -128,7 +135,6 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 
 	/**
 	 * @param mixed $key
-	 * @return void
 	 */
 	public function offsetUnset($key): void
 	{
@@ -146,7 +152,6 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 
 
 	/**
-	 * @param string $key
 	 * @return mixed
 	 * @throws Exceptions\RowException
 	 */
@@ -172,7 +177,6 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 
 
 	/**
-	 * @param string $key
 	 * @param mixed $value
 	 * @return void
 	 */
@@ -196,6 +200,9 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 	}
 
 
+	/**
+	 * @return array<string, mixed>
+	 */
 	public function jsonSerialize(): array
 	{
 		return $this->toArray();

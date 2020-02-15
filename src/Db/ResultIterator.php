@@ -2,6 +2,9 @@
 
 namespace Forrest79\PhPgSql\Db;
 
+/**
+ * @implements \Iterator<int, Row>
+ */
 class ResultIterator implements \Iterator
 {
 	/** @var Result */

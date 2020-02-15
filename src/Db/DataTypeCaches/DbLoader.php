@@ -9,6 +9,9 @@ abstract class DbLoader implements Db\DataTypeCache
 	private const LOAD_QUERY = 'SELECT oid, typname FROM pg_catalog.pg_type';
 
 
+	/**
+	 * @return array<int, string>
+	 */
 	protected function loadFromDb(Db\Connection $connection): array
 	{
 		$resource = $connection->getResource();
@@ -23,7 +26,8 @@ abstract class DbLoader implements Db\DataTypeCache
 			if ($data === FALSE) {
 				break;
 			}
-			$types[$data['oid']] = $data['typname'];
+
+			$types[(int) $data['oid']] = (string) $data['typname'];
 		}
 
 		return $types;

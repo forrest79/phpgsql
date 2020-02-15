@@ -325,6 +325,9 @@ class FetchTest extends TestCase
 		$result = $this->connection->query('SELECT 1');
 
 		$row = $result->fetch();
+		if ($row === NULL) {
+			throw new \RuntimeException('No data from database were returned');
+		}
 
 		Tester\Assert::exception(static function () use ($row): void {
 			$row[1];
@@ -638,6 +641,10 @@ class FetchTest extends TestCase
 	{
 		return new class implements Db\RowFactory {
 
+			/**
+			 * @param array<string, mixed> $values
+			 * @param array<string, string> $columnsDataTypes
+			 */
 			public function createRow(array $values, array $columnsDataTypes, Db\DataTypeParser $dataTypeParser): Db\Row
 			{
 				return new Db\Row(['test' => 'custom'], ['test' => 'text'], $dataTypeParser);

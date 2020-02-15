@@ -15,10 +15,10 @@ class PdoBenchmark extends BenchmarkCase
 	/** @var \PDO */
 	private $pdoEmulate;
 
-	/** @var \PDOStatement */
+	/** @var \PDOStatement<mixed> */
 	private $pdoPrepareStatement;
 
-	/** @var \PDOStatement */
+	/** @var \PDOStatement<mixed> */
 	private $pdoEmulatePrepareStatement;
 
 

@@ -94,6 +94,9 @@ class Basic implements Db\DataTypeParser
 	}
 
 
+	/**
+	 * @return array<mixed>
+	 */
 	protected function parseArray(string $value, ?callable $typeFnc = NULL): array
 	{
 		$value = \substr($value, 1, -1);

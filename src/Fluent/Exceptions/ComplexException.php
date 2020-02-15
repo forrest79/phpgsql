@@ -24,7 +24,6 @@ class ComplexException extends Exception
 
 	/**
 	 * @param mixed $condition
-	 * @return static
 	 */
 	public static function unsupportedConditionType($condition): self
 	{

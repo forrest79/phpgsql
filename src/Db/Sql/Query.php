@@ -9,13 +9,16 @@ class Query implements Db\Sql
 	/** @var string */
 	private $sql;
 
-	/** @var array */
+	/** @var array<mixed> */
 	private $params;
 
 	/** @var Db\Query */
 	private $query;
 
 
+	/**
+	 * @param array<mixed> $params
+	 */
 	public function __construct(string $sql, array $params = [])
 	{
 		$this->sql = $sql;
@@ -29,6 +32,9 @@ class Query implements Db\Sql
 	}
 
 
+	/**
+	 * @return array<mixed>
+	 */
 	public function getParams(): array
 	{
 		return $this->params;
@@ -47,6 +53,9 @@ class Query implements Db\Sql
 	}
 
 
+	/**
+	 * @param array<mixed> $params
+	 */
 	private static function prepareQuery(string $sql, array $params, int $paramIndex): Db\Query
 	{
 		$origParamIndex = 0;
@@ -101,7 +110,6 @@ class Query implements Db\Sql
 
 
 	/**
-	 * @param string $sql
 	 * @param mixed ...$params
 	 * @return self
 	 */
@@ -111,6 +119,9 @@ class Query implements Db\Sql
 	}
 
 
+	/**
+	 * @param array<mixed> $params
+	 */
 	public static function createArgs(string $sql, array $params): self
 	{
 		return new self($sql, $params);

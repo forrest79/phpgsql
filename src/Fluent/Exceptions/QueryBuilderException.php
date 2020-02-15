@@ -56,6 +56,9 @@ class QueryBuilderException extends Exception
 	}
 
 
+	/**
+	 * @param array<string> $validValues
+	 */
 	public static function badParam(string $param, string $value, array $validValues): self
 	{
 		return new self(\sprintf('Bad param \'%s\' with value \'%s\'. Valid values are \'%s\'.', $param, $value, \implode('\', \'', $validValues)), self::BAD_PARAM);

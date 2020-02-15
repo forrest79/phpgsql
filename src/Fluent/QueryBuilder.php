@@ -11,6 +11,7 @@ class QueryBuilder
 
 
 	/**
+	 * @param array<string, mixed> $queryParams
 	 * @throws Exceptions\QueryBuilderException
 	 */
 	public function createSqlQuery(string $queryType, array $queryParams): Db\Sql\Query
@@ -37,6 +38,9 @@ class QueryBuilder
 	}
 
 
+	/**
+	 * @param array<mixed> $params
+	 */
 	protected function prepareSqlQuery(string $sql, array $params): Db\Sql\Query
 	{
 		return new Db\Sql\Query($sql, $params);
@@ -44,6 +48,8 @@ class QueryBuilder
 
 
 	/**
+	 * @param array<string, mixed> $queryParams
+	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 */
 	private function createSelect(array $queryParams, array &$params): string
@@ -64,6 +70,8 @@ class QueryBuilder
 
 
 	/**
+	 * @param array<string, mixed> $queryParams
+	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 */
 	private function createInsert(array $queryParams, array &$params): string
@@ -130,6 +138,8 @@ class QueryBuilder
 
 
 	/**
+	 * @param array<string, mixed> $queryParams
+	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 */
 	private function createUpdate(array $queryParams, array &$params): string
@@ -161,6 +171,8 @@ class QueryBuilder
 
 
 	/**
+	 * @param array<string, mixed> $queryParams
+	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 */
 	private function createDelete(array $queryParams, array &$params): string
@@ -179,6 +191,7 @@ class QueryBuilder
 
 
 	/**
+	 * @param array<string, mixed> $queryParams
 	 * @throws Exceptions\QueryBuilderException
 	 */
 	private function createTruncate(array $queryParams): string
@@ -187,6 +200,9 @@ class QueryBuilder
 	}
 
 
+	/**
+	 * @param array<string, mixed> $queryParams
+	 */
 	private function getSelectDistinct(array $queryParams): string
 	{
 		return $queryParams[Query::PARAM_DISTINCT] === TRUE ? 'DISTINCT ' : '';
@@ -194,6 +210,9 @@ class QueryBuilder
 
 
 	/**
+	 * @param array<string, mixed> $queryParams
+	 * @param array<mixed> $params
+	 * @param array<int|string, string>|NULL $columnNames
 	 * @throws Exceptions\QueryBuilderException
 	 */
 	private function getSelectColumns(array $queryParams, array &$params, ?array &$columnNames = NULL): string
@@ -222,6 +241,8 @@ class QueryBuilder
 
 
 	/**
+	 * @param array<string, mixed> $queryParams
+	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 */
 	private function getFrom(array $queryParams, array &$params, bool $useMainTable = TRUE): string
@@ -254,6 +275,8 @@ class QueryBuilder
 
 
 	/**
+	 * @param array<string, mixed> $queryParams
+	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 */
 	private function getJoins(array $queryParams, array &$params): string
@@ -289,6 +312,8 @@ class QueryBuilder
 
 
 	/**
+	 * @param array<string, mixed> $queryParams
+	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 */
 	private function getWhere(array $queryParams, array &$params): string
@@ -303,6 +328,9 @@ class QueryBuilder
 	}
 
 
+	/**
+	 * @param array<string, mixed> $queryParams
+	 */
 	private function getGroupBy(array $queryParams): string
 	{
 		return $queryParams[Query::PARAM_GROUPBY] === []
@@ -312,6 +340,8 @@ class QueryBuilder
 
 
 	/**
+	 * @param array<string, mixed> $queryParams
+	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 */
 	private function getHaving(array $queryParams, array &$params): string
@@ -327,6 +357,8 @@ class QueryBuilder
 
 
 	/**
+	 * @param array<string, mixed> $queryParams
+	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 */
 	private function getOrderBy(array $queryParams, array &$params): string
@@ -353,6 +385,10 @@ class QueryBuilder
 	}
 
 
+	/**
+	 * @param array<string, mixed> $queryParams
+	 * @param array<mixed> $params
+	 */
 	private function getLimit(array $queryParams, array &$params): string
 	{
 		$limit = $queryParams[Query::PARAM_LIMIT];
@@ -367,6 +403,10 @@ class QueryBuilder
 	}
 
 
+	/**
+	 * @param array<string, mixed> $queryParams
+	 * @param array<mixed> $params
+	 */
 	private function getOffset(array $queryParams, array &$params): string
 	{
 		$offset = $queryParams[Query::PARAM_OFFSET];
@@ -382,6 +422,8 @@ class QueryBuilder
 
 
 	/**
+	 * @param array<string, mixed> $queryParams
+	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 */
 	private function getPrefixSuffix(array $queryParams, string $type, array &$params): string
@@ -417,6 +459,8 @@ class QueryBuilder
 
 
 	/**
+	 * @param array<string, mixed> $queryParams
+	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 */
 	private function combine(array $queryParams, array &$params): string
@@ -447,6 +491,8 @@ class QueryBuilder
 
 
 	/**
+	 * @param array<string, mixed> $queryParams
+	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 */
 	private function getReturning(array $queryParams, array &$params): string
@@ -470,6 +516,7 @@ class QueryBuilder
 
 
 	/**
+	 * @param array<string, mixed> $queryParams
 	 * @throws Exceptions\QueryBuilderException
 	 */
 	private function getMainTableAlias(array $queryParams): string
@@ -484,9 +531,7 @@ class QueryBuilder
 	/**
 	 * @param string|NULL $type
 	 * @param string|Db\Sql|Query $table
-	 * @param string $alias
-	 * @param array $params
-	 * @return string
+	 * @param array<mixed> $params
 	 */
 	private function processTable(?string $type, $table, string $alias, array &$params): string
 	{
@@ -506,6 +551,7 @@ class QueryBuilder
 
 
 	/**
+	 * @param array<int, mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 */
 	private function processComplex(Complex $complex, array &$params): string
