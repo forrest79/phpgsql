@@ -58,7 +58,8 @@ class ParseDataTypeTest extends TestCase
 				type_tsquery tsquery,
 				type_tsrange tsrange,
 				type_tstzrange tstzrange,
-				type_tsvector tsvector
+				type_tsvector tsvector,
+				type_interval interval
 			);
 		');
 
@@ -85,9 +86,10 @@ class ParseDataTypeTest extends TestCase
 					type_json,
 					type_jsonb,
 					type_tsquery,
-					type_tsvector
+					type_tsvector,
+					type_interval
 				)
-			VALUES (?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+			VALUES (?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 		', [
 			1,
 			2,
@@ -111,6 +113,7 @@ class ParseDataTypeTest extends TestCase
 			'{"column":"value"}',
 			'query',
 			'vector',
+			'1 day',
 		]);
 
 		$row = $this->fetch();
@@ -138,6 +141,7 @@ class ParseDataTypeTest extends TestCase
 		Tester\Assert::true(\is_array($row->type_jsonb));
 		Tester\Assert::true(\is_string($row->type_tsquery));
 		Tester\Assert::true(\is_string($row->type_tsvector));
+		Tester\Assert::true(\is_string($row->type_interval));
 	}
 
 
@@ -182,7 +186,7 @@ class ParseDataTypeTest extends TestCase
 					type_timestamp,
 					type_timestamptz
 				)
-			VALUES (?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 		', [
 			'{1}',
 			'{2}',

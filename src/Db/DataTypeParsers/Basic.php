@@ -49,6 +49,7 @@ class Basic implements Db\DataTypeParser
 				case '_text':
 				case '_tsquery':
 				case '_tsvector':
+				case '_interval':
 					throw Exceptions\DataTypeParserException::tryUseConvertToJson($type, $value, 'array_to_json');
 				default:
 					throw Exceptions\DataTypeParserException::cantParseType($type, $value);
@@ -77,13 +78,12 @@ class Basic implements Db\DataTypeParser
 					return \json_decode($value, TRUE);
 				case 'time':
 				case 'timetz':
-					return $value;
 				case 'bpchar':
 				case 'varchar':
 				case 'text':
-					return $value;
 				case 'tsquery':
 				case 'tsvector':
+				case 'interval':
 					return $value;
 				case 'hstore':
 					throw Exceptions\DataTypeParserException::tryUseConvertToJson($type, $value, 'hstore_to_json');
