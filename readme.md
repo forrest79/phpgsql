@@ -37,8 +37,9 @@ This library automatically convert PG types to PHP types. Simple types are conve
 **Important!** To determine PG types from PG result is by default used function `pg_field_type`. This function has one undocumented behavior, sends SQL query `select oid,typname from pg_type` (https://github.com/php/php-src/blob/master/ext/pgsql/pgsql.c) for every request to get proper type names. This SELECT is relatively fast and parsing works out of the box with this. But for bigger databases can be this SELECT slower and in common, there is no need to perform it for all requests. We can cache this data and then use function `pg_field_type_oid`. Cache is needed to flush only if database structure is changed. You can use simply cache for this and this is recommended way. Options are, prepare your own cache with `DataTypesCache` interface or use one already prepared, this save cache to PHP file (it's really fast especially with opcache):
 
 ```php
+$phpFileCache = new PhPgSql\Db\DataTypeCache\PhpFile('/tmp/cache'); // we need connection to load data from DB and each connection can has different data types
+
 $connection = new PhPgSql\Db\Connection();
-$phpFileCache = new PhPgSql\Db\DataTypeCache\PhpFile($connection, '/tmp/cache'); // we need connection to load data from DB and each connection can has different data types
 $connection->setDataTypeCache($phpFileCache);
 
 // when database structure has changed:
@@ -70,15 +71,15 @@ $result = $connection->query('SELECT column FROM table WHERE id = ? AND year > ?
 $result = $connection->queryArgs('SELECT column FROM table WHERE id = ? AND year > ?', [1, 2000]);
 ```
 
-We can you ? for param, this work automatically and we can use some special things as pass array, literal, bool or another query. We can also use classic $1, $2, ..., but with this, no special features is available and you can't combine ? and $1.
+We can you `?` for param, this work automatically and we can use some special things as pass array, literal, bool or another query. We can also use classic `$1`, `$2`, ..., but with this, no special features is available and you can't combine `?` and `$1`.
 
-If you want to pass char '?', just escape it with \ like this \?. This is only one magic thing we need know.
+If you want to pass char `?`, just escape it with `\` like this `\?`. This is only one magic thing we need know.
 
-We can pass as variable scalar, array (is rewriten to many ?, ?, ?, ...), literal (is pass to SQL as string, never pass with this user input, possible SQL-injection), bool (PHP PostgreSQL prepared statement can't handle PHP TRUE\FALSE) and another query. To pass another query, we need to prepare one:
+Passed variable can be scalar, array (is rewriten to many ?, ?, ?, ...), literal (is pass to SQL as string, never pass with this user input, possible SQL-injection), bool (PHP PostgreSQL prepared statement can't handle PHP `TRUE`\`FALSE`) and another query. To pass another query, we need to prepare one:
 
 ```php
-$query = $connection->prepareQuery('SELECT id FROM table WHERE year > ?', 2000);
-$query = $connection->prepareQueryArgs('SELECT id FROM table WHERE year > ?', [2000]);
+$query = Db\Sql\Query::create('SELECT id FROM table WHERE year > ?', 2000);
+$query = Db\Sql\Query::createArgs('SELECT id FROM table WHERE year > ?', [2000]);
 ```
 
 And pass it:
@@ -118,7 +119,7 @@ $row = $result->getColumnType('name');
 $row = $result->getColumns();
 ```
 
-And for INSERT/UPDATE/DELETE results we can get number of affected rows:
+And for `INSERT`/`UPDATE`/`DELETE` results we can get number of affected rows:
 
 ```php
 $row = $result->getAffectedRows();
@@ -137,11 +138,15 @@ $result = $connection->asyncQuery('SELECT * FROM table WHERE id = ?', 1);
 $result = $connection->asyncQueryArgs('SELECT * FROM table WHERE id = ?', [1]);
 ```
 
-You can run just one async query on connection, before we can run new async query, we need to get results from the first one:
+You can run just one async query on connection (but you can run more queries separated with `;` at once in one function call - but only when you don't use parameters - this is `pgsql` extension limitations), before we can run new async query, we need to get results. When you pass more queries in one function call, you need to call this for every query in call. Results are getting in the same order as queries are passed to the function.
 
 ```php
-$connection->waitForAsyncQuery();
+$connection->getNextAsyncQueryResult();
 ```
+
+If you want to run simple SQL query/queries (separated with `;`) without parameters and you don't care about results, you can use `execute(string $sql)` function or `asyncExecute(string $sql)` (call `completeAsyncExecute()` to be sure that all async queries were completed).
+
+> If you use `query()` or `asyncQuery()` without parameters, you can also pass more queries separated with `;`, but you will get only last result for non-async variant. Internally - `execute()` and `query()/asyncQuery()` without parameters call the same `pg_*` functions.  
 
 After that, we can use `$result` as normal $result from normal query.
 
@@ -185,30 +190,31 @@ $connection->addOnQuery(function(Connection $connection, Query $query, ?float $t
 });
 ```
 
+PostgreSQL can raise a notice. This is very handy for development purposes. Notices can be read with `$connection->getNotices(bool $clearAfterRead = TRUE)`. You can call this function after query or at the end of the PHP script.
+
 ## Fluent
 
 ### Common use
 
 Fluent interface can be used to simply create SQL queries using PHP.
 
-We can start with ```Fluent``` object:
+We can start with ```Fluent\Query``` object:
 
 ```php
-$fluent = new Fluent\Fluent();
-$fluent->select(['*'])->prepareSql(); // create Query object with SQL and params to pg_query_params
-// $fluent->select(['*'])->getQuery(); // mostly internal, this is pass to Db\Connection, which prepare real SQL
+$fluent = new Fluent\Query();
+$fluent->select(['*'])->createSqlQuery(); // create Query object with SQL and params to pg_query_params
 ```
 
-But if fluent object has no DB connection, you can't send query directly to database. You can pass connection as parameter in ```create(Db\Connection $connection)``` function or the better solution is to start with ```Fluent\Connection```, which pass DB connection to ```Fluent``` automaticaly:
+But if fluent object has no DB connection, you can't send query directly to database. You can pass connection as parameter in `create(Db\Connection $connection)` function or the better solution is to start with `Fluent\Connection`, which pass DB connection to `Fluent\Query` automaticaly:
 
 ```php
 $fluent = new Fluent\Connection();
 $rows = $fluent->select(['*'])->from('table')->fetchAll();
 ```
 
-You can use all fetch functions as on ```Db\Result```. If you create query that returns no data, you can run it with ```execute()```, that return ```Db\Result``` object.
+You can use all fetch functions as on `Db\Result`. If you create query that returns no data, you can run it with `execute()`, that return `Db\Result` object.
 
-You can update your query till ```execute()``` is call, after that, no updates on query is available, you can only execute this query again by calling ```reexecute()```:
+You can update your query till `execute()` is call, after that, no updates on query is available, you can only execute this query again by calling `reexecute()`:
 
 ```php
 $fluent = (new Fluent\Connection())
@@ -220,7 +226,7 @@ $rows = $fluent->fetchAll();
 $freshRows = $fluent->reexecute()->fetchAll();
 ```
 
-You can start creating your query with every possible command, it does't matter on the order of commands, SQL is always created right. Every query is SELECT at first, until you call ```->insert(...)```, ```->update(...)```, ```->delete(...)``` or ```->truncate(...)```, which change query to apropriate SQL command. So you can prepare you query in common way and at the end, you can decide if you want to SELECT data or DELETE data or whatsoever. If you call some command more than once, data is merged, for example, this ```->select(['column1'])->select(['column2'])``` is the same as ```->select(['column1', 'column2'])```.
+You can start creating your query with every possible command, it does't matter on the order of commands, SQL is always created right. Every query is `SELECT` at first, until you call `->insert(...)`, `->update(...)`, `->delete(...)` or `->truncate(...)`, which change query to apropriate SQL command. So you can prepare you query in common way and at the end, you can decide if you want to `SELECT` data or `DELETE` data or whatsoever. If you call some command more than once, data is merged, for example, this `->select(['column1'])->select(['column2'])` is the same as `->select(['column1', 'column2'])`.
 
 There is one special command ```->table(...)```, it define main table for SQL, when you call select, it will be used as FROM, if you call INSERT it will be used as INTO, the same for UPDATE, DELETE or TRUNCATE.
 
@@ -229,11 +235,11 @@ $fluent = (new Fluent\Connection())
 	->table('table', 't');
 
 $fluent->select(['*']); // SELECT * FROM table AS t
-// $fluent->value(['column' => 1]); INSERT INTO table(column) VALUES($1);
-// $fluent->set(['column' => 1]); UPDATE table AS t SET column = $1;
+// $fluent->value(['column' => 1]); // INSERT INTO table(column) VALUES($1);
+// $fluent->set(['column' => 1]); // UPDATE table AS t SET column = $1;
 ```
 
-Every table definition command (like ```->table(...)```, ```->from(...)```, joins, update table, ...) has table alias definition, you don't need to use this. If you want to create alias for column in select, use string key in array definition:
+Every table definition command (like `->table(...)`, `->from(...)`, joins, update table, ...) has table alias definition, you don't need to use this. If you want to create alias for column in select, use string key in array definition:
 
 ```php
 (new Fluent\Connection())
@@ -255,7 +261,8 @@ If you call more ```->where(...)``` or ```->having(...)``` it is concat with AND
 	->fluent() // back to original fluent object
 	->select(['*'])
 	->from('table')
-	->prepareSql(); // 'SELECT * FROM table WHERE column = $1 OR column2 IN ($2, $3) OR (column IN (SELECT 1) AND column2 = ANY(SELECT 2)) OR column3 IS NOT NULL'
+	->createSqlQuery()
+    ->createQuery() // 'SELECT * FROM table WHERE column = $1 OR column2 IN ($2, $3) OR (column IN (SELECT 1) AND column2 = ANY(SELECT 2)) OR column3 IS NOT NULL'
 ```
 
 The same can be used with ```HAVING``` and ```ON``` conditions for joins, but ```ON``` conditions don't have this API. You have to pass it manually:
@@ -270,7 +277,7 @@ The same can be used with ```HAVING``` and ```ON``` conditions for joins, but ``
 	->on('t', $complex) // you can pass prepared Complex object, Complex::createAnd(...)/creatrOr(...)
 ```
 
-Every condition (in WHERE/HAVING/ON) can be simple string, can have one argument with =/IN detection or can have many argument with ? character:
+Every condition (in `WHERE`/`HAVING`/`ON`) can be simple string, can have one argument with `=`/`IN` detection or can have many argument with `?` character:
 
 ```php
 (new Fluent\Connection())
@@ -279,7 +286,7 @@ Every condition (in WHERE/HAVING/ON) can be simple string, can have one argument
 	->where('column BETWEEN ? AND ?', $from, $to) // you need pass as many argument as ? is passed
 ```
 
-To almost every parameters (select, where, having, on, orderBy, returning, from, joins, unions, ...) you can pass ```Db\Query``` or other ```Fluent\Fluent``` object. At some places (select, from, joins), you must provide alias if you want to pass this objects.
+To almost every parameters (select, where, having, on, orderBy, returning, from, joins, unions, ...) you can pass ```Db\Sql\Query``` (`Db\Sql` interface) or other ```Fluent\Query``` object. At some places (select, from, joins), you must provide alias if you want to pass this objects.
 
 ```php
 $fluent = (new Fluent\Connection())
@@ -354,7 +361,7 @@ Here is column names detected from the first value or you can pass them as secon
 	->execute();
 ```
 
-And of course, you can use INSERT - SELECT:
+And of course, you can use `INSERT` - `SELECT`:
 
 ```php
 (new Fluent\Connection())
@@ -364,7 +371,7 @@ And of course, you can use INSERT - SELECT:
 	->execute(); // INSERT INTO table(name) SELECT column FROM table2
 ```
 
-And if you're using the same names for columns in INSERT and SELECT, you can call insert without columns list and it will be detected from select columns.
+And if you're using the same names for columns in `INSERT` and `SELECT`, you can call insert without columns list and it will be detected from select columns.
 
 ```php
 (new Fluent\Connection())
