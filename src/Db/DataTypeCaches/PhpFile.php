@@ -69,7 +69,13 @@ class PhpFile extends DbLoader
 	{
 		$connectionConfig = $connection->getConnectionConfig();
 
-		@\unlink($this->getCacheFile($connectionConfig)); // intentionally @ - file may not exists
+		$cacheFile = $this->getCacheFile($connectionConfig);
+		@\unlink($cacheFile); // intentionally @ - file may not exists
+
+		if (\function_exists('opcache_invalidate')) {
+			\opcache_invalidate($cacheFile, TRUE);
+		}
+
 		unset($this->cache[$connectionConfig]);
 	}
 
