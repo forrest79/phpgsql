@@ -2,7 +2,7 @@
 
 namespace Forrest79\PhPgSql\Db;
 
-final class DummyRow implements Rowable
+class DummyRow implements Rowable
 {
 	/** @var array<string, mixed> */
 	private $values;
