@@ -10,7 +10,7 @@ class ResultIterator implements \Iterator
 	/** @var Result */
 	private $result;
 
-	/** @var Row|NULL */
+	/** @var Rowable|NULL */
 	private $row;
 
 	/** @var int */
@@ -37,7 +37,7 @@ class ResultIterator implements \Iterator
 	}
 
 
-	public function current(): Row
+	public function current(): Rowable
 	{
 		return $this->row;
 	}
