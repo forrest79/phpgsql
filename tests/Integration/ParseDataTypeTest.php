@@ -352,7 +352,7 @@ class ParseDataTypeTest extends TestCase
 	}
 
 
-	private function fetch(): Db\RowResult
+	private function fetch(): Db\Row
 	{
 		$row = $this->connection->query('SELECT * FROM test')->fetch();
 		if ($row === NULL) {

@@ -627,7 +627,7 @@ class FetchTest extends TestCase
 	}
 
 
-	private function fetch(Db\Result $result): Db\RowResult
+	private function fetch(Db\Result $result): Db\Row
 	{
 		$row = $result->fetch();
 		if ($row === NULL) {
@@ -645,9 +645,9 @@ class FetchTest extends TestCase
 			 * @param array<string, mixed> $values
 			 * @param array<string, string> $columnsDataTypes
 			 */
-			public function createRow(array $values, array $columnsDataTypes, Db\DataTypeParser $dataTypeParser): Db\RowResult
+			public function createRow(array $values, array $columnsDataTypes, Db\DataTypeParser $dataTypeParser): Db\Row
 			{
-				return new Db\RowResult(['test' => 'custom'], ['test' => 'text'], $dataTypeParser);
+				return new Db\Row(['test' => 'custom'], ['test' => 'text'], $dataTypeParser);
 			}
 
 		};

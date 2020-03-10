@@ -9,6 +9,6 @@ interface RowFactory
 	 * @param array<string, mixed> $values
 	 * @param array<string, string> $columnsDataTypes
 	 */
-	function createRow(array $values, array $columnsDataTypes, DataTypeParser $dataTypeParser): RowResult;
+	function createRow(array $values, array $columnsDataTypes, DataTypeParser $dataTypeParser): Row;
 
 }
