@@ -51,7 +51,7 @@ class Result implements \Countable, \IteratorAggregate
 	}
 
 
-	public function fetch(): ?Row
+	public function fetch(): ?RowResult
 	{
 		$data = \pg_fetch_assoc($this->queryResource);
 		if ($data === FALSE) {
@@ -120,7 +120,7 @@ class Result implements \Countable, \IteratorAggregate
 	/**
 	 * Fetches all records from table.
 	 *
-	 * @return array<Row>
+	 * @return array<RowResult>
 	 */
 	public function fetchAll(?int $offset = NULL, ?int $limit = NULL): array
 	{
@@ -154,7 +154,7 @@ class Result implements \Countable, \IteratorAggregate
 	 * - associative descriptor: col1|col2=col3
 	 *   builds a tree:          $tree[$val1][$val2] = val2
 	 *
-	 * @return array<int|string, Row|array|mixed>
+	 * @return array<int|string, RowResult|array|mixed>
 	 * @throws Exceptions\ResultException
 	 * @credit dibi (https://dibiphp.com/) | David Grudl
 	 */

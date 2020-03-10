@@ -3,14 +3,14 @@
 namespace Forrest79\PhPgSql\Db;
 
 /**
- * @implements \Iterator<int, Row>
+ * @implements \Iterator<int, RowResult>
  */
 class ResultIterator implements \Iterator
 {
 	/** @var Result */
 	private $result;
 
-	/** @var Row|NULL */
+	/** @var RowResult|NULL */
 	private $row;
 
 	/** @var int */
@@ -37,7 +37,7 @@ class ResultIterator implements \Iterator
 	}
 
 
-	public function current(): Row
+	public function current(): RowResult
 	{
 		return $this->row;
 	}

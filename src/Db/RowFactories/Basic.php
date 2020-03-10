@@ -11,9 +11,9 @@ class Basic implements Db\RowFactory
 	 * @param array<string, mixed> $values
 	 * @param array<string, string> $columnsDataTypes
 	 */
-	public function createRow(array $values, array $columnsDataTypes, Db\DataTypeParser $dataTypeParser): Db\Row
+	public function createRow(array $values, array $columnsDataTypes, Db\DataTypeParser $dataTypeParser): Db\RowResult
 	{
-		return new Db\Row($values, $columnsDataTypes, $dataTypeParser);
+		return new Db\RowResult($values, $columnsDataTypes, $dataTypeParser);
 	}
 
 }

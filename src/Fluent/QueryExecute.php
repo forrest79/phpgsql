@@ -120,7 +120,7 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	public function fetch(): ?Db\Row
+	public function fetch(): ?Db\RowResult
 	{
 		return $this->execute()->fetch();
 	}
@@ -140,7 +140,7 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 
 
 	/**
-	 * @return array<Db\Row>
+	 * @return array<Db\RowResult>
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
 	 * @throws Exceptions\QueryException
