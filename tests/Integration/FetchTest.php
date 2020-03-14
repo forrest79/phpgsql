@@ -338,10 +338,6 @@ class FetchTest extends TestCase
 		}, Db\Exceptions\RowException::class, NULL, Db\Exceptions\RowException::NOT_STRING_KEY);
 
 		Tester\Assert::exception(static function () use ($row): void {
-			isset($row[1]);
-		}, Db\Exceptions\RowException::class, NULL, Db\Exceptions\RowException::NOT_STRING_KEY);
-
-		Tester\Assert::exception(static function () use ($row): void {
 			unset($row[1]);
 		}, Db\Exceptions\RowException::class, NULL, Db\Exceptions\RowException::NOT_STRING_KEY);
 
@@ -576,33 +572,39 @@ class FetchTest extends TestCase
 
 		Tester\Assert::same('phpgsql', $row->name);
 
-		Tester\Assert::false(isset($row->type));
-
-		Tester\Assert::false(isset($row['another_type']));
+		Tester\Assert::false($row->hasKey('type'));
 
 		Tester\Assert::exception(static function () use ($row): void {
 			$row->type;
 		}, Db\Exceptions\RowException::class, NULL, Db\Exceptions\RowException::NO_KEY);
 
 		Tester\Assert::exception(static function () use ($row): void {
+			isset($row->type);
+		}, Db\Exceptions\RowException::class, NULL, Db\Exceptions\RowException::ISSET_IS_NOT_IMPLEMENTED);
+
+		Tester\Assert::exception(static function () use ($row): void {
 			$row['another_type'];
 		}, Db\Exceptions\RowException::class, NULL, Db\Exceptions\RowException::NO_KEY);
 
+		Tester\Assert::exception(static function () use ($row): void {
+			isset($row['another_type']);
+		}, Db\Exceptions\RowException::class, NULL, Db\Exceptions\RowException::ISSET_IS_NOT_IMPLEMENTED);
+
 		$row->type = 'test';
 
-		Tester\Assert::true(isset($row->type));
+		Tester\Assert::true($row->hasKey('type'));
 
 		Tester\Assert::same('test', $row->type);
 
 		$row['another_type'] = 'another_test';
 
-		Tester\Assert::true(isset($row['another_type']));
+		Tester\Assert::true($row->hasKey('another_type'));
 
 		Tester\Assert::same('another_test', $row['another_type']);
 
 		unset($row->type);
 
-		Tester\Assert::false(isset($row->type));
+		Tester\Assert::false($row->hasKey('type'));
 
 		Tester\Assert::exception(static function () use ($row): void {
 			$row->type;
@@ -610,7 +612,7 @@ class FetchTest extends TestCase
 
 		unset($row['another_type']);
 
-		Tester\Assert::false(isset($row['another_type']));
+		Tester\Assert::false($row->hasKey('another_type'));
 
 		Tester\Assert::exception(static function () use ($row): void {
 			$row['another_type'];

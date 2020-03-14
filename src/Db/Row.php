@@ -56,7 +56,7 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 
 	public function __isset(string $key): bool
 	{
-		return $this->existsKey($key);
+		throw Exceptions\RowException::issetIsNotImplemented($key);
 	}
 
 
@@ -122,14 +122,13 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 
 	/**
 	 * @param mixed $key
-	 * @return bool
 	 */
-	public function offsetExists($key): bool
+	public function offsetExists($key = NULL): bool
 	{
 		if (!\is_string($key)) {
 			throw Exceptions\RowException::notStringKey();
 		}
-		return $this->existsKey($key);
+		throw Exceptions\RowException::issetIsNotImplemented($key);
 	}
 
 
@@ -147,7 +146,7 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 
 	public function hasKey(string $key): bool
 	{
-		return $this->existsKey($key);
+		return \array_key_exists($key, $this->values);
 	}
 
 
@@ -184,12 +183,6 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 	{
 		$this->values[$key] = $value;
 		unset($this->rawValues[$key]);
-	}
-
-
-	private function existsKey(string $key): bool
-	{
-		return \array_key_exists($key, $this->values);
 	}
 
 
