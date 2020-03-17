@@ -24,7 +24,7 @@ Simple and fast PHP database library for PostgreSQL with auto converting DB type
 The recommended way to install PhPgSql is through Composer:
 
 ```sh
-composer require forrest79/phpgsql --dev
+composer require forrest79/phpgsql
 ```
 
 PhPgSql requires PHP 7.1.0 and pgsql binary extension. It doesn't work with PDO!
@@ -52,7 +52,7 @@ $phpFileCache->clean();
 First, create connection to PostgreSQL and connect it:
 
 ```php
-$connection = new Db\Connection('host=sheep port=5432 dbname=test user=lamb password=bar connect_timeout=5'); // good habit is to use connect_timeout parameter 
+$connection = new Db\Connection('host=sheep port=5432 dbname=test user=lamb password=bar connect_timeout=5'); // good habit is to use connect_timeout parameter
 $connection->connect();
 ```
 
@@ -146,7 +146,7 @@ $connection->getNextAsyncQueryResult();
 
 If you want to run simple SQL query/queries (separated with `;`) without parameters and you don't care about results, you can use `execute(string $sql)` function or `asyncExecute(string $sql)` (call `completeAsyncExecute()` to be sure that all async queries were completed).
 
-> If you use `query()` or `asyncQuery()` without parameters, you can also pass more queries separated with `;`, but you will get only last result for non-async variant. Internally - `execute()` and `query()/asyncQuery()` without parameters call the same `pg_*` functions.  
+> If you use `query()` or `asyncQuery()` without parameters, you can also pass more queries separated with `;`, but you will get only last result for non-async variant. Internally - `execute()` and `query()/asyncQuery()` without parameters call the same `pg_*` functions.
 
 After that, we can use `$result` as normal $result from normal query.
 
