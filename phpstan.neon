@@ -42,6 +42,14 @@ parameters:
 			message: '#Call to function array_key_exists\(\) on a separate line has no effect\.#'
 			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
 
+		-
+			message: '#Offset 0 on (array\(.+\)|null) on left side of \?\? .+\.#'
+			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
+
+		-
+			message: "#Offset '[a-zA-Z0-9]+' on array\\(.+\\) in isset\\(\\) .+\\.#"
+			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
+
 		# === We know, that this can happen ===
 
 		-
