@@ -4,13 +4,13 @@ namespace Forrest79\PhPgSql\Db\Exceptions;
 
 class RowException extends Exception
 {
-	public const NO_KEY = 1;
+	public const NO_COLUMN = 1;
 	public const NOT_STRING_KEY = 2;
 
 
-	public static function noParam(string $key): self
+	public static function noColumn(string $column): self
 	{
-		return new self(\sprintf('There is no key \'%s\'.', $key), self::NO_KEY);
+		return new self(\sprintf('There is no column \'%s\'.', $column), self::NO_COLUMN);
 	}
 
 

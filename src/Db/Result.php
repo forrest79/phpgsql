@@ -180,7 +180,7 @@ class Result implements \Countable, \IteratorAggregate
 		// check columns
 		foreach ($assoc as $as) {
 			// offsetExists ignores NULL in PHP 5.2.1, isset() surprisingly NULL accepts
-			if ($as !== '[]' && $as !== '=' && $as !== '|' && $row->hasKey($as) === FALSE) {
+			if ($as !== '[]' && $as !== '=' && $as !== '|' && $row->hasColumn($as) === FALSE) {
 				throw Exceptions\ResultException::noColumn($as);
 			}
 		}
@@ -254,7 +254,7 @@ class Result implements \Countable, \IteratorAggregate
 			$value = $tmp[1];
 
 		} else {
-			if ($row->hasKey($value) === FALSE) {
+			if ($row->hasColumn($value) === FALSE) {
 				throw Exceptions\ResultException::noColumn($value);
 			}
 
@@ -266,7 +266,7 @@ class Result implements \Countable, \IteratorAggregate
 				return $data;
 			}
 
-			if ($row->hasKey($key) === FALSE) {
+			if ($row->hasColumn($key) === FALSE) {
 				throw Exceptions\ResultException::noColumn($key);
 			}
 		}
@@ -299,11 +299,11 @@ class Result implements \Countable, \IteratorAggregate
 	/**
 	 * @throws Exceptions\ResultException
 	 */
-	public function getColumnType(string $key): string
+	public function getColumnType(string $column): string
 	{
-		$type = $this->getColumnsDataTypes()[$key] ?? NULL;
+		$type = $this->getColumnsDataTypes()[$column] ?? NULL;
 		if ($type === NULL) {
-			throw Exceptions\ResultException::noColumn($key);
+			throw Exceptions\ResultException::noColumn($column);
 		}
 		return $type;
 	}
@@ -322,9 +322,9 @@ class Result implements \Countable, \IteratorAggregate
 	 * @param mixed $rawValue
 	 * @return mixed
 	 */
-	public function parseColumnValue(string $key, $rawValue)
+	public function parseColumnValue(string $column, $rawValue)
 	{
-		return $this->dataTypeParser->parse($this->getColumnType($key), $rawValue);
+		return $this->dataTypeParser->parse($this->getColumnType($column), $rawValue);
 	}
 
 

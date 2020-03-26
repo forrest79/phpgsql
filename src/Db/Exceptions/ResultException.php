@@ -14,15 +14,15 @@ class ResultException extends Exception
 	public const ANOTHER_ASYNC_QUERY_IS_RUNNING = 6;
 
 
-	public static function noColumn(string $key): self
+	public static function noColumn(string $column): self
 	{
-		return new self(\sprintf('There is no key \'%s\'.', $key), self::NO_COLUMN);
+		return new self(\sprintf('There is no column \'%s\'.', $column), self::NO_COLUMN);
 	}
 
 
-	public static function columnNameIsAlreadyInUse(string $key): self
+	public static function columnNameIsAlreadyInUse(string $column): self
 	{
-		return new self(\sprintf('Key \'%s\' is already used in result.', $key), self::COLUMN_NAME_IS_ALREADY_IN_USE);
+		return new self(\sprintf('Column \'%s\' is already used in result.', $column), self::COLUMN_NAME_IS_ALREADY_IN_USE);
 	}
 
 

@@ -33,30 +33,30 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 	 * @return mixed
 	 * @throws Exceptions\RowException
 	 */
-	public function __get(string $key)
+	public function __get(string $column)
 	{
-		return $this->getValue($key);
+		return $this->getValue($column);
 	}
 
 
 	/**
 	 * @param mixed $value
 	 */
-	public function __set(string $key, $value): void
+	public function __set(string $column, $value): void
 	{
-		$this->setValue($key, $value);
+		$this->setValue($column, $value);
 	}
 
 
-	public function __isset(string $key): bool
+	public function __isset(string $column): bool
 	{
-		return $this->hasKey($key) && ($this->getValue($key) !== NULL);
+		return $this->hasColumn($column) && ($this->getValue($column) !== NULL);
 	}
 
 
-	public function __unset(string $key): void
+	public function __unset(string $column): void
 	{
-		$this->removeValue($key);
+		$this->removeValue($column);
 	}
 
 
@@ -65,9 +65,9 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 	 */
 	public function toArray(): array
 	{
-		// intentionally not using array_keys($this->rawValues) as $key - this is 2x faster
-		foreach ($this->rawValues as $key => $value) {
-			$this->parseValue($key);
+		// intentionally not using array_keys($this->rawValues) as $column - this is 2x faster
+		foreach ($this->rawValues as $column => $value) {
+			$this->parseValue($column);
 		}
 		return $this->values;
 	}
@@ -89,60 +89,60 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 
 
 	/**
-	 * @param mixed $key
+	 * @param mixed $column
 	 * @return mixed
 	 * @throws Exceptions\RowException
 	 */
-	public function offsetGet($key)
+	public function offsetGet($column)
 	{
-		if (!\is_string($key)) {
+		if (!\is_string($column)) {
 			throw Exceptions\RowException::notStringKey();
 		}
-		return $this->getValue($key);
+		return $this->getValue($column);
 	}
 
 
 	/**
-	 * @param mixed $key
+	 * @param mixed $column
 	 * @param mixed $value
 	 */
-	public function offsetSet($key, $value): void
+	public function offsetSet($column, $value): void
 	{
-		if (!\is_string($key)) {
+		if (!\is_string($column)) {
 			throw Exceptions\RowException::notStringKey();
 		}
-		$this->setValue($key, $value);
+		$this->setValue($column, $value);
 	}
 
 
 	/**
-	 * @param mixed $key
+	 * @param mixed $column
 	 * @return bool
 	 */
-	public function offsetExists($key): bool
+	public function offsetExists($column): bool
 	{
-		if (!\is_string($key)) {
+		if (!\is_string($column)) {
 			throw Exceptions\RowException::notStringKey();
 		}
-		return $this->hasKey($key) && ($this->getValue($key) !== NULL);
+		return $this->hasColumn($column) && ($this->getValue($column) !== NULL);
 	}
 
 
 	/**
-	 * @param mixed $key
+	 * @param mixed $column
 	 */
-	public function offsetUnset($key): void
+	public function offsetUnset($column): void
 	{
-		if (!\is_string($key)) {
+		if (!\is_string($column)) {
 			throw Exceptions\RowException::notStringKey();
 		}
-		$this->removeValue($key);
+		$this->removeValue($column);
 	}
 
 
-	public function hasKey(string $key): bool
+	public function hasColumn(string $column): bool
 	{
-		return \array_key_exists($key, $this->values);
+		return \array_key_exists($column, $this->values);
 	}
 
 
@@ -150,24 +150,24 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 	 * @return mixed
 	 * @throws Exceptions\RowException
 	 */
-	private function getValue(string $key)
+	private function getValue(string $column)
 	{
-		if (!\array_key_exists($key, $this->values)) {
-			throw Exceptions\RowException::noParam($key);
+		if (!\array_key_exists($column, $this->values)) {
+			throw Exceptions\RowException::noColumn($column);
 		}
 
-		if (\array_key_exists($key, $this->rawValues)) {
-			$this->parseValue($key);
+		if (\array_key_exists($column, $this->rawValues)) {
+			$this->parseValue($column);
 		}
 
-		return $this->values[$key];
+		return $this->values[$column];
 	}
 
 
-	private function parseValue(string $key): void
+	private function parseValue(string $column): void
 	{
-		$this->values[$key] = $this->result->parseColumnValue($key, $this->rawValues[$key]);
-		unset($this->rawValues[$key]);
+		$this->values[$column] = $this->result->parseColumnValue($column, $this->rawValues[$column]);
+		unset($this->rawValues[$column]);
 	}
 
 
@@ -175,17 +175,17 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 	 * @param mixed $value
 	 * @return void
 	 */
-	private function setValue(string $key, $value): void
+	private function setValue(string $column, $value): void
 	{
-		$this->values[$key] = $value;
-		unset($this->rawValues[$key]);
+		$this->values[$column] = $value;
+		unset($this->rawValues[$column]);
 	}
 
 
-	private function removeValue(string $key): void
+	private function removeValue(string $column): void
 	{
-		unset($this->rawValues[$key]);
-		unset($this->values[$key]);
+		unset($this->rawValues[$column]);
+		unset($this->values[$column]);
 	}
 
 
