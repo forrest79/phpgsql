@@ -280,10 +280,11 @@ class Result implements \Countable, \IteratorAggregate
 	 */
 	public function getColumnType(string $key): string
 	{
-		if (!isset($this->getColumnsDataTypes()[$key])) {
+		$type = $this->getColumnsDataTypes()[$key] ?? NULL;
+		if ($type === NULL) {
 			throw Exceptions\ResultException::noColumn($key);
 		}
-		return $this->getColumnsDataTypes()[$key];
+		return $type;
 	}
 
 
