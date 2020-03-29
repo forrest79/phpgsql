@@ -16,6 +16,7 @@ class GetFieldTypesBenchmark extends BenchmarkCase
 	/** @var array<int, string> */
 	private $cache = [
 		23 => 'int4',
+		25 => 'text',
 		705 => 'unknown',
 		16 => 'bool',
 		1184 => 'timestamptz',

@@ -252,8 +252,6 @@ class BasicTest extends TestCase
 
 	public function testGetNotifications(): void
 	{
-		$this->skipOnTravis();
-
 		$this->connection->execute('DO $BODY$ BEGIN RAISE NOTICE \'Test notice\'; END; $BODY$ LANGUAGE plpgsql;');
 		Tester\Assert::same(['NOTICE:  Test notice'], $this->connection->getNotices());
 		Tester\Assert::same([], $this->connection->getNotices());
@@ -262,8 +260,6 @@ class BasicTest extends TestCase
 
 	public function testGetNotificationsWithouClearing(): void
 	{
-		$this->skipOnTravis();
-
 		$this->connection->execute('DO $BODY$ BEGIN RAISE NOTICE \'Test notice\'; END; $BODY$ LANGUAGE plpgsql;');
 		Tester\Assert::same(['NOTICE:  Test notice'], $this->connection->getNotices(FALSE));
 		Tester\Assert::same(['NOTICE:  Test notice'], $this->connection->getNotices());

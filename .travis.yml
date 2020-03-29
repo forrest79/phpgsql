@@ -9,16 +9,27 @@ php:
 services:
  - postgresql
 
-addons:
-  postgresql: "9.6"
+# actually Travis nativelly support PostgreSQL only till version "10"
+#addons:
+#  postgresql: "12"
 
 before_install:
   - composer self-update
+  # next is working hack to use PostgreSQL 12 on Travis
+  - sudo apt-get update
+  - sudo apt-get --yes remove postgresql\*
+  - sudo apt-get install -y postgresql-12 postgresql-client-12
+  - sed -e 's/^port.*/port = 5432/' /etc/postgresql/12/main/postgresql.conf > postgresql.conf
+  - sudo chown postgres postgresql.conf
+  - sudo mv postgresql.conf /etc/postgresql/12/main
+  - sudo cp /etc/postgresql/{10,12}/main/pg_hba.conf
+  - sudo service postgresql restart 12
 
 install:
   - composer install --no-interaction --prefer-source
 
 before_script:
+  - psql --version # just to show used PostgreSQL version
   - psql -c "ALTER ROLE postgres ENCRYPTED PASSWORD 'md53175bce1d3201d16594cebf9d7eb3f9d';" -U postgres
 
 script:
