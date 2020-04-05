@@ -50,10 +50,22 @@ class BasicTest extends Tester\TestCase
 	}
 
 
-	public function testDumpSql(): void
+	public function testDumpSqlToHtml(): void
+	{
+		Tester\Assert::same(
+			"<pre class=\"dump\"><strong style=\"color:blue\">SELECT</strong> a \n<strong style=\"color:blue\">FROM</strong> b JOIN c ON c.a = b.a \n<strong style=\"color:blue\">WHERE</strong> d = 'x' \n<strong style=\"color:blue\">GROUP BY</strong> a \n<strong style=\"color:blue\">HAVING</strong> e = 2 \n<strong style=\"color:blue\">ORDER BY</strong> a \n<strong style=\"color:blue\">LIMIT</strong> 1 \n<strong style=\"color:blue\">OFFSET</strong> 2</pre>",
+			Db\Helper::dump('SELECT a FROM b JOIN c ON c.a = b.a WHERE d = $1 GROUP BY a HAVING e = 2 ORDER BY a LIMIT 1 OFFSET 2', ['x'])
+		);
+	}
+
+
+	public function testDumpSqlToCli(): void
 	{
 		\putenv('TERM=none'); // don't use xterm in this test, if is really used
-		Tester\Assert::same("SELECT a \nFROM b JOIN c ON c.a = b.a \nWHERE d = 'x' \nGROUP BY a \nHAVING e = 2 \nORDER BY a \nLIMIT 1 \nOFFSET 2", Db\Helper::dump('SELECT a FROM b JOIN c ON c.a = b.a WHERE d = $1 GROUP BY a HAVING e = 2 ORDER BY a LIMIT 1 OFFSET 2', ['x']));
+		Tester\Assert::same(
+			"SELECT a \nFROM b JOIN c ON c.a = b.a \nWHERE d = 'x' \nGROUP BY a \nHAVING e = 2 \nORDER BY a \nLIMIT 1 \nOFFSET 2",
+			Db\Helper::dump('SELECT a FROM b JOIN c ON c.a = b.a WHERE d = $1 GROUP BY a HAVING e = 2 ORDER BY a LIMIT 1 OFFSET 2', ['x'], 'cli')
+		);
 	}
 
 }

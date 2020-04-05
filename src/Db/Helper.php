@@ -40,9 +40,10 @@ class Helper
 
 	/**
 	 * @param array<int, mixed> $parameters
+	 * @param string $format 'cli' or 'html' (anything else than 'cli' is resolved as 'html')
 	 * @credit https://github.com/dg/dibi/blob/master/src/Dibi/Helpers.php
 	 */
-	public static function dump(string $sql, array $parameters = []): string
+	public static function dump(string $sql, array $parameters = [], string $format = 'html'): string
 	{
 		static $keywords1 = 'SELECT|INSERT(?:\s+INTO)?|DELETE|UNION|FROM|WHERE|HAVING|GROUP\s+BY|ORDER\s+BY|LIMIT|OFFSET|RETURNING|SET|VALUES|LEFT\s+(OUTER\s+)?JOIN|RIGHT\s+(OUTER\s+)?JOIN|INNER\s+JOIN|FULL\s+(OUTER\s+)?JOIN|CROSS\s+JOIN|TRUNCATE|BEGIN|COMMIT|ROLLBACK(?:\s+TO\s+SAVEPOINT)?|(?:RELEASE\s+)?SAVEPOINT';
 		static $keywords2 = 'ALL|DISTINCT|IGNORE|AS|USING|ON|AND|OR|IN|IS|NOT|NULL|LIKE|ILIKE|TRUE|FALSE';
@@ -62,7 +63,7 @@ class Helper
 			$keywords1,
 			$keywords2
 		);
-		if (\PHP_SAPI === 'cli') {
+		if ($format === 'cli') {
 			if (\substr((string) \getenv('TERM'), 0, 5) === 'xterm') {
 				// intentionally (string), other can't be returned
 				$sql = (string) \preg_replace_callback($highlighter, static function (array $m): string {
