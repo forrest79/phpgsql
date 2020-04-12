@@ -119,6 +119,21 @@ $row = $result->getColumnType('name');
 $row = $result->getColumns();
 ```
 
+We can get data parsed to the same type as column have:
+
+```php
+$data = $result->parseColumnValue('price', '123');
+```
+
+Or we can check, what columns was accesed in our application for concrete query. When we check this right before request end or application exit:
+
+```php
+$parsedColumns = $result->getParsedColumns();
+$query = $result->getQuery();
+```
+
+Then we get `array` with column names as key and `TRUE`/`FALSE` as value and we also know for what query this request is. `TRUE` means, that in application was this column accessed. When `NULL` is returned, it means, that no column was accesed. This could be for example for `INSERT` queries or even for `SELECT` queries.
+
 And for `INSERT`/`UPDATE`/`DELETE` results we can get number of affected rows:
 
 ```php
@@ -176,17 +191,20 @@ $connection->commit('savepoint1');
 $connection->rollback('savepoint1');
 ```
 
-Or listen on events like connect/close/query:
+Or listen on events like connect/close/query/result:
 
 ```php
 $connection->addOnConnect(function(Connection $connection) {
-	echo 'connect...';
+	echo 'this is call after connect is done...';
 });
 $connection->addOnClose(function(Connection $connection) {
-	echo 'close...';
+	echo 'this is call right before connection is closed...';
 });
 $connection->addOnQuery(function(Connection $connection, Query $query, ?float $time = NULL) { // $time === NULL for async queries
-	echo 'close...';
+	echo 'this is call for every query (via query or execute method)...';
+});
+$connection->addOnResult(function(Connection $connection, Result $result) {
+	echo 'this is call after result is created (only if query with result is call...)';
 });
 ```
 

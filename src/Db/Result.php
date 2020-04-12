@@ -28,6 +28,9 @@ class Result implements \Countable, \IteratorAggregate
 	/** @var array<string, string> */
 	private $columnsDataTypes;
 
+	/** @var array<string, bool> */
+	private $parsedColumns = [];
+
 
 	/**
 	 * @param resource $queryResource
@@ -324,7 +327,9 @@ class Result implements \Countable, \IteratorAggregate
 	 */
 	public function parseColumnValue(string $column, $rawValue)
 	{
-		return $this->dataTypeParser->parse($this->getColumnType($column), $rawValue);
+		$value = $this->dataTypeParser->parse($this->getColumnType($column), $rawValue);
+		$this->parsedColumns[$column] = TRUE;
+		return $value;
 	}
 
 
@@ -350,6 +355,17 @@ class Result implements \Countable, \IteratorAggregate
 			}
 		}
 		return $this->columnsDataTypes;
+	}
+
+
+	/**
+	 * @return array<string, bool>|NULL NULL = no column was used
+	 */
+	public function getParsedColumns(): ?array
+	{
+		return $this->parsedColumns === []
+			? NULL
+			: $this->parsedColumns + \array_fill_keys($this->getColumns(), FALSE);
 	}
 
 }

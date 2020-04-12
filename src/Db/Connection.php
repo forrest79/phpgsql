@@ -52,6 +52,9 @@ class Connection
 	/** @var array<callable> function (Connection $connection, Query $query, float $time) {} */
 	private $onQuery = [];
 
+	/** @var array<callable> function (Result $result) {} */
+	private $onResult = [];
+
 
 	/**
 	 * @throws Exceptions\ConnectionException
@@ -210,6 +213,13 @@ class Connection
 	}
 
 
+	public function addOnResult(callable $callback): self
+	{
+		$this->onResult[] = $callback;
+		return $this;
+	}
+
+
 	public function close(): self
 	{
 		if ($this->isConnected()) {
@@ -324,13 +334,17 @@ class Connection
 	 */
 	private function createResult($resource, Query $query): Result
 	{
-		return new Result(
+		$result = new Result(
 			$resource,
 			$query,
 			$this->getDefaultRowFactory(),
 			$this->getDataTypeParser(),
 			$this->getDataTypesCache()
 		);
+
+		$this->onResult($result);
+
+		return $result;
 	}
 
 
@@ -651,6 +665,14 @@ class Connection
 	{
 		foreach ($this->onQuery as $event) {
 			$event($this, $query, $time);
+		}
+	}
+
+
+	private function onResult(Result $result): void
+	{
+		foreach ($this->onResult as $event) {
+			$event($this, $result);
 		}
 	}
 
