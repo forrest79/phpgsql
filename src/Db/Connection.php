@@ -315,16 +315,22 @@ class Connection
 			$this->onQuery($query, \microtime(TRUE) - $start);
 		}
 
-		return $this->createResult($resource);
+		return $this->createResult($resource, $query);
 	}
 
 
 	/**
 	 * @param resource $resource
 	 */
-	private function createResult($resource): Result
+	private function createResult($resource, Query $query): Result
 	{
-		return new Result($resource, $this->getDefaultRowFactory(), $this->getDataTypeParser(), $this->getDataTypesCache());
+		return new Result(
+			$resource,
+			$query,
+			$this->getDefaultRowFactory(),
+			$this->getDataTypeParser(),
+			$this->getDataTypesCache()
+		);
 	}
 
 
@@ -456,16 +462,17 @@ class Connection
 			throw Exceptions\ConnectionException::asyncNoQueryWasSentException();
 		}
 
+		$query = $this->asyncQuery->getQuery();
+
 		$resource = \pg_get_result($this->getConnectedResource());
 		if ($resource === FALSE) {
-			$query = $this->asyncQuery->getQuery();
 			$this->asyncQuery = NULL;
 			throw Exceptions\ResultException::noOtherAsyncResult($query);
 		}
 
-		self::checkAsyncQueryResult($resource, $this->asyncQuery->getQuery());
+		self::checkAsyncQueryResult($resource, $query);
 
-		return $this->createResult($resource);
+		return $this->createResult($resource, $query);
 	}
 
 

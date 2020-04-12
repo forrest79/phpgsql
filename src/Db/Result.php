@@ -10,6 +10,9 @@ class Result implements \Countable, \IteratorAggregate
 	/** @var resource */
 	protected $queryResource;
 
+	/** @var Query */
+	private $query;
+
 	/** @var RowFactory */
 	private $rowFactory;
 
@@ -32,12 +35,14 @@ class Result implements \Countable, \IteratorAggregate
 	 */
 	public function __construct(
 		$queryResource,
+		Query $query,
 		RowFactory $rowFactory,
 		DataTypeParser $dataTypeParser,
 		?array $dataTypesCache
 	)
 	{
 		$this->queryResource = $queryResource;
+		$this->query = $query;
 		$this->rowFactory = $rowFactory;
 		$this->dataTypeParser = $dataTypeParser;
 		$this->dataTypesCache = $dataTypesCache;
@@ -272,6 +277,12 @@ class Result implements \Countable, \IteratorAggregate
 		} while ($row !== NULL);
 
 		return $data;
+	}
+
+
+	public function getQuery(): Query
+	{
+		return $this->query;
 	}
 
 

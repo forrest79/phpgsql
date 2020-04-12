@@ -250,6 +250,17 @@ class BasicTest extends TestCase
 	}
 
 
+	public function testResultGetQuery(): void
+	{
+		$result = $this->connection->query('SELECT TRUE WHERE 1 = ?', 2);
+
+		$query = $result->getQuery();
+
+		Tester\Assert::same('SELECT TRUE WHERE 1 = $1', $query->getSql());
+		Tester\Assert::same([2], $query->getParams());
+	}
+
+
 	public function testGetNotifications(): void
 	{
 		$this->connection->execute('DO $BODY$ BEGIN RAISE NOTICE \'Test notice\'; END; $BODY$ LANGUAGE plpgsql;');
