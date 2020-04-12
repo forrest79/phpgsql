@@ -27,10 +27,10 @@ class FetchTest extends TestCase
 
 		$row = $this->fetch($result);
 
-		$result->free();
-
 		Tester\Assert::same(1, $row->id);
 		Tester\Assert::same('phpgsql', $row->name);
+
+		$result->free();
 	}
 
 
@@ -47,9 +47,9 @@ class FetchTest extends TestCase
 
 		$id = $result->fetchSingle();
 
-		$result->free();
-
 		Tester\Assert::same(999, $id);
+
+		$result->free();
 	}
 
 
@@ -501,7 +501,9 @@ class FetchTest extends TestCase
 		$result = $this->connection->query('SELECT 1 AS column, 2 AS column');
 
 		Tester\Assert::exception(static function () use ($result): void {
-			$result->fetch();
+			/** @var Db\Row $row */
+			$row = $result->fetch();
+			$row->column;
 		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::COLUMN_NAME_IS_ALREADY_IN_USE);
 
 		$result->free();
@@ -524,9 +526,9 @@ class FetchTest extends TestCase
 
 		$row = $this->fetch($result);
 
-		$result->free();
+		Tester\Assert::same('custom', $row->name);
 
-		Tester\Assert::same('custom', $row->test);
+		$result->free();
 	}
 
 
@@ -545,9 +547,9 @@ class FetchTest extends TestCase
 
 		$row = $this->fetch($result);
 
-		$result->free();
+		Tester\Assert::same('custom', $row->name);
 
-		Tester\Assert::same('custom', $row->test);
+		$result->free();
 	}
 
 
@@ -573,6 +575,8 @@ class FetchTest extends TestCase
 		$result = $this->connection->query('SELECT id, name FROM test');
 
 		$row = $this->fetch($result);
+
+		Tester\Assert::same($result, $row->getResult());
 
 		Tester\Assert::same('phpgsql', $row->name);
 
@@ -643,11 +647,10 @@ class FetchTest extends TestCase
 
 			/**
 			 * @param array<string, mixed> $values
-			 * @param array<string, string> $columnsDataTypes
 			 */
-			public function createRow(array $values, array $columnsDataTypes, Db\DataTypeParser $dataTypeParser): Db\Row
+			public function createRow(Db\Result $result, array $values): Db\Row
 			{
-				return new Db\Row(['test' => 'custom'], ['test' => 'text'], $dataTypeParser);
+				return new Db\Row($result, ['name' => 'custom']);
 			}
 
 		};

@@ -8,30 +8,24 @@ namespace Forrest79\PhPgSql\Db;
  */
 class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializable
 {
-	/** @var array<string, string|NULL> */
-	private $rawValues;
-
-	/** @var array<string, string> */
-	private $columnsDataTypes;
-
-	/** @var DataTypeParser */
-	private $dataTypeParser;
+	/** @var Result */
+	private $result;
 
 	/** @var array<string, mixed> */
 	private $values;
 
+	/** @var array<string, string|NULL> */
+	private $rawValues;
+
 
 	/**
-	 * @param array<string, mixed> $values
-	 * @param array<string, string> $columnsDataTypes
+	 * @param array<string, mixed> $rawValues
 	 */
-	public function __construct(array $values, array $columnsDataTypes, DataTypeParser $dataTypeParser)
+	public function __construct(Result $result, array $rawValues)
 	{
-		$this->rawValues = $values;
-		$this->columnsDataTypes = $columnsDataTypes;
-		$this->dataTypeParser = $dataTypeParser;
-
-		$this->values = \array_fill_keys(\array_keys($values), NULL);
+		$this->result = $result;
+		$this->values = \array_fill_keys(\array_keys($rawValues), NULL);
+		$this->rawValues = $rawValues;
 	}
 
 
@@ -71,7 +65,8 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 	 */
 	public function toArray(): array
 	{
-		foreach ($this->rawValues as $key => $value) { // intentionally not using array_keys($this->rawValues) as $key - this is 2x faster
+		// intentionally not using array_keys($this->rawValues) as $key - this is 2x faster
+		foreach ($this->rawValues as $key => $value) {
 			$this->parseValue($key);
 		}
 		return $this->values;
@@ -171,7 +166,7 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 
 	private function parseValue(string $key): void
 	{
-		$this->values[$key] = $this->dataTypeParser->parse($this->columnsDataTypes[$key], $this->rawValues[$key]);
+		$this->values[$key] = $this->result->parseColumnValue($key, $this->rawValues[$key]);
 		unset($this->rawValues[$key]);
 	}
 
@@ -200,6 +195,12 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 	public function jsonSerialize(): array
 	{
 		return $this->toArray();
+	}
+
+
+	public function getResult(): Result
+	{
+		return $this->result;
 	}
 
 }

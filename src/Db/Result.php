@@ -63,7 +63,7 @@ class Result implements \Countable, \IteratorAggregate
 			return NULL;
 		}
 
-		return $this->rowFactory->createRow($data, $this->getColumnsDataTypes(), $this->dataTypeParser);
+		return $this->rowFactory->createRow($this, $data);
 	}
 
 
@@ -286,6 +286,16 @@ class Result implements \Countable, \IteratorAggregate
 	}
 
 
+	public function getAffectedRows(): int
+	{
+		if ($this->affectedRows === NULL) {
+			$this->affectedRows = \pg_affected_rows($this->queryResource);
+		}
+
+		return $this->affectedRows;
+	}
+
+
 	/**
 	 * @throws Exceptions\ResultException
 	 */
@@ -308,13 +318,13 @@ class Result implements \Countable, \IteratorAggregate
 	}
 
 
-	public function getAffectedRows(): int
+	/**
+	 * @param mixed $rawValue
+	 * @return mixed
+	 */
+	public function parseColumnValue(string $key, $rawValue)
 	{
-		if ($this->affectedRows === NULL) {
-			$this->affectedRows = \pg_affected_rows($this->queryResource);
-		}
-
-		return $this->affectedRows;
+		return $this->dataTypeParser->parse($this->getColumnType($key), $rawValue);
 	}
 
 

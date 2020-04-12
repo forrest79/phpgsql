@@ -34,10 +34,10 @@ class QueryExecuteFetchTest extends TestCase
 			throw new \RuntimeException('No data from database were returned');
 		}
 
-		$query->free();
-
 		Tester\Assert::same(1, $row->id);
 		Tester\Assert::same('phpgsql', $row->name);
+
+		$query->free();
 	}
 
 
