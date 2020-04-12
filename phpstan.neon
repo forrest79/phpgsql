@@ -50,6 +50,10 @@ parameters:
 			message: "#Offset '[a-zA-Z0-9]+' on array\\(.+\\) in isset\\(\\) .+\\.#"
 			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
 
+		-
+			message: '#Empty array passed to foreach\.#'
+			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
+
 		# === We know, that this can happen ===
 
 		-

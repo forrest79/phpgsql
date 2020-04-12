@@ -157,6 +157,30 @@ class BasicPhpBenchmark extends BenchmarkCase
 
 
 	/**
+	 * @title iterate blank array (always use foreach)
+	 */
+	public function benchmarkIterateBlankArrayAlways(): void
+	{
+		$test = [];
+		foreach ($test as $item) {
+		}
+	}
+
+
+	/**
+	 * @title iterate blank array (skip iteration with if)
+	 */
+	public function benchmarkIterateBlankArray(): void
+	{
+		$test = [];
+		if ($test !== []) {
+			foreach ($test as $item) {
+			}
+		}
+	}
+
+
+	/**
 	 * @title array change cast with "array_map"
 	 */
 	public function benchmarkArrayChangeCastArrayMap(): void

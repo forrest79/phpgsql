@@ -13,6 +13,10 @@
 		<exclude name="Squiz.Scope.MethodScope.Missing"/> <!-- We ignore visibility on interfaces -->
 	</rule>
 
+	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedForeach">
+		<exclude-pattern>benchmarks/BasicPhpBenchmark.php</exclude-pattern>
+	</rule>
+
 	<rule ref="Generic.ControlStructures.InlineControlStructure.NotAllowed">
 		<exclude-pattern>src/Db/Connection.php</exclude-pattern>
 	</rule>
