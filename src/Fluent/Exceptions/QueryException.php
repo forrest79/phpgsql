@@ -6,7 +6,7 @@ class QueryException extends Exception
 {
 	public const ONLY_ONE_MAIN_TABLE = 1;
 	public const TABLE_ALIAS_ALREADY_EXISTS = 2;
-	public const NON_EXISTING_PARAM_TO_RESET = 3;
+	public const NON_EXISTING_QUERY_PARAM = 3;
 	public const QUERYABLE_MUST_HAVE_ALIAS = 4;
 	public const PARAM_MUST_BE_SCALAR_OR_EXPRESSION = 5;
 	public const CANT_UPDATE_QUERY_AFTER_EXECUTE = 6;
@@ -28,9 +28,9 @@ class QueryException extends Exception
 	/**
 	 * @param array<string> $params
 	 */
-	public static function nonExistingParamToReset(string $param, array $params): self
+	public static function nonExistingQueryParam(string $param, array $params): self
 	{
-		return new self(\sprintf('Non existing parameter "%s" to reset. You can reset only these parameters "%s".', $param, \implode(', ', $params)), self::NON_EXISTING_PARAM_TO_RESET);
+		return new self(\sprintf('Non existing query parameter "%s". You can use only these parameters "%s".', $param, \implode(', ', $params)), self::NON_EXISTING_QUERY_PARAM);
 	}
 
 

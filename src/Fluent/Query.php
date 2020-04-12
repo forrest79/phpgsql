@@ -666,13 +666,23 @@ class Query implements Fluent
 	}
 
 
+	public function has(string $param): bool
+	{
+		if (!\array_key_exists($param, self::DEFAULT_PARAMS)) {
+			throw Exceptions\QueryException::nonExistingQueryParam($param, \array_keys(self::DEFAULT_PARAMS));
+		}
+
+		return $this->params[$param] !== self::DEFAULT_PARAMS[$param];
+	}
+
+
 	/**
 	 * @throws Exceptions\QueryException
 	 */
 	public function reset(string $param): self
 	{
 		if (!\array_key_exists($param, self::DEFAULT_PARAMS)) {
-			throw Exceptions\QueryException::nonExistingParamToReset($param, \array_keys(self::DEFAULT_PARAMS));
+			throw Exceptions\QueryException::nonExistingQueryParam($param, \array_keys(self::DEFAULT_PARAMS));
 		}
 
 		$this->updateQuery();

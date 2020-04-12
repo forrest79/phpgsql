@@ -1015,6 +1015,87 @@ class FluentQueryTest extends Tester\TestCase
 	}
 
 
+	public function testHas(): void
+	{
+		$query = $this->query();
+
+		Tester\Assert::false($query->has($query::PARAM_SELECT));
+		Tester\Assert::false($query->has($query::PARAM_DISTINCT));
+		Tester\Assert::false($query->has($query::PARAM_TABLES));
+		Tester\Assert::false($query->has($query::PARAM_TABLE_TYPES));
+		Tester\Assert::false($query->has($query::PARAM_JOIN_CONDITIONS));
+		Tester\Assert::false($query->has($query::PARAM_WHERE));
+		Tester\Assert::false($query->has($query::PARAM_GROUPBY));
+		Tester\Assert::false($query->has($query::PARAM_HAVING));
+		Tester\Assert::false($query->has($query::PARAM_ORDERBY));
+		Tester\Assert::false($query->has($query::PARAM_LIMIT));
+		Tester\Assert::false($query->has($query::PARAM_OFFSET));
+		Tester\Assert::false($query->has($query::PARAM_COMBINE_QUERIES));
+		Tester\Assert::false($query->has($query::PARAM_INSERT_COLUMNS));
+		Tester\Assert::false($query->has($query::PARAM_RETURNING));
+		Tester\Assert::false($query->has($query::PARAM_DATA));
+		Tester\Assert::false($query->has($query::PARAM_ROWS));
+		Tester\Assert::false($query->has($query::PARAM_PREFIX));
+		Tester\Assert::false($query->has($query::PARAM_SUFFIX));
+
+		$query
+			->select(['column'])
+			->distinct()
+			->from('table', 't')
+			->leftJoin('join_table', 'j', 'j.id = t.join_id')
+			->where('t.column', 100)
+			->where('t.text', NULL)
+			->groupBy('t.column')
+			->having('COUNT(*) > 1')
+			->orderBy('t.column')
+			->limit(10)
+			->offset(20)
+			->prefix('some SQL prefix')
+			->sufix('some SQL suffix')
+			->union('SELECT 1');
+
+		Tester\Assert::true($query->has($query::PARAM_SELECT));
+		Tester\Assert::true($query->has($query::PARAM_DISTINCT));
+		Tester\Assert::true($query->has($query::PARAM_TABLES));
+		Tester\Assert::true($query->has($query::PARAM_TABLE_TYPES));
+		Tester\Assert::true($query->has($query::PARAM_JOIN_CONDITIONS));
+		Tester\Assert::true($query->has($query::PARAM_WHERE));
+		Tester\Assert::true($query->has($query::PARAM_GROUPBY));
+		Tester\Assert::true($query->has($query::PARAM_HAVING));
+		Tester\Assert::true($query->has($query::PARAM_ORDERBY));
+		Tester\Assert::true($query->has($query::PARAM_LIMIT));
+		Tester\Assert::true($query->has($query::PARAM_OFFSET));
+		Tester\Assert::true($query->has($query::PARAM_COMBINE_QUERIES));
+		Tester\Assert::true($query->has($query::PARAM_PREFIX));
+		Tester\Assert::true($query->has($query::PARAM_SUFFIX));
+
+		$query = $this->query()->insert('table', ['column'])->select(['1'])->returning(['column']);
+
+		Tester\Assert::true($query->has($query::PARAM_INSERT_COLUMNS));
+		Tester\Assert::true($query->has($query::PARAM_RETURNING));
+
+		$query = $this->query()->insert('table')->rows([
+			['column' => 1],
+		]);
+
+		Tester\Assert::true($query->has($query::PARAM_ROWS));
+
+		$query = $this->query()->update('table')->set(['column' => 'data']);
+
+		Tester\Assert::true($query->has($query::PARAM_DATA));
+	}
+
+
+	public function testHasBadParam(): void
+	{
+		Tester\Assert::exception(function (): void {
+			$this->query()
+				->select([1])
+				->has('table');
+		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::NON_EXISTING_QUERY_PARAM);
+	}
+
+
 	public function testReset(): void
 	{
 		$query = $this->query()
@@ -1042,7 +1123,7 @@ class FluentQueryTest extends Tester\TestCase
 			$this->query()
 				->select([1])
 				->reset('table');
-		}, Fluent\Exceptions\QueryException::class);
+		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::NON_EXISTING_QUERY_PARAM);
 	}
 
 
