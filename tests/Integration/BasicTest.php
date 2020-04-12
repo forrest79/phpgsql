@@ -195,7 +195,7 @@ class BasicTest extends TestCase
 	}
 
 
-	public function testQueryWithFluentWithParams(): void
+	public function testQueryWithParams(): void
 	{
 		$result = $this->connection->query(
 			'SELECT generate_series FROM ?',
