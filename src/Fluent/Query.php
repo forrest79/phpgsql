@@ -677,6 +677,7 @@ class Query implements Fluent
 
 
 	/**
+	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
 	public function reset(string $param): self
