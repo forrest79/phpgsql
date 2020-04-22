@@ -1,5 +1,9 @@
 <?php declare(strict_types=1);
 
+if (\defined('__PHPSTAN_RUNNING__')) {
+	return;
+}
+
 $loader = __DIR__ . '/../vendor/autoload.php';
 
 if (!\file_exists($loader)) {
@@ -9,24 +13,6 @@ if (!\file_exists($loader)) {
 
 require $loader;
 
-if (!\function_exists('run')) {
-
-	function run(string $class): void
-	{
-		if (\defined('__PHPSTAN_RUNNING__')) {
-			return;
-		}
-
-		$test = new $class();
-		if ($test instanceof Tester\TestCase) {
-			$test->run();
-		}
-	}
-
-}
-
-if (!\defined('__PHPSTAN_RUNNING__')) {
-	Tester\Environment::setup();
-}
+Tester\Environment::setup();
 
 require __DIR__ . '/prepare-db-config.php';

@@ -65,4 +65,4 @@ class CollectingResultsTest extends TestCase
 
 }
 
-\run(CollectingResultsTest::class);
+(new CollectingResultsTest())->run();

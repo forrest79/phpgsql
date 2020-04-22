@@ -3,14 +3,15 @@
 namespace Forrest79\PhPgSql\Tests\Unit;
 
 use Forrest79\PhPgSql\Db;
+use Forrest79\PhPgSql\Tests;
 use Tester;
 
-require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../TestCase.php';
 
 /**
  * @testCase
  */
-class BasicTest extends Tester\TestCase
+class BasicTest extends Tests\TestCase
 {
 
 	public function testCreateArray(): void
@@ -87,4 +88,4 @@ class BasicTest extends Tester\TestCase
 
 }
 
-\run(BasicTest::class);
+(new BasicTest())->run();

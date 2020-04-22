@@ -3,14 +3,15 @@
 namespace Forrest79\PhPgSql\Tests\Unit;
 
 use Forrest79\PhPgSql\Db;
+use Forrest79\PhPgSql\Tests;
 use Tester;
 
-require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../TestCase.php';
 
 /**
  * @testCase
  */
-class ParseTest extends Tester\TestCase
+class ParseTest extends Tests\TestCase
 {
 
 	public function testPrepareQuery(): void
@@ -118,4 +119,4 @@ class ParseTest extends Tester\TestCase
 
 }
 
-\run(ParseTest::class);
+(new ParseTest())->run();

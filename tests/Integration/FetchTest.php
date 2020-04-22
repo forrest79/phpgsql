@@ -678,4 +678,4 @@ class FetchTest extends TestCase
 
 }
 
-\run(FetchTest::class);
+(new FetchTest())->run();

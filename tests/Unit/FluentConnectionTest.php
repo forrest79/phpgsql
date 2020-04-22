@@ -4,14 +4,15 @@ namespace Forrest79\PhPgSql\Tests\Unit;
 
 use Forrest79\PhPgSql\Db;
 use Forrest79\PhPgSql\Fluent;
+use Forrest79\PhPgSql\Tests;
 use Tester;
 
-require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../TestCase.php';
 
 /**
  * @testCase
  */
-class FluentConnectionTest extends Tester\TestCase
+class FluentConnectionTest extends Tests\TestCase
 {
 	/** @var Fluent\Connection */
 	private $fluentConnection;
@@ -574,4 +575,4 @@ class FluentConnectionTest extends Tester\TestCase
 
 }
 
-\run(FluentConnectionTest::class);
+(new FluentConnectionTest())->run();

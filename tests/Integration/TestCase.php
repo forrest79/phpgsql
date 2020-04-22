@@ -3,11 +3,11 @@
 namespace Forrest79\PhPgSql\Tests\Integration;
 
 use Forrest79\PhPgSql\Db;
-use Tester;
+use Forrest79\PhPgSql\Tests;
 
-require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../TestCase.php';
 
-abstract class TestCase extends Tester\TestCase
+abstract class TestCase extends Tests\TestCase
 {
 	/** @var Db\Connection */
 	protected $connection;

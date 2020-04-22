@@ -4,6 +4,7 @@ namespace Forrest79\PhPgSql\Tests\Unit;
 
 use Forrest79\PhPgSql\Db;
 use Forrest79\PhPgSql\Fluent;
+use Forrest79\PhPgSql\Tests;
 use Tester;
 
 require_once __DIR__ . '/../bootstrap.php';
@@ -11,7 +12,7 @@ require_once __DIR__ . '/../bootstrap.php';
 /**
  * @testCase
  */
-class FluentQueryTest extends Tester\TestCase
+class FluentQueryTest extends Tests\TestCase
 {
 
 	public function testSelect(): void
@@ -1159,4 +1160,4 @@ class FluentQueryTest extends Tester\TestCase
 
 }
 
-\run(FluentQueryTest::class);
+(new FluentQueryTest())->run();

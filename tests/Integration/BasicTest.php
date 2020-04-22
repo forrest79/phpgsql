@@ -278,4 +278,4 @@ class BasicTest extends TestCase
 
 }
 
-\run(BasicTest::class);
+(new BasicTest())->run();

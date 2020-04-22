@@ -3,14 +3,15 @@
 namespace Forrest79\PhPgSql\Tests\Unit;
 
 use Forrest79\PhPgSql\Fluent;
+use Forrest79\PhPgSql\Tests;
 use Tester;
 
-require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../TestCase.php';
 
 /**
  * @testCase
  */
-class FluentComplexTest extends Tester\TestCase
+class FluentComplexTest extends Tests\TestCase
 {
 
 	public function testParent(): void
@@ -111,4 +112,4 @@ class FluentComplexTest extends Tester\TestCase
 
 }
 
-\run(FluentComplexTest::class);
+(new FluentComplexTest())->run();

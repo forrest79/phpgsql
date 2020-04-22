@@ -10,6 +10,8 @@ parameters:
 	ignoreErrors:
 		# === This is OK (just for tests or benchmarks) ===
 
+		- '#Constant PHPGSQL_CONNECTION_CONFIG not found\.#'
+
 		-
 			message: '#Parameter \#1 \$table of method Forrest79\\PhPgSql\\Fluent\\Query::table\(\) expects Forrest79\\PhPgSql\\Db\\Sql\|Forrest79\\PhPgSql\\Fluent\\Fluent\|string, array<int, string> given\.#'
 			path: %rootDir%/../../../tests/Unit/FluentQueryTest.php

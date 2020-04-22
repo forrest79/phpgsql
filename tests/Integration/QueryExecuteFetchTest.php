@@ -250,4 +250,4 @@ class QueryExecuteFetchTest extends TestCase
 
 }
 
-\run(QueryExecuteFetchTest::class);
+(new QueryExecuteFetchTest())->run();
