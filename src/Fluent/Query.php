@@ -146,7 +146,6 @@ class Query implements Fluent
 	}
 
 
-
 	/**
 	 * @param string|Fluent|Db\Sql $join table or query
 	 * @param string|Complex|Db\Sql|NULL $onCondition

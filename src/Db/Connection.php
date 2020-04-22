@@ -59,7 +59,11 @@ class Connection
 	/**
 	 * @throws Exceptions\ConnectionException
 	 */
-	public function __construct(string $connectionConfig = '', bool $connectForceNew = FALSE, bool $connectAsync = FALSE)
+	public function __construct(
+		string $connectionConfig = '',
+		bool $connectForceNew = FALSE,
+		bool $connectAsync = FALSE
+	)
 	{
 		$this->connectionConfig = $connectionConfig;
 		$this->connectForceNew = $connectForceNew;

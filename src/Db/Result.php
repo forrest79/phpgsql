@@ -136,7 +136,7 @@ class Result implements \Countable, \IteratorAggregate
 		$this->seek($offset ?? 0);
 		$row = $this->fetch();
 		if ($row === NULL) {
-			return [];  // empty result set
+			return []; // empty result set
 		}
 
 		$data = [];
@@ -171,7 +171,7 @@ class Result implements \Countable, \IteratorAggregate
 		$this->seek(0);
 		$row = $this->fetch();
 		if ($row === NULL) {
-			return [];  // empty result set
+			return []; // empty result set
 		}
 
 		$data = [];
@@ -233,7 +233,7 @@ class Result implements \Countable, \IteratorAggregate
 		$this->seek(0);
 		$row = $this->fetch();
 		if ($row === NULL) {
-			return [];  // empty result set
+			return []; // empty result set
 		}
 
 		$data = [];

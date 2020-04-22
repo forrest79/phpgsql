@@ -15,7 +15,12 @@ class QueryException extends Exception
 	private $query;
 
 
-	public function __construct(string $message = '', int $code = 0, ?Db\Query $query = NULL, ?\Throwable $previous = NULL)
+	public function __construct(
+		string $message = '',
+		int $code = 0,
+		?Db\Query $query = NULL,
+		?\Throwable $previous = NULL
+	)
 	{
 		parent::__construct($message, $code, $previous);
 		$this->query = $query;
