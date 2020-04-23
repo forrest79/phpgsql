@@ -9,9 +9,10 @@ class ResultException extends Exception
 	public const NO_COLUMN = 1;
 	public const COLUMN_NAME_IS_ALREADY_IN_USE = 2;
 	public const FETCH_ASSOC_PARSE_FAILED = 3;
-	public const FETCH_PAIRS_FAILED = 4;
-	public const NO_OTHER_ASYNC_RESULT = 5;
-	public const ANOTHER_ASYNC_QUERY_IS_RUNNING = 6;
+	public const FETCH_ASSOC_ONLY_SCALAR_AS_KEY = 4;
+	public const FETCH_PAIRS_FAILED = 5;
+	public const NO_OTHER_ASYNC_RESULT = 6;
+	public const ANOTHER_ASYNC_QUERY_IS_RUNNING = 7;
 
 
 	public static function noColumn(string $column): self
@@ -29,6 +30,15 @@ class ResultException extends Exception
 	public static function fetchAssocParseFailed(string $assocDesc): self
 	{
 		return new self(\sprintf('Failed parsing associative descriptor \'%s\'.', $assocDesc), self::FETCH_ASSOC_PARSE_FAILED);
+	}
+
+
+	/**
+	 * @param mixed $value
+	 */
+	public static function fetchAssocOnlyScalarAsKey(string $assocDesc, string $column, $value): self
+	{
+		return new self(\sprintf('You can use only scalar type as a key in associative descriptor \'%s\'. Column \'%s\' was parsed as \'%s\'.', $assocDesc, $column, \gettype($value)), self::FETCH_ASSOC_ONLY_SCALAR_AS_KEY);
 	}
 
 

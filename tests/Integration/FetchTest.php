@@ -211,6 +211,26 @@ class FetchTest extends TestCase
 	}
 
 
+	public function testFetchAssocObjectAsKey(): void
+	{
+		$this->connection->query('
+			CREATE TABLE test(
+				id serial,
+				test_date date
+			);
+		');
+		$this->connection->query('INSERT INTO test(test_date) VALUES(CURRENT_DATE)');
+
+		$result = $this->connection->query('SELECT id, test_date FROM test');
+
+		Tester\Assert::exception(static function () use ($result): void {
+			$result->fetchAssoc('test_date=id');
+		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::FETCH_ASSOC_ONLY_SCALAR_AS_KEY);
+
+		$result->free();
+	}
+
+
 	public function testFetchAssocBlank(): void
 	{
 		$this->connection->query('
