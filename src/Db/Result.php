@@ -352,7 +352,11 @@ class Result implements \Countable, \IteratorAggregate
 				if ($this->dataTypesCache === NULL) {
 					$type = \pg_field_type($this->queryResource, $i);
 				} else {
-					$type = $this->dataTypesCache[\pg_field_type_oid($this->queryResource, $i)];
+					$typeOid = \pg_field_type_oid($this->queryResource, $i);
+					if (!isset($this->dataTypesCache[$typeOid])) {
+						throw Exceptions\ResultException::noOidInDataTypeCache($typeOid);
+					}
+					$type = $this->dataTypesCache[$typeOid];
 				}
 				$this->columnsDataTypes[$name] = $type;
 			}

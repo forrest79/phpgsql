@@ -13,6 +13,7 @@ class ResultException extends Exception
 	public const FETCH_PAIRS_FAILED = 5;
 	public const NO_OTHER_ASYNC_RESULT = 6;
 	public const ANOTHER_ASYNC_QUERY_IS_RUNNING = 7;
+	public const NO_OID_IN_DATA_TYPE_CACHE = 8;
 
 
 	public static function noColumn(string $column): self
@@ -64,6 +65,15 @@ class ResultException extends Exception
 			),
 			self::ANOTHER_ASYNC_QUERY_IS_RUNNING
 		);
+	}
+
+
+	/**
+	 * @param int|FALSE $oid
+	 */
+	public static function noOidInDataTypeCache($oid): self
+	{
+		return new self(\sprintf('There is no oid \'%s\' in data type cache. Try clear your data type cache.', $oid === FALSE ? 'FALSE' : $oid), self::NO_OID_IN_DATA_TYPE_CACHE);
 	}
 
 }

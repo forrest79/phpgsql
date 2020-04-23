@@ -73,6 +73,45 @@ class DataTypeCacheTest extends TestCase
 	}
 
 
+	public function testNoOidInCache(): void
+	{
+		$dataTypeCache = $this->createDataTypeCache();
+
+		$this->connection->setDataTypeCache($dataTypeCache);
+
+		$this->connection->query('
+			CREATE TABLE test1(
+				id serial,
+  				name text
+			);
+		');
+		$this->connection->query('INSERT INTO test1(name) VALUES(?)', 'phpgsql');
+
+		$result1 = $this->connection->query('SELECT id, name FROM test1');
+
+		Tester\Assert::same('text', $result1->getColumnType('name'));
+
+		$result1->free();
+
+		$this->connection->query('CREATE EXTENSION hstore');
+		$this->connection->query('
+			CREATE TABLE test2(
+				id serial,
+  				data hstore
+			);
+		');
+		$this->connection->query('INSERT INTO test2(data) VALUES(NULL)');
+
+		$result2 = $this->connection->query('SELECT id, data FROM test2');
+
+		Tester\Assert::exception(static function () use ($result2): void {
+			Tester\Assert::same('hstore', $result2->getColumnType('data'));
+		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::NO_OID_IN_DATA_TYPE_CACHE);
+
+		$result2->free();
+	}
+
+
 	private function getDataTypeCacheFile(Db\Connection $connection): string
 	{
 		return $this->cacheDirectory . \DIRECTORY_SEPARATOR . \md5($connection->getConnectionConfig()) . '.php';
