@@ -160,7 +160,7 @@ class Result implements \Countable, \IteratorAggregate
 	 * - associative descriptor: col1[]col2
 	 *   builds a tree:          $tree[$val1][$index][$val2] = {record}
 	 * - associative descriptor: col1|col2=col3
-	 *   builds a tree:          $tree[$val1][$val2] = val2
+	 *   builds a tree:          $tree[$val1][$val2] = $val3
 	 *
 	 * @return array<int|string, Row|array|mixed>
 	 * @throws Exceptions\ResultException
@@ -205,6 +205,9 @@ class Result implements \Countable, \IteratorAggregate
 					$row = $this->fetch();
 					continue 2;
 				} else if ($as !== '|') { // associative-array node
+					if (!\is_scalar($row->$as)) {
+						throw Exceptions\ResultException::fetchAssocOnlyScalarAsKey($assocDesc, $as, $row->$as);
+					}
 					$x = &$x[$row->$as];
 				}
 			}
