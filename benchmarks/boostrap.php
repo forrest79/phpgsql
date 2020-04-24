@@ -9,20 +9,4 @@ if (!\file_exists($loader)) {
 
 require $loader;
 
-if (!\function_exists('run')) {
-
-	function run(string $class): void
-	{
-		if (\defined('__PHPSTAN_RUNNING__')) {
-			return;
-		}
-
-		$benchmark = new $class();
-		if ($benchmark instanceof Forrest79\PhPgSql\Benchmarks\BenchmarkCase) {
-			$benchmark->run();
-		}
-	}
-
-}
-
 require __DIR__ . '/../tests/prepare-db-config.php';

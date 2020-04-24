@@ -10,6 +10,10 @@ abstract class BenchmarkCase
 
 	public function run(): void
 	{
+		if (\defined('__PHPSTAN_RUNNING__')) {
+			return;
+		}
+
 		$class = new \ReflectionClass($this);
 		$methods = $class->getMethods(\ReflectionMethod::IS_PUBLIC);
 

@@ -425,4 +425,4 @@ class BasicPhpBenchmark extends BenchmarkCase
 
 }
 
-\run(BasicPhpBenchmark::class);
+(new BasicPhpBenchmark())->run();

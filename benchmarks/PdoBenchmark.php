@@ -185,4 +185,4 @@ class PdoBenchmark extends BenchmarkCase
 
 }
 
-\run(PdoBenchmark::class);
+(new PdoBenchmark())->run();

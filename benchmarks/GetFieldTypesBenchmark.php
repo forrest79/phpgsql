@@ -113,4 +113,4 @@ class GetFieldTypesBenchmark extends BenchmarkCase
 
 }
 
-\run(GetFieldTypesBenchmark::class);
+(new GetFieldTypesBenchmark())->run();
