@@ -211,6 +211,28 @@ class FetchTest extends TestCase
 	}
 
 
+	public function testFetchAssocObjectAsNull(): void
+	{
+		$this->connection->query('
+			CREATE TABLE test(
+				id serial,
+				test_column text
+			);
+		');
+
+		$this->connection->query('INSERT INTO test(test_column) VALUES(NULL)');
+
+		$result = $this->connection->query('SELECT id, test_column FROM test');
+
+		$row = $result->fetchAssoc('test_column=id');
+
+		Tester\Assert::same('', \key($row));
+		Tester\Assert::same(1, $row[NULL]);
+
+		$result->free();
+	}
+
+
 	public function testFetchAssocObjectAsKey(): void
 	{
 		$this->connection->query('

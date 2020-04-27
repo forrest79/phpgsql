@@ -205,10 +205,11 @@ class Result implements \Countable, \IteratorAggregate
 					$row = $this->fetch();
 					continue 2;
 				} else if ($as !== '|') { // associative-array node
-					if (!\is_scalar($row->$as)) {
-						throw Exceptions\ResultException::fetchAssocOnlyScalarAsKey($assocDesc, $as, $row->$as);
+					$val = $row->$as;
+					if (($val !== NULL) && !\is_scalar($val)) {
+						throw Exceptions\ResultException::fetchAssocOnlyScalarAsKey($assocDesc, $as, $val);
 					}
-					$x = &$x[$row->$as];
+					$x = &$x[$val];
 				}
 			}
 
