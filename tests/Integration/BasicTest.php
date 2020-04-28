@@ -132,6 +132,8 @@ class BasicTest extends TestCase
 		$hasClose = FALSE;
 		$hasQuery = FALSE;
 		$hasExecute = FALSE;
+		$hasQueryResult = FALSE;
+		$hasExecuteResult = FALSE;
 		$queryDuration = 0;
 
 		$this->connection->addOnConnect(static function (Db\Connection $connection) use (&$hasConnect): void {
@@ -155,6 +157,20 @@ class BasicTest extends TestCase
 			$queryDuration = $duration;
 		});
 
+		$this->connection->addOnResult(static function (
+			Db\Connection $connection,
+			Db\Result $result
+		) use (
+			&$hasQueryResult,
+			&$hasExecuteResult
+		): void {
+			if ($result->getQuery()->getSql() === 'SELECT 1') {
+				$hasQueryResult = TRUE;
+			} else if ($result->getQuery()->getSql() === 'SELECT 2') {
+				$hasExecuteResult = TRUE;
+			}
+		});
+
 		$this->connection->addOnClose(static function () use (&$hasClose): void {
 			$hasClose = TRUE;
 		});
@@ -170,6 +186,8 @@ class BasicTest extends TestCase
 		Tester\Assert::true($hasQuery);
 		Tester\Assert::true($hasExecute);
 		Tester\Assert::true($queryDuration > 0);
+		Tester\Assert::true($hasQueryResult);
+		Tester\Assert::false($hasExecuteResult);
 	}
 
 
