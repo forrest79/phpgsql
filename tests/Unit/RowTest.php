@@ -89,7 +89,6 @@ class RowTest extends Tests\TestCase
 
 	public function testAddingValuesDuringIteration(): void
 	{
-		// TODO: failing
 		$fakeResult = new class extends Db\Result
 		{
 
@@ -109,14 +108,9 @@ class RowTest extends Tests\TestCase
 		};
 		$row = new Db\Row($fakeResult, ['column1' => 'foo', 'column2' => 'bar']);
 		$row->column3 = 'baz';
-		Tester\Assert::same(['column1' => 'foo', 'column2' => 'bar', 'column3' => 'baz'], iterator_to_array($row));
-//		$row->column4 = 'bazz';
-//		foreach ($row as $column => $value) {
-//			Tester\Assert::contains($value, ['foo', 'bar', 'baz', 'bazz']);
-//			Tester\Assert::contains($column, ['column1', 'column2', 'column3', 'column4']);
-//		}
-//		Tester\Assert::same(4, iterator_count($row));
-//		Tester\Assert::same(['column1' => 'foo', 'column2' => 'bar', 'column3' => 'baz', 'column4' => 'bazz'], iterator_to_array($row));
+		Tester\Assert::same(['column1' => 'foo', 'column2' => 'bar', 'column3' => 'baz'], \iterator_to_array($row));
+		$row->column4 = 'bazz';
+		Tester\Assert::same(['column1' => 'foo', 'column2' => 'bar', 'column3' => 'baz', 'column4' => 'bazz'], \iterator_to_array($row));
 	}
 
 }

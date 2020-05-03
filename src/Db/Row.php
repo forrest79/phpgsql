@@ -197,8 +197,10 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 	 */
 	private function parsedValues(): \Generator
 	{
-		foreach ($this->rawValues as $column => $value) {
-			$this->parseValue($column);
+		foreach ($this->values as $column => $value) {
+			if (isset($this->rawValues[$column])) {
+				$this->parseValue($column);
+			}
 			yield $column => $this->values[$column];
 		}
 	}
