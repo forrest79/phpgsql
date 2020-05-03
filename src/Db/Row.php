@@ -80,11 +80,14 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 
 
 	/**
-	 * @return \ArrayIterator<string, mixed>
+	 * @return \Iterator<string, mixed>
 	 */
-	public function getIterator(): \ArrayIterator
+	public function getIterator(): \Iterator
 	{
-		return new \ArrayIterator($this->toArray());
+		if ($this->rawValues === []) {
+			return new \ArrayIterator($this->values);
+		}
+		return $this->parsedValues();
 	}
 
 
@@ -186,6 +189,18 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 	{
 		unset($this->rawValues[$column]);
 		unset($this->values[$column]);
+	}
+
+
+	/**
+	 * @return \Generator<string, mixed>
+	 */
+	private function parsedValues(): \Generator
+	{
+		foreach ($this->rawValues as $column => $value) {
+			$this->parseValue($column);
+			yield $column => $this->values[$column];
+		}
 	}
 
 

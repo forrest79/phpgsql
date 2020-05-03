@@ -17,6 +17,10 @@ parameters:
 			path: %rootDir%/../../../tests/Unit/FluentQueryTest.php
 
 		-
+			path: %rootDir%/../../../tests/Unit/RowTest.php
+			message: '#^.+::__construct\(\) does not call parent constructor from Forrest79\\PhPgSql\\Db\\Result\.$#'
+
+		-
 			message: '#Parameter \#(1|2|3) \$(c|onC)ondition of method Forrest79\\PhPgSql\\Fluent\\Query::(where|having|join|on)\(\) expects Forrest79\\PhPgSql\\Db\\Sql\|Forrest79\\PhPgSql\\Fluent\\Complex\|string(\|null)?, array<int, string> given\.#'
 			path: %rootDir%/../../../tests/Unit/FluentQueryTest.php
 
