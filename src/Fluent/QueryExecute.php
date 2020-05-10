@@ -153,7 +153,7 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 
 
 	/**
-	 * @return array<mixed>
+	 * @return array<int|string, Db\Row|array|mixed>
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
 	 * @throws Exceptions\QueryException

@@ -4,18 +4,18 @@ namespace Forrest79\PhPgSql\Fluent;
 
 use Forrest79\PhPgSql\Db;
 
-class Connection extends Db\Connection implements Fluent
+class Connection extends Db\Connection implements Sql
 {
 	/** @var QueryBuilder */
 	private $queryBuilder;
 
 
 	/**
-	 * @param string|Fluent|Db\Sql $table
+	 * @param string|Query|Db\Sql $table
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function table($table, ?string $alias = NULL): Fluent
+	public function table($table, ?string $alias = NULL): Query
 	{
 		return $this->createQuery()->table($table, $alias);
 	}
@@ -26,7 +26,7 @@ class Connection extends Db\Connection implements Fluent
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function select(array $columns): Fluent
+	public function select(array $columns): Query
 	{
 		return $this->createQuery()->select($columns);
 	}
@@ -36,125 +36,125 @@ class Connection extends Db\Connection implements Fluent
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function distinct(): Fluent
+	public function distinct(): Query
 	{
 		return $this->createQuery()->distinct();
 	}
 
 
 	/**
-	 * @param string|Fluent|Db\Sql $from
+	 * @param string|Query|Db\Sql $from
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function from($from, ?string $alias = NULL): Fluent
+	public function from($from, ?string $alias = NULL): Query
 	{
 		return $this->createQuery()->from($from, $alias);
 	}
 
 
 	/**
-	 * @param string|Fluent|Db\Sql $join table or query
+	 * @param string|Query|Db\Sql $join table or query
 	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function join($join, ?string $alias = NULL, $onCondition = NULL): Fluent
+	public function join($join, ?string $alias = NULL, $onCondition = NULL): Query
 	{
 		return $this->createQuery()->join($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @param string|Fluent|Db\Sql $join table or query
+	 * @param string|Query|Db\Sql $join table or query
 	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function innerJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent
+	public function innerJoin($join, ?string $alias = NULL, $onCondition = NULL): Query
 	{
 		return $this->createQuery()->innerJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @param string|Fluent|Db\Sql $join table or query
+	 * @param string|Query|Db\Sql $join table or query
 	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function leftJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent
+	public function leftJoin($join, ?string $alias = NULL, $onCondition = NULL): Query
 	{
 		return $this->createQuery()->leftJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @param string|Fluent|Db\Sql $join table or query
+	 * @param string|Query|Db\Sql $join table or query
 	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function leftOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent
+	public function leftOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Query
 	{
 		return $this->createQuery()->leftOuterJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @param string|Fluent|Db\Sql $join table or query
+	 * @param string|Query|Db\Sql $join table or query
 	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function rightJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent
+	public function rightJoin($join, ?string $alias = NULL, $onCondition = NULL): Query
 	{
 		return $this->createQuery()->rightJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @param string|Fluent|Db\Sql $join table or query
+	 * @param string|Query|Db\Sql $join table or query
 	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function rightOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent
+	public function rightOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Query
 	{
 		return $this->createQuery()->rightOuterJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @param string|Fluent|Db\Sql $join table or query
+	 * @param string|Query|Db\Sql $join table or query
 	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function fullJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent
+	public function fullJoin($join, ?string $alias = NULL, $onCondition = NULL): Query
 	{
 		return $this->createQuery()->fullJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @param string|Fluent|Db\Sql $join table or query
+	 * @param string|Query|Db\Sql $join table or query
 	 * @param string|Complex|Db\Sql|NULL $onCondition
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function fullOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Fluent
+	public function fullOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Query
 	{
 		return $this->createQuery()->fullOuterJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @param string|Fluent|Db\Sql $join table or query
+	 * @param string|Query|Db\Sql $join table or query
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function crossJoin($join, ?string $alias = NULL): Fluent
+	public function crossJoin($join, ?string $alias = NULL): Query
 	{
 		return $this->createQuery()->crossJoin($join, $alias);
 	}
@@ -166,7 +166,7 @@ class Connection extends Db\Connection implements Fluent
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function on(string $alias, $condition, ...$params): Fluent
+	public function on(string $alias, $condition, ...$params): Query
 	{
 		return $this->createQuery()->on($alias, $condition, ...$params);
 	}
@@ -178,7 +178,7 @@ class Connection extends Db\Connection implements Fluent
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function where($condition, ...$params): Fluent
+	public function where($condition, ...$params): Query
 	{
 		return $this->createQuery()->where($condition, ...$params);
 	}
@@ -209,7 +209,7 @@ class Connection extends Db\Connection implements Fluent
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function groupBy(string ...$columns): Fluent
+	public function groupBy(string ...$columns): Query
 	{
 		return $this->createQuery()->groupBy(...$columns);
 	}
@@ -221,7 +221,7 @@ class Connection extends Db\Connection implements Fluent
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function having($condition, ...$params): Fluent
+	public function having($condition, ...$params): Query
 	{
 		return $this->createQuery()->having($condition, ...$params);
 	}
@@ -252,7 +252,7 @@ class Connection extends Db\Connection implements Fluent
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function orderBy(...$columns): Fluent
+	public function orderBy(...$columns): Query
 	{
 		return $this->createQuery()->orderBy(...$columns);
 	}
@@ -262,7 +262,7 @@ class Connection extends Db\Connection implements Fluent
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function limit(int $limit): Fluent
+	public function limit(int $limit): Query
 	{
 		return $this->createQuery()->limit($limit);
 	}
@@ -272,47 +272,47 @@ class Connection extends Db\Connection implements Fluent
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function offset(int $offset): Fluent
+	public function offset(int $offset): Query
 	{
 		return $this->createQuery()->offset($offset);
 	}
 
 
 	/**
-	 * @param string|Fluent|Db\Sql $query
+	 * @param string|Query|Db\Sql $query
 	 * @return QueryExecute
 	 */
-	public function union($query): Fluent
+	public function union($query): Query
 	{
 		return $this->createQuery()->union($query);
 	}
 
 
 	/**
-	 * @param string|Fluent|Db\Sql $query
+	 * @param string|Query|Db\Sql $query
 	 * @return QueryExecute
 	 */
-	public function unionAll($query): Fluent
+	public function unionAll($query): Query
 	{
 		return $this->createQuery()->unionAll($query);
 	}
 
 
 	/**
-	 * @param string|Fluent|Db\Sql $query
+	 * @param string|Query|Db\Sql $query
 	 * @return QueryExecute
 	 */
-	public function intersect($query): Fluent
+	public function intersect($query): Query
 	{
 		return $this->createQuery()->intersect($query);
 	}
 
 
 	/**
-	 * @param string|Fluent|Db\Sql $query
+	 * @param string|Query|Db\Sql $query
 	 * @return QueryExecute
 	 */
-	public function except($query): Fluent
+	public function except($query): Query
 	{
 		return $this->createQuery()->except($query);
 	}
@@ -323,7 +323,7 @@ class Connection extends Db\Connection implements Fluent
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function insert(?string $into = NULL, ?array $columns = []): Fluent
+	public function insert(?string $into = NULL, ?array $columns = []): Query
 	{
 		return $this->createQuery()->insert($into, $columns);
 	}
@@ -334,7 +334,7 @@ class Connection extends Db\Connection implements Fluent
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function values(array $data): Fluent
+	public function values(array $data): Query
 	{
 		return $this->createQuery()->values($data);
 	}
@@ -345,7 +345,7 @@ class Connection extends Db\Connection implements Fluent
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function rows(array $rows): Fluent
+	public function rows(array $rows): Query
 	{
 		return $this->createQuery()->rows($rows);
 	}
@@ -355,7 +355,7 @@ class Connection extends Db\Connection implements Fluent
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function update(?string $table = NULL, ?string $alias = NULL): Fluent
+	public function update(?string $table = NULL, ?string $alias = NULL): Query
 	{
 		return $this->createQuery()->update($table, $alias);
 	}
@@ -366,7 +366,7 @@ class Connection extends Db\Connection implements Fluent
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function set(array $data): Fluent
+	public function set(array $data): Query
 	{
 		return $this->createQuery()->set($data);
 	}
@@ -376,7 +376,7 @@ class Connection extends Db\Connection implements Fluent
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function delete(?string $from = NULL, ?string $alias = NULL): Fluent
+	public function delete(?string $from = NULL, ?string $alias = NULL): Query
 	{
 		return $this->createQuery()->delete($from, $alias);
 	}
@@ -387,7 +387,7 @@ class Connection extends Db\Connection implements Fluent
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function returning(array $returning): Fluent
+	public function returning(array $returning): Query
 	{
 		return $this->createQuery()->returning($returning);
 	}
@@ -397,7 +397,7 @@ class Connection extends Db\Connection implements Fluent
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function truncate(?string $table = NULL): Fluent
+	public function truncate(?string $table = NULL): Query
 	{
 		return $this->createQuery()->truncate($table);
 	}
@@ -408,7 +408,7 @@ class Connection extends Db\Connection implements Fluent
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function prefix(string $queryPrefix, ...$params): Fluent
+	public function prefix(string $queryPrefix, ...$params): Query
 	{
 		return $this->createQuery()->prefix($queryPrefix, ...$params);
 	}
@@ -419,7 +419,7 @@ class Connection extends Db\Connection implements Fluent
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function sufix(string $querySufix, ...$params): Fluent
+	public function sufix(string $querySufix, ...$params): Query
 	{
 		return $this->createQuery()->sufix($querySufix, ...$params);
 	}

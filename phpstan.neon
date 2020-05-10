@@ -10,10 +10,8 @@ parameters:
 	ignoreErrors:
 		# === This is OK (just for tests or benchmarks) ===
 
-		- '#Constant PHPGSQL_CONNECTION_CONFIG not found\.#'
-
 		-
-			message: '#Parameter \#1 \$table of method Forrest79\\PhPgSql\\Fluent\\Query::table\(\) expects Forrest79\\PhPgSql\\Db\\Sql\|Forrest79\\PhPgSql\\Fluent\\Fluent\|string, array<int, string> given\.#'
+			message: '#Parameter \#1 \$table of method Forrest79\\PhPgSql\\Fluent\\Query::table\(\) expects Forrest79\\PhPgSql\\Db\\Sql\|Forrest79\\PhPgSql\\Fluent\\Query\|string, array<int, string> given\.#'
 			path: %rootDir%/../../../tests/Unit/FluentQueryTest.php
 
 		-
@@ -22,6 +20,10 @@ parameters:
 
 		-
 			message: '#Parameter \#1 \$condition of method Forrest79\\PhPgSql\\Fluent\\Query::having\(\) expects Forrest79\\PhPgSql\\Db\\Sql\|Forrest79\\PhPgSql\\Fluent\\Complex\|string(\|null)?, Forrest79\\PhPgSql\\Db\\Query given\.#'
+			path: %rootDir%/../../../tests/Unit/FluentQueryTest.php
+
+		-
+			message: '#Parameter \#2 \$queryParams of method Forrest79\\PhPgSql\\Fluent\\QueryBuilder::createSqlQuery\(\) expects array\(.+\), array\(\) given\.#'
 			path: %rootDir%/../../../tests/Unit/FluentQueryTest.php
 
 		-
@@ -65,6 +67,10 @@ parameters:
 		-
 			message: '#Else branch is unreachable because previous condition is always true\.#'
 			path: %rootDir%/../../../src/Fluent/Complex.php
+
+		-
+			message: "#Offset 'prefix'\\|\\'suffix\\' on array\\(.+\\) on left side of \\?\\? always exists and is not nullable\\.#"
+			path: %rootDir%/../../../src/Fluent/QueryBuilder.php
 
 		# === We know, that this can't happen ===
 

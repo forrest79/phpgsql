@@ -11,7 +11,7 @@ class QueryBuilder
 
 
 	/**
-	 * @param array<string, mixed> $queryParams
+	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
 	 * @throws Exceptions\QueryBuilderException
 	 */
 	public function createSqlQuery(string $queryType, array $queryParams): Db\Sql\Query
@@ -48,7 +48,7 @@ class QueryBuilder
 
 
 	/**
-	 * @param array<string, mixed> $queryParams
+	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
 	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 */
@@ -70,7 +70,7 @@ class QueryBuilder
 
 
 	/**
-	 * @param array<string, mixed> $queryParams
+	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
 	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 */
@@ -138,7 +138,7 @@ class QueryBuilder
 
 
 	/**
-	 * @param array<string, mixed> $queryParams
+	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
 	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 */
@@ -171,7 +171,7 @@ class QueryBuilder
 
 
 	/**
-	 * @param array<string, mixed> $queryParams
+	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
 	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 */
@@ -191,7 +191,7 @@ class QueryBuilder
 
 
 	/**
-	 * @param array<string, mixed> $queryParams
+	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
 	 * @throws Exceptions\QueryBuilderException
 	 */
 	private function createTruncate(array $queryParams): string
@@ -201,7 +201,7 @@ class QueryBuilder
 
 
 	/**
-	 * @param array<string, mixed> $queryParams
+	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
 	 */
 	private function getSelectDistinct(array $queryParams): string
 	{
@@ -210,7 +210,7 @@ class QueryBuilder
 
 
 	/**
-	 * @param array<string, mixed> $queryParams
+	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
 	 * @param array<mixed> $params
 	 * @param array<int|string, string>|NULL $columnNames
 	 * @throws Exceptions\QueryBuilderException
@@ -241,7 +241,7 @@ class QueryBuilder
 
 
 	/**
-	 * @param array<string, mixed> $queryParams
+	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
 	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 */
@@ -275,7 +275,7 @@ class QueryBuilder
 
 
 	/**
-	 * @param array<string, mixed> $queryParams
+	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
 	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 */
@@ -312,7 +312,7 @@ class QueryBuilder
 
 
 	/**
-	 * @param array<string, mixed> $queryParams
+	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
 	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 */
@@ -329,7 +329,7 @@ class QueryBuilder
 
 
 	/**
-	 * @param array<string, mixed> $queryParams
+	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
 	 */
 	private function getGroupBy(array $queryParams): string
 	{
@@ -340,7 +340,7 @@ class QueryBuilder
 
 
 	/**
-	 * @param array<string, mixed> $queryParams
+	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
 	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 */
@@ -357,7 +357,7 @@ class QueryBuilder
 
 
 	/**
-	 * @param array<string, mixed> $queryParams
+	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
 	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 */
@@ -386,7 +386,7 @@ class QueryBuilder
 
 
 	/**
-	 * @param array<string, mixed> $queryParams
+	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
 	 * @param array<mixed> $params
 	 */
 	private function getLimit(array $queryParams, array &$params): string
@@ -404,7 +404,7 @@ class QueryBuilder
 
 
 	/**
-	 * @param array<string, mixed> $queryParams
+	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
 	 * @param array<mixed> $params
 	 */
 	private function getOffset(array $queryParams, array &$params): string
@@ -422,7 +422,8 @@ class QueryBuilder
 
 
 	/**
-	 * @param array<string, mixed> $queryParams
+	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
+	 * @param Query::PARAM_PREFIX|Query::PARAM_SUFFIX $type
 	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 */
@@ -459,7 +460,7 @@ class QueryBuilder
 
 
 	/**
-	 * @param array<string, mixed> $queryParams
+	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
 	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 */
@@ -491,7 +492,7 @@ class QueryBuilder
 
 
 	/**
-	 * @param array<string, mixed> $queryParams
+	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
 	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 */
@@ -516,7 +517,7 @@ class QueryBuilder
 
 
 	/**
-	 * @param array<string, mixed> $queryParams
+	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
 	 * @throws Exceptions\QueryBuilderException
 	 */
 	private function getMainTableAlias(array $queryParams): string
