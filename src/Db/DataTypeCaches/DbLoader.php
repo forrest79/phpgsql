@@ -21,12 +21,7 @@ abstract class DbLoader implements Db\DataTypeCache
 		}
 
 		$types = [];
-		while (TRUE) {
-			$data = \pg_fetch_assoc($query);
-			if ($data === FALSE) {
-				break;
-			}
-
+		while (($data = \pg_fetch_assoc($query)) !== FALSE) {
 			$types[(int) $data['oid']] = (string) $data['typname'];
 		}
 
