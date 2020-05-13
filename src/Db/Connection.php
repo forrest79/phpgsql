@@ -447,11 +447,7 @@ class Connection
 			throw Exceptions\ConnectionException::asyncNoExecuteWasSentException();
 		}
 
-		while (TRUE) {
-			$resource = \pg_get_result($this->getConnectedResource());
-			if ($resource === FALSE) {
-				break;
-			}
+		while (($resource = \pg_get_result($this->getConnectedResource())) !== FALSE) {
 			self::checkAsyncQueryResult($resource, $this->asyncQuery);
 		}
 
