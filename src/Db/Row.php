@@ -140,6 +140,15 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 	}
 
 
+	/**
+	 * @return array<string>
+	 */
+	public function getColumns(): array
+	{
+		return \array_keys($this->values);
+	}
+
+
 	public function hasColumn(string $column): bool
 	{
 		return \array_key_exists($column, $this->values);

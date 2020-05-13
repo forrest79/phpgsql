@@ -554,6 +554,10 @@ class FetchTest extends TestCase
 
 		Tester\Assert::same(['id', 'name'], $result->getColumns());
 
+		$row = $this->fetch($result);
+
+		Tester\Assert::same(['id', 'name'], $row->getColumns());
+
 		$result->free();
 	}
 
