@@ -8,12 +8,13 @@ class ResultException extends Exception
 {
 	public const NO_COLUMN = 1;
 	public const COLUMN_NAME_IS_ALREADY_IN_USE = 2;
-	public const FETCH_ASSOC_PARSE_FAILED = 3;
-	public const FETCH_ASSOC_ONLY_SCALAR_AS_KEY = 4;
-	public const FETCH_PAIRS_FAILED = 5;
-	public const NO_OTHER_ASYNC_RESULT = 6;
-	public const ANOTHER_ASYNC_QUERY_IS_RUNNING = 7;
-	public const NO_OID_IN_DATA_TYPE_CACHE = 8;
+	public const FETCH_ASSOC_BAD_DESCRIPTOR = 3;
+	public const FETCH_ASSOC_NO_COLUMN = 4;
+	public const FETCH_ASSOC_ONLY_SCALAR_AS_KEY = 5;
+	public const FETCH_PAIRS_FAILED = 6;
+	public const NO_OTHER_ASYNC_RESULT = 7;
+	public const ANOTHER_ASYNC_QUERY_IS_RUNNING = 8;
+	public const NO_OID_IN_DATA_TYPE_CACHE = 9;
 
 
 	public static function noColumn(string $column): self
@@ -28,9 +29,15 @@ class ResultException extends Exception
 	}
 
 
-	public static function fetchAssocParseFailed(string $assocDesc): self
+	public static function fetchAssocBadDescriptor(string $assocDesc): self
 	{
-		return new self(\sprintf('Failed parsing associative descriptor \'%s\'.', $assocDesc), self::FETCH_ASSOC_PARSE_FAILED);
+		return new self(\sprintf('Bad associative descriptor format \'%s\'.', $assocDesc), self::FETCH_ASSOC_BAD_DESCRIPTOR);
+	}
+
+
+	public static function fetchAssocNoColumn(string $column, string $assocDesc): self
+	{
+		return new self(\sprintf('No column (or bad operator) \'%s\' in associative descriptor \'%s\'.', $column, $assocDesc), self::FETCH_ASSOC_NO_COLUMN);
 	}
 
 

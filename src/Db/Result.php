@@ -158,9 +158,11 @@ class Result implements \Countable, \IteratorAggregate
 	 * Fetches all records from table and returns associative tree.
 	 * Examples:
 	 * - associative descriptor: col1[]col2
-	 *   builds a tree:          $tree[$val1][$index][$val2] = {record}
+	 *   builds a tree:          $tree[$val1][$index][$val2] = Row
 	 * - associative descriptor: col1|col2=col3
 	 *   builds a tree:          $tree[$val1][$val2] = $val3
+	 * - associative descriptor: col1|col2=[]
+	 *   builds a tree:          $tree[$val1][$val2] = Row::toArray()
 	 *
 	 * @return array<int|string, Row|array|mixed>
 	 * @throws Exceptions\ResultException
@@ -168,57 +170,59 @@ class Result implements \Countable, \IteratorAggregate
 	 */
 	public function fetchAssoc(string $assocDesc): array
 	{
-		$this->seek(0);
-		$row = $this->fetch();
-		if ($row === NULL) {
-			return []; // empty result set
+		$parts = \preg_split('#(\[\]|=|\|)#', $assocDesc, -1, \PREG_SPLIT_DELIM_CAPTURE | \PREG_SPLIT_NO_EMPTY);
+		if (($parts === FALSE) || ($parts === [])) {
+			throw Exceptions\ResultException::fetchAssocBadDescriptor($assocDesc);
 		}
+
+		$firstPart = \reset($parts);
+		$lastPart = \end($parts);
+		if (($firstPart === '=') || ($firstPart === '|') || ($lastPart === '=') || ($lastPart === '|')) {
+			throw Exceptions\ResultException::fetchAssocBadDescriptor($assocDesc);
+		}
+
+		$this->seek(0);
 
 		$data = [];
-		$assoc = \preg_split('#(\[\]|=|\|)#', $assocDesc, -1, \PREG_SPLIT_DELIM_CAPTURE | \PREG_SPLIT_NO_EMPTY);
-		if ($assoc === FALSE) {
-			throw Exceptions\ResultException::fetchAssocParseFailed($assocDesc);
-		}
-
-		// check columns
-		foreach ($assoc as $as) {
-			// offsetExists ignores NULL in PHP 5.2.1, isset() surprisingly NULL accepts
-			if ($as !== '[]' && $as !== '=' && $as !== '|' && $row->hasColumn($as) === FALSE) {
-				throw Exceptions\ResultException::noColumn($as);
-			}
-		}
-
-		if ($assoc === []) {
-			$assoc[] = '[]';
-		}
+		$columnsChecked = FALSE;
 
 		// make associative tree
-		do {
+		while (($row = $this->fetch()) !== NULL) {
+			if (!$columnsChecked) {
+				foreach ($parts as $checkPart) {
+					if (($checkPart !== '[]') && ($checkPart !== '=') && ($checkPart !== '|') && !$row->hasColumn($checkPart)) {
+						throw Exceptions\ResultException::fetchAssocNoColumn($checkPart, $assocDesc);
+					}
+				}
+				$columnsChecked = TRUE;
+			}
+
 			$x = &$data;
 
 			// iterative deepening
-			foreach ($assoc as $i => $as) {
-				if ($as === '[]') { // indexed-array node
+			foreach ($parts as $i => $part) {
+				if ($part === '[]') { // indexed-array node
 					$x = &$x[];
-				} else if ($as === '=') { // "value" node
-					$x = $row->{$assoc[$i + 1]};
-					$row = $this->fetch();
-					continue 2;
-				} else if ($as !== '|') { // associative-array node
-					$val = $row->$as;
-					if (($val !== NULL) && !\is_scalar($val)) {
-						throw Exceptions\ResultException::fetchAssocOnlyScalarAsKey($assocDesc, $as, $val);
+				} else if ($part === '=') { // "value" node
+					if ($parts[$i + 1] === '[]') { // get Row as array
+						$x = $row->toArray();
+					} else { // get concrete Row column
+						$x = $row->{$parts[$i + 1]};
 					}
-					$x = &$x[$val];
+					continue 2;
+				} else if ($part !== '|') { // associative-array node
+					$val = $row->$part;
+					if (($val !== NULL) && !\is_scalar($val)) {
+						throw Exceptions\ResultException::fetchAssocOnlyScalarAsKey($assocDesc, $part, $val);
+					}
+					$x = &$x[(string) $val];
 				}
 			}
 
 			if ($x === NULL) { // build leaf
 				$x = $row;
 			}
-
-			$row = $this->fetch();
-		} while ($row !== NULL);
+		}
 
 		unset($x);
 		return $data;

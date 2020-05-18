@@ -98,15 +98,27 @@ class FetchTest extends TestCase
 		');
 		$this->connection->query('INSERT INTO test(type, name) SELECT generate_series, \'name\' || generate_series FROM generate_series(3, 1, -1)');
 
-		$result = $this->connection->query('SELECT id, type, name FROM test ORDER BY id');
+		$result1 = $this->connection->query('SELECT id, type, name FROM test ORDER BY id');
 
-		$rows = $result->fetchAssoc('type');
+		$rows1 = $result1->fetchAssoc('type');
 
-		Tester\Assert::same(['id' => 1, 'type' => 3, 'name' => 'name3'], $rows[3]->toArray());
-		Tester\Assert::same(['id' => 2, 'type' => 2, 'name' => 'name2'], $rows[2]->toArray());
-		Tester\Assert::same(['id' => 3, 'type' => 1, 'name' => 'name1'], $rows[1]->toArray());
+		Tester\Assert::same(['id' => 1, 'type' => 3, 'name' => 'name3'], $rows1[3]->toArray());
+		Tester\Assert::same(['id' => 2, 'type' => 2, 'name' => 'name2'], $rows1[2]->toArray());
+		Tester\Assert::same(['id' => 3, 'type' => 1, 'name' => 'name1'], $rows1[1]->toArray());
 
-		$result->free();
+		$result1->free();
+
+		// ---
+
+		$result2 = $this->connection->query('SELECT id, type, name FROM test ORDER BY id');
+
+		$rows2 = $result2->fetchAssoc('type=[]');
+
+		Tester\Assert::same(['id' => 1, 'type' => 3, 'name' => 'name3'], $rows2[3]);
+		Tester\Assert::same(['id' => 2, 'type' => 2, 'name' => 'name2'], $rows2[2]);
+		Tester\Assert::same(['id' => 3, 'type' => 1, 'name' => 'name1'], $rows2[1]);
+
+		$result2->free();
 	}
 
 
@@ -121,15 +133,39 @@ class FetchTest extends TestCase
 		');
 		$this->connection->query('INSERT INTO test(type, name) SELECT generate_series, \'test\' FROM generate_series(3, 1, -1)');
 
-		$result = $this->connection->query('SELECT id, type, name FROM test ORDER BY id');
+		$result1 = $this->connection->query('SELECT id, type, name FROM test ORDER BY id');
 
-		$rows = $result->fetchAssoc('name[]');
+		$rows1 = $result1->fetchAssoc('name[]');
 
-		Tester\Assert::same(['id' => 1, 'type' => 3, 'name' => 'test'], $rows['test'][0]->toArray());
-		Tester\Assert::same(['id' => 2, 'type' => 2, 'name' => 'test'], $rows['test'][1]->toArray());
-		Tester\Assert::same(['id' => 3, 'type' => 1, 'name' => 'test'], $rows['test'][2]->toArray());
+		Tester\Assert::same(['id' => 1, 'type' => 3, 'name' => 'test'], $rows1['test'][0]->toArray());
+		Tester\Assert::same(['id' => 2, 'type' => 2, 'name' => 'test'], $rows1['test'][1]->toArray());
+		Tester\Assert::same(['id' => 3, 'type' => 1, 'name' => 'test'], $rows1['test'][2]->toArray());
 
-		$result->free();
+		$result1->free();
+
+		// ---
+
+		$result2 = $this->connection->query('SELECT id, type, name FROM test ORDER BY id');
+
+		$rows2 = $result2->fetchAssoc('name[]=[]');
+
+		Tester\Assert::same(['id' => 1, 'type' => 3, 'name' => 'test'], $rows2['test'][0]);
+		Tester\Assert::same(['id' => 2, 'type' => 2, 'name' => 'test'], $rows2['test'][1]);
+		Tester\Assert::same(['id' => 3, 'type' => 1, 'name' => 'test'], $rows2['test'][2]);
+
+		$result2->free();
+
+		// ---
+
+		$result3 = $this->connection->query('SELECT id, type, name || id AS name FROM test ORDER BY id');
+
+		$rows3 = $result3->fetchAssoc('[]name');
+
+		Tester\Assert::same(['id' => 1, 'type' => 3, 'name' => 'test1'], $rows3[0]['test1']->toArray());
+		Tester\Assert::same(['id' => 2, 'type' => 2, 'name' => 'test2'], $rows3[1]['test2']->toArray());
+		Tester\Assert::same(['id' => 3, 'type' => 1, 'name' => 'test3'], $rows3[2]['test3']->toArray());
+
+		$result3->free();
 	}
 
 
@@ -144,27 +180,39 @@ class FetchTest extends TestCase
 		');
 		$this->connection->query('INSERT INTO test(type, name) SELECT generate_series, \'test\' FROM generate_series(3, 1, -1)');
 
-		$result = $this->connection->query('SELECT id, type, name FROM test ORDER BY id');
+		$result1 = $this->connection->query('SELECT id, type, name FROM test ORDER BY id');
 
-		$rows = $result->fetchAssoc('name|type');
+		$rows1 = $result1->fetchAssoc('name|type');
 
-		Tester\Assert::same(['id' => 1, 'type' => 3, 'name' => 'test'], $rows['test'][3]->toArray());
-		Tester\Assert::same(['id' => 2, 'type' => 2, 'name' => 'test'], $rows['test'][2]->toArray());
-		Tester\Assert::same(['id' => 3, 'type' => 1, 'name' => 'test'], $rows['test'][1]->toArray());
+		Tester\Assert::same(['id' => 1, 'type' => 3, 'name' => 'test'], $rows1['test'][3]->toArray());
+		Tester\Assert::same(['id' => 2, 'type' => 2, 'name' => 'test'], $rows1['test'][2]->toArray());
+		Tester\Assert::same(['id' => 3, 'type' => 1, 'name' => 'test'], $rows1['test'][1]->toArray());
 
-		$result->free();
+		$result1->free();
 
 		// ---
 
-		$result = $this->connection->query('SELECT id, type, name FROM test ORDER BY id');
+		$result2 = $this->connection->query('SELECT id, type, name FROM test ORDER BY id');
 
-		$rows = $result->fetchAssoc('name|type[]');
+		$rows2 = $result2->fetchAssoc('name|type=[]');
 
-		Tester\Assert::same(['id' => 1, 'type' => 3, 'name' => 'test'], $rows['test'][3][0]->toArray());
-		Tester\Assert::same(['id' => 2, 'type' => 2, 'name' => 'test'], $rows['test'][2][0]->toArray());
-		Tester\Assert::same(['id' => 3, 'type' => 1, 'name' => 'test'], $rows['test'][1][0]->toArray());
+		Tester\Assert::same(['id' => 1, 'type' => 3, 'name' => 'test'], $rows2['test'][3]);
+		Tester\Assert::same(['id' => 2, 'type' => 2, 'name' => 'test'], $rows2['test'][2]);
+		Tester\Assert::same(['id' => 3, 'type' => 1, 'name' => 'test'], $rows2['test'][1]);
 
-		$result->free();
+		$result2->free();
+
+		// ---
+
+		$result3 = $this->connection->query('SELECT id, type, name FROM test ORDER BY id');
+
+		$rows3 = $result3->fetchAssoc('name|type[]');
+
+		Tester\Assert::same(['id' => 1, 'type' => 3, 'name' => 'test'], $rows3['test'][3][0]->toArray());
+		Tester\Assert::same(['id' => 2, 'type' => 2, 'name' => 'test'], $rows3['test'][2][0]->toArray());
+		Tester\Assert::same(['id' => 3, 'type' => 1, 'name' => 'test'], $rows3['test'][1][0]->toArray());
+
+		$result3->free();
 	}
 
 
@@ -191,6 +239,42 @@ class FetchTest extends TestCase
 	}
 
 
+	public function testFetchAssocBadDescriptor(): void
+	{
+		$this->connection->query('
+			CREATE TABLE test(
+				id serial,
+				type integer
+			);
+		');
+		$this->connection->query('INSERT INTO test(type) SELECT generate_series FROM generate_series(3, 1, -1)');
+
+		$result = $this->connection->query('SELECT id, type FROM test ORDER BY id');
+
+		Tester\Assert::exception(static function () use ($result): void {
+			$result->fetchAssoc('');
+		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::FETCH_ASSOC_BAD_DESCRIPTOR);
+
+		Tester\Assert::exception(static function () use ($result): void {
+			$result->fetchAssoc('=types');
+		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::FETCH_ASSOC_BAD_DESCRIPTOR);
+
+		Tester\Assert::exception(static function () use ($result): void {
+			$result->fetchAssoc('|types');
+		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::FETCH_ASSOC_BAD_DESCRIPTOR);
+
+		Tester\Assert::exception(static function () use ($result): void {
+			$result->fetchAssoc('types=');
+		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::FETCH_ASSOC_BAD_DESCRIPTOR);
+
+		Tester\Assert::exception(static function () use ($result): void {
+			$result->fetchAssoc('types|');
+		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::FETCH_ASSOC_BAD_DESCRIPTOR);
+
+		$result->free();
+	}
+
+
 	public function testFetchAssocNoColumn(): void
 	{
 		$this->connection->query('
@@ -205,7 +289,7 @@ class FetchTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($result): void {
 			$result->fetchAssoc('id=types');
-		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::NO_COLUMN);
+		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::FETCH_ASSOC_NO_COLUMN);
 
 		$result->free();
 	}
@@ -248,32 +332,6 @@ class FetchTest extends TestCase
 		Tester\Assert::exception(static function () use ($result): void {
 			$result->fetchAssoc('test_date=id');
 		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::FETCH_ASSOC_ONLY_SCALAR_AS_KEY);
-
-		$result->free();
-	}
-
-
-	public function testFetchAssocBlank(): void
-	{
-		$this->connection->query('
-			CREATE TABLE test(
-				id serial,
-				type integer,
-				name character varying
-			);
-		');
-		$this->connection->query('INSERT INTO test(type, name) SELECT generate_series, \'test\' || generate_series FROM generate_series(2, 1, -1)');
-
-		$result = $this->connection->query('SELECT id, type, name FROM test ORDER BY id');
-
-		$rows = $result->fetchAssoc('');
-
-		Tester\Assert::same(2, \count($rows));
-
-		Tester\Assert::same(2, $rows[0]->type);
-		Tester\Assert::same('test2', $rows[0]->name);
-		Tester\Assert::same(1, $rows[1]->type);
-		Tester\Assert::same('test1', $rows[1]->name);
 
 		$result->free();
 	}
