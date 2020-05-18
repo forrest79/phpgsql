@@ -66,6 +66,7 @@ class Result implements \Countable, \IteratorAggregate
 			return NULL;
 		}
 
+		$this->detectColumnsDataTypes();
 		return $this->rowFactory->createRow($this, $data);
 	}
 
@@ -346,6 +347,13 @@ class Result implements \Countable, \IteratorAggregate
 	 */
 	private function getColumnsDataTypes(): array
 	{
+		$this->detectColumnsDataTypes();
+		return $this->columnsDataTypes;
+	}
+
+
+	private function detectColumnsDataTypes(): void
+	{
 		if ($this->columnsDataTypes === NULL) {
 			$this->columnsDataTypes = [];
 			$fieldsCnt = \pg_num_fields($this->queryResource);
@@ -366,7 +374,6 @@ class Result implements \Countable, \IteratorAggregate
 				$this->columnsDataTypes[$name] = $type;
 			}
 		}
-		return $this->columnsDataTypes;
 	}
 
 
