@@ -35,5 +35,12 @@
 			"Forrest79\\PhPgSql\\Tests\\": "tests/",
 			"Forrest79\\PhPgSql\\Benchmarks\\": "benchmarks/"
 		}
+	},
+	"scripts": {
+		"tests": "tests/run-tests tests",
+		"coverage": "tests/collect-coverage tests",
+		"benchmarks": "benchmarks/run-benchmarks.php",
+		"phpcs": "vendor/bin/phpcs -s src tests benchmarks",
+		"phpstan": "vendor/bin/phpstan analyse src tests benchmarks"
 	}
 }

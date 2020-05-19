@@ -33,10 +33,10 @@ before_script:
   - psql -c "ALTER ROLE postgres ENCRYPTED PASSWORD 'md53175bce1d3201d16594cebf9d7eb3f9d';" -U postgres
 
 script:
-  - vendor/bin/phpcs -s src tests benchmarks
-  - vendor/bin/phpstan analyse src tests benchmarks
-  - vendor/bin/tester tests
-  - benchmarks/run-benchmarks.php
+  - composer phpcs
+  - composer phpstan
+  - composer tests
+  - composer benchmarks
 
 after_failure:
   - for i in $(find tests -name \*.actual); do echo "--- $i"; cat $i; echo; echo; done
