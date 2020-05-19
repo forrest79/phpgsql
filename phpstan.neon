@@ -13,83 +13,103 @@ parameters:
 		-
 			message: '#Parameter \#1 \$table of method Forrest79\\PhPgSql\\Fluent\\Query::table\(\) expects Forrest79\\PhPgSql\\Db\\Sql\|Forrest79\\PhPgSql\\Fluent\\Query\|string, array<int, string> given\.#'
 			path: %rootDir%/../../../tests/Unit/FluentQueryTest.php
+			count: 1
 
 		-
 			message: '#Parameter \#(1|2|3) \$(c|onC)ondition of method Forrest79\\PhPgSql\\Fluent\\Query::(where|having|join|on)\(\) expects Forrest79\\PhPgSql\\Db\\Sql\|Forrest79\\PhPgSql\\Fluent\\Complex\|string(\|null)?, array<int, string> given\.#'
 			path: %rootDir%/../../../tests/Unit/FluentQueryTest.php
+			count: 3
 
 		-
 			message: '#Parameter \#1 \$condition of method Forrest79\\PhPgSql\\Fluent\\Query::having\(\) expects Forrest79\\PhPgSql\\Db\\Sql\|Forrest79\\PhPgSql\\Fluent\\Complex\|string(\|null)?, Forrest79\\PhPgSql\\Db\\Query given\.#'
 			path: %rootDir%/../../../tests/Unit/FluentQueryTest.php
+			count: 1
 
 		-
 			message: '#Parameter \#2 \$queryParams of method Forrest79\\PhPgSql\\Fluent\\QueryBuilder::createSqlQuery\(\) expects array\(.+\), array\(\) given\.#'
 			path: %rootDir%/../../../tests/Unit/FluentQueryTest.php
+			count: 1
 
 		-
 			message: '#Expression ".+" on a separate line does not do anything\.#'
 			path: %rootDir%/../../../tests/Integration/FetchTest.php
+			count: 8
 
 		-
 			message: '#Expression ".+" on a separate line does not do anything\.#'
 			path: %rootDir%/../../../tests/Integration/ParseDataTypeTest.php
+			count: 4
 
 		-
 			message: '#Result of \|\| is always (true|false)\.#'
 			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
+			count: 8
 
 		-
 			message: "#Call to function array_key_exists\\(\\) with '.+' and array\\(.+\\) will always evaluate to (true|false)\\.#"
 			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
+			count: 10
 
 		-
 			message: '#Call to function array_key_exists\(\) on a separate line has no effect\.#'
 			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
+			count: 2
 
 		-
 			message: '#Offset 0 on (array\(.+\)|null) on left side of \?\? .+\.#'
 			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
+			count: 2
 
 		-
 			message: "#Offset '[a-zA-Z0-9]+' on array\\(.+\\) in isset\\(\\) .+\\.#"
 			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
+			count: 8
 
 		-
 			message: '#Empty array passed to foreach\.#'
 			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
+			count: 1
 
 		# === We know, that this can happen ===
 
 		-
 			message: '#Call to function is_string\(\) with string will always evaluate to true\.#'
 			path: %rootDir%/../../../src/Fluent/Complex.php
+			count: 1
 
 		-
 			message: '#Else branch is unreachable because previous condition is always true\.#'
 			path: %rootDir%/../../../src/Fluent/Complex.php
+			count: 1
 
 		-
 			message: "#Offset 'prefix'\\|\\'suffix\\' on array\\(.+\\) on left side of \\?\\? always exists and is not nullable\\.#"
 			path: %rootDir%/../../../src/Fluent/QueryBuilder.php
+			count: 1
 
 		# === We know, that this can't happen ===
 
 		-
 			message: '#Parameter \#1 \$connection of function pg_connect_poll expects resource, resource\|null given\.#'
 			path: %rootDir%/../../../src/Db/Connection.php
+			count: 1
 
 		-
 			message: '#Parameter \#1 \$connection of function pg_set_error_verbosity expects resource, resource\|null given\.#'
 			path: %rootDir%/../../../src/Db/Connection.php
+			count: 1
 
 		-
 			message: '#Method Forrest79\\PhPgSql\\Db\\Connection::getConnectedResource\(\) should return resource but returns resource\|null\.#'
 			path: %rootDir%/../../../src/Db/Connection.php
+			count: 2
 
 		-
 			message: '#Method Forrest79\\PhPgSql\\Db\\ResultIterator::current\(\) should return Forrest79\\PhPgSql\\Db\\Row but returns Forrest79\\PhPgSql\\Db\\Row\|null\.#'
 			path: %rootDir%/../../../src/Db/ResultIterator.php
+			count: 1
 
 		-
 			message: '#Parameter \#2 \$expected of static method Forrest79\\PhPgSql\\Fluent\\Exceptions\\QueryBuilderException::badParamsCount\(\) expects int, int\|false given\.#'
 			path: %rootDir%/../../../src/Fluent/QueryBuilder.php
+			count: 1
