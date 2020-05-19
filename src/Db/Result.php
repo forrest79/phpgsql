@@ -165,7 +165,7 @@ class Result implements \Countable, \IteratorAggregate
 	 * - associative descriptor: col1|col2=[]
 	 *   builds a tree:          $tree[$val1][$val2] = Row::toArray()
 	 *
-	 * @return array<int|string, Row|array|mixed>
+	 * @return array<mixed>
 	 * @throws Exceptions\ResultException
 	 * @credit dibi (https://dibiphp.com/) | David Grudl
 	 */
