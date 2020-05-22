@@ -15,7 +15,7 @@ Simple and fast PHP database library for PostgreSQL with auto converting DB type
 - no database structure reading
 - automatically convert PG data types to PHP data types
 - support async connect to DB and async query
-- simple creating queries with prepared statement with `?` for variable instead of $1, $2 and so...
+- simple creating queries with parameters - char `?` for variable is automatically replaced with `$1`, `$2` and so...
   - as variable you can pass scalar, bool, array, literal or other query
 
 
@@ -102,8 +102,9 @@ $row = $result->fetchSingle();
 $row = $result->fetchAll();
 
 // special syntax for creating structure from data
-$row = $result->fetchAssoc('col1[]col2'); // $tree[$val1][$index][$val2] = {record}
+$row = $result->fetchAssoc('col1[]col2'); // $tree[$val1][$index][$val2] = Db\Row
 $row = $result->fetchAssoc('col1|col2=col3'); // $tree[$val1][$val2] = val2
+$row = $result->fetchAssoc('col1|col2=[]'); // $tree[$val1][$val2] = Db\Row::toArray()
 
 // get indexed array, key is first column, value is second column or you can choose columns manually
 $row = $result->fetchPairs();
