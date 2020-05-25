@@ -49,6 +49,11 @@ parameters:
 			count: 4
 
 		-
+			message: '#Parameter \#1 \$result of function pg_.+ expects resource, resource\|false given\.#'
+			path: %rootDir%/../../../tests/Integration/PgFunctionsTest.php
+			count: 50
+
+		-
 			message: '#Result of \|\| is always (true|false)\.#'
 			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
 			count: 8
