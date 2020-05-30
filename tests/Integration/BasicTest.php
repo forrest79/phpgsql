@@ -297,6 +297,28 @@ class BasicTest extends TestCase
 	}
 
 
+	public function testRowSerialize(): void
+	{
+		$this->connection->query('
+			CREATE TABLE test(
+				id serial,
+  				name text
+			);
+		');
+		$this->connection->query('INSERT INTO test(name) VALUES(?)', 'phpgsql');
+
+		/** @var Db\Row $row */
+		$row = $this->connection->query('SELECT id, name FROM test')->fetch();
+
+		Tester\Assert::same(1, $row->id);
+		Tester\Assert::same('phpgsql', $row->name);
+
+		$serializedRow = \serialize($row);
+
+		Tester\Assert::same($row->toArray(), \unserialize($serializedRow)->toArray());
+	}
+
+
 	public function testGetNotifications(): void
 	{
 		$this->connection->execute('DO $BODY$ BEGIN RAISE NOTICE \'Test notice\'; END; $BODY$ LANGUAGE plpgsql;');
