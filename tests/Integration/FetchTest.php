@@ -680,8 +680,6 @@ class FetchTest extends TestCase
 
 		$row = $this->fetch($result);
 
-		Tester\Assert::same($result, $row->getResult());
-
 		Tester\Assert::same('phpgsql', $row->name);
 
 		Tester\Assert::false(isset($row->type));
@@ -750,11 +748,11 @@ class FetchTest extends TestCase
 		return new class implements Db\RowFactory {
 
 			/**
-			 * @param array<string, mixed> $values
+			 * @param array<string, mixed> $rawValues
 			 */
-			public function createRow(Db\Result $result, array $values): Db\Row
+			public function createRow(Db\ColumnValueParser $columnValueParser, array $rawValues): Db\Row
 			{
-				return new Db\Row($result, ['name' => 'custom']);
+				return new Db\Row($columnValueParser, ['name' => 'custom']);
 			}
 
 		};

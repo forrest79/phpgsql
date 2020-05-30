@@ -5,7 +5,7 @@ namespace Forrest79\PhPgSql\Db;
 /**
  * @implements \IteratorAggregate<int, Row>
  */
-class Result implements \Countable, \IteratorAggregate
+class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 {
 	/** @var resource */
 	protected $queryResource;

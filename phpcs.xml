@@ -111,33 +111,8 @@
 		</properties>
 	</rule>
 
-	<rule ref="SlevomatCodingStandard.TypeHints.DeclareStrictTypes">
-		<properties>
-			<property name="newlinesCountBetweenOpenTagAndDeclare" type="int" value="0"/>
-			<property name="spacesCountAroundEqualsSign" type="int" value="0"/>
-		</properties>
-	</rule>
-
-	<rule ref="SlevomatCodingStandard.Variables.UnusedVariable">
-		<properties>
-			<property name="ignoreUnusedValuesWhenOnlyKeysAreUsedInForeach" type="bool" value="true"/>
-		</properties>
-	</rule>
-
-	<rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint">
-		<exclude-pattern>src/Fluent/Complex.php</exclude-pattern>
-	</rule>
-
 	<rule ref="SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.MissingVariable">
 		<exclude-pattern>src/Fluent/Complex.php</exclude-pattern>
-	</rule>
-
-	<rule ref="SlevomatCodingStandard.Whitespaces.DuplicateSpaces.DuplicateSpaces">
-		<exclude-pattern>src/Db/Result.php</exclude-pattern>
-	</rule>
-
-	<rule ref="SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter">
-		<exclude-pattern>tests/*</exclude-pattern>
 	</rule>
 
 	<rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
@@ -146,9 +121,35 @@
 		<exclude-pattern>benchmarks/*</exclude-pattern>
 	</rule>
 
+	<rule ref="SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter">
+		<exclude-pattern>src/Db/DummyColumnValueParser.php</exclude-pattern>
+		<exclude-pattern>tests/*</exclude-pattern>
+	</rule>
+
+	<rule ref="SlevomatCodingStandard.TypeHints.DeclareStrictTypes">
+		<properties>
+			<property name="newlinesCountBetweenOpenTagAndDeclare" type="int" value="0"/>
+			<property name="spacesCountAroundEqualsSign" type="int" value="0"/>
+		</properties>
+	</rule>
+
+	<rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint">
+		<exclude-pattern>src/Fluent/Complex.php</exclude-pattern>
+	</rule>
+
 	<rule ref="SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint">
 		<exclude-pattern>src/*</exclude-pattern>
 		<exclude-pattern>tests/*</exclude-pattern>
 		<exclude-pattern>benchmarks/*</exclude-pattern>
+	</rule>
+
+	<rule ref="SlevomatCodingStandard.Variables.UnusedVariable">
+		<properties>
+			<property name="ignoreUnusedValuesWhenOnlyKeysAreUsedInForeach" type="bool" value="true"/>
+		</properties>
+	</rule>
+
+	<rule ref="SlevomatCodingStandard.Whitespaces.DuplicateSpaces.DuplicateSpaces">
+		<exclude-pattern>src/Db/Result.php</exclude-pattern>
 	</rule>
 </ruleset>

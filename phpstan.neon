@@ -8,6 +8,14 @@ parameters:
 	autoload_files:
 		- %rootDir%/../../../tests/bootstrap.php
 	ignoreErrors:
+		# === This is OK ===
+
+		-
+			message: '#Unsafe usage of new static\(\)\.#'
+			path: %rootDir%/../../../src/Db/Row.php
+			count: 1
+
+
 		# === This is OK (just for tests or benchmarks) ===
 
 		-

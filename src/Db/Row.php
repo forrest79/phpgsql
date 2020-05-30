@@ -8,24 +8,25 @@ namespace Forrest79\PhPgSql\Db;
  */
 class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializable
 {
-	/** @var Result */
-	private $result;
-
-	/** @var array<string, mixed> */
-	private $values;
+	/** @var ColumnValueParser */
+	private $columnValueParser;
 
 	/** @var array<string, string|NULL> */
 	private $rawValues;
+
+	/** @var array<string, mixed> */
+	private $values;
 
 
 	/**
 	 * @param array<string, mixed> $rawValues
 	 */
-	public function __construct(Result $result, array $rawValues)
+	public function __construct(ColumnValueParser $columnValueParser, array $rawValues)
 	{
-		$this->result = $result;
-		$this->values = \array_fill_keys(\array_keys($rawValues), NULL);
+		$this->columnValueParser = $columnValueParser;
 		$this->rawValues = $rawValues;
+
+		$this->values = \array_fill_keys(\array_keys($rawValues), NULL);
 	}
 
 
@@ -175,7 +176,7 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 
 	private function parseValue(string $column): void
 	{
-		$this->values[$column] = $this->result->parseColumnValue($column, $this->rawValues[$column]);
+		$this->values[$column] = $this->columnValueParser->parseColumnValue($column, $this->rawValues[$column]);
 		unset($this->rawValues[$column]);
 	}
 
@@ -207,9 +208,13 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 	}
 
 
-	public function getResult(): Result
+	/**
+	 * @param array<string, mixed> $values
+	 * @return static
+	 */
+	public static function from(array $values): self
 	{
-		return $this->result;
+		return new static(new DummyColumnValueParser(), $values);
 	}
 
 }
