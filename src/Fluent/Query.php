@@ -708,7 +708,7 @@ class Query implements Sql
 	private function checkAlias($data, ?string $alias): void
 	{
 		if ((($data instanceof self) || ($data instanceof Db\Sql)) && ($alias === NULL)) {
-			throw Exceptions\QueryException::queryableMustHaveAlias();
+			throw Exceptions\QueryException::sqlMustHaveAlias();
 		} else if (!\is_scalar($data) && !($data instanceof self) && !($data instanceof Db\Sql)) {
 			throw Exceptions\QueryException::columnMustBeScalarOrExpression();
 		}

@@ -7,7 +7,7 @@ class QueryException extends Exception
 	public const ONLY_ONE_MAIN_TABLE = 1;
 	public const TABLE_ALIAS_ALREADY_EXISTS = 2;
 	public const NON_EXISTING_QUERY_PARAM = 3;
-	public const QUERYABLE_MUST_HAVE_ALIAS = 4;
+	public const SQL_MUST_HAVE_ALIAS = 4;
 	public const PARAM_MUST_BE_SCALAR_OR_EXPRESSION = 5;
 	public const CANT_UPDATE_QUERY_AFTER_EXECUTE = 6;
 	public const YOU_MUST_EXECUTE_QUERY_BEFORE_THAT = 7;
@@ -34,15 +34,15 @@ class QueryException extends Exception
 	}
 
 
-	public static function queryableMustHaveAlias(): self
+	public static function sqlMustHaveAlias(): self
 	{
-		return new self('Queryable must have alias.', self::QUERYABLE_MUST_HAVE_ALIAS);
+		return new self('Sql must have an alias.', self::SQL_MUST_HAVE_ALIAS);
 	}
 
 
 	public static function columnMustBeScalarOrExpression(): self
 	{
-		return new self('Column must be scalar, Fluent\Query or Db\Sql.', self::PARAM_MUST_BE_SCALAR_OR_EXPRESSION);
+		return new self('Column must be a scalar, Fluent\Query or Db\Sql.', self::PARAM_MUST_BE_SCALAR_OR_EXPRESSION);
 	}
 
 

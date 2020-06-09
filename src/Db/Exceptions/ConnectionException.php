@@ -19,7 +19,7 @@ class ConnectionException extends Exception
 	public const ASYNC_ANOTHER_QUERY_IS_RUNNING = 13;
 
 
-	public static function noConfigException(): self
+	public static function noConfig(): self
 	{
 		return new self('No configuration was provided.', self::NO_CONFIG);
 	}
@@ -31,7 +31,7 @@ class ConnectionException extends Exception
 	}
 
 
-	public static function connectionFailedException(): self
+	public static function connectionFailed(): self
 	{
 		$message = '.';
 		$lastPhpError = \error_get_last();
@@ -42,55 +42,55 @@ class ConnectionException extends Exception
 	}
 
 
-	public static function badConnectionException(): self
+	public static function badConnection(): self
 	{
 		return new self('Connection failed (bad connection).', self::BAD_CONNECTION);
 	}
 
 
-	public static function cantGetNoticesException(): self
+	public static function cantGetNotices(): self
 	{
 		return new self('Can\'t get notices from connection. Is notice message tracking not ignored in php.ini - pgsql.ignore_notice = 0 is the right value.', self::CANT_GET_NOTICES);
 	}
 
 
-	public static function asyncStreamFailedException(): self
+	public static function asyncStreamFailed(): self
 	{
 		return new self('Asynchronous connection error.', self::ASYNC_STREAM_FAILED);
 	}
 
 
-	public static function asyncConnectFailedException(): self
+	public static function asyncConnectFailed(): self
 	{
 		return new self('Asynchronous connection error.', self::ASYNC_CONNECT_FAILED);
 	}
 
 
-	public static function asyncConnectTimeoutException(float $afterSeconds, int $configSeconds): self
+	public static function asyncConnectTimeout(float $afterSeconds, int $configSeconds): self
 	{
 		return new self(\sprintf('Asynchronous connection timeout after %f seconds (%d seconds are configured).', $afterSeconds, $configSeconds), self::ASYNC_CONNECT_TIMEOUT);
 	}
 
 
-	public static function asyncCancelFailedException(): self
+	public static function asyncCancelFailed(): self
 	{
 		return new self('Cancelation of async query failed.', self::ASYNC_CANCEL_FAILED);
 	}
 
 
-	public static function asyncQuerySentFailedException(string $error): self
+	public static function asyncQuerySentFailed(string $error): self
 	{
 		return new self(\sprintf('Sending new async query failed: \'%s\'. Did you complete previous async query?', $error), self::ASYNC_QUERY_SENT_FAILED);
 	}
 
 
-	public static function asyncNoQueryIsSentException(): self
+	public static function asyncNoQueryIsSent(): self
 	{
 		return new self('No async query is sent.', self::ASYNC_NO_QUERY_IS_SENT);
 	}
 
 
-	public static function asyncNoExecuteIsSentException(): self
+	public static function asyncNoExecuteIsSent(): self
 	{
 		return new self('No async execute is sent.', self::ASYNC_NO_EXECUTE_IS_SENT);
 	}

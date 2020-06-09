@@ -74,7 +74,7 @@ class Connection
 	public function connect(): self
 	{
 		if ($this->connectionConfig === '') {
-			throw Exceptions\ConnectionException::noConfigException();
+			throw Exceptions\ConnectionException::noConfig();
 		}
 
 		$connectType = 0;
@@ -87,9 +87,9 @@ class Connection
 
 		$resource = @\pg_connect($this->connectionConfig, $connectType); // intentionally @
 		if (!\is_resource($resource)) {
-			throw Exceptions\ConnectionException::connectionFailedException();
+			throw Exceptions\ConnectionException::connectionFailed();
 		} elseif (\pg_connection_status($resource) === \PGSQL_CONNECTION_BAD) {
-			throw Exceptions\ConnectionException::badConnectionException();
+			throw Exceptions\ConnectionException::badConnection();
 		}
 
 		$this->resource = $resource;
@@ -97,7 +97,7 @@ class Connection
 		if ($this->connectAsync === TRUE) {
 			$stream = \pg_socket($resource);
 			if ($stream === FALSE) {
-				throw Exceptions\ConnectionException::asyncStreamFailedException();
+				throw Exceptions\ConnectionException::asyncStreamFailed();
 			}
 			$this->asyncStream = $stream;
 		} else {
@@ -398,7 +398,7 @@ class Connection
 			$querySuccess = @\pg_send_query_params($this->getConnectedResource(), $query->getSql(), $query->getParams()); // intentionally @
 		}
 		if ($querySuccess === FALSE) {
-			throw Exceptions\ConnectionException::asyncQuerySentFailedException($this->getLastError());
+			throw Exceptions\ConnectionException::asyncQuerySentFailed($this->getLastError());
 		}
 
 		if ($this->events->hasOnQuery()) {
@@ -417,7 +417,7 @@ class Connection
 	{
 		$querySuccess = @\pg_send_query($this->getConnectedResource(), $sql); // intentionally @
 		if ($querySuccess === FALSE) {
-			throw Exceptions\ConnectionException::asyncQuerySentFailedException($this->getLastError());
+			throw Exceptions\ConnectionException::asyncQuerySentFailed($this->getLastError());
 		}
 
 		if ($this->events->hasOnQuery()) {
@@ -438,7 +438,7 @@ class Connection
 	{
 		$asyncExecuteQuery = $this->asyncHelper->getAsyncExecuteQuery();
 		if ($asyncExecuteQuery === NULL) {
-			throw Exceptions\ConnectionException::asyncNoExecuteIsSentException();
+			throw Exceptions\ConnectionException::asyncNoExecuteIsSent();
 		}
 
 		while (($result = \pg_get_result($this->getConnectedResource())) !== FALSE) {
@@ -462,7 +462,7 @@ class Connection
 	public function cancelAsyncQuery(): self
 	{
 		if (!\pg_cancel_query($this->getConnectedResource())) {
-			throw Exceptions\ConnectionException::asyncCancelFailedException();
+			throw Exceptions\ConnectionException::asyncCancelFailed();
 		}
 
 		$this->asyncHelper->clearQuery();
@@ -491,7 +491,7 @@ class Connection
 		/** @var array<string>|FALSE $notices */
 		$notices = \pg_last_notice($this->getConnectedResource(), \PGSQL_NOTICE_ALL);
 		if ($notices === FALSE) {
-			throw Exceptions\ConnectionException::cantGetNoticesException();
+			throw Exceptions\ConnectionException::cantGetNotices();
 		}
 
 		if ($clearAfterRead) {
@@ -588,7 +588,7 @@ class Connection
 						while (!self::isWritable($this->asyncStream));
 						break;
 					case \PGSQL_POLLING_FAILED:
-						throw Exceptions\ConnectionException::asyncConnectFailedException();
+						throw Exceptions\ConnectionException::asyncConnectFailed();
 					case \PGSQL_POLLING_OK:
 					case \PGSQL_POLLING_ACTIVE: // this can't happen?
 						if ($this->errorVerbosity !== \PGSQL_ERRORS_DEFAULT) {
@@ -599,7 +599,7 @@ class Connection
 						return $this->resource;
 				}
 			} while (($test - $start) <= $this->connectAsyncWaitSeconds);
-			throw Exceptions\ConnectionException::asyncConnectTimeoutException($test, $this->connectAsyncWaitSeconds);
+			throw Exceptions\ConnectionException::asyncConnectTimeout($test, $this->connectAsyncWaitSeconds);
 		}
 
 		return $this->resource;

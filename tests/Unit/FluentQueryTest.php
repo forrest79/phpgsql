@@ -1133,11 +1133,11 @@ class FluentQueryTest extends Tests\TestCase
 		Tester\Assert::exception(function (): void {
 			$this->query()
 				->table($this->query()->select([1]));
-		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::QUERYABLE_MUST_HAVE_ALIAS);
+		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::SQL_MUST_HAVE_ALIAS);
 	}
 
 
-	public function testParamMustBeScalarOrQueryable(): void
+	public function testParamMustBeScalarOrQuery(): void
 	{
 		Tester\Assert::exception(function (): void {
 			$this->query()->table(['table'], 't');

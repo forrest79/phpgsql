@@ -45,7 +45,7 @@ class AsyncQuery
 		$actualAsyncQuery = $this->asyncHelper->getAsyncQuery();
 		$actualAsyncExecuteQuery = $this->asyncHelper->getAsyncExecuteQuery();
 		if (($actualAsyncQuery === NULL) && ($actualAsyncExecuteQuery === NULL)) {
-			throw Exceptions\ConnectionException::asyncNoQueryIsSentException();
+			throw Exceptions\ConnectionException::asyncNoQueryIsSent();
 		} else if (($actualAsyncQuery !== $this) || ($actualAsyncExecuteQuery !== NULL)) {
 			throw Exceptions\ConnectionException::anotherAsyncQueryIsRunning(
 				$this->getQuery()->getSql(),
