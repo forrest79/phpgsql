@@ -22,7 +22,7 @@ class Connection extends Db\Connection implements Sql
 
 
 	/**
-	 * @param array<int|string, string|int|Query|Db\Sql> $columns
+	 * @param array<int|string, string|int|bool|Query|Db\Sql|NULL> $columns
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */

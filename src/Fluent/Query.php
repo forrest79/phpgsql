@@ -102,7 +102,7 @@ class Query implements Sql
 
 
 	/**
-	 * @param array<int|string, string|int|self|Db\Sql> $columns
+	 * @param array<int|string, string|int|bool|self|Db\Sql|NULL> $columns
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
@@ -110,9 +110,16 @@ class Query implements Sql
 	{
 		$this->updateQuery();
 
-		foreach ($columns as $alias => $column) {
+		foreach ($columns as $alias => &$column) {
 			if (\is_int($alias)) {
 				$alias = NULL;
+			}
+			if ($column === NULL) {
+				$column = 'NULL';
+			} else if ($column === TRUE) {
+				$column = 'TRUE';
+			} else if ($column === FALSE) {
+				$column = 'FALSE';
 			}
 			$this->checkAlias($column, $alias);
 		}

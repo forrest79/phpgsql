@@ -71,6 +71,18 @@ class FluentQueryTest extends Tests\TestCase
 	}
 
 
+	public function testSelectBoolNull(): void
+	{
+		$query = $this->query()
+			->select(['is_true' => TRUE, 'is_false' => FALSE, 'is_null' => NULL])
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('SELECT TRUE AS "is_true", FALSE AS "is_false", NULL AS "is_null"', $query->getSql());
+		Tester\Assert::same([], $query->getParams());
+	}
+
+
 	public function testFromWithFluentQuery(): void
 	{
 		$query = $this->query()
