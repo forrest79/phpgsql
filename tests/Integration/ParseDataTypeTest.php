@@ -356,7 +356,7 @@ class ParseDataTypeTest extends TestCase
 	{
 		$row = $this->connection->query('SELECT * FROM test')->fetch();
 		if ($row === NULL) {
-			throw new \InvalidArgumentException('Bad data were return from database');
+			throw new \RuntimeException('No data from database were returned');
 		}
 		return $row;
 	}

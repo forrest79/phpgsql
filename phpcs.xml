@@ -126,6 +126,10 @@
 		<exclude-pattern>tests/*</exclude-pattern>
 	</rule>
 
+	<rule ref="SlevomatCodingStandard.Operators.RequireOnlyStandaloneIncrementAndDecrementOperators.PostIncrementOperatorNotUsedStandalone">
+		<exclude-pattern>src/Db/PreparedStatement.php</exclude-pattern>
+	</rule>
+
 	<rule ref="SlevomatCodingStandard.TypeHints.DeclareStrictTypes">
 		<properties>
 			<property name="newlinesCountBetweenOpenTagAndDeclare" type="int" value="0"/>

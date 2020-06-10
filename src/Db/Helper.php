@@ -5,12 +5,6 @@ namespace Forrest79\PhPgSql\Db;
 class Helper
 {
 
-	private function __construct()
-	{
-		// just static class
-	}
-
-
 	/**
 	 * @param array<mixed> $array
 	 */

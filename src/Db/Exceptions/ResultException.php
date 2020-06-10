@@ -13,8 +13,7 @@ class ResultException extends Exception
 	public const FETCH_ASSOC_ONLY_SCALAR_AS_KEY = 5;
 	public const FETCH_PAIRS_FAILED = 6;
 	public const NO_OTHER_ASYNC_RESULT = 7;
-	public const ANOTHER_ASYNC_QUERY_IS_RUNNING = 8;
-	public const NO_OID_IN_DATA_TYPE_CACHE = 9;
+	public const NO_OID_IN_DATA_TYPE_CACHE = 8;
 
 
 	public static function noColumn(string $column): self
@@ -59,19 +58,6 @@ class ResultException extends Exception
 	public static function noOtherAsyncResult(Db\Query $query): self
 	{
 		return new self(\sprintf('No other result for async query \'%s\'.', $query->getSql()), self::NO_OTHER_ASYNC_RESULT);
-	}
-
-
-	public static function anotherAsyncQueryIsRunning(Db\Query $resultQuery, string $connectionQuery): self
-	{
-		return new self(
-			\sprintf(
-				'Result async query \'%s\' is different from actual connection async query \'%s\', we can\'t no longer read result async query results.',
-				$resultQuery->getSql(),
-				$connectionQuery
-			),
-			self::ANOTHER_ASYNC_QUERY_IS_RUNNING
-		);
 	}
 
 

@@ -150,14 +150,14 @@ $result->free();
 We can also run query asynchronously. Just use this (syntax is the same as query and queryArgs):
 
 ```php
-$result = $connection->asyncQuery('SELECT * FROM table WHERE id = ?', 1);
-$result = $connection->asyncQueryArgs('SELECT * FROM table WHERE id = ?', [1]);
+$asyncQuery = $connection->asyncQuery('SELECT * FROM table WHERE id = ?', 1);
+$asyncQuery = $connection->asyncQueryArgs('SELECT * FROM table WHERE id = ?', [1]);
 ```
 
-You can run just one async query on connection (but you can run more queries separated with `;` at once in one function call - but only when you don't use parameters - this is `pgsql` extension limitations), before we can run new async query, we need to get results. When you pass more queries in one function call, you need to call this for every query in call. Results are getting in the same order as queries are passed to the function.
+You can run just one async query on connection (but you can run more queries separated with `;` at once in one function call - but only when you don't use parameters - this is `pgsql` extension limitations), before we can run new async query, we need to get results. When you pass more queries in one function call, you need to call this for every query in call. Results are getting in the same order as queries are pass to the function.
 
 ```php
-$connection->getNextAsyncQueryResult();
+$asyncQuery->getNextResult();
 ```
 
 If you want to run simple SQL query/queries (separated with `;`) without parameters and you don't care about results, you can use `execute(string $sql)` function or `asyncExecute(string $sql)` (call `completeAsyncExecute()` to be sure that all async queries were completed).
@@ -178,6 +178,31 @@ Ale data have the right PHP type. If some type is not able to be parsed, excepti
 
 ```php
 $connection->setDataTypeParser(new MyOwnDataTypeParserWithDataTypeParserInterface);
+```
+
+There is also support for prepared statements. You can prepare some query on database with defined "placeholders" and repeatedly call this query with different arguments. In query, use `?` for parameters, but in prepared statements you can use as parameter only scalars, nothing else.
+
+```php
+$prepareStatement = $this->connection->prepareStatement('SELECT * FROM table WHERE id = ?');
+$result1 = $prepareStatement->execute(1);
+$result2 = $prepareStatement->executeArgs([2]);
+```
+
+And of course in async version:
+
+```php
+$prepareStatement = $this->connection->asyncPrepareStatement('SELECT * FROM table WHERE id = ?');
+$asyncQuery1 = $prepareStatement->execute(1);
+
+// you can do logic here
+
+$result1 = $asyncQuery1->getNextResult();
+
+$asyncQuery2 = $prepareStatement->executeArgs([2]);
+
+// you can do logic here
+
+$result2 = $asyncQuery2->getNextResult();
 ```
 
 Don't be afraid to use transaction:

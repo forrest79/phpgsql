@@ -11,7 +11,7 @@ require_once __DIR__ . '/../TestCase.php';
 /**
  * @testCase
  */
-class ParseTest extends Tests\TestCase
+class QueryTest extends Tests\TestCase
 {
 
 	public function testPrepareQuery(): void
@@ -117,6 +117,16 @@ class ParseTest extends Tests\TestCase
 		Tester\Assert::same(['yes', 2005, 3, 2, 1], $query->getParams());
 	}
 
+
+	public function testPrepareStatementQueryAndParams(): void
+	{
+		$query = Db\PreparedStatement::prepareQuery('SELECT * FROM table WHERE column = ? AND text ILIKE \'What\?\'');
+		Tester\Assert::same('SELECT * FROM table WHERE column = $1 AND text ILIKE \'What?\'', $query);
+
+		$params = Db\PreparedStatement::prepareParams([NULL, 1, TRUE, FALSE, 'test']);
+		Tester\Assert::same([NULL, 1, 'TRUE', 'FALSE', 'test'], $params);
+	}
+
 }
 
-(new ParseTest())->run();
+(new QueryTest())->run();

@@ -5,7 +5,7 @@ namespace Forrest79\PhPgSql\Db\Exceptions;
 class ConnectionException extends Exception
 {
 	public const NO_CONFIG = 1;
-	public const CANT_CHANGE_CONNECTION_SETTINGS = 2;
+	public const CANT_CHANGE_WHEN_CONNECTED = 2;
 	public const CONNECTION_FAILED = 3;
 	public const BAD_CONNECTION = 4;
 	public const CANT_GET_NOTICES = 5;
@@ -13,9 +13,10 @@ class ConnectionException extends Exception
 	public const ASYNC_CONNECT_FAILED = 7;
 	public const ASYNC_CONNECT_TIMEOUT = 8;
 	public const ASYNC_CANCEL_FAILED = 9;
-	public const ASYNC_QUERY_ALREADY_SENT = 10;
-	public const ASYNC_NO_QUERY_WAS_SENT = 11;
-	public const ASYNC_NO_EXECUTE_WAS_SENT = 12;
+	public const ASYNC_QUERY_SENT_FAILED = 10;
+	public const ASYNC_NO_QUERY_IS_SENT = 11;
+	public const ASYNC_NO_EXECUTE_IS_SENT = 12;
+	public const ASYNC_ANOTHER_QUERY_IS_RUNNING = 13;
 
 
 	public static function noConfigException(): self
@@ -24,9 +25,9 @@ class ConnectionException extends Exception
 	}
 
 
-	public static function cantChangeConnectionSettings(): self
+	public static function cantChangeWhenConnected(string $type): self
 	{
-		return new self('You can\'t change connection settings when connected.', self::CANT_CHANGE_CONNECTION_SETTINGS);
+		return new self(\sprintf('You can\'t change \'%s\' when connected.', $type), self::CANT_CHANGE_WHEN_CONNECTED);
 	}
 
 
@@ -77,21 +78,34 @@ class ConnectionException extends Exception
 	}
 
 
-	public static function asyncQueryAlreadySentException(): self
+	public static function asyncQuerySentFailedException(string $error): self
 	{
-		return new self('There is already running async query. Did you call waitForAsyncQuery method before new async query?', self::ASYNC_QUERY_ALREADY_SENT);
+		return new self(\sprintf('Sending new async query failed: \'%s\'. Did you complete previous async query?', $error), self::ASYNC_QUERY_SENT_FAILED);
 	}
 
 
-	public static function asyncNoQueryWasSentException(): self
+	public static function asyncNoQueryIsSentException(): self
 	{
-		return new self('No async query was sent.', self::ASYNC_NO_QUERY_WAS_SENT);
+		return new self('No async query is sent.', self::ASYNC_NO_QUERY_IS_SENT);
 	}
 
 
-	public static function asyncNoExecuteWasSentException(): self
+	public static function asyncNoExecuteIsSentException(): self
 	{
-		return new self('No async execute was sent.', self::ASYNC_NO_EXECUTE_WAS_SENT);
+		return new self('No async execute is sent.', self::ASYNC_NO_EXECUTE_IS_SENT);
+	}
+
+
+	public static function anotherAsyncQueryIsRunning(string $resultQuery, string $actualQuery): self
+	{
+		return new self(
+			\sprintf(
+				'Result async query \'%s\' is different from actual connection async query \'%s\', async query results can\'t be read.',
+				$resultQuery,
+				$actualQuery
+			),
+			self::ASYNC_ANOTHER_QUERY_IS_RUNNING
+		);
 	}
 
 }

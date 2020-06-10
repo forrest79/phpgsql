@@ -8,8 +8,10 @@ class QueryException extends Exception
 {
 	public const QUERY_FAILED = 1;
 	public const ASYNC_QUERY_FAILED = 2;
-	public const CANT_PASS_PARAMS = 3;
-	public const NO_PARAM = 4;
+	public const PREPARED_STATEMENT_QUERY_FAILED = 3;
+	public const ASYNC_PREPARED_STATEMENT_QUERY_FAILED = 4;
+	public const CANT_PASS_PARAMS = 5;
+	public const NO_PARAM = 6;
 
 	/** @var Db\Query|NULL */
 	private $query;
@@ -35,13 +37,33 @@ class QueryException extends Exception
 
 	public static function queryFailed(Db\Query $query, string $error): self
 	{
-		return new self(\sprintf('Query failed: \'%s\' with error: %s.', $query->getSql(), $error), self::QUERY_FAILED, $query);
+		return new self(\sprintf('Query: \'%s\' failed with an error: %s.', $query->getSql(), $error), self::QUERY_FAILED, $query);
 	}
 
 
-	public static function asyncQueryFailed(Db\Query $query, string $sqlState, string $error): self
+	public static function asyncQueryFailed(Db\Query $query, string $error): self
 	{
-		return new self(\sprintf('Async query \'%s\' failed with state \'%s\' and error: %s.', $query->getSql(), $sqlState, $error), self::ASYNC_QUERY_FAILED, $query);
+		return new self(\sprintf('Async query \'%s\' failed with an error: %s.', $query->getSql(), $error), self::ASYNC_QUERY_FAILED, $query);
+	}
+
+
+	public static function preparedStatementQueryFailed(
+		string $preparedStatementName,
+		Db\Query $query,
+		string $error
+	): self
+	{
+		return new self(\sprintf('Prepared statement: \'%s\', query: \'%s\' failed with an error: %s.', $preparedStatementName, $query->getSql(), $error), self::PREPARED_STATEMENT_QUERY_FAILED, $query);
+	}
+
+
+	public static function asyncPreparedStatementQueryFailed(
+		string $preparedStatementName,
+		Db\Query $query,
+		string $error
+	): self
+	{
+		return new self(\sprintf('Prepared statement: \'%s\', async query \'%s\' failed with error: %s.', $preparedStatementName, $query->getSql(), $error), self::ASYNC_PREPARED_STATEMENT_QUERY_FAILED, $query);
 	}
 
 

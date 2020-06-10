@@ -106,16 +106,16 @@ class BasicTest extends TestCase
 		Tester\Assert::true($this->connection->ping());
 		Tester\Assert::exception(function (): void {
 			$this->connection->setConnectionConfig('');
-		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::CANT_CHANGE_CONNECTION_SETTINGS);
+		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::CANT_CHANGE_WHEN_CONNECTED);
 		Tester\Assert::exception(function (): void {
 			$this->connection->setConnectForceNew(TRUE);
-		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::CANT_CHANGE_CONNECTION_SETTINGS);
+		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::CANT_CHANGE_WHEN_CONNECTED);
 		Tester\Assert::exception(function (): void {
 			$this->connection->setConnectAsync(TRUE);
-		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::CANT_CHANGE_CONNECTION_SETTINGS);
+		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::CANT_CHANGE_WHEN_CONNECTED);
 		Tester\Assert::exception(function (): void {
 			$this->connection->setConnectAsyncWaitSeconds(5);
-		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::CANT_CHANGE_CONNECTION_SETTINGS);
+		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::CANT_CHANGE_WHEN_CONNECTED);
 
 		$this->connection->close();
 

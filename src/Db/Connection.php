@@ -5,19 +5,19 @@ namespace Forrest79\PhPgSql\Db;
 class Connection
 {
 	/** @var string */
-	private $connectionConfig = '';
-
-	/** @var int */
-	private $errorVerbosity = \PGSQL_ERRORS_DEFAULT;
+	private $connectionConfig;
 
 	/** @var bool */
-	private $connectForceNew = FALSE;
+	private $connectForceNew;
 
 	/** @var bool */
-	private $connectAsync = FALSE;
+	private $connectAsync;
 
 	/** @var int */
-	private $connectAsyncWaitSeconds = 15;
+	private $connectAsyncWaitSeconds;
+
+	/** @var int */
+	private $errorVerbosity;
 
 	/** @var resource|NULL */
 	private $resource;
@@ -37,23 +37,14 @@ class Connection
 	/** @var DataTypeCache|NULL */
 	private $dataTypeCache;
 
-	/** @var AsyncQuery|string|NULL */
-	private $asyncQuery;
-
 	/** @var Transaction */
 	private $transaction;
 
-	/** @var array<callable> function (Connection $connection) {} */
-	private $onConnect = [];
+	/** @var AsyncHelper */
+	private $asyncHelper;
 
-	/** @var array<callable> function (Connection $connection) {} */
-	private $onClose = [];
-
-	/** @var array<callable> function (Connection $connection, Query $query, float $time) {} */
-	private $onQuery = [];
-
-	/** @var array<callable> function (Result $result) {} */
-	private $onResult = [];
+	/** @var Events */
+	private $events;
 
 
 	/**
@@ -68,6 +59,12 @@ class Connection
 		$this->connectionConfig = $connectionConfig;
 		$this->connectForceNew = $connectForceNew;
 		$this->connectAsync = $connectAsync;
+
+		$this->connectAsyncWaitSeconds = 15;
+		$this->errorVerbosity = \PGSQL_ERRORS_DEFAULT;
+
+		$this->asyncHelper = new AsyncHelper($this);
+		$this->events = new Events($this);
 	}
 
 
@@ -108,9 +105,7 @@ class Connection
 				\pg_set_error_verbosity($this->resource, $this->errorVerbosity);
 			}
 			$this->connected = TRUE;
-			if ($this->onConnect !== []) {
-				$this->onConnect();
-			}
+			$this->events->onConnect();
 		}
 
 		return $this;
@@ -141,7 +136,7 @@ class Connection
 	public function setConnectionConfig(string $config): self
 	{
 		if ($this->isConnected()) {
-			throw Exceptions\ConnectionException::cantChangeConnectionSettings();
+			throw Exceptions\ConnectionException::cantChangeWhenConnected('config');
 		}
 		$this->connectionConfig = $config;
 		return $this;
@@ -157,7 +152,7 @@ class Connection
 	public function setConnectForceNew(bool $forceNew = TRUE): self
 	{
 		if ($this->isConnected()) {
-			throw Exceptions\ConnectionException::cantChangeConnectionSettings();
+			throw Exceptions\ConnectionException::cantChangeWhenConnected('forceNew');
 		}
 		$this->connectForceNew = $forceNew;
 		return $this;
@@ -167,7 +162,7 @@ class Connection
 	public function setConnectAsync(bool $async = TRUE): self
 	{
 		if ($this->isConnected()) {
-			throw Exceptions\ConnectionException::cantChangeConnectionSettings();
+			throw Exceptions\ConnectionException::cantChangeWhenConnected('async');
 		}
 		$this->connectAsync = $async;
 		return $this;
@@ -177,7 +172,7 @@ class Connection
 	public function setConnectAsyncWaitSeconds(int $seconds): self
 	{
 		if ($this->isConnected()) {
-			throw Exceptions\ConnectionException::cantChangeConnectionSettings();
+			throw Exceptions\ConnectionException::cantChangeWhenConnected('asyncWaitSeconds');
 		}
 		$this->connectAsyncWaitSeconds = $seconds;
 		return $this;
@@ -198,28 +193,28 @@ class Connection
 
 	public function addOnConnect(callable $callback): self
 	{
-		$this->onConnect[] = $callback;
+		$this->events->addOnConnect($callback);
 		return $this;
 	}
 
 
 	public function addOnClose(callable $callback): self
 	{
-		$this->onClose[] = $callback;
+		$this->events->addOnClose($callback);
 		return $this;
 	}
 
 
 	public function addOnQuery(callable $callback): self
 	{
-		$this->onQuery[] = $callback;
+		$this->events->addOnQuery($callback);
 		return $this;
 	}
 
 
 	public function addOnResult(callable $callback): self
 	{
-		$this->onResult[] = $callback;
+		$this->events->addOnResult($callback);
 		return $this;
 	}
 
@@ -227,7 +222,7 @@ class Connection
 	public function close(): self
 	{
 		if ($this->isConnected()) {
-			$this->onClose();
+			$this->events->onClose();
 		}
 
 		if (\is_resource($this->resource)) {
@@ -313,7 +308,7 @@ class Connection
 	{
 		$query = $this->normalizeSqlQuery($sqlQuery, $params)->createQuery();
 
-		$start = $this->onQuery !== [] ? \microtime(TRUE) : NULL;
+		$startTime = $this->events->hasOnQuery() ? \microtime(TRUE) : NULL;
 
 		$queryParams = $query->getParams();
 		if ($queryParams === []) {
@@ -325,8 +320,8 @@ class Connection
 			throw Exceptions\QueryException::queryFailed($query, $this->getLastError());
 		}
 
-		if ($start !== NULL) {
-			$this->onQuery($query, \microtime(TRUE) - $start);
+		if ($startTime !== NULL) {
+			$this->events->onQuery($query, \microtime(TRUE) - $startTime);
 		}
 
 		return $this->createResult($resource, $query);
@@ -335,8 +330,9 @@ class Connection
 
 	/**
 	 * @param resource $resource
+	 * @internal
 	 */
-	private function createResult($resource, Query $query): Result
+	public function createResult($resource, Query $query): Result
 	{
 		$result = new Result(
 			$resource,
@@ -346,7 +342,7 @@ class Connection
 			$this->getDataTypesCache()
 		);
 
-		$this->onResult($result);
+		$this->events->onResult($result);
 
 		return $result;
 	}
@@ -358,15 +354,15 @@ class Connection
 	 */
 	public function execute(string $sql): self
 	{
-		$start = $this->onQuery !== [] ? \microtime(TRUE) : NULL;
+		$startTime = $this->events->hasOnQuery() ? \microtime(TRUE) : NULL;
 
 		$resource = @\pg_query($this->getConnectedResource(), $sql); // intentionally @
 		if ($resource === FALSE) {
 			throw Exceptions\QueryException::queryFailed(new Query($sql, []), $this->getLastError());
 		}
 
-		if ($start !== NULL) {
-			$this->onQuery(new Query($sql, []), \microtime(TRUE) - $start);
+		if ($startTime !== NULL) {
+			$this->events->onQuery(new Query($sql, []), \microtime(TRUE) - $startTime);
 		}
 
 		return $this;
@@ -394,7 +390,6 @@ class Connection
 	public function asyncQueryArgs($sqlQuery, array $params): AsyncQuery
 	{
 		$query = $this->normalizeSqlQuery($sqlQuery, $params)->createQuery();
-		$asyncQuery = new AsyncQuery($this, $query);
 
 		$queryParams = $query->getParams();
 		if ($queryParams === []) {
@@ -403,16 +398,14 @@ class Connection
 			$querySuccess = @\pg_send_query_params($this->getConnectedResource(), $query->getSql(), $query->getParams()); // intentionally @
 		}
 		if ($querySuccess === FALSE) {
-			throw Exceptions\ConnectionException::asyncQueryAlreadySentException();
+			throw Exceptions\ConnectionException::asyncQuerySentFailedException($this->getLastError());
 		}
 
-		if ($this->onQuery !== []) {
-			$this->onQuery($query);
+		if ($this->events->hasOnQuery()) {
+			$this->events->onQuery($query);
 		}
 
-		$this->asyncQuery = $asyncQuery;
-
-		return $asyncQuery;
+		return $this->asyncHelper->createAndSetAsyncQuery($query);
 	}
 
 
@@ -422,16 +415,16 @@ class Connection
 	 */
 	public function asyncExecute(string $sql): self
 	{
-		$this->asyncQuery = $sql;
-
 		$querySuccess = @\pg_send_query($this->getConnectedResource(), $sql); // intentionally @
 		if ($querySuccess === FALSE) {
-			throw Exceptions\ConnectionException::asyncQueryAlreadySentException();
+			throw Exceptions\ConnectionException::asyncQuerySentFailedException($this->getLastError());
 		}
 
-		if ($this->onQuery !== []) {
-			$this->onQuery(new Query($sql, []));
+		if ($this->events->hasOnQuery()) {
+			$this->events->onQuery(new Query($sql, []));
 		}
+
+		$this->asyncHelper->setAsyncExecuteQuery($sql);
 
 		return $this;
 	}
@@ -443,67 +436,23 @@ class Connection
 	 */
 	public function completeAsyncExecute(): self
 	{
-		if (!\is_string($this->asyncQuery)) {
-			throw Exceptions\ConnectionException::asyncNoExecuteWasSentException();
+		$asyncExecuteQuery = $this->asyncHelper->getAsyncExecuteQuery();
+		if ($asyncExecuteQuery === NULL) {
+			throw Exceptions\ConnectionException::asyncNoExecuteIsSentException();
 		}
 
-		while (($resource = \pg_get_result($this->getConnectedResource())) !== FALSE) {
-			self::checkAsyncQueryResult($resource, $this->asyncQuery);
+		while (($result = \pg_get_result($this->getConnectedResource())) !== FALSE) {
+			if (!$this->asyncHelper::checkAsyncQueryResult($result)) {
+				throw Exceptions\QueryException::asyncQueryFailed(
+					new Query($asyncExecuteQuery, []),
+					(string) \pg_result_error($result)
+				);
+			}
 		}
 
-		$this->asyncQuery = NULL;
+		$this->asyncHelper->clearQuery();
 
 		return $this;
-	}
-
-
-	/**
-	 * @return AsyncQuery|string|NULL
-	 */
-	public function getAsyncQuery()
-	{
-		return $this->asyncQuery;
-	}
-
-
-	/**
-	 * @throws Exceptions\ConnectionException
-	 * @throws Exceptions\QueryException
-	 */
-	public function getNextAsyncQueryResult(): Result
-	{
-		if (!($this->asyncQuery instanceof AsyncQuery)) {
-			throw Exceptions\ConnectionException::asyncNoQueryWasSentException();
-		}
-
-		$query = $this->asyncQuery->getQuery();
-
-		$resource = \pg_get_result($this->getConnectedResource());
-		if ($resource === FALSE) {
-			$this->asyncQuery = NULL;
-			throw Exceptions\ResultException::noOtherAsyncResult($query);
-		}
-
-		self::checkAsyncQueryResult($resource, $query);
-
-		return $this->createResult($resource, $query);
-	}
-
-
-	/**
-	 * @param resource $result
-	 * @param Query|string $query
-	 * @throws Exceptions\QueryException
-	 */
-	private static function checkAsyncQueryResult($result, $query): void
-	{
-		if (\in_array(\pg_result_status($result), [\PGSQL_BAD_RESPONSE, \PGSQL_NONFATAL_ERROR, \PGSQL_FATAL_ERROR], TRUE)) {
-			throw Exceptions\QueryException::asyncQueryFailed(
-				$query instanceof Query ? $query : new Query($query, []),
-				(string) \pg_result_error_field($result, \PGSQL_DIAG_SQLSTATE),
-				(string) \pg_result_error($result)
-			);
-		}
 	}
 
 
@@ -516,9 +465,21 @@ class Connection
 			throw Exceptions\ConnectionException::asyncCancelFailedException();
 		}
 
-		$this->asyncQuery = NULL;
+		$this->asyncHelper->clearQuery();
 
 		return $this;
+	}
+
+
+	public function prepareStatement(string $query): PreparedStatement
+	{
+		return new PreparedStatement($this, $this->events, $query);
+	}
+
+
+	public function asyncPrepareStatement(string $query): AsyncPreparedStatement
+	{
+		return new AsyncPreparedStatement($this, $this->asyncHelper, $this->events, $query);
 	}
 
 
@@ -634,7 +595,7 @@ class Connection
 							\pg_set_error_verbosity($this->resource, $this->errorVerbosity);
 						}
 						$this->connected = TRUE;
-						$this->onConnect();
+						$this->events->onConnect();
 						return $this->resource;
 				}
 			} while (($test - $start) <= $this->connectAsyncWaitSeconds);
@@ -642,38 +603,6 @@ class Connection
 		}
 
 		return $this->resource;
-	}
-
-
-	private function onConnect(): void
-	{
-		foreach ($this->onConnect as $event) {
-			$event($this);
-		}
-	}
-
-
-	private function onClose(): void
-	{
-		foreach ($this->onClose as $event) {
-			$event($this);
-		}
-	}
-
-
-	private function onQuery(Query $query, ?float $time = NULL): void
-	{
-		foreach ($this->onQuery as $event) {
-			$event($this, $query, $time);
-		}
-	}
-
-
-	private function onResult(Result $result): void
-	{
-		foreach ($this->onResult as $event) {
-			$event($this, $result);
-		}
 	}
 
 
