@@ -7,6 +7,8 @@ use Tester;
 require_once __DIR__ . '/TestCase.php';
 
 /**
+ * Special test for internals pg_* functions and scenarious.
+ *
  * @testCase
  */
 class PgFunctionsTest extends TestCase

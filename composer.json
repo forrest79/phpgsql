@@ -16,7 +16,7 @@
 	},
 	"require-dev": {
 		"nette/tester": "~2",
-		"phpstan/phpstan": "0.12.25",
+		"phpstan/phpstan": "^0.12",
 		"phpstan/phpstan-strict-rules": "^0.12",
 		"forrest79/phpgsql-phpstan": "^0.1",
 		"consistence/coding-standard": "^3.10",

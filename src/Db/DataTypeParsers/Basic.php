@@ -99,6 +99,10 @@ class Basic implements Db\DataTypeParser
 	 */
 	protected function parseArray(string $value, ?callable $typeFnc = NULL): array
 	{
+		if ((\substr($value, 0, 1) !== '{') || (\substr($value, -1) !== '}')) {
+			throw Exceptions\DataTypeParserException::valueIsNotArray($value);
+		}
+
 		$value = \substr($value, 1, -1);
 		if ($value === '') {
 			return [];

@@ -5,13 +5,20 @@ namespace Forrest79\PhPgSql\Db\Exceptions;
 class DataTypeParserException extends Exception
 {
 	public const CANT_PARSE_TYPE = 1;
-	public const CANT_CONVERT_DATETIME = 2;
-	public const TRY_USE_CONVERT_TO_JSON = 3;
+	public const VALUE_IS_NOT_ARRAY = 2;
+	public const CANT_CONVERT_DATETIME = 3;
+	public const TRY_USE_CONVERT_TO_JSON = 4;
 
 
 	public static function cantParseType(string $type, string $value): self
 	{
 		return new self(\sprintf('Can\'t parse type \'%s\' for value \'%s\'.', $type, $value), self::CANT_PARSE_TYPE);
+	}
+
+
+	public static function valueIsNotArray(string $value): self
+	{
+		return new self(\sprintf('Value \'%s\' isn\'t an array.', $value), self::VALUE_IS_NOT_ARRAY);
 	}
 
 
