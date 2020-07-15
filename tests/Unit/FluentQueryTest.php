@@ -201,6 +201,10 @@ class FluentQueryTest extends Tests\TestCase
 		Tester\Assert::exception(function (): void {
 			$this->query()->where(['x.id = 1']);
 		}, Fluent\Exceptions\ComplexException::class, NULL, Fluent\Exceptions\ComplexException::UNSUPPORTED_CONDITION_TYPE);
+
+		Tester\Assert::exception(function (): void {
+			$this->query()->where(NULL);
+		}, Fluent\Exceptions\ComplexException::class, NULL, Fluent\Exceptions\ComplexException::UNSUPPORTED_CONDITION_TYPE);
 	}
 
 

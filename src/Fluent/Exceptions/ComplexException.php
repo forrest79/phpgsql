@@ -27,9 +27,10 @@ class ComplexException extends Exception
 	 */
 	public static function unsupportedConditionType($condition): self
 	{
-		$type = \gettype($condition);
-		if (!\is_scalar($condition) && !\is_array($condition)) {
+		if (\is_object($condition)) {
 			$type = \get_class($condition);
+		} else {
+			$type = \gettype($condition);
 		}
 		return new self(
 			\sprintf('Only string, Fluent\Complex or Db\Sql can be used in condition. Type \'%s\' was given.', $type),

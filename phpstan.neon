@@ -29,9 +29,9 @@ parameters:
 			count: 1
 
 		-
-			message: '#Parameter \#(1|2|3) \$(c|onC)ondition of method Forrest79\\PhPgSql\\Fluent\\Query::(where|having|join|on)\(\) expects Forrest79\\PhPgSql\\Db\\Sql\|Forrest79\\PhPgSql\\Fluent\\Complex\|string(\|null)?, array<int, string> given\.#'
+			message: '#Parameter \#(1|2|3) \$(c|onC)ondition of method Forrest79\\PhPgSql\\Fluent\\Query::(where|having|join|on)\(\) expects Forrest79\\PhPgSql\\Db\\Sql\|Forrest79\\PhPgSql\\Fluent\\Complex\|string(\|null)?, (array<int, string>|null) given\.#'
 			path: %rootDir%/../../../tests/Unit/FluentQueryTest.php
-			count: 3
+			count: 4
 
 		-
 			message: '#Parameter \#1 \$condition of method Forrest79\\PhPgSql\\Fluent\\Query::having\(\) expects Forrest79\\PhPgSql\\Db\\Sql\|Forrest79\\PhPgSql\\Fluent\\Complex\|string(\|null)?, Forrest79\\PhPgSql\\Db\\Query given\.#'
