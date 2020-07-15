@@ -55,7 +55,6 @@ class PhpFile extends DbLoader
 
 				\flock($handle, \LOCK_UN);
 				\fclose($handle);
-				@\unlink($lockFile); // intentionally @ - file may become locked on Windows
 			}
 
 			$this->cache[$connectionConfig] = require $cacheFile;
