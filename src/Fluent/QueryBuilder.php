@@ -91,8 +91,16 @@ class QueryBuilder
 			$values = [];
 			foreach ($queryParams[Query::PARAM_DATA] as $column => $value) {
 				$columns[] = $column;
-				$values[] = '?';
-				$params[] = $value;
+				if ($value instanceof Db\Sql\Query) {
+					$values[] = '(?)';
+					$params[] = $value;
+				} else if ($value instanceof Query) {
+					$values[] = '(?)';
+					$params[] = $value->createSqlQuery();
+				} else {
+					$values[] = '?';
+					$params[] = $value;
+				}
 			}
 			$rows[] = \implode(', ', $values);
 		} else if ($queryParams[Query::PARAM_ROWS] !== []) {
@@ -104,8 +112,16 @@ class QueryBuilder
 					if ($fillColumns) {
 						$columns[] = $column;
 					}
-					$values[] = '?';
-					$params[] = $value;
+					if ($value instanceof Db\Sql\Query) {
+						$values[] = '(?)';
+						$params[] = $value;
+					} else if ($value instanceof Query) {
+						$values[] = '(?)';
+						$params[] = $value->createSqlQuery();
+					} else {
+						$values[] = '?';
+						$params[] = $value;
+					}
 				}
 				$rows[] = \implode(', ', $values);
 			}
@@ -152,8 +168,16 @@ class QueryBuilder
 
 		$set = [];
 		foreach ($queryParams[Query::PARAM_DATA] as $column => $value) {
-			$set[] = $column . ' = ?';
-			$params[] = $value;
+			if ($value instanceof Db\Sql\Query) {
+				$set[] = $column . ' = (?)';
+				$params[] = $value;
+			} else if ($value instanceof Query) {
+				$set[] = $column . ' = (?)';
+				$params[] = $value->createSqlQuery();
+			} else {
+				$set[] = $column . ' = ?';
+				$params[] = $value;
+			}
 		}
 
 		return 'UPDATE ' . $this->processTable(
