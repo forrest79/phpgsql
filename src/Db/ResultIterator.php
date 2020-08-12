@@ -16,6 +16,9 @@ class ResultIterator implements \Iterator
 	/** @var int */
 	private $pointer;
 
+	/** @var array<int, Row|NULL> */
+	private $data = [];
+
 
 	public function __construct(Result $result)
 	{
@@ -27,6 +30,7 @@ class ResultIterator implements \Iterator
 	{
 		$this->pointer = 0;
 		$this->result->seek(0);
+		\reset($this->data);
 	}
 
 
@@ -50,8 +54,17 @@ class ResultIterator implements \Iterator
 
 	public function valid(): bool
 	{
-		$this->row = $this->result->fetch();
+		$this->row = $this->fetch();
 		return $this->row !== NULL;
+	}
+
+
+	private function fetch(): ?Row
+	{
+		if (!\array_key_exists($this->pointer, $this->data)) {
+			$this->data[$this->pointer] = $this->result->fetch();
+		}
+		return $this->data[$this->pointer];
 	}
 
 }
