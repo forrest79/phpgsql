@@ -27,7 +27,6 @@ class ResultIterator implements \Iterator
 	{
 		$this->pointer = 0;
 		$this->result->seek(0);
-		$this->row = $this->result->fetch();
 	}
 
 
@@ -45,13 +44,13 @@ class ResultIterator implements \Iterator
 
 	public function next(): void
 	{
-		$this->row = $this->result->fetch();
 		$this->pointer++;
 	}
 
 
 	public function valid(): bool
 	{
+		$this->row = $this->result->fetch();
 		return $this->row !== NULL;
 	}
 
