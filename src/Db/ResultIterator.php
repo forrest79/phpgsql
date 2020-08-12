@@ -5,7 +5,7 @@ namespace Forrest79\PhPgSql\Db;
 /**
  * @implements \Iterator<int, Row>
  */
-class ResultIterator implements \Iterator
+class ResultIterator implements \Iterator, \Countable
 {
 	/** @var Result */
 	private $result;
@@ -56,6 +56,12 @@ class ResultIterator implements \Iterator
 	{
 		$this->row = $this->fetch();
 		return $this->row !== NULL;
+	}
+
+
+	public function count(): int
+	{
+		return $this->result->getRowCount();
 	}
 
 
