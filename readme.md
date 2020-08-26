@@ -354,6 +354,14 @@ $fluent = (new Fluent\Connection())
 	->union($flunt)
 ```
 
+If you want to create copy of existing fluent query, just use `clone`:
+
+```php
+$newQuery = clone $existingQuery;
+```
+
+If `$existingQuery` was alredy executed, copy is cloned with reset resutlt, so you can still update `$newQuery` and then execute it.
+
 ### Inserts
 
 You can insert simple row:

@@ -58,11 +58,18 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 	 */
 	public function reexecute(): Db\Result
 	{
-		if ($this->result !== NULL) {
+		$this->resetResult();
+		return $this->execute();
+	}
+
+
+	private function resetResult(bool $freeResult = TRUE): void
+	{
+		if ($freeResult && ($this->result !== NULL)) {
 			$this->free();
 		}
+
 		$this->result = NULL;
-		return $this->execute();
 	}
 
 
@@ -187,6 +194,12 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 	public function asyncExecute(): Db\AsyncQuery
 	{
 		return $this->connection->asyncQuery($this->createSqlQuery());
+	}
+
+
+	public function __clone()
+	{
+		$this->resetResult(FALSE);
 	}
 
 }
