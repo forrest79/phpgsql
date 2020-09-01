@@ -243,6 +243,24 @@ class QueryExecuteFetchTest extends TestCase
 	}
 
 
+	public function testCloneExecuted(): void
+	{
+		$originalQuery = $this->connection->select([1]);
+
+		$result1 = $originalQuery->execute();
+
+		Tester\Assert::same(1, $result1->fetchSingle());
+
+		$clonedQuery = clone $originalQuery;
+
+		$result2 = $clonedQuery->where('FALSE')->execute();
+
+		Tester\Assert::null($result2->fetch());
+
+		Tester\Assert::notSame($result1, $result2);
+	}
+
+
 	protected function createConnection(): Db\Connection
 	{
 		return new Fluent\Connection($this->getTestConnectionConfig());
