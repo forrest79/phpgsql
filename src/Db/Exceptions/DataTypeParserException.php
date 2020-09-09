@@ -24,7 +24,7 @@ class DataTypeParserException extends Exception
 
 	public static function cantConvertDatetime(string $format, string $value): self
 	{
-		return new self(\sprintf('Can\'t convert value \'%s\' to datetime with format \'%s\'.', $format, $value), self::CANT_CONVERT_DATETIME);
+		return new self(\sprintf('Can\'t convert value \'%s\' to datetime with format \'%s\'.', $value, $format), self::CANT_CONVERT_DATETIME);
 	}
 
 

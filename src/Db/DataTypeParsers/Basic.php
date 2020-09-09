@@ -144,7 +144,10 @@ class Basic implements Db\DataTypeParser
 	{
 		$datetime = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $value);
 		if ($datetime === FALSE) {
-			throw Exceptions\DataTypeParserException::cantConvertDatetime('Y-m-d H:i:s', $value);
+			$datetime = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s.u', $value);
+		}
+		if ($datetime === FALSE) {
+			throw Exceptions\DataTypeParserException::cantConvertDatetime('Y-m-d H:i:s/Y-m-d H:i:s.u', $value);
 		}
 		return $datetime;
 	}
@@ -155,12 +158,12 @@ class Basic implements Db\DataTypeParser
 	 */
 	protected function parseTimestampTz(string $value): \DateTimeImmutable
 	{
-		$datetime = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s.ue', $value);
+		$datetime = \DateTimeImmutable::createFromFormat('Y-m-d H:i:se', $value);
 		if ($datetime === FALSE) {
-			$datetime = \DateTimeImmutable::createFromFormat('Y-m-d H:i:se', $value);
+			$datetime = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s.ue', $value);
 		}
 		if ($datetime === FALSE) {
-			throw Exceptions\DataTypeParserException::cantConvertDatetime('Y-m-d H:i:s.ue/Y-m-d H:i:se', $value);
+			throw Exceptions\DataTypeParserException::cantConvertDatetime('Y-m-d H:i:se/Y-m-d H:i:s.ue', $value);
 		}
 		return $datetime;
 	}
