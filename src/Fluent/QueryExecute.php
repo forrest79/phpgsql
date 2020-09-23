@@ -58,12 +58,12 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 	 */
 	public function reexecute(): Db\Result
 	{
-		$this->resetResult();
+		$this->releaseResult();
 		return $this->execute();
 	}
 
 
-	private function resetResult(bool $freeResult = TRUE): void
+	private function releaseResult(bool $freeResult = TRUE): void
 	{
 		if ($freeResult && ($this->result !== NULL)) {
 			$this->free();
@@ -199,7 +199,7 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 
 	public function __clone()
 	{
-		$this->resetResult(FALSE);
+		$this->releaseResult(FALSE);
 	}
 
 }
