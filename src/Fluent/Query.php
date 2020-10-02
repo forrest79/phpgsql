@@ -108,7 +108,7 @@ class Query implements Sql
 	 */
 	public function select(array $columns): self
 	{
-		$this->updateQuery();
+		$this->resetQuery();
 
 		foreach ($columns as $alias => &$column) {
 			if (\is_int($alias)) {
@@ -136,7 +136,7 @@ class Query implements Sql
 	 */
 	public function distinct(): self
 	{
-		$this->updateQuery();
+		$this->resetQuery();
 		$this->params[self::PARAM_DISTINCT] = TRUE;
 		return $this;
 	}
@@ -268,7 +268,7 @@ class Query implements Sql
 	 */
 	private function addTable(string $type, $name, ?string $alias, $onCondition = NULL): self
 	{
-		$this->updateQuery();
+		$this->resetQuery();
 
 		$this->checkAlias($name, $alias);
 
@@ -309,7 +309,7 @@ class Query implements Sql
 	 */
 	public function on(string $alias, $condition, ...$params): self
 	{
-		$this->updateQuery();
+		$this->resetQuery();
 		$this->getComplexParam(self::PARAM_JOIN_CONDITIONS, $alias)->add($condition, ...$params);
 		return $this;
 	}
@@ -323,7 +323,7 @@ class Query implements Sql
 	 */
 	public function where($condition, ...$params): self
 	{
-		$this->updateQuery();
+		$this->resetQuery();
 		$this->getComplexParam(self::PARAM_WHERE)->add($condition, ...$params);
 		return $this;
 	}
@@ -335,7 +335,7 @@ class Query implements Sql
 	 */
 	public function whereAnd(array $conditions = []): Complex
 	{
-		$this->updateQuery();
+		$this->resetQuery();
 		$complex = Complex::createAnd($conditions, NULL, $this);
 		$this->getComplexParam(self::PARAM_WHERE)->add($complex);
 		return $complex;
@@ -348,7 +348,7 @@ class Query implements Sql
 	 */
 	public function whereOr(array $conditions = []): Complex
 	{
-		$this->updateQuery();
+		$this->resetQuery();
 		$complex = Complex::createOr($conditions, NULL, $this);
 		$this->getComplexParam(self::PARAM_WHERE)->add($complex);
 		return $complex;
@@ -362,7 +362,7 @@ class Query implements Sql
 	 */
 	public function groupBy(string ...$columns): self
 	{
-		$this->updateQuery();
+		$this->resetQuery();
 		$this->params[self::PARAM_GROUPBY] = \array_merge($this->params[self::PARAM_GROUPBY], $columns);
 		return $this;
 	}
@@ -376,7 +376,7 @@ class Query implements Sql
 	 */
 	public function having($condition, ...$params): self
 	{
-		$this->updateQuery();
+		$this->resetQuery();
 		$this->getComplexParam(self::PARAM_HAVING)->add($condition, ...$params);
 		return $this;
 	}
@@ -388,7 +388,7 @@ class Query implements Sql
 	 */
 	public function havingAnd(array $conditions = []): Complex
 	{
-		$this->updateQuery();
+		$this->resetQuery();
 		$complex = Complex::createAnd($conditions, NULL, $this);
 		$this->getComplexParam(self::PARAM_HAVING)->add($complex);
 		return $complex;
@@ -401,7 +401,7 @@ class Query implements Sql
 	 */
 	public function havingOr(array $conditions = []): Complex
 	{
-		$this->updateQuery();
+		$this->resetQuery();
 		$complex = Complex::createOr($conditions, NULL, $this);
 		$this->getComplexParam(self::PARAM_HAVING)->add($complex);
 		return $complex;
@@ -433,7 +433,7 @@ class Query implements Sql
 	 */
 	public function orderBy(...$columns): self
 	{
-		$this->updateQuery();
+		$this->resetQuery();
 		$this->params[self::PARAM_ORDERBY] = \array_merge($this->params[self::PARAM_ORDERBY], $columns);
 		return $this;
 	}
@@ -445,7 +445,7 @@ class Query implements Sql
 	 */
 	public function limit(int $limit): self
 	{
-		$this->updateQuery();
+		$this->resetQuery();
 		$this->params[self::PARAM_LIMIT] = $limit;
 		return $this;
 	}
@@ -457,7 +457,7 @@ class Query implements Sql
 	 */
 	public function offset(int $offset): self
 	{
-		$this->updateQuery();
+		$this->resetQuery();
 		$this->params[self::PARAM_OFFSET] = $offset;
 		return $this;
 	}
@@ -521,7 +521,7 @@ class Query implements Sql
 	 */
 	public function insert(?string $into = NULL, ?array $columns = []): self
 	{
-		$this->updateQuery();
+		$this->resetQuery();
 
 		$this->queryType = self::QUERY_INSERT;
 
@@ -542,7 +542,7 @@ class Query implements Sql
 	 */
 	public function values(array $data): self
 	{
-		$this->updateQuery();
+		$this->resetQuery();
 		$this->queryType = self::QUERY_INSERT;
 		$this->params[self::PARAM_DATA] = $data + $this->params[self::PARAM_DATA];
 		return $this;
@@ -556,7 +556,7 @@ class Query implements Sql
 	 */
 	public function rows(array $rows): self
 	{
-		$this->updateQuery();
+		$this->resetQuery();
 
 		$this->queryType = self::QUERY_INSERT;
 		$this->params[self::PARAM_ROWS] = \array_merge($this->params[self::PARAM_ROWS], $rows);
@@ -571,7 +571,7 @@ class Query implements Sql
 	 */
 	public function update(?string $table = NULL, ?string $alias = NULL): self
 	{
-		$this->updateQuery();
+		$this->resetQuery();
 
 		$this->queryType = self::QUERY_UPDATE;
 
@@ -590,7 +590,7 @@ class Query implements Sql
 	 */
 	public function set(array $data): self
 	{
-		$this->updateQuery();
+		$this->resetQuery();
 		$this->queryType = self::QUERY_UPDATE;
 		$this->params[self::PARAM_DATA] = $data + $this->params[self::PARAM_DATA];
 		return $this;
@@ -603,7 +603,7 @@ class Query implements Sql
 	 */
 	public function delete(?string $from = NULL, ?string $alias = NULL): self
 	{
-		$this->updateQuery();
+		$this->resetQuery();
 
 		$this->queryType = self::QUERY_DELETE;
 
@@ -622,7 +622,7 @@ class Query implements Sql
 	 */
 	public function returning(array $returning): self
 	{
-		$this->updateQuery();
+		$this->resetQuery();
 		$this->params[self::PARAM_RETURNING] = \array_merge($this->params[self::PARAM_RETURNING], $returning);
 		return $this;
 	}
@@ -634,7 +634,7 @@ class Query implements Sql
 	 */
 	public function truncate(?string $table = NULL): self
 	{
-		$this->updateQuery();
+		$this->resetQuery();
 
 		$this->queryType = self::QUERY_TRUNCATE;
 
@@ -653,7 +653,7 @@ class Query implements Sql
 	 */
 	public function prefix(string $queryPrefix, ...$params): self
 	{
-		$this->updateQuery();
+		$this->resetQuery();
 		\array_unshift($params, $queryPrefix);
 		$this->params[self::PARAM_PREFIX][] = $params;
 		return $this;
@@ -667,7 +667,7 @@ class Query implements Sql
 	 */
 	public function sufix(string $querySufix, ...$params): self
 	{
-		$this->updateQuery();
+		$this->resetQuery();
 		\array_unshift($params, $querySufix);
 		$this->params[self::PARAM_SUFFIX][] = $params;
 		return $this;
@@ -694,7 +694,7 @@ class Query implements Sql
 			throw Exceptions\QueryException::nonExistingQueryParam($param, \array_keys(self::DEFAULT_PARAMS));
 		}
 
-		$this->updateQuery();
+		$this->resetQuery();
 
 		$this->params[$param] = self::DEFAULT_PARAMS[$param];
 
@@ -702,7 +702,7 @@ class Query implements Sql
 	}
 
 
-	protected function updateQuery(): void
+	protected function resetQuery(): void
 	{
 		$this->query = NULL;
 	}
@@ -731,6 +731,24 @@ class Query implements Sql
 			$this->query = $this->queryBuilder->createSqlQuery($this->queryType, $this->params);
 		}
 		return $this->query;
+	}
+
+
+	public function __clone()
+	{
+		$this->resetQuery();
+
+		foreach ($this->params[self::PARAM_JOIN_CONDITIONS] as $alias => $joinCondition) {
+			$this->params[self::PARAM_JOIN_CONDITIONS][$alias] = clone $joinCondition;
+		}
+
+		if ($this->params[self::PARAM_WHERE] !== NULL) {
+			$this->params[self::PARAM_WHERE] = clone $this->params[self::PARAM_WHERE];
+		}
+
+		if ($this->params[self::PARAM_HAVING] !== NULL) {
+			$this->params[self::PARAM_HAVING] = clone $this->params[self::PARAM_HAVING];
+		}
 	}
 
 }

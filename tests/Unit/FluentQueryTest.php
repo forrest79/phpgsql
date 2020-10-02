@@ -1174,6 +1174,38 @@ class FluentQueryTest extends Tests\TestCase
 	}
 
 
+	public function testCloneQuery(): void
+	{
+		$baseQuery = $this->query()
+			->select(['x.column'])
+			->from('table', 't')
+			->join('another_table', 'at', 'at.id = t.another_table_id')
+				->on('at', 'at.type_id', 2)
+			->where('x.column', 1)
+			->having('count(*) > ?', 10);
+
+		$clonedQuery = clone $baseQuery;
+		$clonedQuery
+			->on('at', 'at.another_type', 3)
+			->where('x.another_column', 4)
+			->having('avg(column)', 1);
+
+		$testBaseQuery = $baseQuery
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another_table AS at ON (at.id = t.another_table_id) AND (at.type_id = $1) WHERE x.column = $2 HAVING count(*) > $3', $testBaseQuery->getSql());
+		Tester\Assert::same([2, 1, 10], $testBaseQuery->getParams());
+
+		$testClonedQuery = $clonedQuery
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another_table AS at ON (at.id = t.another_table_id) AND (at.type_id = $1) AND (at.another_type = $2) WHERE (x.column = $3) AND (x.another_column = $4) HAVING (count(*) > $5) AND (avg(column) = $6)', $testClonedQuery->getSql());
+		Tester\Assert::same([2, 3, 1, 4, 10, 1], $testClonedQuery->getParams());
+	}
+
+
 	private function query(): Fluent\Query
 	{
 		return new Fluent\Query(new Fluent\QueryBuilder());

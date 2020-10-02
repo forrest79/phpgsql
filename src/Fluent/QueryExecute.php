@@ -26,12 +26,12 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 	/**
 	 * @throws Exceptions\QueryException
 	 */
-	protected function updateQuery(): void
+	protected function resetQuery(): void
 	{
 		if ($this->result !== NULL) {
 			throw Exceptions\QueryException::cantUpdateQueryAfterExecute();
 		}
-		parent::updateQuery();
+		parent::resetQuery();
 	}
 
 
@@ -199,7 +199,8 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 
 	public function __clone()
 	{
-		$this->releaseResult(FALSE);
+		$this->releaseResult(FALSE); // must be before parent clone - we need to allow resetQuery() first
+		parent::__clone();
 	}
 
 }
