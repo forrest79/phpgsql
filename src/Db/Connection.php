@@ -627,4 +627,22 @@ class Connection
 		return (bool) \stream_select($read, $write, $ex, $usec = 1, 0);
 	}
 
+
+	/**
+	 * Prevents unserialization.
+	 */
+	public function __wakeup(): void
+	{
+		throw new \RuntimeException(\sprintf('You can\'t serialize or unserialize \'%s\' instances.', static::class));
+	}
+
+
+	/**
+	 * Prevents serialization.
+	 */
+	public function __sleep(): void
+	{
+		throw new \RuntimeException(\sprintf('You can\'t serialize or unserialize \'%s\' instances.', static::class));
+	}
+
 }

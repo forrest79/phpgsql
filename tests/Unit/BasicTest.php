@@ -51,6 +51,14 @@ class BasicTest extends Tests\TestCase
 	}
 
 
+	public function testPreventConnectionSerialization(): void
+	{
+		Tester\Assert::exception(static function (): void {
+			\serialize(new Db\Connection());
+		}, \RuntimeException::class, 'You can\'t serialize or unserialize \'Forrest79\PhPgSql\Db\Connection\' instances.');
+	}
+
+
 	public function testDumpSqlToHtml(): void
 	{
 		Tester\Assert::same(
