@@ -50,14 +50,15 @@ class QueryBuilder
 	/**
 	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
 	 * @param array<mixed> $params
+	 * @param array<int, string>|NULL $insertSelectColumnNames
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	private function createSelect(array $queryParams, array &$params): string
+	private function createSelect(array $queryParams, array &$params, ?array &$insertSelectColumnNames = NULL): string
 	{
 		return 'SELECT ' .
 			$this->getSelectDistinct($queryParams) .
-			$this->getSelectColumns($queryParams, $params) .
-			$this->getFrom($queryParams, $params) .
+			$this->getSelectColumns($queryParams, $params, $insertSelectColumnNames) .
+			$this->getFrom($queryParams, $params, $insertSelectColumnNames === NULL) .
 			$this->getJoins($queryParams, $params) .
 			$this->getWhere($queryParams, $params) .
 			$this->getGroupBy($queryParams) .
@@ -132,15 +133,11 @@ class QueryBuilder
 		}
 
 		if ($queryParams[Query::PARAM_SELECT] !== []) {
-			$data = ' SELECT ' .
-				$this->getSelectDistinct($queryParams) .
-				($columns === [] ? $this->getSelectColumns($queryParams, $params, $columns) : $this->getSelectColumns($queryParams, $params)) .
-				$this->getFrom($queryParams, $params, FALSE) .
-				$this->getJoins($queryParams, $params) .
-				$this->getWhere($queryParams, $params) .
-				$this->getGroupBy($queryParams) .
-				$this->getHaving($queryParams, $params) .
-				$this->combine($queryParams, $params);
+			$selectColumns = [];
+			$data = ' ' . $this->createSelect($queryParams, $params, $selectColumns);
+			if ($columns === []) {
+				$columns = $selectColumns;
+			}
 		} else {
 			$data = ' VALUES(' . \implode('), (', $rows) . ')';
 		}
@@ -236,7 +233,7 @@ class QueryBuilder
 	/**
 	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
 	 * @param array<mixed> $params
-	 * @param array<int|string, string>|NULL $columnNames
+	 * @param array<int, string>|NULL $columnNames
 	 * @throws Exceptions\QueryBuilderException
 	 */
 	private function getSelectColumns(array $queryParams, array &$params, ?array &$columnNames = NULL): string
