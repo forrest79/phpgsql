@@ -2,15 +2,19 @@
 <ruleset name="PhPgSql">
 	<rule ref="./vendor/consistence/coding-standard/Consistence/ruleset.xml">
 		<exclude name="Consistence.Exceptions.ExceptionDeclaration.IncorrectExceptionDirectory"/> <!-- We use Exceptions directory, not exceptions -->
-		<exclude name="Generic.Arrays.ArrayIndent.CloseBraceIncorrect"/> <!-- Used phpstorm indent -->
-		<exclude name="Generic.Arrays.ArrayIndent.KeyIncorrect"/> <!-- Used phpstorm indent -->
+		<exclude name="Generic.Arrays.ArrayIndent.CloseBraceIncorrect"/>
+		<exclude name="Generic.Arrays.ArrayIndent.KeyIncorrect"/>
 		<exclude name="Generic.PHP.LowerCaseConstant.Found"/>
-		<exclude name="PEAR.WhiteSpace.ObjectOperatorIndent.Incorrect"/> <!-- Used phpstorm indent -->
+		<exclude name="PEAR.WhiteSpace.ObjectOperatorIndent.Incorrect"/>
 		<exclude name="PSR2.ControlStructures.ElseIfDeclaration.NotAllowed"/>
 		<exclude name="Squiz.Commenting.FunctionComment.InvalidTypeHint"/> <!-- PHPStan check this-->
 		<exclude name="Squiz.Commenting.FunctionComment.MissingParamTag"/>
 		<exclude name="Squiz.Commenting.FunctionComment.ParamNameNoMatch"/> <!-- PHPStan check this-->
 		<exclude name="Squiz.Scope.MethodScope.Missing"/> <!-- We ignore visibility on interfaces -->
+	</rule>
+
+	<rule ref="Generic.Arrays.ArrayIndent.OpenBraceIncorrect">
+		<exclude-pattern>tests/Integration/ParseDataTypeTest.php</exclude-pattern>
 	</rule>
 
 	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedForeach">

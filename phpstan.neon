@@ -88,6 +88,11 @@ parameters:
 			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
 			count: 1
 
+		-
+			message: '#Call to function microtime\(\) on a separate line has no effect\.#'
+			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
+			count: 1
+
 		# === We know, that this can happen ===
 
 		-
