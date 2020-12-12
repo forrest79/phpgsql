@@ -640,7 +640,7 @@ class Connection
 	/**
 	 * Prevents serialization.
 	 */
-	public function __sleep(): void
+	public function __sleep(): array
 	{
 		throw new \RuntimeException(\sprintf('You can\'t serialize or unserialize \'%s\' instances.', static::class));
 	}
