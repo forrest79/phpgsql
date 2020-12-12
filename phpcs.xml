@@ -34,6 +34,10 @@
 		<exclude-pattern>src/Fluent/QueryBuilder.php</exclude-pattern>
 	</rule>
 
+	<rule ref="Squiz.Commenting.FunctionComment.InvalidNoReturn">
+		<exclude-pattern>src/Db/Connection.php</exclude-pattern>
+	</rule>
+
 	<rule ref="Squiz.WhiteSpace.FunctionSpacing">
 		<properties>
 			<property name="spacing" type="integer" value="2"/>
