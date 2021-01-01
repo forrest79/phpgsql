@@ -12,19 +12,19 @@ services:
 
 # actually Travis nativelly support PostgreSQL only till version "10"
 #addons:
-#  postgresql: "12"
+#  postgresql: "13"
 
 before_install:
   - composer self-update
-  # next is working hack to use PostgreSQL 12 on Travis
+  # next is working hack to use PostgreSQL 13 on Travis
   - sudo apt-get update
   - sudo apt-get --yes remove postgresql\*
-  - sudo apt-get install -y postgresql-12 postgresql-client-12
-  - sed -e 's/^port.*/port = 5432/' /etc/postgresql/12/main/postgresql.conf > postgresql.conf
+  - sudo apt-get install -y postgresql-13 postgresql-client-13
+  - sed -e 's/^port.*/port = 5432/' /etc/postgresql/13/main/postgresql.conf > postgresql.conf
   - sudo chown postgres postgresql.conf
-  - sudo mv postgresql.conf /etc/postgresql/12/main
-  - sudo cp /etc/postgresql/{10,12}/main/pg_hba.conf
-  - sudo service postgresql restart 12
+  - sudo mv postgresql.conf /etc/postgresql/13/main
+  - sudo cp /etc/postgresql/{10,13}/main/pg_hba.conf
+  - sudo service postgresql restart 13
 
 install:
   #- composer install --no-interaction --prefer-source
