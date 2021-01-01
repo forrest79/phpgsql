@@ -658,15 +658,16 @@ class FluentQueryTest extends Tests\TestCase
 			->values([
 				'column' => 1,
 				'column_from' => Db\Sql\Literal::create('3'),
-				'column_query' => $this->query()->select(['\'test\''])->where('4', 4),
+				'column_fluent_query' => $this->query()->select(['\'test_fluent\''])->where('4', 4),
+				'column_query' => new Db\Sql\Query('SELECT \'test\' WHERE 5 = ?', [5]),
 			])
 			->insert('table')
 			->returning(['column'])
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('INSERT INTO table(column, column_from, column_query) VALUES($1, 3, (SELECT \'test\' WHERE 4 = $2)) RETURNING column', $query->getSql());
-		Tester\Assert::same([1, 4], $query->getParams());
+		Tester\Assert::same('INSERT INTO table(column, column_from, column_fluent_query, column_query) VALUES($1, 3, (SELECT \'test_fluent\' WHERE 4 = $2), (SELECT \'test\' WHERE 5 = $3)) RETURNING column', $query->getSql());
+		Tester\Assert::same([1, 4, 5], $query->getParams());
 	}
 
 
@@ -698,15 +699,16 @@ class FluentQueryTest extends Tests\TestCase
 				['column' => 2],
 				['column' => 3],
 				['column' => Db\Sql\Literal::create('4')],
-				['column' => $this->query()->select(['5'])->where('6', 6)],
+				['column' => $this->query()->select(['\'test_fluent\''])->where('6', 6)],
+				['column' => new Db\Sql\Query('SELECT \'test\' WHERE 7 = ?', [7])],
 			])
 			->insert('table')
 			->returning(['column'])
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('INSERT INTO table(column) VALUES($1), ($2), ($3), (4), ((SELECT 5 WHERE 6 = $4)) RETURNING column', $query->getSql());
-		Tester\Assert::same([1, 2, 3, 6], $query->getParams());
+		Tester\Assert::same('INSERT INTO table(column) VALUES($1), ($2), ($3), (4), ((SELECT \'test_fluent\' WHERE 6 = $4)), ((SELECT \'test\' WHERE 7 = $5)) RETURNING column', $query->getSql());
+		Tester\Assert::same([1, 2, 3, 6, 7], $query->getParams());
 	}
 
 
@@ -777,7 +779,8 @@ class FluentQueryTest extends Tests\TestCase
 			->set([
 				'column' => 1,
 				'column_from' => Db\Sql\Literal::create('t2.id'),
-				'column_query' => $this->query()->select(['\'test\''])->where('2', 2),
+				'column_fluent_query' => $this->query()->select(['\'test_fluent\''])->where('2', 2),
+				'column_query' => new Db\Sql\Query('SELECT \'test\' WHERE 3 = ?', [3]),
 			])
 			->from('table2', 't2')
 			->where('t2.column', 100)
@@ -785,8 +788,8 @@ class FluentQueryTest extends Tests\TestCase
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('UPDATE table AS t SET column = $1, column_from = t2.id, column_query = (SELECT \'test\' WHERE 2 = $2) FROM table2 AS t2 WHERE t2.column = $3 RETURNING t.column', $query->getSql());
-		Tester\Assert::same([1, 2, 100], $query->getParams());
+		Tester\Assert::same('UPDATE table AS t SET column = $1, column_from = t2.id, column_fluent_query = (SELECT \'test_fluent\' WHERE 2 = $2), column_query = (SELECT \'test\' WHERE 3 = $3) FROM table2 AS t2 WHERE t2.column = $4 RETURNING t.column', $query->getSql());
+		Tester\Assert::same([1, 2, 3, 100], $query->getParams());
 	}
 
 
