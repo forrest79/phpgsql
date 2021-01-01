@@ -100,10 +100,7 @@ class PdoBenchmark extends BenchmarkCase
 		if ($queryResource === FALSE) {
 			throw new \RuntimeException('pg_query_params failed');
 		}
-		$data = \pg_fetch_all($queryResource);
-		if ($data === FALSE) {
-			throw new \RuntimeException('pg_fetch_all failed');
-		}
+		\pg_fetch_all($queryResource);
 	}
 
 
@@ -114,10 +111,10 @@ class PdoBenchmark extends BenchmarkCase
 	{
 		$queryResource = $this->pdo->prepare('SELECT ' . \rand(0, 1000) . ' WHERE 1 = ?');
 		$result = $queryResource->execute([1]);
-		$queryResource->fetchAll();
 		if ($result === FALSE) {
 			throw new \RuntimeException('PDO::execute failed');
 		}
+		$queryResource->fetchAll();
 	}
 
 
@@ -128,10 +125,10 @@ class PdoBenchmark extends BenchmarkCase
 	{
 		$queryResource = $this->pdoEmulate->prepare('SELECT ' . \rand(0, 1000) . ' WHERE 1 = ?');
 		$result = $queryResource->execute([1]);
-		$queryResource->fetchAll();
 		if ($result === FALSE) {
 			throw new \RuntimeException('PDO::execute failed');
 		}
+		$queryResource->fetchAll();
 	}
 
 
@@ -144,10 +141,7 @@ class PdoBenchmark extends BenchmarkCase
 		if ($queryResource === FALSE) {
 			throw new \RuntimeException('pg_execute failed');
 		}
-		$data = \pg_fetch_all($queryResource);
-		if ($data === FALSE) {
-			throw new \RuntimeException('pg_fetch_all failed');
-		}
+		\pg_fetch_all($queryResource);
 	}
 
 

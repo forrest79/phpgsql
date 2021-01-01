@@ -35,9 +35,15 @@ class PgFunctionsTest extends TestCase
 
 		Tester\Assert::true($success1);
 
-		$success2 = @\pg_free_result($result1); // intentionally @ - `E_WARNING: pg_free_result(): supplied resource is not a valid PostgreSQL result resource`
+		if (\PHP_VERSION_ID < 80000) {
+			$success2 = @\pg_free_result($result1); // intentionally @ - `E_WARNING: pg_free_result(): supplied resource is not a valid PostgreSQL result resource`
 
-		Tester\Assert::false($success2);
+			Tester\Assert::false($success2);
+		} else {
+			Tester\Assert::exception(static function () use ($result1): void {
+				\pg_free_result($result1);
+			}, \TypeError::class, 'pg_free_result(): supplied resource is not a valid PostgreSQL result resource');
+		}
 	}
 
 
@@ -83,7 +89,11 @@ class PgFunctionsTest extends TestCase
 	{
 		$result1 = @\pg_query($this->getConnectionResource(), 'SELECTx 1 AS clm1, \'test\' AS clm2');
 		Tester\Assert::contains('ERROR:  syntax error at or near "SELECTx"', \pg_last_error($this->getConnectionResource()));
-		Tester\Assert::false(\pg_result_error($result1)); // pg_result_error() is just for async queries
+		if (\PHP_VERSION_ID < 80000) {
+			Tester\Assert::false(\pg_result_error($result1)); // pg_result_error() is just for async queries
+		} else {
+			Tester\Assert::false($result1);
+		}
 
 		// ---
 

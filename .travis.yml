@@ -5,6 +5,7 @@ php:
   - 7.2
   - 7.3
   - 7.4
+  - 8.0
 
 services:
  - postgresql
@@ -26,7 +27,8 @@ before_install:
   - sudo service postgresql restart 12
 
 install:
-  - composer install --no-interaction --prefer-source
+  #- composer install --no-interaction --prefer-source
+  - composer install --no-interaction --prefer-source --ignore-platform-reqs # --ignore-platform-reqs because of consistence/coding-standard
 
 before_script:
   - psql --version # just to show used PostgreSQL version

@@ -14,7 +14,7 @@ class Helper
 			return '{}';
 		}
 		foreach ($array as $i => $value) {
-			$array[$i] = \str_replace('"', '\"', $value);
+			$array[$i] = \str_replace('"', '\"', (string) $value);
 		}
 		return '{"' . \implode('","', $array) . '"}';
 	}

@@ -11,8 +11,8 @@
 		}
 	],
 	"require": {
-		"php":  ">=7.1",
-		"ext-pgsql": ">=7.1"
+		"php": "^7.1 | ^8.0",
+		"ext-pgsql": "^7.1 | ^8.0"
 	},
 	"require-dev": {
 		"nette/tester": "~2",

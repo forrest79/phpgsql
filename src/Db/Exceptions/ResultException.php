@@ -62,7 +62,7 @@ class ResultException extends Exception
 
 
 	/**
-	 * @param int|FALSE $oid
+	 * @param int|string|FALSE $oid
 	 */
 	public static function noOidInDataTypeCache($oid): self
 	{
