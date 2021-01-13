@@ -77,11 +77,11 @@ class QueryBuilder
 	 */
 	private function createInsert(array $queryParams, array &$params): string
 	{
-		$mainTableAlias = $this->getMainTableAlias($queryParams);
+		['table' => $mainTable, 'alias' => $mainTableAlias] = $this->getMainTableMetadata($queryParams);
 
 		$insert = 'INSERT ' . $this->processTable(
 			'INTO',
-			$queryParams[Query::PARAM_TABLES][$mainTableAlias][self::TABLE_NAME],
+			$mainTable,
 			$mainTableAlias,
 			$params
 		);
@@ -161,7 +161,7 @@ class QueryBuilder
 			throw Exceptions\QueryBuilderException::noDataToUpdate();
 		}
 
-		$mainTableAlias = $this->getMainTableAlias($queryParams);
+		['table' => $mainTable, 'alias' => $mainTableAlias] = $this->getMainTableMetadata($queryParams);
 
 		$set = [];
 		foreach ($queryParams[Query::PARAM_DATA] as $column => $value) {
@@ -179,7 +179,7 @@ class QueryBuilder
 
 		return 'UPDATE ' . $this->processTable(
 				NULL,
-				$queryParams[Query::PARAM_TABLES][$mainTableAlias][self::TABLE_NAME],
+				$mainTable,
 				$mainTableAlias,
 				$params
 			) . ' SET ' . \implode(', ', $set) .
@@ -198,10 +198,10 @@ class QueryBuilder
 	 */
 	private function createDelete(array $queryParams, array &$params): string
 	{
-		$mainTableAlias = $this->getMainTableAlias($queryParams);
+		['table' => $mainTable, 'alias' => $mainTableAlias] = $this->getMainTableMetadata($queryParams);
 		return 'DELETE ' . $this->processTable(
 				'FROM',
-				$queryParams[Query::PARAM_TABLES][$mainTableAlias][self::TABLE_NAME],
+				$mainTable,
 				$mainTableAlias,
 				$params
 			) .
@@ -217,7 +217,7 @@ class QueryBuilder
 	 */
 	private function createTruncate(array $queryParams): string
 	{
-		return 'TRUNCATE ' . $queryParams[Query::PARAM_TABLES][$this->getMainTableAlias($queryParams)][self::TABLE_NAME];
+		return 'TRUNCATE ' . $this->getMainTableMetadata($queryParams)['table'];
 	}
 
 
@@ -539,14 +539,17 @@ class QueryBuilder
 
 	/**
 	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
+	 * @return array{table: string, alias: string}
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	private function getMainTableAlias(array $queryParams): string
+	final protected function getMainTableMetadata(array $queryParams): array
 	{
 		if ($queryParams[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_MAIN] === NULL) {
 			throw Exceptions\QueryBuilderException::noMainTable();
 		}
-		return $queryParams[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_MAIN];
+		$alias = $queryParams[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_MAIN];
+
+		return ['table' => $queryParams[Query::PARAM_TABLES][$alias][self::TABLE_NAME], 'alias' => $alias];
 	}
 
 
