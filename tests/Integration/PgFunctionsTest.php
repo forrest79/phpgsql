@@ -103,7 +103,7 @@ class PgFunctionsTest extends TestCase
 		$result2 = \pg_get_result($this->getConnectionResource());
 		Tester\Assert::true(\is_resource($result2));
 		Tester\Assert::false(\pg_fetch_assoc($result2));
-		Tester\Assert::contains('ERROR:  syntax error at or near "SELECTx"', \pg_result_error($result2));
+		Tester\Assert::contains('ERROR:  syntax error at or near "SELECTx"', self::pgResultError($result2));
 
 		Tester\Assert::same('ERROR', \pg_result_error_field($result2, \PGSQL_DIAG_SEVERITY));
 		Tester\Assert::same('42601', \pg_result_error_field($result2, \PGSQL_DIAG_SQLSTATE));
@@ -126,7 +126,7 @@ class PgFunctionsTest extends TestCase
 
 		@\pg_send_query($this->getConnectionResource(), 'SELECTx 1 AS clm1, \'test\' AS clm2');
 		$result3 = \pg_get_result($this->getConnectionResource());
-		Tester\Assert::contains('ERROR:  syntax error at or near "SELECTx"', \pg_result_error($result3));
+		Tester\Assert::contains('ERROR:  syntax error at or near "SELECTx"', self::pgResultError($result3));
 
 		// ---
 
@@ -136,7 +136,7 @@ class PgFunctionsTest extends TestCase
 
 		@\pg_send_query($this->getConnectionResource(), 'SELECTx 1 AS clm1, \'test\' AS clm2');
 		$result4 = \pg_get_result($this->getConnectionResource());
-		Tester\Assert::contains('ERROR:  syntax error at or near "SELECTx"', \pg_result_error($result4));
+		Tester\Assert::contains('ERROR:  syntax error at or near "SELECTx"', self::pgResultError($result4));
 
 		// ---
 
@@ -146,7 +146,7 @@ class PgFunctionsTest extends TestCase
 
 		@\pg_send_query($this->getConnectionResource(), 'SELECTx 1 AS clm1, \'test\' AS clm2');
 		$result5 = \pg_get_result($this->getConnectionResource());
-		Tester\Assert::contains('ERROR:  42601: syntax error at or near "SELECTx"', \pg_result_error($result5));
+		Tester\Assert::contains('ERROR:  42601: syntax error at or near "SELECTx"', self::pgResultError($result5));
 
 		// async errors are also in last error
 
@@ -398,7 +398,7 @@ class PgFunctionsTest extends TestCase
 		Tester\Assert::true(\is_resource($result7));
 		Tester\Assert::same(\PGSQL_FATAL_ERROR, \pg_result_status($result7));
 		Tester\Assert::contains('ERROR:  syntax error at or near "SELECTx"', \pg_last_error($this->getConnectionResource()));
-		Tester\Assert::contains('ERROR:  syntax error at or near "SELECTx"', \pg_result_error($result7));
+		Tester\Assert::contains('ERROR:  syntax error at or near "SELECTx"', self::pgResultError($result7));
 
 		\pg_send_prepare($this->getConnectionResource(), 'stm7', 'SELECT 1 AS clm1; SELECT 2 AS clm2');
 
@@ -406,7 +406,7 @@ class PgFunctionsTest extends TestCase
 		Tester\Assert::true(\is_resource($result8));
 		Tester\Assert::same(\PGSQL_FATAL_ERROR, \pg_result_status($result8));
 		Tester\Assert::contains('ERROR:  cannot insert multiple commands into a prepared statement', \pg_last_error($this->getConnectionResource()));
-		Tester\Assert::contains('ERROR:  cannot insert multiple commands into a prepared statement', \pg_result_error($result8));
+		Tester\Assert::contains('ERROR:  cannot insert multiple commands into a prepared statement', self::pgResultError($result8));
 
 		\pg_send_prepare($this->getConnectionResource(), 'stm8', 'SELECT 1 AS clm1 WHERE 1 = $1');
 
@@ -432,7 +432,7 @@ class PgFunctionsTest extends TestCase
 		$result12 = \pg_get_result($this->getConnectionResource());
 		Tester\Assert::same(\PGSQL_FATAL_ERROR, \pg_result_status($result12));
 		Tester\Assert::contains('ERROR:  bind message supplies 2 parameters, but prepared statement "stm8" requires 1', \pg_last_error($this->getConnectionResource()));
-		Tester\Assert::contains('ERROR:  bind message supplies 2 parameters, but prepared statement "stm8" requires 1', \pg_result_error($result12));
+		Tester\Assert::contains('ERROR:  bind message supplies 2 parameters, but prepared statement "stm8" requires 1', self::pgResultError($result12));
 	}
 
 
@@ -442,6 +442,19 @@ class PgFunctionsTest extends TestCase
 	private function getConnectionResource()
 	{
 		return $this->connection->getResource();
+	}
+
+
+	/**
+	 * @param resource|FALSE $result
+	 */
+	private static function pgResultError($result): string
+	{
+		$error = \pg_result_error($result);
+		if ($error === FALSE) {
+			throw new \RuntimeException('pg_result_error contains no error');
+		}
+		return $error;
 	}
 
 }

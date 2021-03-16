@@ -19,7 +19,7 @@
 		"phpstan/phpstan": "^0.12",
 		"phpstan/phpstan-strict-rules": "^0.12",
 		"forrest79/phpgsql-phpstan": "^0.3",
-		"consistence/coding-standard": "^3.10",
+		"consistence-community/coding-standard": "^3.10",
 		"slevomat/coding-standard": "^6.0"
 	},
 	"suggest": {

@@ -27,8 +27,7 @@ before_install:
   - sudo service postgresql restart 13
 
 install:
-  #- composer install --no-interaction --prefer-source
-  - composer install --no-interaction --prefer-source --ignore-platform-reqs # --ignore-platform-reqs because of consistence/coding-standard
+  - composer install --no-interaction --prefer-source
 
 before_script:
   - psql --version # just to show used PostgreSQL version
