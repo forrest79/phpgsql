@@ -762,6 +762,32 @@ class FluentQueryTest extends Tests\TestCase
 	}
 
 
+	public function testInsertRowWithArray(): void
+	{
+		Tester\Assert::exception(function (): void {
+			$this->query()
+				->insert('table')
+				->values([
+					'column' => [1, 2],
+				])
+				->createSqlQuery();
+		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::DATA_CANT_CONTAIN_ARRAY);
+	}
+
+
+	public function testInsertRowsWithArray(): void
+	{
+		Tester\Assert::exception(function (): void {
+			$this->query()
+				->insert('table')
+				->rows([
+					['column' => [1, 2]],
+				])
+				->createSqlQuery();
+		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::DATA_CANT_CONTAIN_ARRAY);
+	}
+
+
 	public function testInsertNoData(): void
 	{
 		Tester\Assert::exception(function (): void {
@@ -810,6 +836,19 @@ class FluentQueryTest extends Tests\TestCase
 
 		Tester\Assert::same('UPDATE table AS t SET column2 = $1, column3 = $2, column1 = $3', $query->getSql());
 		Tester\Assert::same([2, 1, 3], $query->getParams());
+	}
+
+
+	public function testUpdateWithArray(): void
+	{
+		Tester\Assert::exception(function (): void {
+			$this->query()
+				->update('table')
+				->set([
+					'column1' => [1, 2],
+				])
+				->createSqlQuery();
+		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::DATA_CANT_CONTAIN_ARRAY);
 	}
 
 

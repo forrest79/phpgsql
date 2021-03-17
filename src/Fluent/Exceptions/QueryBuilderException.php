@@ -9,9 +9,10 @@ class QueryBuilderException extends Exception
 	public const NO_JOIN_CONDITIONS = 3;
 	public const NO_DATA_TO_INSERT = 4;
 	public const NO_DATA_TO_UPDATE = 5;
-	public const NO_MAIN_TABLE = 6;
-	public const BAD_PARAMS_COUNT = 7;
-	public const BAD_PARAM = 8;
+	public const DATA_CANT_CONTAIN_ARRAY = 6;
+	public const NO_MAIN_TABLE = 7;
+	public const BAD_PARAMS_COUNT = 8;
+	public const BAD_PARAM = 9;
 
 
 	public static function badQueryType(string $type): self
@@ -41,6 +42,12 @@ class QueryBuilderException extends Exception
 	public static function noDataToUpdate(): self
 	{
 		return new self('No data to update.', self::NO_DATA_TO_UPDATE);
+	}
+
+
+	public static function dataCantContainArray(): self
+	{
+		return new self('You can\'t use array in data for INSERT or UPDATE. Convert array with PhPgSql\Db\Helper::createPgArray() or ::createStringPgArray().', self::DATA_CANT_CONTAIN_ARRAY);
 	}
 
 

@@ -92,16 +92,7 @@ class QueryBuilder
 			$values = [];
 			foreach ($queryParams[Query::PARAM_DATA] as $column => $value) {
 				$columns[] = $column;
-				if ($value instanceof Db\Sql\Query) {
-					$values[] = '(?)';
-					$params[] = $value;
-				} else if ($value instanceof Query) {
-					$values[] = '(?)';
-					$params[] = $value->createSqlQuery();
-				} else {
-					$values[] = '?';
-					$params[] = $value;
-				}
+				self::prepareRow($value, $values, $params);
 			}
 			$rows[] = \implode(', ', $values);
 		} else if ($queryParams[Query::PARAM_ROWS] !== []) {
@@ -113,16 +104,7 @@ class QueryBuilder
 					if ($fillColumns) {
 						$columns[] = $column;
 					}
-					if ($value instanceof Db\Sql\Query) {
-						$values[] = '(?)';
-						$params[] = $value;
-					} else if ($value instanceof Query) {
-						$values[] = '(?)';
-						$params[] = $value->createSqlQuery();
-					} else {
-						$values[] = '?';
-						$params[] = $value;
-					}
+					self::prepareRow($value, $values, $params);
 				}
 				$rows[] = \implode(', ', $values);
 			}
@@ -151,6 +133,28 @@ class QueryBuilder
 
 
 	/**
+	 * @param Db\Sql\Query|Query|mixed $value
+	 * @param array<string> $values
+	 * @param array<Db\Sql\Query|Query|mixed> $params
+	 */
+	private static function prepareRow($value, array &$values, array &$params): void
+	{
+		if ($value instanceof Db\Sql\Query) {
+			$values[] = '(?)';
+			$params[] = $value;
+		} else if ($value instanceof Query) {
+			$values[] = '(?)';
+			$params[] = $value->createSqlQuery();
+		} else if (\is_array($value)) {
+			throw Exceptions\QueryBuilderException::dataCantContainArray();
+		} else {
+			$values[] = '?';
+			$params[] = $value;
+		}
+	}
+
+
+	/**
 	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
 	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
@@ -171,6 +175,8 @@ class QueryBuilder
 			} else if ($value instanceof Query) {
 				$set[] = $column . ' = (?)';
 				$params[] = $value->createSqlQuery();
+			} else if (\is_array($value)) {
+				throw Exceptions\QueryBuilderException::dataCantContainArray();
 			} else {
 				$set[] = $column . ' = ?';
 				$params[] = $value;
