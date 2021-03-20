@@ -29,8 +29,10 @@ class GetFieldTypesBenchmark extends BenchmarkCase
 	private $queryResource;
 
 
-	public function __construct()
+	protected function setUp(): void
 	{
+		parent::setUp();
+
 		$resource = \pg_connect(\PHPGSQL_CONNECTION_CONFIG);
 		if ($resource === FALSE) {
 			throw new \RuntimeException('pg_connect failed');

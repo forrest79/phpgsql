@@ -21,8 +21,10 @@ class BasicPhpBenchmark extends BenchmarkCase
 	private $updateFunction;
 
 
-	public function __construct()
+	protected function setUp(): void
 	{
+		parent::setUp();
+
 		$this->updateFunction = static function (int $x): int {
 			return $x ^ 2;
 		};

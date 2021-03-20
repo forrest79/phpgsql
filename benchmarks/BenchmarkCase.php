@@ -14,6 +14,8 @@ abstract class BenchmarkCase
 			return;
 		}
 
+		$this->setUp();
+
 		$class = new \ReflectionClass($this);
 		$methods = $class->getMethods(\ReflectionMethod::IS_PUBLIC);
 
@@ -65,6 +67,11 @@ abstract class BenchmarkCase
 		}
 
 		echo \sprintf('| %-80s | %012.10f | %11d |', \substr($title, 0, 80), (\microtime(TRUE) - $start) / $repeat, $repeat) . \PHP_EOL;
+	}
+
+
+	protected function setUp(): void
+	{
 	}
 
 
