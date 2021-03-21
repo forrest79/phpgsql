@@ -1,7 +1,9 @@
 PhPgSql
 =======
 
-[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://github.com/forrest79/PhPgSql/blob/master/license.md)
+[![Latest Stable Version](https://poser.pugx.org/forrest79/phpgsql/v)](//packagist.org/packages/forrest79/phpgsql)
+[![Monthly Downloads](https://poser.pugx.org/forrest79/phpgsql/d/monthly)](//packagist.org/packages/forrest79/phpgsql)
+[![License](https://poser.pugx.org/forrest79/phpgsql/license)](//packagist.org/packages/forrest79/phpgsql)
 [![Build](https://github.com/forrest79/PhPgSql/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/forrest79/PhPgSql/actions/workflows/build.yml)
 
 ## DB
