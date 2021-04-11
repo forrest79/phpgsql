@@ -103,7 +103,7 @@ class Helper
 					if (\array_key_exists($i, $parameters)) {
 						$value = $parameters[$i];
 						unset($parameters[$i]);
-						return ($value === NULL) ? 'NULL' : \sprintf('\'%s\'', \str_replace('\'', '\'\'', $value));
+						return ($value === NULL) ? 'NULL' : \sprintf('\'%s\'', \str_replace('\'', '\'\'', (string) $value));
 					}
 
 					return $matches[0];
