@@ -138,6 +138,11 @@ parameters:
 			count: 2
 
 		-
+			message: '#Negated boolean expression is always true\.#'
+			path: %rootDir%/../../../src/Db/DataTypeCaches/PhpFile.php
+			count: 1
+
+		-
 			message: '#Method Forrest79\\PhPgSql\\Db\\ResultIterator::current\(\) should return Forrest79\\PhPgSql\\Db\\Row but returns Forrest79\\PhPgSql\\Db\\Row\|null\.#'
 			path: %rootDir%/../../../src/Db/ResultIterator.php
 			count: 1
