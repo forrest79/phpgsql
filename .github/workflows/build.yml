@@ -52,8 +52,14 @@ jobs:
         run: composer phpstan
 
       - name: Run tests
-        run: tests/run-tests tests -j 1
-        #run: composer tests # manually with `-j 1` because of random async connection errors
+        #run: composer tests # manually with `-j 1` and rety uses because of random async connection errors
+        uses: nick-invision/retry@v2
+        with:
+          timeout_seconds: 120
+          retry_wait_seconds: 5
+          max_attempts: 15
+          retry_on: error
+          command: tests/run-tests tests -j 1
 
       - if: failure()
         uses: actions/upload-artifact@v2
