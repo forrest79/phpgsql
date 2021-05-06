@@ -4,7 +4,7 @@ namespace Forrest79\PhPgSql\Benchmarks;
 
 require __DIR__ . '/boostrap.php';
 
-class QueryWithoutParametersBenchmark extends BenchmarkCase
+class PgQueryBenchmark extends BenchmarkCase
 {
 	/** @var resource */
 	private $resource;
@@ -52,6 +52,30 @@ class QueryWithoutParametersBenchmark extends BenchmarkCase
 	}
 
 
+	/**
+	 * @title run with "pg_query" with static WHERE
+	 */
+	public function benchmarkPgQueryWithParameters(): void
+	{
+		$queryResource = \pg_query($this->resource, 'SELECT 1 WHERE 1 = 1 AND 2 = 2 AND 3 = 3 AND 4 = 4 AND 5 = 5');
+		if ($queryResource === FALSE) {
+			throw new \RuntimeException('pg_query failed');
+		}
+	}
+
+
+	/**
+	 * @title run with "pg_query_params" with parameters WHERE
+	 */
+	public function benchmarkPgQueryParamsWithParameters(): void
+	{
+		$queryResource = \pg_query_params($this->resource, 'SELECT 1 WHERE 1 = $1 AND 2 = $2 AND 3 = $3 AND 4 = $4 AND 5 = $5', [1, 2, 3, 4, 5]);
+		if ($queryResource === FALSE) {
+			throw new \RuntimeException('pg_query_params failed');
+		}
+	}
+
+
 	protected function tearDown(): void
 	{
 		parent::tearDown();
@@ -60,4 +84,4 @@ class QueryWithoutParametersBenchmark extends BenchmarkCase
 
 }
 
-(new QueryWithoutParametersBenchmark())->run();
+(new PgQueryBenchmark())->run();
