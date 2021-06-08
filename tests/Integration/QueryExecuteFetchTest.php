@@ -12,7 +12,7 @@ require_once __DIR__ . '/TestCase.php';
  * @testCase
  * @property-read Fluent\Connection $connection
  */
-class QueryExecuteFetchTest extends TestCase
+final class QueryExecuteFetchTest extends TestCase
 {
 
 	public function testFetch(): void

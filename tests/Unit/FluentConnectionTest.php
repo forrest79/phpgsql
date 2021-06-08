@@ -12,7 +12,7 @@ require_once __DIR__ . '/../TestCase.php';
 /**
  * @testCase
  */
-class FluentConnectionTest extends Tests\TestCase
+final class FluentConnectionTest extends Tests\TestCase
 {
 	/** @var Fluent\Connection */
 	private $fluentConnection;

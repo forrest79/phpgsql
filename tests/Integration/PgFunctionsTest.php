@@ -11,7 +11,7 @@ require_once __DIR__ . '/TestCase.php';
  *
  * @testCase
  */
-class PgFunctionsTest extends TestCase
+final class PgFunctionsTest extends TestCase
 {
 
 	public function testBasic(): void

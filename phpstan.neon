@@ -146,3 +146,10 @@ parameters:
 			message: '#Parameter \#2 \$expected of static method Forrest79\\PhPgSql\\Fluent\\Exceptions\\QueryBuilderException::badParamsCount\(\) expects int, int\|false(\|null)? given\.#' # (|null)? is for forward PHP 8 compatibility
 			path: %rootDir%/../../../src/Fluent/QueryBuilder.php
 			count: 1
+
+		# === Fix PhPgSql-PHPStan rules ===
+
+		-
+			message: '#Method Forrest79\\PhPgSql\\Fluent\\QueryExecute::getIterator\(\) should return Forrest79\\PhPgSql\\Db\\ResultIterator but returns iterable<int, Forrest79\\PhPgSql\\Db\\Row>\.#'
+			path: %rootDir%/../../../src/Fluent/QueryExecute.php
+			count: 1

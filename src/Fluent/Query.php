@@ -330,7 +330,7 @@ class Query implements Sql
 
 
 	/**
-	 * @param array<int, string|array|Db\Sql|Complex> $conditions
+	 * @param array<int, string|array<mixed>|Db\Sql|Complex> $conditions
 	 * @throws Exceptions\QueryException
 	 */
 	public function whereAnd(array $conditions = []): Complex
@@ -343,7 +343,7 @@ class Query implements Sql
 
 
 	/**
-	 * @param array<int, string|array|Db\Sql|Complex> $conditions
+	 * @param array<int, string|array<mixed>|Db\Sql|Complex> $conditions
 	 * @throws Exceptions\QueryException
 	 */
 	public function whereOr(array $conditions = []): Complex
@@ -383,7 +383,7 @@ class Query implements Sql
 
 
 	/**
-	 * @param array<int, string|array|Db\Sql|Complex> $conditions
+	 * @param array<int, string|array<mixed>|Db\Sql|Complex> $conditions
 	 * @throws Exceptions\QueryException
 	 */
 	public function havingAnd(array $conditions = []): Complex
@@ -396,7 +396,7 @@ class Query implements Sql
 
 
 	/**
-	 * @param array<int, string|array|Db\Sql|Complex> $conditions
+	 * @param array<int, string|array<mixed>|Db\Sql|Complex> $conditions
 	 * @throws Exceptions\QueryException
 	 */
 	public function havingOr(array $conditions = []): Complex

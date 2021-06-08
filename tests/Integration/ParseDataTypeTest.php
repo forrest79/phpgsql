@@ -10,7 +10,7 @@ require_once __DIR__ . '/TestCase.php';
 /**
  * @testCase
  */
-class ParseDataTypeTest extends TestCase
+final class ParseDataTypeTest extends TestCase
 {
 
 	public function testParseNull(): void

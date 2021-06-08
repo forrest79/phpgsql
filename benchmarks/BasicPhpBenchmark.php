@@ -6,7 +6,7 @@ use Forrest79\PhPgSql\Db;
 
 require __DIR__ . '/boostrap.php';
 
-class BasicPhpBenchmark extends BenchmarkCase
+final class BasicPhpBenchmark extends BenchmarkCase
 {
 	private const CONDITION = 1;
 	private const ARRAY = [1];

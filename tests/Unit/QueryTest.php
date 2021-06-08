@@ -11,7 +11,7 @@ require_once __DIR__ . '/../TestCase.php';
 /**
  * @testCase
  */
-class QueryTest extends Tests\TestCase
+final class QueryTest extends Tests\TestCase
 {
 
 	public function testPrepareQuery(): void

@@ -11,7 +11,7 @@ require_once __DIR__ . '/../TestCase.php';
 /**
  * @testCase
  */
-class FluentComplexTest extends Tests\TestCase
+final class FluentComplexTest extends Tests\TestCase
 {
 
 	public function testParent(): void

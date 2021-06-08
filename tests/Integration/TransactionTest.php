@@ -10,7 +10,7 @@ require_once __DIR__ . '/TestCase.php';
 /**
  * @testCase
  */
-class TransactionTest extends TestCase
+final class TransactionTest extends TestCase
 {
 	/** @var Db\Transaction */
 	protected $transactions;

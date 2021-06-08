@@ -12,7 +12,7 @@ require_once __DIR__ . '/../bootstrap.php';
 /**
  * @testCase
  */
-class FluentQueryTest extends Tests\TestCase
+final class FluentQueryTest extends Tests\TestCase
 {
 
 	public function testSelect(): void

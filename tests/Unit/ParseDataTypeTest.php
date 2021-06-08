@@ -11,7 +11,7 @@ require_once __DIR__ . '/../TestCase.php';
 /**
  * @testCase
  */
-class ParseDataTypeTest extends Tests\TestCase
+final class ParseDataTypeTest extends Tests\TestCase
 {
 
 	public function testParseNull(): void

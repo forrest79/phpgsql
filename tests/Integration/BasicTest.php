@@ -10,7 +10,7 @@ require_once __DIR__ . '/TestCase.php';
 /**
  * @testCase
  */
-class BasicTest extends TestCase
+final class BasicTest extends TestCase
 {
 
 	public function testGetLastErrorWithNoConnection(): void

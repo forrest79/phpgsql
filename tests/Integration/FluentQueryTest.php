@@ -12,7 +12,7 @@ require_once __DIR__ . '/TestCase.php';
  * @testCase
  * @property-read Fluent\Connection $connection
  */
-class FluentQueryTest extends TestCase
+final class FluentQueryTest extends TestCase
 {
 
 	public function testSelectBoolNull(): void

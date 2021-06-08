@@ -10,7 +10,7 @@ require_once __DIR__ . '/TestCase.php';
 /**
  * @testCase
  */
-class FetchTest extends TestCase
+final class FetchTest extends TestCase
 {
 
 	public function testFetch(): void

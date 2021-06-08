@@ -10,7 +10,7 @@ require_once __DIR__ . '/TestCase.php';
 /**
  * @testCase
  */
-class DataTypeCacheTest extends TestCase
+final class DataTypeCacheTest extends TestCase
 {
 	/** @var string */
 	private $cacheDirectory;

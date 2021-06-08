@@ -105,13 +105,13 @@ interface Sql
 
 
 	/**
-	 * @param array<int, string|array|Db\Sql|Complex> $conditions
+	 * @param array<int, string|array<mixed>|Db\Sql|Complex> $conditions
 	 */
 	function whereAnd(array $conditions = []): Complex;
 
 
 	/**
-	 * @param array<int, string|array|Db\Sql|Complex> $conditions
+	 * @param array<int, string|array<mixed>|Db\Sql|Complex> $conditions
 	 */
 	function whereOr(array $conditions = []): Complex;
 
@@ -127,13 +127,13 @@ interface Sql
 
 
 	/**
-	 * @param array<int, string|array|Db\Sql|Complex> $conditions
+	 * @param array<int, string|array<mixed>|Db\Sql|Complex> $conditions
 	 */
 	function havingAnd(array $conditions = []): Complex;
 
 
 	/**
-	 * @param array<int, string|array|Db\Sql|Complex> $conditions
+	 * @param array<int, string|array<mixed>|Db\Sql|Complex> $conditions
 	 */
 	function havingOr(array $conditions = []): Complex;
 

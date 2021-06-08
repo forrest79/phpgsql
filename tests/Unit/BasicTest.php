@@ -11,7 +11,7 @@ require_once __DIR__ . '/../TestCase.php';
 /**
  * @testCase
  */
-class BasicTest extends Tests\TestCase
+final class BasicTest extends Tests\TestCase
 {
 
 	public function testCreateArray(): void

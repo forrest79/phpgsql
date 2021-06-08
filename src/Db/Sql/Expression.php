@@ -24,7 +24,7 @@ class Expression implements Db\Sql
 	}
 
 
-	function getSql(): string
+	public function getSql(): string
 	{
 		return $this->sql;
 	}

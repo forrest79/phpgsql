@@ -4,7 +4,7 @@ namespace Forrest79\PhPgSql\Benchmarks;
 
 require __DIR__ . '/boostrap.php';
 
-class PdoBenchmark extends BenchmarkCase
+final class PdoBenchmark extends BenchmarkCase
 {
 	/** @var resource */
 	private $resource;

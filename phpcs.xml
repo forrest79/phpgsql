@@ -1,16 +1,9 @@
 <?xml version="1.0"?>
 <ruleset name="PhPgSql">
-	<rule ref="./vendor/consistence-community/coding-standard/Consistence/ruleset.xml">
-		<exclude name="Consistence.Exceptions.ExceptionDeclaration.IncorrectExceptionDirectory"/> <!-- We use Exceptions directory, not exceptions -->
-		<exclude name="Generic.Arrays.ArrayIndent.CloseBraceIncorrect"/>
-		<exclude name="Generic.Arrays.ArrayIndent.KeyIncorrect"/>
-		<exclude name="Generic.PHP.LowerCaseConstant.Found"/>
-		<exclude name="PEAR.WhiteSpace.ObjectOperatorIndent.Incorrect"/>
-		<exclude name="PSR2.ControlStructures.ElseIfDeclaration.NotAllowed"/>
-		<exclude name="Squiz.Commenting.FunctionComment.InvalidTypeHint"/> <!-- PHPStan check this-->
-		<exclude name="Squiz.Commenting.FunctionComment.MissingParamTag"/>
-		<exclude name="Squiz.Commenting.FunctionComment.ParamNameNoMatch"/> <!-- PHPStan check this-->
-		<exclude name="Squiz.Scope.MethodScope.Missing"/> <!-- We ignore visibility on interfaces -->
+	<rule ref="./vendor/forrest79/phpcs/Forrest79CodingStandard/ruleset.xml"/>
+
+	<rule ref="Forrest79CodingStandard.Classes.ForceFinalClass.MissingFinal">
+		<exclude-pattern>src/*</exclude-pattern>
 	</rule>
 
 	<rule ref="Generic.Arrays.ArrayIndent.OpenBraceIncorrect">
@@ -19,10 +12,6 @@
 
 	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedForeach">
 		<exclude-pattern>benchmarks/BasicPhpBenchmark.php</exclude-pattern>
-	</rule>
-
-	<rule ref="Generic.ControlStructures.InlineControlStructure.NotAllowed">
-		<exclude-pattern>src/Db/Connection.php</exclude-pattern>
 	</rule>
 
 	<rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
@@ -34,92 +23,8 @@
 		<exclude-pattern>src/Fluent/QueryBuilder.php</exclude-pattern>
 	</rule>
 
-	<rule ref="Squiz.Commenting.FunctionComment.InvalidNoReturn">
-		<exclude-pattern>src/Db/Connection.php</exclude-pattern>
-	</rule>
-
-	<rule ref="Squiz.WhiteSpace.FunctionSpacing">
-		<properties>
-			<property name="spacing" type="integer" value="2"/>
-			<property name="spacingAfterLast" type="integer" value="1"/>
-			<property name="spacingBeforeFirst" type="integer" value="1"/>
-		</properties>
-	</rule>
-
-	<rule ref="Squiz.WhiteSpace.MemberVarSpacing">
-		<properties>
-			<property name="spacingBeforeFirst" type="integer" value="0"/>
-		</properties>
-	</rule>
-
-	<rule ref="Squiz.WhiteSpace.FunctionSpacing.Before">
-		<exclude-pattern>tests/bootstrap.php</exclude-pattern>
-		<exclude-pattern>benchmarks/boostrap.php</exclude-pattern>
-	</rule>
-
-	<rule ref="Squiz.Strings.DoubleQuoteUsage.ContainsVar">
-		<exclude-pattern>benchmarks/BasicPhpBenchmark.php</exclude-pattern>
-	</rule>
-
-	<rule ref="./vendor/slevomat/coding-standard/SlevomatCodingStandard/ruleset.xml">
-		<exclude name="SlevomatCodingStandard.Classes.ClassMemberSpacing.IncorrectCountOfBlankLinesBetweenMembers"/>
-		<exclude name="SlevomatCodingStandard.Classes.ClassStructure.IncorrectGroupOrder"/>
-		<exclude name="SlevomatCodingStandard.Classes.EmptyLinesAroundClassBraces.NoEmptyLineAfterOpeningBrace"/>
-		<exclude name="SlevomatCodingStandard.Classes.ParentCallSpacing.IncorrectLinesCountAfterControlStructure"/>
-		<exclude name="SlevomatCodingStandard.Classes.ParentCallSpacing.IncorrectLinesCountBeforeControlStructure"/>
-		<exclude name="SlevomatCodingStandard.Classes.SuperfluousExceptionNaming.SuperfluousSuffix"/>
-		<exclude name="SlevomatCodingStandard.Commenting.DisallowCommentAfterCode.DisallowedCommentAfterCode"/>
-		<exclude name="SlevomatCodingStandard.Commenting.DisallowOneLinePropertyDocComment.OneLinePropertyComment"/>
-		<exclude name="SlevomatCodingStandard.Commenting.RequireOneLineDocComment.MultiLineDocComment"/>
-		<exclude name="SlevomatCodingStandard.ControlStructures.DisallowShortTernaryOperator.DisallowedShortTernaryOperator"/>
-		<exclude name="SlevomatCodingStandard.ControlStructures.JumpStatementsSpacing.IncorrectLinesCountBeforeControlStructure"/>
-		<exclude name="SlevomatCodingStandard.ControlStructures.NewWithoutParentheses.UselessParentheses"/> <!-- Already used parentheses -->
-		<exclude name="SlevomatCodingStandard.ControlStructures.RequireYodaComparison.RequiredYodaComparison"/>
-		<exclude name="SlevomatCodingStandard.ControlStructures.RequireMultiLineCondition.RequiredMultiLineCondition"/>
-		<exclude name="SlevomatCodingStandard.ControlStructures.RequireMultiLineTernaryOperator.MultiLineTernaryOperatorNotUsed"/>
-		<exclude name="SlevomatCodingStandard.Files.LineLength.LineTooLong"/>
-		<exclude name="SlevomatCodingStandard.Functions.DisallowEmptyFunction.EmptyFunction"/>
-		<exclude name="SlevomatCodingStandard.Functions.TrailingCommaInCall.MissingTrailingComma"/><!-- PHP 7.3 -->
-		<exclude name="SlevomatCodingStandard.Functions.RequireArrowFunction.RequiredArrowFunction"/><!-- PHP 7.4 -->
-		<exclude name="SlevomatCodingStandard.Functions.RequireMultiLineCall.RequiredMultiLineCall"/>
-		<exclude name="SlevomatCodingStandard.Functions.RequireSingleLineCall.RequiredSingleLineCall"/>
-		<exclude name="SlevomatCodingStandard.Operators.DisallowIncrementAndDecrementOperators.DisallowedPostIncrementOperator"/>
-		<exclude name="SlevomatCodingStandard.Operators.DisallowIncrementAndDecrementOperators.DisallowedPostDecrementOperator"/>
-		<exclude name="SlevomatCodingStandard.Operators.DisallowIncrementAndDecrementOperators.DisallowedPreIncrementOperator"/>
-		<exclude name="SlevomatCodingStandard.Operators.RequireOnlyStandaloneIncrementAndDecrementOperators.PreIncrementOperatorNotUsedStandalone"/>
-		<exclude name="SlevomatCodingStandard.PHP.DisallowReference.DisallowedAssigningByReference"/>
-		<exclude name="SlevomatCodingStandard.PHP.DisallowReference.DisallowedInheritingVariableByReference"/>
-		<exclude name="SlevomatCodingStandard.PHP.DisallowReference.DisallowedPassingByReference"/>
-		<exclude name="SlevomatCodingStandard.PHP.RequireExplicitAssertion.RequiredExplicitAssertion"/>
-		<exclude name="SlevomatCodingStandard.PHP.UselessParentheses.UselessParentheses"/>
-		<exclude name="SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameAfterKeyword"/>
-		<exclude name="SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameInAnnotation.NonFullyQualifiedClassName"/>
-		<exclude name="SlevomatCodingStandard.Namespaces.FullyQualifiedExceptions.NonFullyQualifiedException"/>
-		<exclude name="SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.PartialUse"/>
-		<exclude name="SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName"/>
-		<exclude name="SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedNameWithoutNamespace"/>
-		<exclude name="SlevomatCodingStandard.Namespaces.UseOnlyWhitelistedNamespaces"/>
-		<exclude name="SlevomatCodingStandard.Numbers.RequireNumericLiteralSeparator.RequiredNumericLiteralSeparator"/>
-		<exclude name="SlevomatCodingStandard.TypeHints.DisallowMixedTypeHint.DisallowedMixedTypeHint"/>
-		<exclude name="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingTraversableParameterTypeHintSpecification"/>
-		<exclude name="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingTraversablePropertyTypeHintSpecification"/>
-		<exclude name="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingTraversableReturnTypeHintSpecification"/>
-
-		<!-- @hack these don't support "else if" -->
-		<exclude name="SlevomatCodingStandard.ControlStructures.BlockControlStructureSpacing"/>
-		<exclude name="SlevomatCodingStandard.ControlStructures.EarlyExit"/>
-		<exclude name="SlevomatCodingStandard.ControlStructures.RequireTernaryOperator"/>
-		<exclude name="SlevomatCodingStandard.ControlStructures.UselessIfConditionWithReturn.UselessIfCondition"/>
-		<exclude name="SlevomatCodingStandard.ControlStructures.JumpStatementsSpacing.IncorrectLinesCountAfterControlStructure"/>
-		<exclude name="SlevomatCodingStandard.ControlStructures.JumpStatementsSpacing.IncorrectLinesCountAfterLastControlStructure"/>
-		<exclude name="SlevomatCodingStandard.ControlStructures.JumpStatementsSpacing.IncorrectLinesCountBeforeFirstControlStructure"/>
-	</rule>
-
-	<rule ref="SlevomatCodingStandard.Classes.MethodSpacing">
-		<properties>
-			<property name="minLinesCount" type="int" value="2"/>
-			<property name="maxLinesCount" type="int" value="2"/>
-		</properties>
+	<rule ref="SlevomatCodingStandard.Classes.ModernClassNameReference.ClassNameReferencedViaFunctionCall">
+		<exclude-pattern>src/Fluent/Exceptions/ComplexException.php</exclude-pattern>
 	</rule>
 
 	<rule ref="SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.MissingVariable">
@@ -127,44 +32,78 @@
 	</rule>
 
 	<rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
+		<properties>
+			<property name="rootNamespaces" type="array" value="
+				src=>Forrest79\PhPgSql,
+				tests=>Forrest79\PhPgSql\Tests,
+				benchmarks=>Forrest79\PhPgSql\Benchmarks,
+			"/>
+		</properties>
+	</rule>
+
+	<!-- PHP 7.3 -->
+	<rule ref="SlevomatCodingStandard.Functions.RequireTrailingCommaInCall.MissingTrailingComma">
 		<exclude-pattern>src/*</exclude-pattern>
 		<exclude-pattern>tests/*</exclude-pattern>
 		<exclude-pattern>benchmarks/*</exclude-pattern>
 	</rule>
 
+	<!-- PHP 8.0 -->
+	<rule ref="SlevomatCodingStandard.Functions.RequireTrailingCommaInDeclaration.MissingTrailingComma">
+		<exclude-pattern>src/*</exclude-pattern>
+		<exclude-pattern>tests/Integration/BasicTest.php</exclude-pattern>
+	</rule>
+
 	<rule ref="SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter">
 		<exclude-pattern>src/Db/DummyColumnValueParser.php</exclude-pattern>
-		<exclude-pattern>tests/*</exclude-pattern>
+		<exclude-pattern>tests/Integration/AsyncTest.php</exclude-pattern>
+		<exclude-pattern>tests/Integration/BasicTest.php</exclude-pattern>
+		<exclude-pattern>tests/Integration/CollectingResultsTest.php</exclude-pattern>
+		<exclude-pattern>tests/Integration/FetchTest.php</exclude-pattern>
+		<exclude-pattern>tests/Integration/PreparedStatementTest.php</exclude-pattern>
+		<exclude-pattern>tests/Unit/FluentConnectionTest.php</exclude-pattern>
 	</rule>
 
-	<rule ref="SlevomatCodingStandard.Operators.RequireOnlyStandaloneIncrementAndDecrementOperators.PostIncrementOperatorNotUsedStandalone">
-		<exclude-pattern>src/Db/PreparedStatement.php</exclude-pattern>
-	</rule>
-
-	<rule ref="SlevomatCodingStandard.TypeHints.DeclareStrictTypes">
-		<properties>
-			<property name="newlinesCountBetweenOpenTagAndDeclare" type="int" value="0"/>
-			<property name="spacesCountAroundEqualsSign" type="int" value="0"/>
-		</properties>
-	</rule>
-
+	<!-- PHP 7.4 -->
 	<rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint">
-		<exclude-pattern>src/Fluent/Complex.php</exclude-pattern>
+		<exclude-pattern>src/*</exclude-pattern>
 	</rule>
 
+	<!-- PHP 7.4 -->
 	<rule ref="SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint">
 		<exclude-pattern>src/*</exclude-pattern>
 		<exclude-pattern>tests/*</exclude-pattern>
 		<exclude-pattern>benchmarks/*</exclude-pattern>
 	</rule>
 
-	<rule ref="SlevomatCodingStandard.Variables.UnusedVariable">
-		<properties>
-			<property name="ignoreUnusedValuesWhenOnlyKeysAreUsedInForeach" type="bool" value="true"/>
-		</properties>
+	<!-- PHP 7.4 -->
+	<rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint">
+		<exclude-pattern>src/*</exclude-pattern>
+	</rule>
+
+	<rule ref="SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable">
+		<exclude-pattern>src/Db/Row.php</exclude-pattern>
+		<exclude-pattern>benchmarks/BasicPhpBenchmark.php</exclude-pattern>
 	</rule>
 
 	<rule ref="SlevomatCodingStandard.Whitespaces.DuplicateSpaces.DuplicateSpaces">
 		<exclude-pattern>src/Db/Result.php</exclude-pattern>
+	</rule>
+
+	<rule ref="Squiz.Commenting.FunctionComment.InvalidNoReturn">
+		<exclude-pattern>src/Db/Connection.php</exclude-pattern>
+	</rule>
+
+	<rule ref="Squiz.Scope.MethodScope.Missing">
+		<exclude-pattern>src/Db/ColumnValueParser.php</exclude-pattern>
+		<exclude-pattern>src/Db/DataTypeCache.php</exclude-pattern>
+		<exclude-pattern>src/Db/DataTypeParser.php</exclude-pattern>
+		<exclude-pattern>src/Db/RowFactory.php</exclude-pattern>
+		<exclude-pattern>src/Db/Sql.php</exclude-pattern>
+		<exclude-pattern>src/Fluent/Sql.php</exclude-pattern>
+	</rule>
+
+	<rule ref="Squiz.Strings.DoubleQuoteUsage.ContainsVar">
+		<exclude-pattern>benchmarks/BasicPhpBenchmark.php</exclude-pattern>
 	</rule>
 </ruleset>

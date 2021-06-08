@@ -10,7 +10,7 @@ require_once __DIR__ . '/TestCase.php';
 /**
  * @testCase
  */
-class AsyncTest extends TestCase
+final class AsyncTest extends TestCase
 {
 
 	public function testIsConnected(): void

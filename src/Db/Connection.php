@@ -282,7 +282,11 @@ class Connection
 	 */
 	private function getDataTypesCache(): ?array
 	{
-		return $this->dataTypeCache === NULL ? NULL : $this->dataTypeCache->load($this);
+		if ($this->dataTypeCache !== NULL) {
+			return $this->dataTypeCache->load($this);
+		}
+
+		return NULL;
 	}
 
 

@@ -4,7 +4,7 @@ namespace Forrest79\PhPgSql\Benchmarks;
 
 require __DIR__ . '/boostrap.php';
 
-class GetFieldTypesBenchmark extends BenchmarkCase
+final class GetFieldTypesBenchmark extends BenchmarkCase
 {
 	private const COLUMNS = [
 		'col1' => 1,
