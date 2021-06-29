@@ -51,7 +51,7 @@ class ResultException extends Exception
 
 	public static function fetchPairsBadColumns(): self
 	{
-		return new self('Either none or both columns must be specified.', self::FETCH_PAIRS_FAILED);
+		return new self('None or both columns or just value column must be specified.', self::FETCH_PAIRS_FAILED);
 	}
 
 
