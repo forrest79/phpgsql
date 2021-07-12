@@ -4,6 +4,9 @@ namespace Forrest79\PhPgSql\Fluent;
 
 use Forrest79\PhPgSql\Db;
 
+/**
+ * @phpstan-type QueryParams array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>}
+ */
 class QueryBuilder
 {
 	private const TABLE_NAME = 0;
@@ -11,8 +14,9 @@ class QueryBuilder
 
 
 	/**
-	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
+	 * @param array<string, mixed> $queryParams
 	 * @throws Exceptions\QueryBuilderException
+	 * @phpstan-param QueryParams $queryParams
 	 */
 	public function createSqlQuery(string $queryType, array $queryParams): Db\Sql\Query
 	{
@@ -48,10 +52,11 @@ class QueryBuilder
 
 
 	/**
-	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
+	 * @param array<string, mixed> $queryParams
 	 * @param array<mixed> $params
 	 * @param array<int, string>|NULL $insertSelectColumnNames
 	 * @throws Exceptions\QueryBuilderException
+	 * @phpstan-param QueryParams $queryParams
 	 */
 	private function createSelect(array $queryParams, array &$params, ?array &$insertSelectColumnNames = NULL): string
 	{
@@ -71,9 +76,10 @@ class QueryBuilder
 
 
 	/**
-	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
+	 * @param array<string, mixed> $queryParams
 	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
+	 * @phpstan-param QueryParams $queryParams
 	 */
 	private function createInsert(array $queryParams, array &$params): string
 	{
@@ -155,9 +161,10 @@ class QueryBuilder
 
 
 	/**
-	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
+	 * @param array<string, mixed> $queryParams
 	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
+	 * @phpstan-param QueryParams $queryParams
 	 */
 	private function createUpdate(array $queryParams, array &$params): string
 	{
@@ -198,9 +205,10 @@ class QueryBuilder
 
 
 	/**
-	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
+	 * @param array<string, mixed> $queryParams
 	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
+	 * @phpstan-param QueryParams $queryParams
 	 */
 	private function createDelete(array $queryParams, array &$params): string
 	{
@@ -218,8 +226,9 @@ class QueryBuilder
 
 
 	/**
-	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
+	 * @param array<string, mixed> $queryParams
 	 * @throws Exceptions\QueryBuilderException
+	 * @phpstan-param QueryParams $queryParams
 	 */
 	private function createTruncate(array $queryParams): string
 	{
@@ -228,7 +237,8 @@ class QueryBuilder
 
 
 	/**
-	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
+	 * @param array<string, mixed> $queryParams
+	 * @phpstan-param QueryParams $queryParams
 	 */
 	private function getSelectDistinct(array $queryParams): string
 	{
@@ -237,10 +247,11 @@ class QueryBuilder
 
 
 	/**
-	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
+	 * @param array<string, mixed> $queryParams
 	 * @param array<mixed> $params
 	 * @param array<int, string>|NULL $columnNames
 	 * @throws Exceptions\QueryBuilderException
+	 * @phpstan-param QueryParams $queryParams
 	 */
 	private function getSelectColumns(array $queryParams, array &$params, ?array &$columnNames = NULL): string
 	{
@@ -268,9 +279,10 @@ class QueryBuilder
 
 
 	/**
-	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
+	 * @param array<string, mixed> $queryParams
 	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
+	 * @phpstan-param QueryParams $queryParams
 	 */
 	private function getFrom(array $queryParams, array &$params, bool $useMainTable = TRUE): string
 	{
@@ -302,9 +314,10 @@ class QueryBuilder
 
 
 	/**
-	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
+	 * @param array<string, mixed> $queryParams
 	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
+	 * @phpstan-param QueryParams $queryParams
 	 */
 	private function getJoins(array $queryParams, array &$params): string
 	{
@@ -339,9 +352,10 @@ class QueryBuilder
 
 
 	/**
-	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
+	 * @param array<string, mixed> $queryParams
 	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
+	 * @phpstan-param QueryParams $queryParams
 	 */
 	private function getWhere(array $queryParams, array &$params): string
 	{
@@ -356,7 +370,8 @@ class QueryBuilder
 
 
 	/**
-	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
+	 * @param array<string, mixed> $queryParams
+	 * @phpstan-param QueryParams $queryParams
 	 */
 	private function getGroupBy(array $queryParams): string
 	{
@@ -367,9 +382,10 @@ class QueryBuilder
 
 
 	/**
-	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
+	 * @param array<string, mixed> $queryParams
 	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
+	 * @phpstan-param QueryParams $queryParams
 	 */
 	private function getHaving(array $queryParams, array &$params): string
 	{
@@ -384,9 +400,10 @@ class QueryBuilder
 
 
 	/**
-	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
+	 * @param array<string, mixed> $queryParams
 	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
+	 * @phpstan-param QueryParams $queryParams
 	 */
 	private function getOrderBy(array $queryParams, array &$params): string
 	{
@@ -413,8 +430,9 @@ class QueryBuilder
 
 
 	/**
-	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
+	 * @param array<string, mixed> $queryParams
 	 * @param array<mixed> $params
+	 * @phpstan-param QueryParams $queryParams
 	 */
 	private function getLimit(array $queryParams, array &$params): string
 	{
@@ -431,8 +449,9 @@ class QueryBuilder
 
 
 	/**
-	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
+	 * @param array<string, mixed> $queryParams
 	 * @param array<mixed> $params
+	 * @phpstan-param QueryParams $queryParams
 	 */
 	private function getOffset(array $queryParams, array &$params): string
 	{
@@ -449,10 +468,11 @@ class QueryBuilder
 
 
 	/**
-	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
+	 * @param array<string, mixed> $queryParams
 	 * @param Query::PARAM_PREFIX|Query::PARAM_SUFFIX $type
 	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
+	 * @phpstan-param QueryParams $queryParams
 	 */
 	private function getPrefixSuffix(array $queryParams, string $type, array &$params): string
 	{
@@ -487,9 +507,10 @@ class QueryBuilder
 
 
 	/**
-	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
+	 * @param array<string, mixed> $queryParams
 	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
+	 * @phpstan-param QueryParams $queryParams
 	 */
 	private function combine(array $queryParams, array &$params): string
 	{
@@ -519,9 +540,10 @@ class QueryBuilder
 
 
 	/**
-	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
+	 * @param array<string, mixed> $queryParams
 	 * @param array<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
+	 * @phpstan-param QueryParams $queryParams
 	 */
 	private function getReturning(array $queryParams, array &$params): string
 	{
@@ -544,9 +566,10 @@ class QueryBuilder
 
 
 	/**
-	 * @param array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} $queryParams
+	 * @param array<string, mixed> $queryParams
 	 * @return array{table: string, alias: string}
 	 * @throws Exceptions\QueryBuilderException
+	 * @phpstan-param QueryParams $queryParams
 	 */
 	final protected function getMainTableMetadata(array $queryParams): array
 	{
