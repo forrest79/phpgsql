@@ -15,7 +15,9 @@ final class AsyncTest extends TestCase
 
 	public function testIsConnected(): void
 	{
-		Tester\Assert::true($this->connection->isConnected(TRUE));
+		Tester\Assert::false($this->connection->isConnected());
+		$this->connection->execute('SELECT 1');
+		Tester\Assert::true($this->connection->isConnected());
 	}
 
 

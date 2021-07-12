@@ -115,11 +115,8 @@ class Connection
 	/**
 	 * @throws Exceptions\ConnectionException
 	 */
-	public function isConnected(bool $waitForConnect = FALSE): bool
+	public function isConnected(): bool
 	{
-		if ($waitForConnect === TRUE) {
-			$this->getConnectedResource();
-		}
 		return $this->connected;
 	}
 
