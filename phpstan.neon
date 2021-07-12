@@ -11,12 +11,12 @@ parameters:
 		# === This is OK ===
 
 		-
-			message: '#Cannot call method getQuery\(\) on Forrest79\\PhPgSql\\Db\\AsyncQuery\|null\.#'
+			message: '#^Cannot call method getQuery\(\) on Forrest79\\PhPgSql\\Db\\AsyncQuery\|null\.$#'
 			path: %rootDir%/../../../src/Db/AsyncQuery.php
 			count: 1
 
 		-
-			message: '#Unsafe usage of new static\(\)\.#'
+			message: '#^Unsafe usage of new static\(\)\.$#'
 			path: %rootDir%/../../../src/Db/Row.php
 			count: 1
 
@@ -24,132 +24,132 @@ parameters:
 		# === This is OK (just for tests or benchmarks) ===
 
 		-
-			message: '#Parameter \#1 \$table of method Forrest79\\PhPgSql\\Fluent\\Query::table\(\) expects Forrest79\\PhPgSql\\Db\\Sql\|Forrest79\\PhPgSql\\Fluent\\Query\|string, array<int, string> given\.#'
+			message: '#^Parameter \#1 \$table of method Forrest79\\PhPgSql\\Fluent\\Query::table\(\) expects Forrest79\\PhPgSql\\Db\\Sql\|Forrest79\\PhPgSql\\Fluent\\Query\|string, array<int, string> given\.$#'
 			path: %rootDir%/../../../tests/Unit/FluentQueryTest.php
 			count: 1
 
 		-
-			message: '#Parameter \#(1|2|3) \$(c|onC)ondition of method Forrest79\\PhPgSql\\Fluent\\Query::(where|having|join|on)\(\) expects Forrest79\\PhPgSql\\Db\\Sql\|Forrest79\\PhPgSql\\Fluent\\Complex\|string(\|null)?, (array<int, string>|null) given\.#'
+			message: '#^Parameter \#(1|2|3) \$(c|onC)ondition of method Forrest79\\PhPgSql\\Fluent\\Query::(where|having|join|on)\(\) expects Forrest79\\PhPgSql\\Db\\Sql\|Forrest79\\PhPgSql\\Fluent\\Complex\|string(\|null)?, (array<int, string>|null) given\.$#'
 			path: %rootDir%/../../../tests/Unit/FluentQueryTest.php
 			count: 4
 
 		-
-			message: '#Parameter \#1 \$condition of method Forrest79\\PhPgSql\\Fluent\\Query::having\(\) expects Forrest79\\PhPgSql\\Db\\Sql\|Forrest79\\PhPgSql\\Fluent\\Complex\|string(\|null)?, Forrest79\\PhPgSql\\Db\\Query given\.#'
+			message: '#^Parameter \#1 \$condition of method Forrest79\\PhPgSql\\Fluent\\Query::having\(\) expects Forrest79\\PhPgSql\\Db\\Sql\|Forrest79\\PhPgSql\\Fluent\\Complex\|string(\|null)?, Forrest79\\PhPgSql\\Db\\Query given\.$#'
 			path: %rootDir%/../../../tests/Unit/FluentQueryTest.php
 			count: 1
 
 		-
-			message: '#Parameter \#2 \$queryParams of method Forrest79\\PhPgSql\\Fluent\\QueryBuilder::createSqlQuery\(\) expects array\(.+\), array\(\) given\.#'
+			message: '#^Parameter \#2 \$queryParams of method Forrest79\\PhPgSql\\Fluent\\QueryBuilder::createSqlQuery\(\) expects array\(.+\), array\(\) given\.$#'
 			path: %rootDir%/../../../tests/Unit/FluentQueryTest.php
 			count: 1
 
 		-
-			message: '#Expression ".+" on a separate line does not do anything\.#'
+			message: '#^Expression ".+" on a separate line does not do anything\.$#'
 			path: %rootDir%/../../../tests/Integration/FetchTest.php
 			count: 8
 
 		-
-			message: '#Expression ".+" on a separate line does not do anything\.#'
+			message: '#^Expression ".+" on a separate line does not do anything\.$#'
 			path: %rootDir%/../../../tests/Integration/ParseDataTypeTest.php
 			count: 4
 
 		-
-			message: '#Parameter \#1 \$result of function pg_.+ expects resource, resource\|false given\.#'
+			message: '#^Parameter \#1 \$result of function pg_.+ expects resource, resource\|false given\.$#'
 			path: %rootDir%/../../../tests/Integration/PgFunctionsTest.php
 			count: 49
 
 		-
-			message: '#Result of \|\| is always (true|false)\.#'
+			message: '#^Result of \|\| is always (true|false)\.$#'
 			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
 			count: 8
 
 		-
-			message: "#Call to function array_key_exists\\(\\) with '.+' and array\\(.+\\) will always evaluate to (true|false)\\.#"
+			message: "#^Call to function array_key_exists\\(\\) with '.+' and array\\(.+\\) will always evaluate to (true|false)\\.$#"
 			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
 			count: 10
 
 		-
-			message: '#Call to function array_key_exists\(\) on a separate line has no effect\.#'
+			message: '#^Call to function array_key_exists\(\) on a separate line has no effect\.$#'
 			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
 			count: 2
 
 		-
-			message: '#Offset 0 on (array\(.+\)|null) on left side of \?\? .+\.#'
+			message: '#^Offset 0 on (array\(.+\)|null) on left side of \?\? .+\.$#'
 			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
 			count: 2
 
 		-
-			message: "#Offset '[a-zA-Z0-9]+' on array\\(.+\\) in isset\\(\\) .+\\.#"
+			message: "#^Offset '[a-zA-Z0-9]+' on array\\(.+\\) in isset\\(\\) .+\\.$#"
 			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
 			count: 8
 
 		-
-			message: '#Empty array passed to foreach\.#'
+			message: '#^Empty array passed to foreach\.$#'
 			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
 			count: 1
 
 		-
-			message: '#Call to function microtime\(\) on a separate line has no effect\.#'
+			message: '#^Call to function microtime\(\) on a separate line has no effect\.$#'
 			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
 			count: 1
 
 		# === We know, that this can happen ===
 
 		-
-			message: '#Call to function is_string\(\) with string will always evaluate to true\.#'
+			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
 			path: %rootDir%/../../../src/Fluent/Complex.php
 			count: 1
 
 		-
-			message: '#Else branch is unreachable because previous condition is always true\.#'
+			message: '#^Else branch is unreachable because previous condition is always true\.$#'
 			path: %rootDir%/../../../src/Fluent/Complex.php
 			count: 1
 
 		-
-			message: "#Offset 'prefix'\\|\\'suffix\\' on array\\(.+\\) on left side of \\?\\? always exists and is not nullable\\.#"
+			message: "#^Offset 'prefix'\\|\\'suffix\\' on array\\(.+\\) on left side of \\?\\? always exists and is not nullable\\.$#"
 			path: %rootDir%/../../../src/Fluent/QueryBuilder.php
 			count: 1
 
 		-
-			message: "#Strict comparison using === between 'suffix' and 'suffix' will always evaluate to true\\.#"
+			message: "#^Strict comparison using === between 'suffix' and 'suffix' will always evaluate to true\\.$#"
 			path: %rootDir%/../../../src/Fluent/QueryBuilder.php
 			count: 1
 
 		-
-			message: '#Unreachable statement - code above always terminates\.#'
+			message: '#^Unreachable statement - code above always terminates\.$#'
 			path: %rootDir%/../../../src/Fluent/QueryBuilder.php
 			count: 1
 
 		# === We know, that this can't happen ===
 
 		-
-			message: '#Parameter \#1 \$connection of function pg_connect_poll expects resource, resource\|null given\.#'
+			message: '#^Parameter \#1 \$connection of function pg_connect_poll expects resource, resource\|null given\.$#'
 			path: %rootDir%/../../../src/Db/Connection.php
 			count: 1
 
 		-
-			message: '#Parameter \#1 \$connection of function pg_set_error_verbosity expects resource, resource\|null given\.#'
+			message: '#^Parameter \#1 \$connection of function pg_set_error_verbosity expects resource, resource\|null given\.$#'
 			path: %rootDir%/../../../src/Db/Connection.php
 			count: 1
 
 		-
-			message: '#Method Forrest79\\PhPgSql\\Db\\Connection::getConnectedResource\(\) should return resource but returns resource\|null\.#'
+			message: '#^Method Forrest79\\PhPgSql\\Db\\Connection::getConnectedResource\(\) should return resource but returns resource\|null\.$#'
 			path: %rootDir%/../../../src/Db/Connection.php
 			count: 2
 
 		-
-			message: '#Method Forrest79\\PhPgSql\\Db\\ResultIterator::current\(\) should return Forrest79\\PhPgSql\\Db\\Row but returns Forrest79\\PhPgSql\\Db\\Row\|null\.#'
+			message: '#^Method Forrest79\\PhPgSql\\Db\\ResultIterator::current\(\) should return Forrest79\\PhPgSql\\Db\\Row but returns Forrest79\\PhPgSql\\Db\\Row\|null\.$#'
 			path: %rootDir%/../../../src/Db/ResultIterator.php
 			count: 1
 
 		-
-			message: '#Parameter \#2 \$expected of static method Forrest79\\PhPgSql\\Fluent\\Exceptions\\QueryBuilderException::badParamsCount\(\) expects int, int\|false(\|null)? given\.#' # (|null)? is for forward PHP 8 compatibility
+			message: '#^Parameter \#2 \$expected of static method Forrest79\\PhPgSql\\Fluent\\Exceptions\\QueryBuilderException::badParamsCount\(\) expects int, int\|false(\|null)? given\.$#' # (|null)? is for forward PHP 8 compatibility
 			path: %rootDir%/../../../src/Fluent/QueryBuilder.php
 			count: 1
 
 		# === Fix PhPgSql-PHPStan rules ===
 
 		-
-			message: '#Method Forrest79\\PhPgSql\\Fluent\\QueryExecute::getIterator\(\) should return Forrest79\\PhPgSql\\Db\\ResultIterator but returns iterable<int, Forrest79\\PhPgSql\\Db\\Row>\.#'
+			message: '#^Method Forrest79\\PhPgSql\\Fluent\\QueryExecute::getIterator\(\) should return Forrest79\\PhPgSql\\Db\\ResultIterator but returns iterable<int, Forrest79\\PhPgSql\\Db\\Row>\.$#'
 			path: %rootDir%/../../../src/Fluent/QueryExecute.php
 			count: 1
