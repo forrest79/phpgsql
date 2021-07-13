@@ -7,16 +7,16 @@ class Events
 	/** @var Connection */
 	private $connection;
 
-	/** @var array<callable> function (Connection $connection) {} */
+	/** @var array<callable(Connection): void> function (Connection $connection) {} */
 	private $onConnect = [];
 
-	/** @var array<callable> function (Connection $connection) {} */
+	/** @var array<callable(Connection): void> function (Connection $connection) {} */
 	private $onClose = [];
 
-	/** @var array<callable> function (Connection $connection, Query $query, float $time) {} */
+	/** @var array<callable(Connection, Query, ?float, ?string): void> function (Connection $connection, Query $query, ?float $time, ?string $prepareStatementName) {} */
 	private $onQuery = [];
 
-	/** @var array<callable> function (Result $result) {} */
+	/** @var array<callable(Connection, Result): void> function (Connection $connection, Result $result) {} */
 	private $onResult = [];
 
 
