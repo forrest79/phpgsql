@@ -147,6 +147,13 @@ parameters:
 			path: %rootDir%/../../../src/Fluent/QueryBuilder.php
 			count: 1
 
+		# === PHPStan imperfection ===
+
+		-
+			message: '#^Array \(array<string, array\|bool\|Forrest79\\PhPgSql\\Fluent\\Complex\|int\|null>\) does not accept key string\.$#'
+			path: %rootDir%/../../../src/Fluent/Query.php
+			count: 1
+
 		# === Fix PhPgSql-PHPStan rules ===
 
 		-
