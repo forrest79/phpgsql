@@ -37,11 +37,11 @@ If you're using [PHPStan](https://phpstan.org/) you can install [settings](https
 composer require --dev forrest79/phpgsql-phpstan
 ```
 
-And if you're using [Nette framework](https://nette.org/), there is existing integration with [Tracy](https://tracy.nette.org/) panel.
+And if you're using [Nette framework](https://nette.org/), there is existing integration with the [Tracy](https://tracy.nette.org/) panel.
 
 
 ## Documentation
 
-[Complete documentation](doc/index.md) is in `docs` directory.
+[Complete documentation](docs/index.md) is in the `docs` directory.
 
 > All examples are self-tested - you can be sure, it's working.
