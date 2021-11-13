@@ -5,7 +5,7 @@ namespace Forrest79\PhPgSql\Fluent;
 use Forrest79\PhPgSql\Db;
 
 /**
- * @phpstan-type QueryParams array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>}
+ * @phpstan-type QueryParams array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<array<mixed>>, suffix: array<array<mixed>>}
  */
 class QueryBuilder
 {
@@ -618,6 +618,7 @@ class QueryBuilder
 				$condition = \sprintf($withoutParentheses === TRUE ? '%s' : '(%s)', $this->processComplex($conditionParams, $params));
 			} else {
 				$condition = \array_shift($conditionParams);
+				\assert(\is_string($condition)); // first array item is SQL, next are mixed params
 				$cnt = \preg_match_all('/(?<!\\\\)\?/', $condition);
 				$cntParams = \count($conditionParams);
 				if (($cnt === 0) && ($cntParams === 1)) {

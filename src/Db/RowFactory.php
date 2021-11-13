@@ -6,7 +6,7 @@ interface RowFactory
 {
 
 	/**
-	 * @param array<string, mixed> $rawValues
+	 * @param array<string, string|NULL> $rawValues
 	 */
 	function createRow(ColumnValueParser $columnValueParser, array $rawValues): Row;
 

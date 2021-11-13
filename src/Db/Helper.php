@@ -14,6 +14,7 @@ class Helper
 			return '{}';
 		}
 		foreach ($array as $i => $value) {
+			\assert(is_scalar($value));
 			$array[$i] = \str_replace('"', '\"', (string) $value);
 		}
 		return '{"' . \implode('","', $array) . '"}';
@@ -103,6 +104,7 @@ class Helper
 					if (\array_key_exists($i, $parameters)) {
 						$value = $parameters[$i];
 						unset($parameters[$i]);
+						\assert(($value === NULL) || \is_scalar($value));
 						return ($value === NULL) ? 'NULL' : \sprintf('\'%s\'', \str_replace('\'', '\'\'', (string) $value));
 					}
 

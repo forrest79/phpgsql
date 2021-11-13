@@ -307,8 +307,8 @@ final class BasicTest extends TestCase
 		');
 		$this->connection->query('INSERT INTO test(name) VALUES(?)', 'phpgsql');
 
-		/** @var Db\Row $row */
 		$row = $this->connection->query('SELECT id, name FROM test')->fetch();
+		\assert($row !== NULL);
 
 		Tester\Assert::same(1, $row->id);
 		Tester\Assert::same('phpgsql', $row->name);

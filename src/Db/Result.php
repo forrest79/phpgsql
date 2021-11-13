@@ -165,7 +165,7 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 	 * - associative descriptor: col1|col2=[]
 	 *   builds a tree:          $tree[$val1][$val2] = Row::toArray()
 	 *
-	 * @return array<mixed>
+	 * @return array<int|string, mixed>
 	 * @throws Exceptions\ResultException
 	 * @credit dibi (https://dibiphp.com/) | David Grudl
 	 */
@@ -233,7 +233,7 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 	/**
 	 * Fetches all records from table like $key => $value pairs.
 	 *
-	 * @return array<mixed, mixed>
+	 * @return array<int|string, mixed>
 	 * @throws Exceptions\ResultException
 	 * @credit dibi (https://dibiphp.com/) | David Grudl
 	 */
@@ -284,6 +284,7 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 		}
 
 		do {
+			\assert(\is_scalar($row[$key]));
 			$data[(string) $row[$key]] = $row[$value];
 			$row = $this->fetch();
 		} while ($row !== NULL);
@@ -336,6 +337,7 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 	 */
 	public function parseColumnValue(string $column, $rawValue)
 	{
+		assert(($rawValue === NULL) || \is_string($rawValue)); // database result all values as string or NULL
 		$value = $this->dataTypeParser->parse($this->getColumnType($column), $rawValue);
 		$this->parsedColumns[$column] = TRUE;
 		return $value;
@@ -359,6 +361,7 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 			$fieldsCnt = \pg_num_fields($this->queryResource);
 			for ($i = 0; $i < $fieldsCnt; $i++) {
 				$name = \pg_field_name($this->queryResource, $i);
+				\assert(\is_string($name));
 				if (isset($this->columnsDataTypes[$name])) {
 					throw Exceptions\ResultException::columnNameIsAlreadyInUse($name);
 				}

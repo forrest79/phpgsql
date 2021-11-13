@@ -19,7 +19,7 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 
 
 	/**
-	 * @param array<string, mixed> $rawValues
+	 * @param array<string, string|NULL> $rawValues
 	 */
 	public function __construct(ColumnValueParser $columnValueParser, array $rawValues)
 	{

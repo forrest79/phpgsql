@@ -2,9 +2,11 @@ includes:
 	- %rootDir%/conf/bleedingEdge.neon
 	- %rootDir%/../phpstan-strict-rules/rules.neon
 	- %rootDir%/../../forrest79/phpgsql-phpstan/extension.neon
+	- %rootDir%/../../../phpstan-php8.php
 
 parameters:
 	level: max
+
 	bootstrapFiles:
 		- %rootDir%/../../../tests/bootstrap.php
 	ignoreErrors:
@@ -39,7 +41,7 @@ parameters:
 			count: 1
 
 		-
-			message: '#^Parameter \#2 \$queryParams of method Forrest79\\PhPgSql\\Fluent\\QueryBuilder::createSqlQuery\(\) expects array\(.+\), array\(\) given\.$#'
+			message: '#^Parameter \#2 \$queryParams of method Forrest79\\PhPgSql\\Fluent\\QueryBuilder::createSqlQuery\(\) expects array\{.+\}, array\{\} given\.$#'
 			path: %rootDir%/../../../tests/Unit/FluentQueryTest.php
 			count: 1
 
@@ -69,7 +71,7 @@ parameters:
 			count: 8
 
 		-
-			message: "#^Call to function array_key_exists\\(\\) with '.+' and array\\(.+\\) will always evaluate to (true|false)\\.$#"
+			message: "#^Call to function array_key_exists\\(\\) with '.+' and array\\{.+\\} will always evaluate to (true|false)\\.$#"
 			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
 			count: 10
 
@@ -79,12 +81,12 @@ parameters:
 			count: 2
 
 		-
-			message: '#^Offset 0 on (array\(.+\)|null) on left side of \?\? .+\.$#'
+			message: '#^Offset 0 on (array\{1\}|null) on left side of \?\? .+\.$#'
 			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
 			count: 2
 
 		-
-			message: "#^Offset '[a-zA-Z0-9]+' on array\\(.+\\) in isset\\(\\) .+\\.$#"
+			message: "#^Offset '[a-zA-Z0-9]+' on array\\{.+\\} in isset\\(\\) .+\\.$#"
 			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
 			count: 8
 
@@ -97,6 +99,33 @@ parameters:
 			message: '#^Call to function microtime\(\) on a separate line has no effect\.$#'
 			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
 			count: 1
+
+		# === Explicit mixed check (correct type is checked in tests)
+
+		-
+			message: '#^Cannot call method toArray\(\) on mixed\.$#'
+			path: %rootDir%/../../../tests/Integration/BasicTest.php
+			count: 1
+
+		-
+			message: '#^Parameter \#1 \$object of function get_class expects object, mixed given\.$#'
+			path: %rootDir%/../../../tests/Integration/DocsTest.php
+			count: 1
+
+		-
+			message: '#^Cannot access offset 0 on mixed\.$#'
+			path: %rootDir%/../../../tests/Integration/ParseDataTypeTest.php
+			count: 15
+
+		-
+			message: '#^Cannot access offset 0 on mixed\.$#'
+			path: %rootDir%/../../../tests/Unit/ParseDataTypeTest.php
+			count: 5
+
+		-
+			message: '#^Cannot call method format\(\) on mixed\.$#'
+			path: %rootDir%/../../../tests/Unit/ParseDataTypeTest.php
+			count: 10
 
 		# === We know, that this can happen ===
 
@@ -111,7 +140,7 @@ parameters:
 			count: 1
 
 		-
-			message: "#^Offset 'prefix'\\|\\'suffix\\' on array\\(.+\\) on left side of \\?\\? always exists and is not nullable\\.$#"
+			message: "#^Offset 'prefix'\\|\\'suffix\\' on array\\{.+\\} on left side of \\?\\? always exists and is not nullable\\.$#"
 			path: %rootDir%/../../../src/Fluent/QueryBuilder.php
 			count: 1
 
@@ -155,8 +184,8 @@ parameters:
 		# === PHPStan imperfection ===
 
 		-
-			message: '#^Array \(array<string, array\|bool\|Forrest79\\PhPgSql\\Fluent\\Complex\|int\|null>\) does not accept key string\.$#'
-			path: %rootDir%/../../../src/Fluent/Query.php
+			message: "#^Array \\(array\\{select: array\\<int\\|string, Forrest79\\\\PhPgSql\\\\Db\\\\Sql\\|Forrest79\\\\PhPgSql\\\\Fluent\\\\Query\\|int\\|string\\>, distinct: bool, tables: array\\<string, array\\{string, string\\}\\>, table\\-types: array\\{main: string\\|null, from: array\\<string\\>, joins: array\\<string\\>\\}, join\\-conditions: array\\<string, Forrest79\\\\PhPgSql\\\\Fluent\\\\Complex\\>, where: Forrest79\\\\PhPgSql\\\\Fluent\\\\Complex\\|null, groupBy: array\\<string\\>, having: Forrest79\\\\PhPgSql\\\\Fluent\\\\Complex\\|null, \\.\\.\\.\\}\\) does not accept key string\\.$#"
+			path: src/Fluent/Query.php
 			count: 1
 
 		# === Fix PhPgSql-PHPStan rules ===

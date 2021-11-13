@@ -166,6 +166,18 @@ final class FetchTest extends TestCase
 		Tester\Assert::same(['id' => 3, 'type' => 1, 'name' => 'test3'], $rows3[2]['test3']->toArray());
 
 		$result3->free();
+
+		// ---
+
+		$result4 = $this->connection->query('SELECT id, type, name FROM test ORDER BY id');
+
+		$rows4 = $result4->fetchAssoc('[]');
+
+		Tester\Assert::same(['id' => 1, 'type' => 3, 'name' => 'test'], $rows4[0]->toArray());
+		Tester\Assert::same(['id' => 2, 'type' => 2, 'name' => 'test'], $rows4[1]->toArray());
+		Tester\Assert::same(['id' => 3, 'type' => 1, 'name' => 'test'], $rows4[2]->toArray());
+
+		$result4->free();
 	}
 
 
@@ -605,8 +617,8 @@ final class FetchTest extends TestCase
 		$result = $this->connection->query('SELECT 1 AS column, 2 AS column');
 
 		Tester\Assert::exception(static function () use ($result): void {
-			/** @var Db\Row $row */
 			$row = $result->fetch();
+			\assert($row !== NULL);
 			$row->column;
 		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::COLUMN_NAME_IS_ALREADY_IN_USE);
 
@@ -748,7 +760,7 @@ final class FetchTest extends TestCase
 		return new class implements Db\RowFactory {
 
 			/**
-			 * @param array<string, mixed> $rawValues
+			 * @param array<string, string|NULL> $rawValues
 			 */
 			public function createRow(Db\ColumnValueParser $columnValueParser, array $rawValues): Db\Row
 			{

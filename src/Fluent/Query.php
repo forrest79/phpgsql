@@ -4,6 +4,9 @@ namespace Forrest79\PhPgSql\Fluent;
 
 use Forrest79\PhPgSql\Db;
 
+/**
+ * @phpstan-import-type QueryParams from QueryBuilder
+ */
 class Query implements Sql
 {
 	public const QUERY_SELECT = 'select';
@@ -74,7 +77,7 @@ class Query implements Sql
 	/** @var string */
 	private $queryType = self::QUERY_SELECT;
 
-	/** @var array{select: array<int|string, string|int|self|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|self>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|self|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|self|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<mixed>, suffix: array<mixed>} */
+	/** @phpstan-var QueryParams */
 	private $params = self::DEFAULT_PARAMS;
 
 	/** @var Db\Sql\Query|NULL */

@@ -15,7 +15,6 @@ final class CollectingResultsTest extends TestCase
 
 	public function testResultCollector(): void
 	{
-		/** @var array<Db\Result> $results */
 		$results = [];
 
 		$this->connection->addOnResult(static function (Db\Connection $connection, Db\Result $result) use (&$results): void {
@@ -30,14 +29,13 @@ final class CollectingResultsTest extends TestCase
 		');
 		$this->connection->query('INSERT INTO test(name) VALUES(?)', 'phpgsql');
 
-		/** @var Db\Row $row */
 		$row = $this->connection->query('SELECT id, name FROM test')->fetch();
+		\assert($row !== NULL);
 
 		Tester\Assert::same('phpgsql', $row->name);
 
 		Tester\Assert::same(3, \count($results));
 
-		/** @var Db\Result $resultInsert */
 		$resultInsert = $results[1];
 
 		$queryInsert = $resultInsert->getQuery();
@@ -47,7 +45,6 @@ final class CollectingResultsTest extends TestCase
 
 		Tester\Assert::null($resultInsert->getParsedColumns());
 
-		/** @var Db\Result $resultSelect */
 		$resultSelect = $results[2];
 
 		// Try also parse some non-existing column
