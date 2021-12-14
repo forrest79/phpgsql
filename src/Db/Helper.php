@@ -96,15 +96,15 @@ class Helper
 		}
 
 		if ($parameters !== []) {
-			$sql = (string) \preg_replace_callback( // intentionally (string), other can't be returned
+			$sql = \preg_replace_callback(
 				'/\$(\d+)/',
 				static function ($matches) use (&$parameters): string {
 					$i = $matches[1] - 1;
 
 					if (\array_key_exists($i, $parameters)) {
+						/** @phpstan-var scalar|NULL $value */
 						$value = $parameters[$i];
 						unset($parameters[$i]);
-						\assert(($value === NULL) || \is_scalar($value));
 						return ($value === NULL) ? 'NULL' : \sprintf('\'%s\'', \str_replace('\'', '\'\'', (string) $value));
 					}
 
@@ -112,6 +112,7 @@ class Helper
 				},
 				$sql
 			);
+			\assert(\is_string($sql));
 		}
 
 		return $sql;
