@@ -37,13 +37,13 @@ class QueryException extends Exception
 
 	public static function queryFailed(Db\Query $query, string $error): self
 	{
-		return new self(\sprintf('Query: \'%s\' failed with an error: %s.', $query->getSql(), $error), self::QUERY_FAILED, $query);
+		return new self(\sprintf('Query failed [%s]: \'%s\'.', $error, $query->getSql()), self::QUERY_FAILED, $query);
 	}
 
 
 	public static function asyncQueryFailed(Db\Query $query, string $error): self
 	{
-		return new self(\sprintf('Async query \'%s\' failed with an error: %s.', $query->getSql(), $error), self::ASYNC_QUERY_FAILED, $query);
+		return new self(\sprintf('Async query failed [%s]: \'%s\'.', $error, $query->getSql()), self::ASYNC_QUERY_FAILED, $query);
 	}
 
 
@@ -53,7 +53,7 @@ class QueryException extends Exception
 		string $error
 	): self
 	{
-		return new self(\sprintf('Prepared statement: \'%s\', query: \'%s\' failed with an error: %s.', $preparedStatementName, $query->getSql(), $error), self::PREPARED_STATEMENT_QUERY_FAILED, $query);
+		return new self(\sprintf('Prepared statement failed [%s]: \'%s\', query: \'%s\'.', $error, $preparedStatementName, $query->getSql()), self::PREPARED_STATEMENT_QUERY_FAILED, $query);
 	}
 
 
@@ -63,7 +63,7 @@ class QueryException extends Exception
 		string $error
 	): self
 	{
-		return new self(\sprintf('Prepared statement: \'%s\', async query \'%s\' failed with error: %s.', $preparedStatementName, $query->getSql(), $error), self::ASYNC_PREPARED_STATEMENT_QUERY_FAILED, $query);
+		return new self(\sprintf('Async prepared statement failed [%s]: \'%s\', query \'%s\'.', $error, $preparedStatementName, $query->getSql()), self::ASYNC_PREPARED_STATEMENT_QUERY_FAILED, $query);
 	}
 
 

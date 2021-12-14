@@ -238,7 +238,7 @@ final class BasicTest extends TestCase
 				$this->connection->query('SELECT 1 WHERE 1 = ?; SELECT 2 WHERE 2 = ?', 1, 2);
 			},
 			Db\Exceptions\QueryException::class,
-			'#^.+ERROR:  cannot insert multiple commands into a prepared statement\.$#',
+			'#^.+\[ERROR:  cannot insert multiple commands into a prepared statement].+\.$#',
 			Db\Exceptions\QueryException::QUERY_FAILED
 		);
 	}

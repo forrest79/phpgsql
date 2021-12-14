@@ -377,13 +377,13 @@ $userId = '1; TRUNCATE user_departments';
 try {
   $connection->query('DELETE FROM user_departments WHERE id = ?', $userId);
 } catch (Forrest79\PhPgSql\Db\Exceptions\QueryException $e) {
-  dump($e->getMessage()); // (string) 'Query: 'DELETE FROM user_departments WHERE id = $1' failed with an error: ERROR:  invalid input syntax for type integer: \"1; TRUNCATE user_departments\".'
+  dump($e->getMessage()); // (string) 'Query failed [ERROR:  invalid input syntax for type integer: \"1; TRUNCATE user_departments\"]: 'DELETE FROM user_departments WHERE id = $1'.'
 }
 
 try {
   $connection->query('DELETE FROM user_departments WHERE id = $1', $userId);
 } catch (Forrest79\PhPgSql\Db\Exceptions\QueryException $e) {
-  dump($e->getMessage()); // (string) 'Query: 'DELETE FROM user_departments WHERE id = $1' failed with an error: ERROR:  invalid input syntax for type integer: \"1; TRUNCATE user_departments\".'
+  dump($e->getMessage()); // (string) 'Query failed [ERROR:  invalid input syntax for type integer: \"1; TRUNCATE user_departments\"]: 'DELETE FROM user_departments WHERE id = $1'.'
 }
 
 dump($connection->query('SELECT COUNT(*) FROM user_departments')->fetchSingle()); // (integer) 6
