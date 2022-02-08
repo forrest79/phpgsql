@@ -52,7 +52,7 @@ jobs:
         run: composer phpstan
 
       - name: Run tests
-        #run: composer tests # manually with `-j 1` and rety uses because of random async connection errors
+        #run: composer tests # manually with `-j 1` and retry used because of random async connection errors
         uses: nick-invision/retry@v2
         with:
           timeout_seconds: 120
