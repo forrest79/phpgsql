@@ -15,7 +15,7 @@ final class BasicTest extends TestCase
 
 	public function testGetLastErrorWithNoConnection(): void
 	{
-		Tester\Assert::same('', $this->connection->getLastError());
+		Tester\Assert::same('unknown error', $this->connection->getLastError());
 	}
 
 

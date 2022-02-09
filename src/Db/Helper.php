@@ -64,13 +64,13 @@ class Helper
 			if (\substr((string) \getenv('TERM'), 0, 5) === 'xterm') {
 				// intentionally (string), other can't be returned
 				$sql = (string) \preg_replace_callback($highlighter, static function (array $m): string {
-					if (isset($m[1]) && $m[1]) { // comment
+					if (isset($m[1]) && ($m[1] !== '')) { // comment
 						return \sprintf("\033[1;30m%s\033[0m", $m[1]);
-					} elseif (isset($m[2]) && $m[2]) { // important keywords
+					} elseif (isset($m[2]) && ($m[2] !== '')) { // important keywords
 						return \sprintf("\033[1;34m%s\033[0m", $m[2]);
-					} elseif (isset($m[3]) && $m[3]) { // other keywords
+					} elseif (isset($m[3]) && ($m[3] !== '')) { // other keywords
 						return \sprintf("\033[1;32m%s\033[0m", $m[3]);
-					} elseif (isset($m[4]) && $m[4]) { // variables
+					} elseif (isset($m[4]) && ($m[4] !== '')) { // variables
 						return \sprintf("\033[1;35m%s\033[0m", $m[4]);
 					}
 					return $m[0];
@@ -78,16 +78,16 @@ class Helper
 			}
 			$sql = \trim($sql);
 		} else {
-			$sql = \htmlspecialchars($sql);
+			$sql = \htmlspecialchars($sql, ENT_COMPAT);
 			// intentionally (string), other can't be returned
 			$sql = (string) \preg_replace_callback($highlighter, static function (array $m): string {
-				if (isset($m[1]) && $m[1]) { // comment
+				if (isset($m[1]) && ($m[1] !== '')) { // comment
 					return \sprintf('<em style="color:gray">%s</em>', $m[1]);
-				} elseif (isset($m[2]) && $m[2]) { // important keywords
+				} elseif (isset($m[2]) && ($m[2] !== '')) { // important keywords
 					return \sprintf('<strong style="color:blue">%s</strong>', $m[2]);
-				} elseif (isset($m[3]) && $m[3]) { // other keywords
+				} elseif (isset($m[3]) && ($m[3] !== '')) { // other keywords
 					return \sprintf('<strong style="color:green">%s</strong>', $m[3]);
-				} elseif (isset($m[4]) && $m[4]) { // variables
+				} elseif (isset($m[4]) && ($m[4] !== '')) { // variables
 					return \sprintf('<strong style="color:brown">%s</strong>', $m[4]);
 				}
 				return $m[0];
@@ -99,7 +99,7 @@ class Helper
 			$sql = \preg_replace_callback(
 				'/\$(\d+)/',
 				static function ($matches) use (&$parameters): string {
-					$i = $matches[1] - 1;
+					$i = intval($matches[1]) - 1;
 
 					if (\array_key_exists($i, $parameters)) {
 						/** @phpstan-var scalar|NULL $value */

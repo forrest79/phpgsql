@@ -94,6 +94,7 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 	 * @return mixed
 	 * @throws Exceptions\RowException
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetGet($column)
 	{
 		if (!\is_string($column)) {

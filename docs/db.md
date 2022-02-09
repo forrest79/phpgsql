@@ -333,7 +333,7 @@ Or you can get resource, that can be used with native `pg_*` functions with the 
 ```php
 $result = $connection->query('DELETE FROM users WHERE id IN (?)', [1, 2]);
 $resource = $result->getResource();
-assert(is_resource($resource));
+assert($resource !== FALSE);
 ```
 
 #### Safely passing parameters

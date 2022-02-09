@@ -86,7 +86,7 @@ class Connection
 		}
 
 		$resource = @\pg_connect($this->connectionConfig, $connectType); // intentionally @
-		if (!\is_resource($resource)) {
+		if ($resource === FALSE) {
 			throw Exceptions\ConnectionException::connectionFailed();
 		} elseif (\pg_connection_status($resource) === \PGSQL_CONNECTION_BAD) {
 			throw Exceptions\ConnectionException::badConnection();
@@ -222,7 +222,7 @@ class Connection
 			$this->events->onClose();
 		}
 
-		if (\is_resource($this->resource)) {
+		if ($this->resource !== NULL) {
 			\pg_close($this->resource);
 		}
 
@@ -561,9 +561,9 @@ class Connection
 
 	public function getLastError(): string
 	{
-		return \is_resource($this->resource)
+		return ($this->resource !== NULL)
 			? \pg_last_error($this->resource)
-			: \pg_last_error();
+			: 'unknown error';
 	}
 
 
@@ -573,7 +573,7 @@ class Connection
 	 */
 	private function getConnectedResource()
 	{
-		if (!\is_resource($this->resource)) {
+		if ($this->resource === NULL) {
 			$this->connect();
 		}
 

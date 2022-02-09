@@ -41,5 +41,10 @@
 		"benchmarks": "benchmarks/run-benchmarks.php",
 		"phpcs": "vendor/bin/phpcs -s src tests benchmarks",
 		"phpstan": "vendor/bin/phpstan analyse src tests benchmarks"
+	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": false
+		}
 	}
 }

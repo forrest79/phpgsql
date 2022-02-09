@@ -39,6 +39,10 @@ final class PgFunctionsTest extends TestCase
 			$success2 = @\pg_free_result($result1); // intentionally @ - `E_WARNING: pg_free_result(): supplied resource is not a valid PostgreSQL result resource`
 
 			Tester\Assert::false($success2);
+		} else if (\PHP_VERSION_ID >= 80100) {
+			Tester\Assert::exception(static function () use ($result1): void {
+				\pg_free_result($result1);
+			}, \Error::class, 'PostgreSQL result has already been closed');
 		} else {
 			Tester\Assert::exception(static function () use ($result1): void {
 				\pg_free_result($result1);
@@ -101,7 +105,7 @@ final class PgFunctionsTest extends TestCase
 		Tester\Assert::true($success1);
 
 		$result2 = \pg_get_result($this->getConnectionResource());
-		Tester\Assert::true(\is_resource($result2));
+		Tester\Assert::true($result2 !== FALSE);
 		Tester\Assert::false(\pg_fetch_assoc($result2));
 		Tester\Assert::contains('ERROR:  syntax error at or near "SELECTx"', self::pgResultError($result2));
 
@@ -120,7 +124,7 @@ final class PgFunctionsTest extends TestCase
 
 		// ---
 
-		Tester\Assert::false(\pg_set_error_verbosity(\PGSQL_ERRORS_TERSE));
+		Tester\Assert::false(\pg_set_error_verbosity($this->getConnectionResource(), \PGSQL_ERRORS_TERSE));
 		@\pg_query($this->getConnectionResource(), 'SELECTx 1 AS clm1, \'test\' AS clm2');
 		Tester\Assert::contains('ERROR:  syntax error at or near "SELECTx"', \pg_last_error($this->getConnectionResource()));
 
@@ -130,7 +134,7 @@ final class PgFunctionsTest extends TestCase
 
 		// ---
 
-		Tester\Assert::same(\PGSQL_ERRORS_DEFAULT, \pg_set_error_verbosity(\PGSQL_ERRORS_DEFAULT)); // strange, according to doc, last verbosity should be returned, so PGSQL_ERRORS_TERSE
+		Tester\Assert::same(\PGSQL_ERRORS_DEFAULT, \pg_set_error_verbosity($this->getConnectionResource(), \PGSQL_ERRORS_DEFAULT)); // strange, according to doc, last verbosity should be returned, so PGSQL_ERRORS_TERSE
 		@\pg_query($this->getConnectionResource(), 'SELECTx 1 AS clm1, \'test\' AS clm2');
 		Tester\Assert::contains('ERROR:  syntax error at or near "SELECTx"', \pg_last_error($this->getConnectionResource()));
 
@@ -140,7 +144,7 @@ final class PgFunctionsTest extends TestCase
 
 		// ---
 
-		Tester\Assert::same(\PGSQL_ERRORS_DEFAULT, \pg_set_error_verbosity(\PGSQL_ERRORS_VERBOSE));
+		Tester\Assert::same(\PGSQL_ERRORS_DEFAULT, \pg_set_error_verbosity($this->getConnectionResource(), \PGSQL_ERRORS_VERBOSE));
 		@\pg_query($this->getConnectionResource(), 'SELECTx 1 AS clm1, \'test\' AS clm2');
 		Tester\Assert::contains('ERROR:  42601: syntax error at or near "SELECTx"', \pg_last_error($this->getConnectionResource()));
 
@@ -165,7 +169,7 @@ final class PgFunctionsTest extends TestCase
 	{
 		$result1 = \pg_query_params($this->getConnectionResource(), 'SELECT 1 AS clm1', []);
 
-		Tester\Assert::true(\is_resource($result1));
+		Tester\Assert::true($result1 !== FALSE);
 
 		// This is just for async
 		Tester\Assert::false(\pg_connection_busy($this->getConnectionResource())); // connection is not bussy after sync query
@@ -175,7 +179,7 @@ final class PgFunctionsTest extends TestCase
 
 		$result2 = \pg_query_params($this->getConnectionResource(), 'SELECT 1 AS clm1 WHERE 1 = $1', [1]);
 
-		Tester\Assert::true(\is_resource($result2));
+		Tester\Assert::true($result2 !== FALSE);
 		Tester\Assert::same(['clm1' => '1'], \pg_fetch_assoc($result2));
 
 		$result3 = @\pg_query_params($this->getConnectionResource(), 'SELECT 1 AS clm1 WHERE 1 = $1; SELECT 2;', [1]); // intentionally @ - `E_WARNING: pg_query_params(): Query failed: ERROR:  cannot insert multiple commands into a prepared statement`
@@ -188,7 +192,7 @@ final class PgFunctionsTest extends TestCase
 	{
 		$result1 = \pg_query($this->getConnectionResource(), 'SELECT 1 AS clm1');
 
-		Tester\Assert::true(\is_resource($result1));
+		Tester\Assert::true($result1 !== FALSE);
 
 		// This is just for async
 		Tester\Assert::false(\pg_connection_busy($this->getConnectionResource())); // connection is not bussy after sync query
@@ -199,7 +203,7 @@ final class PgFunctionsTest extends TestCase
 		$result2 = \pg_query($this->getConnectionResource(), 'SELECT 1 AS clm1; SELECT 2 AS clm2;');
 
 		Tester\Assert::false(\pg_get_result($this->getConnectionResource())); // there is no waiting result for sync query, even if there is more queries in `pg_query`
-		Tester\Assert::true(\is_resource($result2));
+		Tester\Assert::true($result2 !== FALSE);
 		Tester\Assert::same(['clm2' => '2'], \pg_fetch_assoc($result2)); // only last query is fetched
 	}
 
@@ -232,17 +236,17 @@ final class PgFunctionsTest extends TestCase
 
 		$result2 = \pg_get_result($this->getConnectionResource());
 
-		Tester\Assert::true(\is_resource($result2));
+		Tester\Assert::true($result2 !== FALSE);
 		Tester\Assert::same(['clm1' => '1'], \pg_fetch_assoc($result2));
 
 		$result3 = \pg_get_result($this->getConnectionResource());
 
-		Tester\Assert::true(\is_resource($result3));
+		Tester\Assert::true($result3 !== FALSE);
 		Tester\Assert::same(['clm2' => '2'], \pg_fetch_assoc($result3));
 
 		$result4 = \pg_get_result($this->getConnectionResource());
 
-		Tester\Assert::false(\is_resource($result4));
+		Tester\Assert::false($result4);
 	}
 
 
@@ -275,7 +279,7 @@ final class PgFunctionsTest extends TestCase
 		// strange, error is filled after first get result
 		Tester\Assert::contains('cannot insert multiple commands into a prepared statement', \pg_last_error($this->getConnectionResource()));
 
-		Tester\Assert::true(\is_resource($result3));
+		Tester\Assert::true($result3 !== FALSE);
 		Tester\Assert::false(\pg_fetch_assoc($result3));
 
 		$result4 = \pg_get_result($this->getConnectionResource());
@@ -318,7 +322,7 @@ final class PgFunctionsTest extends TestCase
 
 		$result2 = @\pg_query($this->getConnectionResource(), 'SELECT 3 AS clm3'); // intentionally @ - `E_NOTICE: pg_query(): Found results on this connection. Use pg_get_result() to get these results first`
 
-		Tester\Assert::true(\is_resource($result2)); // but sync SELECT is done
+		Tester\Assert::true($result2 !== FALSE); // but sync SELECT is done
 
 		Tester\Assert::contains('', \pg_last_error($this->getConnectionResource()));
 
@@ -360,7 +364,7 @@ final class PgFunctionsTest extends TestCase
 		Tester\Assert::contains('ERROR:  cannot insert multiple commands into a prepared statement', \pg_last_error($this->getConnectionResource()));
 
 		$resource3 = \pg_prepare($this->getConnectionResource(), 'stm3', 'SELECT 1 AS clm1');
-		Tester\Assert::true(\is_resource($resource3));
+		Tester\Assert::true($resource3 !== FALSE);
 
 		$result1 = \pg_execute($this->getConnectionResource(), 'stm3', []);
 		Tester\Assert::same(['clm1' => '1'], \pg_fetch_assoc($result1));
@@ -395,7 +399,7 @@ final class PgFunctionsTest extends TestCase
 		Tester\Assert::same('', \pg_last_error($this->getConnectionResource())); // no error until pg_get_result()
 
 		$result7 = \pg_get_result($this->getConnectionResource());
-		Tester\Assert::true(\is_resource($result7));
+		Tester\Assert::true($result7 !== FALSE);
 		Tester\Assert::same(\PGSQL_FATAL_ERROR, \pg_result_status($result7));
 		Tester\Assert::contains('ERROR:  syntax error at or near "SELECTx"', \pg_last_error($this->getConnectionResource()));
 		Tester\Assert::contains('ERROR:  syntax error at or near "SELECTx"', self::pgResultError($result7));
@@ -403,7 +407,7 @@ final class PgFunctionsTest extends TestCase
 		\pg_send_prepare($this->getConnectionResource(), 'stm7', 'SELECT 1 AS clm1; SELECT 2 AS clm2');
 
 		$result8 = \pg_get_result($this->getConnectionResource());
-		Tester\Assert::true(\is_resource($result8));
+		Tester\Assert::true($result8 !== FALSE);
 		Tester\Assert::same(\PGSQL_FATAL_ERROR, \pg_result_status($result8));
 		Tester\Assert::contains('ERROR:  cannot insert multiple commands into a prepared statement', \pg_last_error($this->getConnectionResource()));
 		Tester\Assert::contains('ERROR:  cannot insert multiple commands into a prepared statement', self::pgResultError($result8));
@@ -411,7 +415,7 @@ final class PgFunctionsTest extends TestCase
 		\pg_send_prepare($this->getConnectionResource(), 'stm8', 'SELECT 1 AS clm1 WHERE 1 = $1');
 
 		$result9 = \pg_get_result($this->getConnectionResource());
-		Tester\Assert::true(\is_resource($result9)); // we must call this after pg_send_result()
+		Tester\Assert::true($result9 !== FALSE); // we must call this after pg_send_result()
 
 		$success2 = \pg_send_execute($this->getConnectionResource(), 'stm8', [1]);
 		Tester\Assert::true($success2);

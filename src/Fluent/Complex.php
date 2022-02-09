@@ -154,6 +154,7 @@ class Complex implements \ArrayAccess
 	 * @param int $offset
 	 * @return string|array<mixed>|self|Db\Sql|NULL
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetGet($offset)
 	{
 		return $this->conditions[$offset] ?? NULL;
