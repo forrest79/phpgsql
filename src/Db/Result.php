@@ -100,6 +100,7 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 
 	public function count(): int
 	{
+		/** @phpstan-var int<0, max> */
 		return $this->getRowCount();
 	}
 

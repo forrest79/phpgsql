@@ -2,10 +2,6 @@
 <ruleset name="PhPgSql">
 	<rule ref="./vendor/forrest79/phpcs/Forrest79CodingStandard/ruleset.xml"/>
 
-	<rule ref="Forrest79CodingStandard.Classes.ForceFinalClass.MissingFinal">
-		<exclude-pattern>src/*</exclude-pattern>
-	</rule>
-
 	<rule ref="Generic.Arrays.ArrayIndent.OpenBraceIncorrect">
 		<exclude-pattern>tests/Integration/ParseDataTypeTest.php</exclude-pattern>
 	</rule>
@@ -26,6 +22,10 @@
 	<rule ref="SlevomatCodingStandard.Classes.ModernClassNameReference.ClassNameReferencedViaFunctionCall">
 		<exclude-pattern>src/Fluent/Exceptions/ComplexException.php</exclude-pattern>
 		<exclude-pattern>tests/Integration/DocsTest.php</exclude-pattern>
+	</rule>
+
+	<rule ref="SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal">
+		<exclude-pattern>src/*</exclude-pattern>
 	</rule>
 
 	<rule ref="SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.MissingVariable">
