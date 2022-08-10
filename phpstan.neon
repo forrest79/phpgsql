@@ -2,7 +2,8 @@ includes:
 	- %rootDir%/conf/bleedingEdge.neon
 	- %rootDir%/../phpstan-strict-rules/rules.neon
 	- %rootDir%/../../forrest79/phpgsql-phpstan/extension.neon
-	- %rootDir%/../../../phpstan-php8.php
+	- %rootDir%/../../../phpstan-php80.php
+	- %rootDir%/../../../phpstan-php81.php
 
 parameters:
 	level: max
@@ -61,16 +62,6 @@ parameters:
 			count: 4
 
 		-
-			message: '#^Parameter \#1 \$result of function pg_.+ expects resource, resource\|false given\.$#'
-			path: %rootDir%/../../../tests/Integration/PgFunctionsTest.php
-			count: 50
-
-		-
-			message: '#^Result of \|\| is always (true|false)\.$#'
-			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
-			count: 8
-
-		-
 			message: "#^Call to function array_key_exists\\(\\) with '.+' and array\\{.+\\} will always evaluate to (true|false)\\.$#"
 			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
 			count: 10
@@ -97,6 +88,11 @@ parameters:
 
 		-
 			message: '#^Call to function microtime\(\) on a separate line has no effect\.$#'
+			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
+			count: 1
+
+		-
+			message: '#^Strict comparison using \!\=\= between array\{\} and array\{\} will always evaluate to false\.$#'
 			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
 			count: 1
 
@@ -155,11 +151,6 @@ parameters:
 			count: 1
 
 		# === We know, that this can't happen ===
-
-		-
-			message: '#^Parameter \#1 \$connection of function pg_connect_poll expects resource, resource\|null given\.$#'
-			path: %rootDir%/../../../src/Db/Connection.php
-			count: 1
 
 		-
 			message: '#^Parameter \#1 \$connection of function pg_set_error_verbosity expects resource, resource\|null given\.$#'
