@@ -60,7 +60,7 @@ class QueryBuilder
 	 */
 	private function createSelect(array $queryParams, array &$params, ?array &$insertSelectColumnNames = NULL): string
 	{
-		return 'SELECT ' .
+		$selectSql = 'SELECT ' .
 			$this->getSelectDistinct($queryParams) .
 			$this->getSelectColumns($queryParams, $params, $insertSelectColumnNames) .
 			$this->getFrom($queryParams, $params, $insertSelectColumnNames === NULL) .
@@ -70,8 +70,9 @@ class QueryBuilder
 			$this->getHaving($queryParams, $params) .
 			$this->getOrderBy($queryParams, $params) .
 			$this->getLimit($queryParams, $params) .
-			$this->getOffset($queryParams, $params) .
-			$this->combine($queryParams, $params);
+			$this->getOffset($queryParams, $params);
+
+		return $this->combine($selectSql, $queryParams, $params);
 	}
 
 
@@ -512,12 +513,12 @@ class QueryBuilder
 	 * @throws Exceptions\QueryBuilderException
 	 * @phpstan-param QueryParams $queryParams
 	 */
-	private function combine(array $queryParams, array &$params): string
+	private function combine(string $sql, array $queryParams, array &$params): string
 	{
 		$combineQueries = $queryParams[Query::PARAM_COMBINE_QUERIES];
 
 		if ($combineQueries === []) {
-			return '';
+			return $sql;
 		}
 
 		$combines = [];
@@ -535,7 +536,7 @@ class QueryBuilder
 			$combines[] = $type . ' (' . $query . ')';
 		}
 
-		return ' ' . \implode(' ', $combines);
+		return '(' . $sql . ') ' . \implode(' ', $combines);
 	}
 
 

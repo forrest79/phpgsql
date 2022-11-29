@@ -369,7 +369,7 @@ final class FluentConnectionTest extends Tests\TestCase
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('SELECT 1 UNION (SELECT 2)', $query->getSql());
+		Tester\Assert::same('(SELECT 1) UNION (SELECT 2)', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
 	}
 
@@ -382,7 +382,7 @@ final class FluentConnectionTest extends Tests\TestCase
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('SELECT 1 UNION ALL (SELECT 2)', $query->getSql());
+		Tester\Assert::same('(SELECT 1) UNION ALL (SELECT 2)', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
 	}
 
@@ -395,7 +395,7 @@ final class FluentConnectionTest extends Tests\TestCase
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('SELECT 1 INTERSECT (SELECT 2)', $query->getSql());
+		Tester\Assert::same('(SELECT 1) INTERSECT (SELECT 2)', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
 	}
 
@@ -408,7 +408,7 @@ final class FluentConnectionTest extends Tests\TestCase
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('SELECT 1 EXCEPT (SELECT 2)', $query->getSql());
+		Tester\Assert::same('(SELECT 1) EXCEPT (SELECT 2)', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
 	}
 

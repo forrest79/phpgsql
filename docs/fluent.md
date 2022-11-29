@@ -196,7 +196,7 @@ $queryE = $connection
   ->select(['column1', 'column2'])
   ->union($query);
 
-dump($queryE); // (Query) SELECT column1, column2 UNION (SELECT column FROM table LIMIT $1) [Params: (array) [1]]
+dump($queryE); // (Query) (SELECT column1, column2) UNION (SELECT column FROM table LIMIT $1) [Params: (array) [1]]
 ```
 
 ### Complex conditions

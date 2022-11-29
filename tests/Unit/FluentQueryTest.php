@@ -577,7 +577,7 @@ final class FluentQueryTest extends Tests\TestCase
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('SELECT column FROM table AS t UNION (SELECT column FROM table2 AS t2)', $query->getSql());
+		Tester\Assert::same('(SELECT column FROM table AS t) UNION (SELECT column FROM table2 AS t2)', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
 	}
 
@@ -595,7 +595,7 @@ final class FluentQueryTest extends Tests\TestCase
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('SELECT column FROM table AS t UNION (SELECT column FROM table2 AS t2)', $query->getSql());
+		Tester\Assert::same('(SELECT column FROM table AS t) UNION (SELECT column FROM table2 AS t2)', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
 	}
 
@@ -609,7 +609,7 @@ final class FluentQueryTest extends Tests\TestCase
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('SELECT column FROM table AS t UNION (SELECT column FROM table2 AS t2)', $query->getSql());
+		Tester\Assert::same('(SELECT column FROM table AS t) UNION (SELECT column FROM table2 AS t2)', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
 	}
 
