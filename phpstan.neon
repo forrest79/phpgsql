@@ -104,11 +104,6 @@ parameters:
 			count: 1
 
 		-
-			message: '#^Parameter \#1 \$object of function get_class expects object, mixed given\.$#'
-			path: %rootDir%/../../../tests/Integration/DocsTest.php
-			count: 1
-
-		-
 			message: '#^Cannot access offset 0 on mixed\.$#'
 			path: %rootDir%/../../../tests/Integration/ParseDataTypeTest.php
 			count: 15
@@ -151,11 +146,6 @@ parameters:
 			count: 1
 
 		# === We know, that this can't happen ===
-
-		-
-			message: '#^Parameter \#1 \$connection of function pg_set_error_verbosity expects resource, resource\|null given\.$#'
-			path: %rootDir%/../../../src/Db/Connection.php
-			count: 1
 
 		-
 			message: '#^Method Forrest79\\PhPgSql\\Db\\Connection::getConnectedResource\(\) should return resource but returns resource\|null\.$#'
