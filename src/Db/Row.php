@@ -119,7 +119,6 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 
 	/**
 	 * @param mixed $column
-	 * @return bool
 	 */
 	public function offsetExists($column): bool
 	{
