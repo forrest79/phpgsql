@@ -437,6 +437,8 @@ $query->execute();
 
 On `QueryExecute`, you can use all fetch functions as on the `Db\Result`. All `fetch*()` methods call `execute()` that run query in DB and returns the `Db\Result` object. The `execute()` method can be used everytime, but it's handy mostly for queries, that returns no data.
 
+> You can pass query object to `foreach` without calling `execute()` or other fetch function. This is good, because just one rows iteration is made (`fetchAll()`, `fetchPairs()` and `fetchAssoc()` iterate all rows in backgroud before return an array). If you want to iterate rows just once and run query in DB earlyier than in `foreach`, just call `execute()` whenever you want and pass query object or returned result object to `foreach`.
+
 You can update your query till `execute()` is call, after that, no updates on query is available, you can only execute this query again by calling `reexecute()`:
 
 ```php
