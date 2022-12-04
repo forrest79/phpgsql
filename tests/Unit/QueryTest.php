@@ -83,6 +83,14 @@ final class QueryTest extends Tests\TestCase
 	}
 
 
+	public function testPrepareQueryWithArrayAsOneAnyParameter(): void
+	{
+		$query = Db\Sql\Query::create('SELECT * FROM table WHERE column = ANY(?)', Db\Helper::createPgArray([1, 2]))->createQuery();
+		Tester\Assert::same('SELECT * FROM table WHERE column = ANY($1)', $query->getSql());
+		Tester\Assert::same(['{1,2}'], $query->getParams());
+	}
+
+
 	public function testPrepareQueryWithQuery(): void
 	{
 		$subquery = Db\Sql\Query::create('SELECT id FROM subtable WHERE column = ?', 1);

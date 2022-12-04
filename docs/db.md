@@ -135,6 +135,47 @@ The difference between `query()` and `queryArgs()` is, that `query()` accepts ma
 
 Passed variable can be scalar, `array` (is rewriten to many `?`, `?`, `?`, ... - this is usefull for example for `column IN (?)`), literal (is passed to SQL as string, never pass with this user input, possible SQL-injection), `bool`, `NULL` or another query (object implementing `Db\Sql` interface - there are some already prepared).
 
+> If you have an array with a many items, consider usign `ANY` with just one parametr as PostgreSQL array instead of `IN` with many params:
+
+```php
+$ids = [1, 2, 4]; 
+
+$resultIn = $connection->query('SELECT id, name FROM departments WHERE id IN (?)', $ids);
+
+// this will generate a query with 3 parameters...
+
+$rowsIn = $resultIn->fetchAll();
+
+table($rowsIn);
+/**
+------------------------------------
+| id          | name               |
+|==================================|
+| (integer) 1 | (string) 'IT'      |
+| (integer) 2 | (string) 'HR'      |
+| (integer) 4 | (string) 'Drivers' |
+------------------------------------
+*/
+
+$resultAny = $connection->query('SELECT id, name FROM departments WHERE id = ANY(?)', Forrest79\PhPgSql\Db\Helper::createPgArray($ids));
+
+// this will generate a query with just one parameter...
+
+$rowsAny = $resultIn->fetchAll();
+
+table($rowsAny);
+/**
+------------------------------------
+| id          | name               |
+|==================================|
+| (integer) 1 | (string) 'IT'      |
+| (integer) 2 | (string) 'HR'      |
+| (integer) 4 | (string) 'Drivers' |
+------------------------------------
+*/
+
+```
+
 To pass another query, we need to prepare one and then use it:
 
 ```php
