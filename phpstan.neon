@@ -106,7 +106,7 @@ parameters:
 		-
 			message: '#^Cannot access offset 0 on mixed\.$#'
 			path: %rootDir%/../../../tests/Integration/ParseDataTypeTest.php
-			count: 15
+			count: 29
 
 		-
 			message: '#^Cannot access offset 0 on mixed\.$#'
@@ -116,7 +116,7 @@ parameters:
 		-
 			message: '#^Cannot call method format\(\) on mixed\.$#'
 			path: %rootDir%/../../../tests/Unit/ParseDataTypeTest.php
-			count: 10
+			count: 14
 
 		# === We know, that this can happen ===
 

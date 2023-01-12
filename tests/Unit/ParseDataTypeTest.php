@@ -36,8 +36,12 @@ final class ParseDataTypeTest extends Tests\TestCase
 		Tester\Assert::same('2018-01-01', $basicDataTypeParser->parse('date', '2018-01-01')->format('Y-m-d'));
 		Tester\Assert::same('2018-01-01 20:30:00', $basicDataTypeParser->parse('timestamp', '2018-01-01 20:30:00')->format('Y-m-d H:i:s'));
 		Tester\Assert::same('2018-01-01 20:30:00.123000', $basicDataTypeParser->parse('timestamp', '2018-01-01 20:30:00.123')->format('Y-m-d H:i:s.u'));
-		Tester\Assert::same('2018-01-01 20:30:00 +0200', $basicDataTypeParser->parse('timestamptz', '2018-01-01 20:30:00+02')->format('Y-m-d H:i:s O'));
-		Tester\Assert::same('2018-01-01 20:30:00.123000 +0200', $basicDataTypeParser->parse('timestamptz', '2018-01-01 20:30:00.123+02')->format('Y-m-d H:i:s.u O'));
+		Tester\Assert::same('2018-01-01 20:30:00+02:00', $basicDataTypeParser->parse('timestamptz', '2018-01-01 20:30:00+02')->format('Y-m-d H:i:sP'));
+		Tester\Assert::same('2018-01-01 20:30:00.123000+02:00', $basicDataTypeParser->parse('timestamptz', '2018-01-01 20:30:00.123+02')->format('Y-m-d H:i:s.uP'));
+		Tester\Assert::same('2018-01-01 20:30:00+02:00', $basicDataTypeParser->parse('timestamptz', '2018-01-01 20:30:00+02')->format('Y-m-d H:i:sP'));
+		Tester\Assert::same('2018-01-01 20:30:00.123000+02:00', $basicDataTypeParser->parse('timestamptz', '2018-01-01 20:30:00.123+02')->format('Y-m-d H:i:s.uP'));
+		Tester\Assert::same('2018-01-01 20:30:00+02:30', $basicDataTypeParser->parse('timestamptz', '2018-01-01 20:30:00+02:30')->format('Y-m-d H:i:sP'));
+		Tester\Assert::same('2018-01-01 20:30:00.123000+02:30', $basicDataTypeParser->parse('timestamptz', '2018-01-01 20:30:00.123+02:30')->format('Y-m-d H:i:s.uP'));
 		Tester\Assert::same(['key' => 'value'], $basicDataTypeParser->parse('json', '{"key":"value"}'));
 		Tester\Assert::same(['column' => 'value'], $basicDataTypeParser->parse('jsonb', '{"column":"value"}'));
 		Tester\Assert::same('20:30:00', $basicDataTypeParser->parse('time', '20:30:00'));

@@ -44,7 +44,8 @@ final class ParseDataTypeTest extends TestCase
 				type_real real,
 				type_double double precision,
 				type_float float,
-				type_bool boolean,
+				type_bool_true boolean,
+				type_bool_false boolean,
 				type_date date,
 				type_time time,
 				type_timetz timetz,
@@ -74,7 +75,8 @@ final class ParseDataTypeTest extends TestCase
 					type_real,
 					type_double,
 					type_float,
-					type_bool,
+					type_bool_true,
+					type_bool_false,
 					type_date,
 					type_time,
 					type_timetz,
@@ -89,7 +91,7 @@ final class ParseDataTypeTest extends TestCase
 					type_tsvector,
 					type_interval
 				)
-			VALUES (?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+			VALUES (?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 		', [
 			1,
 			2,
@@ -101,6 +103,7 @@ final class ParseDataTypeTest extends TestCase
 			4.4,
 			5.5,
 			TRUE,
+			FALSE,
 			'2018-01-01',
 			'20:30:00',
 			'20:30:00+02',
@@ -119,29 +122,82 @@ final class ParseDataTypeTest extends TestCase
 		$row = $this->fetch();
 
 		Tester\Assert::true(\is_int($row->id));
+		Tester\Assert::same(1, $row->id);
+
 		Tester\Assert::true(\is_int($row->type_integer));
+		Tester\Assert::same(1, $row->type_integer);
+
 		Tester\Assert::true(\is_int($row->type_bigint));
+		Tester\Assert::same(2, $row->type_bigint);
+
 		Tester\Assert::true(\is_int($row->type_smallint));
+		Tester\Assert::same(3, $row->type_smallint);
+
 		Tester\Assert::true(\is_int($row->type_oid));
+		Tester\Assert::same(4, $row->type_oid);
+
 		Tester\Assert::true(\is_float($row->type_numeric));
+		Tester\Assert::same(1.1, $row->type_numeric);
+
 		Tester\Assert::true(\is_float($row->type_decimal));
+		Tester\Assert::same(2.2, $row->type_decimal);
+
 		Tester\Assert::true(\is_float($row->type_real));
+		Tester\Assert::same(3.3, $row->type_real);
+
 		Tester\Assert::true(\is_float($row->type_double));
+		Tester\Assert::same(4.4, $row->type_double);
+
 		Tester\Assert::true(\is_float($row->type_float));
-		Tester\Assert::true(\is_bool($row->type_bool));
+		Tester\Assert::same(5.5, $row->type_float);
+
+		Tester\Assert::true(\is_bool($row->type_bool_true));
+		Tester\Assert::true($row->type_bool_true);
+
+		Tester\Assert::true(\is_bool($row->type_bool_false));
+		Tester\Assert::false($row->type_bool_false);
+
 		Tester\Assert::true($row->type_date instanceof \DateTimeImmutable);
+		assert($row->type_date instanceof \DateTimeImmutable);
+		Tester\Assert::same('2018-01-01', $row->type_date->format('Y-m-d'));
+
 		Tester\Assert::true(\is_string($row->type_time));
+		Tester\Assert::same('20:30:00', $row->type_time);
+
 		Tester\Assert::true(\is_string($row->type_timetz));
+		Tester\Assert::same('20:30:00+02', $row->type_timetz);
+
 		Tester\Assert::true($row->type_timestamp instanceof \DateTimeImmutable);
+		assert($row->type_timestamp instanceof \DateTimeImmutable);
+		Tester\Assert::same('2018-01-01 20:30:00', $row->type_timestamp->format('Y-m-d H:i:s'));
+
 		Tester\Assert::true($row->type_timestamptz instanceof \DateTimeImmutable);
+		assert($row->type_timestamptz instanceof \DateTimeImmutable);
+		Tester\Assert::same('2018-01-01 20:30:00+02:00', $row->type_timestamptz->setTimezone(new \DateTimeZone('+2:00'))->format('Y-m-d H:i:sP'));
+
 		Tester\Assert::true(\is_string($row->type_varchar));
+		Tester\Assert::same('text1', $row->type_varchar);
+
 		Tester\Assert::true(\is_string($row->type_text));
+		Tester\Assert::same('text2', $row->type_text);
+
 		Tester\Assert::true(\is_string($row->type_char));
+		Tester\Assert::same('text3     ', $row->type_char);
+
 		Tester\Assert::true(\is_array($row->type_json));
+		Tester\Assert::same(['key' => 'value'], $row->type_json);
+
 		Tester\Assert::true(\is_array($row->type_jsonb));
+		Tester\Assert::same(['column' => 'value'], $row->type_jsonb);
+
 		Tester\Assert::true(\is_string($row->type_tsquery));
+		Tester\Assert::same('\'query\'', $row->type_tsquery);
+
 		Tester\Assert::true(\is_string($row->type_tsvector));
+		Tester\Assert::same('\'vector\'', $row->type_tsvector);
+
 		Tester\Assert::true(\is_string($row->type_interval));
+		Tester\Assert::same('1 day', $row->type_interval);
 	}
 
 
@@ -159,7 +215,8 @@ final class ParseDataTypeTest extends TestCase
 				type_real real[],
 				type_double double precision[],
 				type_float float[],
-				type_bool boolean[],
+				type_bool_true boolean[],
+				type_bool_false boolean[],
 				type_date date[],
 				type_time time[],
 				type_timetz timetz[],
@@ -179,14 +236,15 @@ final class ParseDataTypeTest extends TestCase
 					type_real,
 					type_double,
 					type_float,
-					type_bool,
+					type_bool_true,
+					type_bool_false,
 					type_date,
 					type_time,
 					type_timetz,
 					type_timestamp,
 					type_timestamptz
 				)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 		', [
 			'{1}',
 			'{2}',
@@ -198,6 +256,7 @@ final class ParseDataTypeTest extends TestCase
 			'{4.4}',
 			'{5.5}',
 			'{TRUE}',
+			'{FALSE}',
 			'{\'2018-01-01\'}',
 			'{\'20:30:00\'}',
 			'{\'20:30:00+02\'}',
@@ -208,36 +267,77 @@ final class ParseDataTypeTest extends TestCase
 		$row = $this->fetch();
 
 		Tester\Assert::true(\is_int($row->id));
+		Tester\Assert::same(1, $row->id);
+
 		Tester\Assert::true(\is_array($row->type_integer));
 		Tester\Assert::true(\is_int($row->type_integer[0]));
+		Tester\Assert::same(1, $row->type_integer[0]);
+
 		Tester\Assert::true(\is_array($row->type_bigint));
 		Tester\Assert::true(\is_int($row->type_bigint[0]));
+		Tester\Assert::same(2, $row->type_bigint[0]);
+
 		Tester\Assert::true(\is_array($row->type_smallint));
 		Tester\Assert::true(\is_int($row->type_smallint[0]));
+		Tester\Assert::same(3, $row->type_smallint[0]);
+
 		Tester\Assert::true(\is_array($row->type_oid));
 		Tester\Assert::true(\is_int($row->type_oid[0]));
+		Tester\Assert::same(4, $row->type_oid[0]);
+
 		Tester\Assert::true(\is_array($row->type_numeric));
 		Tester\Assert::true(\is_float($row->type_numeric[0]));
+		Tester\Assert::same(1.1, $row->type_numeric[0]);
+
 		Tester\Assert::true(\is_array($row->type_decimal));
 		Tester\Assert::true(\is_float($row->type_decimal[0]));
+		Tester\Assert::same(2.2, $row->type_decimal[0]);
+
 		Tester\Assert::true(\is_array($row->type_real));
 		Tester\Assert::true(\is_float($row->type_real[0]));
+		Tester\Assert::same(3.3, $row->type_real[0]);
+
 		Tester\Assert::true(\is_array($row->type_double));
 		Tester\Assert::true(\is_float($row->type_double[0]));
+		Tester\Assert::same(4.4, $row->type_double[0]);
+
 		Tester\Assert::true(\is_array($row->type_float));
 		Tester\Assert::true(\is_float($row->type_float[0]));
-		Tester\Assert::true(\is_array($row->type_bool));
-		Tester\Assert::true(\is_bool($row->type_bool[0]));
+		Tester\Assert::same(5.5, $row->type_float[0]);
+
+		Tester\Assert::true(\is_array($row->type_bool_true));
+		Tester\Assert::true(\is_bool($row->type_bool_true[0]));
+		Tester\Assert::true($row->type_bool_true[0]);
+
+		Tester\Assert::true(\is_array($row->type_bool_false));
+		Tester\Assert::true(\is_bool($row->type_bool_false[0]));
+		Tester\Assert::false($row->type_bool_false[0]);
+
 		Tester\Assert::true(\is_array($row->type_date));
 		Tester\Assert::true($row->type_date[0] instanceof \DateTimeImmutable);
+		assert(is_array($row->type_date));
+		assert($row->type_date[0] instanceof \DateTimeImmutable);
+		Tester\Assert::same('2018-01-01', $row->type_date[0]->format('Y-m-d'));
+
 		Tester\Assert::true(\is_array($row->type_time));
 		Tester\Assert::true(\is_string($row->type_time[0]));
+		Tester\Assert::same('20:30:00', $row->type_time[0]);
+
 		Tester\Assert::true(\is_array($row->type_timetz));
 		Tester\Assert::true(\is_string($row->type_timetz[0]));
+		Tester\Assert::same('20:30:00+02', $row->type_timetz[0]);
+
 		Tester\Assert::true(\is_array($row->type_timestamp));
 		Tester\Assert::true($row->type_timestamp[0] instanceof \DateTimeImmutable);
+		assert(is_array($row->type_timestamp));
+		assert($row->type_timestamp[0] instanceof \DateTimeImmutable);
+		Tester\Assert::same('2018-01-01 20:30:00', $row->type_timestamp[0]->format('Y-m-d H:i:s'));
+
 		Tester\Assert::true(\is_array($row->type_timestamptz));
 		Tester\Assert::true($row->type_timestamptz[0] instanceof \DateTimeImmutable);
+		assert(is_array($row->type_timestamptz));
+		assert($row->type_timestamptz[0] instanceof \DateTimeImmutable);
+		Tester\Assert::same('2018-01-01 20:30:00+02:00', $row->type_timestamptz[0]->setTimezone(new \DateTimeZone('+2:00'))->format('Y-m-d H:i:sP'));
 	}
 
 

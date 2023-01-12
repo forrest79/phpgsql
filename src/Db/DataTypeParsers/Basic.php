@@ -158,12 +158,12 @@ class Basic implements Db\DataTypeParser
 	 */
 	protected function parseTimestampTz(string $value): \DateTimeImmutable
 	{
-		$datetime = \DateTimeImmutable::createFromFormat('Y-m-d H:i:se', $value);
+		$datetime = \DateTimeImmutable::createFromFormat('Y-m-d H:i:sP', $value);
 		if ($datetime === FALSE) {
-			$datetime = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s.ue', $value);
+			$datetime = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s.uP', $value);
 		}
 		if ($datetime === FALSE) {
-			throw Exceptions\DataTypeParserException::cantConvertDatetime('Y-m-d H:i:se/Y-m-d H:i:s.ue', $value);
+			throw Exceptions\DataTypeParserException::cantConvertDatetime('Y-m-d H:i:sP/Y-m-d H:i:s.uP', $value);
 		}
 		return $datetime;
 	}
