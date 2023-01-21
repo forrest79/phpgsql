@@ -324,6 +324,14 @@ class QueryBuilder
 	{
 		$joins = [];
 
+		$aliasesWithoutTables = array_diff(
+			array_keys($queryParams[Query::PARAM_JOIN_CONDITIONS]),
+			$queryParams[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_JOINS]
+		);
+		if ($aliasesWithoutTables !== []) {
+			throw Exceptions\QueryBuilderException::noCorrespondingTable($aliasesWithoutTables);
+		}
+
 		foreach ($queryParams[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_JOINS] as $tableAlias) {
 			$joinType = $queryParams[Query::PARAM_TABLES][$tableAlias][self::TABLE_TYPE];
 

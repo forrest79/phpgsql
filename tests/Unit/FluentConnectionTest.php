@@ -217,6 +217,19 @@ final class FluentConnectionTest extends Tests\TestCase
 	}
 
 
+	public function testOnWithoutTable(): void
+	{
+		Tester\Assert::exception(function (): void {
+			$this->fluentConnection
+				->on('at', 'at.id = t.another_id')
+				->from('table', 't')
+				->select(['*'])
+				->createSqlQuery()
+				->createQuery();
+		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::NO_CORRESPONDING_TABLE);
+	}
+
+
 	public function testWhere(): void
 	{
 		$query = $this->fluentConnection

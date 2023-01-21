@@ -13,6 +13,7 @@ class QueryBuilderException extends Exception
 	public const NO_MAIN_TABLE = 7;
 	public const BAD_PARAMS_COUNT = 8;
 	public const BAD_PARAM = 9;
+	public const NO_CORRESPONDING_TABLE = 10;
 
 
 	public static function badQueryType(string $type): self
@@ -69,6 +70,15 @@ class QueryBuilderException extends Exception
 	public static function badParam(string $param, string $value, array $validValues): self
 	{
 		return new self(\sprintf('Bad param \'%s\' with value \'%s\'. Valid values are \'%s\'.', $param, $value, \implode('\', \'', $validValues)), self::BAD_PARAM);
+	}
+
+
+	/**
+	 * @param array<string> $aliases
+	 */
+	public static function noCorrespondingTable(array $aliases): self
+	{
+		return new self('There are extra join conditions without corresponding tables: ' . implode(', ', $aliases), self::NO_CORRESPONDING_TABLE);
 	}
 
 }
