@@ -425,7 +425,7 @@ class Query implements Sql
 			return $this->params[$param];
 		}
 
-		throw new \InvalidArgumentException('todo');
+		throw new Exceptions\ShouldNotHappenException('Invalid argument: ' . $param);
 	}
 
 
