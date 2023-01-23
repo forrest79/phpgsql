@@ -1,10 +1,14 @@
 name: build
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron:  '0 10 * * 1'
 
 jobs:
   run:
-    runs-on: 'ubuntu-18.04'
+    runs-on: 'ubuntu-20.04'
 
     strategy:
       matrix:
@@ -22,7 +26,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -33,17 +37,17 @@ jobs:
 
       - name: Get composer cache directory
         id: composer-cache
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install dependencies
-        run: composer install --no-interaction --prefer-dist --no-progress --no-suggest
+        run: composer install --no-interaction --prefer-dist --no-progress
 
       - name: Run phpcs
         run: composer phpcs
@@ -52,7 +56,7 @@ jobs:
         run: composer phpstan
 
       - name: Run tests
-        #run: composer tests # manually with `-j 1` and retry used because of random async connection errors
+        #run: composer tests # manually with `-j 1` and retry is used because of random async connection errors
         uses: nick-invision/retry@v2
         with:
           timeout_seconds: 120
