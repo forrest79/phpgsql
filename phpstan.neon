@@ -131,11 +131,6 @@ parameters:
 			count: 1
 
 		-
-			message: "#^Offset 'prefix'\\|\\'suffix\\' on array\\{.+\\} on left side of \\?\\? always exists and is not nullable\\.$#"
-			path: %rootDir%/../../../src/Fluent/QueryBuilder.php
-			count: 1
-
-		-
 			message: "#^Strict comparison using === between 'suffix' and 'suffix' will always evaluate to true\\.$#"
 			path: %rootDir%/../../../src/Fluent/QueryBuilder.php
 			count: 1
