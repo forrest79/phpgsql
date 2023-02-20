@@ -6,5 +6,6 @@ tests export-ignore
 .gitignore export-ignore
 phpcs.xml export-ignore
 phpstan.neon export-ignore
+phpstan-bootstrap.php export-ignore
 phpstan-php80.php export-ignore
 phpstan-php81.php export-ignore

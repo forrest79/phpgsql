@@ -75,6 +75,14 @@ final class QueryTest extends Tests\TestCase
 	}
 
 
+	public function testPrepareQueryWithArrayNotList(): void
+	{
+		$query = Db\Sql\Query::create('SELECT * FROM table WHERE column1 = ? AND column2 IN (?)', 3, [10 => 2, 20 => 1])->createQuery();
+		Tester\Assert::same('SELECT * FROM table WHERE column1 = $1 AND column2 IN ($2, $3)', $query->getSql());
+		Tester\Assert::same([3, 2, 1], $query->getParams());
+	}
+
+
 	public function testPrepareQueryWithBlankArray(): void
 	{
 		$query = Db\Sql\Query::create('SELECT * FROM table WHERE column IN (?)', [])->createQuery();
@@ -97,6 +105,30 @@ final class QueryTest extends Tests\TestCase
 		$query = Db\Sql\Query::create('SELECT * FROM table WHERE id IN (?)', $subquery)->createQuery();
 		Tester\Assert::same('SELECT * FROM table WHERE id IN (SELECT id FROM subtable WHERE column = $1)', $query->getSql());
 		Tester\Assert::same([1], $query->getParams());
+	}
+
+
+	public function testPrepareQueryWithEnum(): void
+	{
+		if (\PHP_VERSION_ID < 80100) {
+			Tester\Environment::skip('Minimum PHP version is 8.1');
+		}
+
+		$query = Db\Sql\Query::create('SELECT * FROM table WHERE column = ?', Tests\TestEnum::One)->createQuery();
+		Tester\Assert::same('SELECT * FROM table WHERE column = $1', $query->getSql());
+		Tester\Assert::same([1], $query->getParams()); // @todo backward compatibility with PHP < 8.1: Tests\TestEnum::One->value
+	}
+
+
+	public function testPrepareQueryWithArrayOfEnums(): void
+	{
+		if (\PHP_VERSION_ID < 80100) {
+			Tester\Environment::skip('Minimum PHP version is 8.1');
+		}
+
+		$query = Db\Sql\Query::create('SELECT * FROM table WHERE column IN (?)', [Tests\TestEnum::Two, Tests\TestEnum::One])->createQuery();
+		Tester\Assert::same('SELECT * FROM table WHERE column IN ($1, $2)', $query->getSql());
+		Tester\Assert::same([2, 1], $query->getParams()); // @todo backward compatibility with PHP < 8.1: Tests\TestEnum::Two->value, Tests\TestEnum::One->value
 	}
 
 

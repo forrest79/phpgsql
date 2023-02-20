@@ -79,11 +79,10 @@ class Query implements Db\Sql
 
 				if (\is_array($param)) {
 					$keys = [];
-					$paramCnt = \count($param);
-					for ($i = 0; $i < $paramCnt; $i++) {
+					foreach ($param as $value) {
 						$keys[] = '$' . ++$paramIndex;
+						$parsedParams[] = ($value instanceof \BackedEnum) ? $value->value : $value;
 					}
-					$parsedParams = \array_merge($parsedParams, $param);
 					return \implode(', ', $keys);
 				} else if (\is_bool($param)) {
 					return $param === TRUE ? 'TRUE' : 'FALSE';
@@ -94,7 +93,7 @@ class Query implements Db\Sql
 					return $subquerySql->getSql();
 				}
 
-				$parsedParams[] = $param;
+				$parsedParams[] = ($param instanceof \BackedEnum) ? $param->value : $param;
 
 				return '$' . ++$paramIndex;
 			},

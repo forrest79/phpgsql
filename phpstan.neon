@@ -9,7 +9,9 @@ parameters:
 	level: max
 
 	bootstrapFiles:
+		- %rootDir%/../../../phpstan-bootstrap.php
 		- %rootDir%/../../../tests/bootstrap.php
+
 	ignoreErrors:
 		# === This is OK ===
 

@@ -3,6 +3,11 @@
 return PHP_VERSION_ID < 80100
 	? [
 		'parameters' => [
+			'excludePaths' => [
+				'analyseAndScan' => [
+					__DIR__ . '/tests/TestEnum.php',
+				],
+			],
 			'ignoreErrors' => [
 				[
 					'message' => '#^Parameter \#1 \$connection of function pg_connect_poll expects resource, resource\|null given\.$#',
@@ -18,6 +23,11 @@ return PHP_VERSION_ID < 80100
 					'message' => '#^Parameter \#1 \$result of function pg_.+ expects resource, resource\|false given\.$#',
 					'path' => __DIR__ . '/tests/Integration/PgFunctionsTest.php',
 					'count' => 50,
+				],
+				[ // === Compatibility with Enums (PHP 8.1) ===
+					'message' => '#Access to constant (One|Two) on an unknown class Forrest79\\\\PhPgSql\\\\Tests\\\\TestEnum\.#',
+					'path' => __DIR__ . '/tests/Unit/QueryTest.php',
+					'count' => 3,
 				],
 			],
 		],
