@@ -419,9 +419,9 @@ class Connection extends Db\Connection implements Sql
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function sufix(string $querySufix, ...$params): Query
+	public function suffix(string $querySuffix, ...$params): Query
 	{
-		return $this->createQuery()->sufix($querySufix, ...$params);
+		return $this->createQuery()->suffix($querySuffix, ...$params);
 	}
 
 

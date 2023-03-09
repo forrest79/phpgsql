@@ -949,7 +949,7 @@ final class FluentQueryTest extends Tests\TestCase
 			->select(['column'])
 			->from('table')
 			->where('column', 100)
-			->sufix('FOR UPDATE')
+			->suffix('FOR UPDATE')
 			->createSqlQuery()
 			->createQuery();
 
@@ -958,7 +958,7 @@ final class FluentQueryTest extends Tests\TestCase
 
 		$query = $this->query()
 			->truncate('table')
-			->sufix('CASCADE')
+			->suffix('CASCADE')
 			->createSqlQuery()
 			->createQuery();
 
@@ -972,7 +972,7 @@ final class FluentQueryTest extends Tests\TestCase
 		$query = $this->query()
 			->insert('table')
 			->values(['column' => 'value'])
-			->sufix('ON CONFLICT (column) DO NOTHING')
+			->suffix('ON CONFLICT (column) DO NOTHING')
 			->returning(['column'])
 			->createSqlQuery()
 			->createQuery();
@@ -983,7 +983,7 @@ final class FluentQueryTest extends Tests\TestCase
 		$query = $this->query()
 			->update('table')
 			->set(['column' => 'value'])
-			->sufix('WHERE CURRENT OF cursor_name')
+			->suffix('WHERE CURRENT OF cursor_name')
 			->returning(['column'])
 			->createSqlQuery()
 			->createQuery();
@@ -993,7 +993,7 @@ final class FluentQueryTest extends Tests\TestCase
 
 		$query = $this->query()
 			->delete('table')
-			->sufix('WHERE CURRENT OF cursor_name')
+			->suffix('WHERE CURRENT OF cursor_name')
 			->returning(['column'])
 			->createSqlQuery()
 			->createQuery();
@@ -1115,7 +1115,7 @@ final class FluentQueryTest extends Tests\TestCase
 			->limit(10)
 			->offset(20)
 			->prefix('some SQL prefix')
-			->sufix('some SQL suffix')
+			->suffix('some SQL suffix')
 			->union('SELECT 1');
 
 		Tester\Assert::true($query->has($query::PARAM_SELECT));

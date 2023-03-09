@@ -222,6 +222,6 @@ interface Sql
 	/**
 	 * @param mixed ...$params
 	 */
-	function sufix(string $querySufix, ...$params): Query;
+	function suffix(string $querySuffix, ...$params): Query;
 
 }

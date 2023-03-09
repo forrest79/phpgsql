@@ -548,7 +548,7 @@ final class FluentConnectionTest extends Tests\TestCase
 	public function testPrefixAndSuffix(): void
 	{
 		$query = $this->fluentConnection
-			->sufix('FOR UPDATE')
+			->suffix('FOR UPDATE')
 			->select(['column'])
 			->from('table')
 			->createSqlQuery()

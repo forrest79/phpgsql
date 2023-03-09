@@ -127,7 +127,7 @@ Every query is `SELECT` at first, until you call `->insert(...)`, `->update(...)
 - `truncate(?string $table = NULL)` - truncates table. If the main table is not set, you must provide/rewrite it with the `$table` parameter.
 
 
-- `prefix(string $queryPrefix/$querySufix, ...$params)` (or `sufix(...)`) - with this, you can define univerzal query prefix or sufix. This is usefull for actually not supported fluent syntax. With prefix, you can create CTE (Common Table Expression) queries. With sufix, you can create `SELECT ... FOR UPDATE` for example. Definition can be simple `string` or you can use `?` and parameters.
+- `prefix(string $queryPrefix/$querySuffix, ...$params)` (or `suffix(...)`) - with this, you can define univerzal query prefix or suffix. This is usefull for actually not supported fluent syntax. With prefix, you can create CTE (Common Table Expression) queries. With suffix, you can create `SELECT ... FOR UPDATE` for example. Definition can be simple `string` or you can use `?` and parameters.
 
 If you want to create a copy of existing query, just use `clone`:
 
@@ -426,7 +426,7 @@ $connection
 $query = $connection
   ->table('departments')
   ->truncate()
-  ->sufix('CASCADE'); // generate `TRUNCATE departments CASCADE`
+  ->suffix('CASCADE'); // generate `TRUNCATE departments CASCADE`
 
 dump($query); // (Query) TRUNCATE departments CASCADE
 
@@ -527,7 +527,7 @@ $query = $connection
   ->select(['nick'])
   ->from('users')
   ->where('id', 1)
-  ->sufix('FOR UPDATE');
+  ->suffix('FOR UPDATE');
 
 dump($query); // (Query) SELECT nick FROM users WHERE id = $1 FOR UPDATE [Params: (array) [1]]
 

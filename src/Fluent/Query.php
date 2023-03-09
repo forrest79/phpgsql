@@ -668,10 +668,10 @@ class Query implements Sql
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function sufix(string $querySufix, ...$params): self
+	public function suffix(string $querySuffix, ...$params): self
 	{
 		$this->resetQuery();
-		\array_unshift($params, $querySufix);
+		\array_unshift($params, $querySuffix);
 		$this->params[self::PARAM_SUFFIX][] = $params;
 		return $this;
 	}
