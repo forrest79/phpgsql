@@ -565,7 +565,7 @@ final class FluentConnectionTest extends Tests\TestCase
 		{
 
 			/**
-			 * @param array<mixed> $params
+			 * @param list<mixed> $params
 			 */
 			protected function prepareSqlQuery(string $sql, array $params): Db\Sql\Query
 			{

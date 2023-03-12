@@ -95,7 +95,7 @@ class Basic implements Db\DataTypeParser
 
 
 	/**
-	 * @return array<mixed>
+	 * @return list<mixed>
 	 */
 	protected function parseArray(string $value, ?callable $typeFnc = NULL): array
 	{

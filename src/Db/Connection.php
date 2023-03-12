@@ -485,11 +485,11 @@ class Connection
 
 
 	/**
-	 * @return array<string>
+	 * @return list<string>
 	 */
 	public function getNotices(bool $clearAfterRead = TRUE): array
 	{
-		/** @var array<string>|FALSE $notices */
+		/** @var list<string>|FALSE $notices */
 		$notices = \pg_last_notice($this->getConnectedResource(), \PGSQL_NOTICE_ALL);
 		if ($notices === FALSE) {
 			throw Exceptions\ConnectionException::cantGetNotices();

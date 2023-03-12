@@ -142,7 +142,7 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 
 
 	/**
-	 * @return array<string>
+	 * @return list<string>
 	 */
 	public function getColumns(): array
 	{

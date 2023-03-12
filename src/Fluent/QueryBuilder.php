@@ -5,7 +5,7 @@ namespace Forrest79\PhPgSql\Fluent;
 use Forrest79\PhPgSql\Db;
 
 /**
- * @phpstan-type QueryParams array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: array<string>, joins: array<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: array<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: array<array<mixed>>, suffix: array<array<mixed>>}
+ * @phpstan-type QueryParams array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: list<string>, joins: list<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: list<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: list<array<mixed>>, suffix: list<array<mixed>>}
  */
 class QueryBuilder
 {
@@ -43,7 +43,7 @@ class QueryBuilder
 
 
 	/**
-	 * @param array<mixed> $params
+	 * @param list<mixed> $params
 	 */
 	protected function prepareSqlQuery(string $sql, array $params): Db\Sql\Query
 	{
@@ -53,8 +53,8 @@ class QueryBuilder
 
 	/**
 	 * @param array<string, mixed> $queryParams
-	 * @param array<mixed> $params
-	 * @param array<int, string>|NULL $insertSelectColumnNames
+	 * @param list<mixed> $params
+	 * @param array<string>|NULL $insertSelectColumnNames
 	 * @throws Exceptions\QueryBuilderException
 	 * @phpstan-param QueryParams $queryParams
 	 */
@@ -78,7 +78,7 @@ class QueryBuilder
 
 	/**
 	 * @param array<string, mixed> $queryParams
-	 * @param array<mixed> $params
+	 * @param list<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 * @phpstan-param QueryParams $queryParams
 	 */
@@ -141,8 +141,8 @@ class QueryBuilder
 
 	/**
 	 * @param Db\Sql\Query|Query|mixed $value
-	 * @param array<string> $values
-	 * @param array<Db\Sql\Query|Query|mixed> $params
+	 * @param list<string> $values
+	 * @param list<Db\Sql\Query|Query|mixed> $params
 	 */
 	private static function prepareRow($value, array &$values, array &$params): void
 	{
@@ -163,7 +163,7 @@ class QueryBuilder
 
 	/**
 	 * @param array<string, mixed> $queryParams
-	 * @param array<mixed> $params
+	 * @param list<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 * @phpstan-param QueryParams $queryParams
 	 */
@@ -207,7 +207,7 @@ class QueryBuilder
 
 	/**
 	 * @param array<string, mixed> $queryParams
-	 * @param array<mixed> $params
+	 * @param list<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 * @phpstan-param QueryParams $queryParams
 	 */
@@ -249,8 +249,8 @@ class QueryBuilder
 
 	/**
 	 * @param array<string, mixed> $queryParams
-	 * @param array<mixed> $params
-	 * @param array<int, string>|NULL $columnNames
+	 * @param list<mixed> $params
+	 * @param array<string>|NULL $columnNames
 	 * @throws Exceptions\QueryBuilderException
 	 * @phpstan-param QueryParams $queryParams
 	 */
@@ -281,7 +281,7 @@ class QueryBuilder
 
 	/**
 	 * @param array<string, mixed> $queryParams
-	 * @param array<mixed> $params
+	 * @param list<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 * @phpstan-param QueryParams $queryParams
 	 */
@@ -316,7 +316,7 @@ class QueryBuilder
 
 	/**
 	 * @param array<string, mixed> $queryParams
-	 * @param array<mixed> $params
+	 * @param list<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 * @phpstan-param QueryParams $queryParams
 	 */
@@ -362,7 +362,7 @@ class QueryBuilder
 
 	/**
 	 * @param array<string, mixed> $queryParams
-	 * @param array<mixed> $params
+	 * @param list<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 * @phpstan-param QueryParams $queryParams
 	 */
@@ -392,7 +392,7 @@ class QueryBuilder
 
 	/**
 	 * @param array<string, mixed> $queryParams
-	 * @param array<mixed> $params
+	 * @param list<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 * @phpstan-param QueryParams $queryParams
 	 */
@@ -410,7 +410,7 @@ class QueryBuilder
 
 	/**
 	 * @param array<string, mixed> $queryParams
-	 * @param array<mixed> $params
+	 * @param list<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 * @phpstan-param QueryParams $queryParams
 	 */
@@ -440,7 +440,7 @@ class QueryBuilder
 
 	/**
 	 * @param array<string, mixed> $queryParams
-	 * @param array<mixed> $params
+	 * @param list<mixed> $params
 	 * @phpstan-param QueryParams $queryParams
 	 */
 	private function getLimit(array $queryParams, array &$params): string
@@ -459,7 +459,7 @@ class QueryBuilder
 
 	/**
 	 * @param array<string, mixed> $queryParams
-	 * @param array<mixed> $params
+	 * @param list<mixed> $params
 	 * @phpstan-param QueryParams $queryParams
 	 */
 	private function getOffset(array $queryParams, array &$params): string
@@ -479,7 +479,7 @@ class QueryBuilder
 	/**
 	 * @param array<string, mixed> $queryParams
 	 * @param Query::PARAM_PREFIX|Query::PARAM_SUFFIX $type
-	 * @param array<mixed> $params
+	 * @param list<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 * @phpstan-param QueryParams $queryParams
 	 */
@@ -517,7 +517,7 @@ class QueryBuilder
 
 	/**
 	 * @param array<string, mixed> $queryParams
-	 * @param array<mixed> $params
+	 * @param list<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 * @phpstan-param QueryParams $queryParams
 	 */
@@ -550,7 +550,7 @@ class QueryBuilder
 
 	/**
 	 * @param array<string, mixed> $queryParams
-	 * @param array<mixed> $params
+	 * @param list<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 * @phpstan-param QueryParams $queryParams
 	 */
@@ -594,7 +594,7 @@ class QueryBuilder
 	/**
 	 * @param string|NULL $type
 	 * @param string|Db\Sql|Query $table
-	 * @param array<mixed> $params
+	 * @param list<mixed> $params
 	 */
 	private function processTable(?string $type, $table, string $alias, array &$params): string
 	{
@@ -614,7 +614,7 @@ class QueryBuilder
 
 
 	/**
-	 * @param array<int, mixed> $params
+	 * @param list<mixed> $params
 	 * @throws Exceptions\QueryBuilderException
 	 */
 	private function processComplex(Complex $complex, array &$params): string

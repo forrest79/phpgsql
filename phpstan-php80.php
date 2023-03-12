@@ -1,7 +1,17 @@
 <?php declare(strict_types = 1);
 
 return PHP_MAJOR_VERSION < 8
-	? []
+	? [
+		'parameters' => [
+			'ignoreErrors' => [
+				[
+					'message' => '#PHPDoc tag @var with type array<int, string>\|false is not subtype of native type string\.#',
+					'path' => __DIR__ . '/src/Db/Connection.php',
+					'count' => 1,
+				],
+			],
+		],
+	]
 	: [
 		'parameters' => [
 			'ignoreErrors' => [

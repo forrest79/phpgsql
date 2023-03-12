@@ -5,7 +5,7 @@ namespace Forrest79\PhPgSql\Fluent;
 use Forrest79\PhPgSql\Db;
 
 /**
- * @implements \ArrayAccess<int, string|array|self|Db\Sql>
+ * @implements \ArrayAccess<int, string|array<mixed>|self|Db\Sql>
  */
 class Complex implements \ArrayAccess
 {
@@ -21,12 +21,12 @@ class Complex implements \ArrayAccess
 	/** @var string */
 	private $type;
 
-	/** @var array<int, self|array<mixed>> */
+	/** @var array<self|array<mixed>> */
 	private $conditions;
 
 
 	/**
-	 * @param array<int, self|string|array<mixed>|Db\Sql> $conditions
+	 * @param array<self|string|array<mixed>|Db\Sql> $conditions
 	 */
 	private function __construct(string $type, array $conditions, ?Complex $parent = NULL, ?Query $query = NULL)
 	{
@@ -62,7 +62,7 @@ class Complex implements \ArrayAccess
 
 
 	/**
-	 * @param array<int, self|string|array<mixed>|Db\Sql> $conditions
+	 * @param array<self|string|array<mixed>|Db\Sql> $conditions
 	 */
 	public function addComplexAnd(array $conditions = []): Complex
 	{
@@ -73,7 +73,7 @@ class Complex implements \ArrayAccess
 
 
 	/**
-	 * @param array<int, self|string|array<mixed>|Db\Sql> $conditions
+	 * @param array<self|string|array<mixed>|Db\Sql> $conditions
 	 */
 	public function addComplexOr(array $conditions = []): Complex
 	{
@@ -90,7 +90,7 @@ class Complex implements \ArrayAccess
 
 
 	/**
-	 * @return array<int, self|array<mixed>>
+	 * @return array<self|array<mixed>>
 	 */
 	public function getConditions(): array
 	{
@@ -124,7 +124,7 @@ class Complex implements \ArrayAccess
 
 
 	/**
-	 * @param array<int, self|string|array<mixed>|Db\Sql> $conditions
+	 * @param array<self|string|array<mixed>|Db\Sql> $conditions
 	 */
 	public static function createAnd(array $conditions = [], ?Complex $parent = NULL, ?Query $query = NULL): self
 	{
@@ -133,7 +133,7 @@ class Complex implements \ArrayAccess
 
 
 	/**
-	 * @param array<int, self|string|array<mixed>|Db\Sql> $conditions
+	 * @param array<self|string|array<mixed>|Db\Sql> $conditions
 	 */
 	public static function createOr(array $conditions = [], ?Complex $parent = NULL, ?Query $query = NULL): self
 	{
@@ -189,8 +189,8 @@ class Complex implements \ArrayAccess
 
 
 	/**
-	 * @param array<int, self|string|array<mixed>|Db\Sql> $conditions
-	 * @return array<int, self|array<mixed>>
+	 * @param array<self|string|array<mixed>|Db\Sql> $conditions
+	 * @return array<self|array<mixed>>
 	 */
 	private function normalizeConditions(array $conditions): array
 	{
@@ -202,7 +202,7 @@ class Complex implements \ArrayAccess
 			}
 		}
 
-		/** @var array<int, self|array<mixed>> $conditions */
+		/** @var array<self|array<mixed>> $conditions */
 		return $conditions;
 	}
 

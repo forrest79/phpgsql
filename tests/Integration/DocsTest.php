@@ -157,7 +157,7 @@ final class DocsTest extends TestCase
 
 
 	/**
-	 * @param array<Db\Row>|array<array<Db\Row>> $rows
+	 * @param list<Db\Row> $rows
 	 */
 	public static function table(array $rows): string
 	{
@@ -165,20 +165,7 @@ final class DocsTest extends TestCase
 			return self::dump($rows);
 		}
 
-		$firstKey = \key($rows);
-
-		if ($firstKey === 0) { // $rows is a list
-			$firstRow = \current($rows);
-		} else { // $rows is a single row
-			$firstRow = $rows;
-			$rows = [$rows];
-		}
-
-		if ($firstRow instanceof Db\Row) {
-			$firstRow = $firstRow->toArray();
-		}
-
-		$columns = \array_keys($firstRow);
+		$columns = \array_keys($rows[0]->toArray());
 
 		// Compute max chars for columns
 

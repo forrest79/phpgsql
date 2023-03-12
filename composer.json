@@ -16,10 +16,10 @@
 	},
 	"require-dev": {
 		"forrest79/phpcs": "^0.3",
-		"forrest79/phpgsql-phpstan": "^1.1",
+		"forrest79/phpgsql-phpstan": "^1.5",
 		"nette/tester": "^2.4",
-		"phpstan/phpstan": "^1.9",
-		"phpstan/phpstan-strict-rules": "^1.4"
+		"phpstan/phpstan": "^1.10",
+		"phpstan/phpstan-strict-rules": "^1.5"
 	},
 	"suggest": {
 		"ext-json": "Needed to support parse JSON types from PostgreSQL"

@@ -130,7 +130,7 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 	/**
 	 * Fetches all records from table.
 	 *
-	 * @return array<Row>
+	 * @return list<Row>
 	 */
 	public function fetchAll(?int $offset = NULL, ?int $limit = NULL): array
 	{
@@ -324,7 +324,7 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 
 
 	/**
-	 * @return array<string>
+	 * @return list<string>
 	 */
 	public function getColumns(): array
 	{
