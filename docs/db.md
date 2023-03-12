@@ -133,7 +133,7 @@ $connection->queryArgs('DELETE FROM user_departments WHERE id = ?', [2]);
 
 The difference between `query()` and `queryArgs()` is, that `query()` accepts many parameters and `queryArgs()` accept parameters in one `array`.
 
-Passed variable can be scalar, `array` (is rewriten to many `?`, `?`, `?`, ... - this is usefull for example for `column IN (?)`), literal (is passed to SQL as string, never pass with this user input, possible SQL-injection), `bool`, `NULL` or another query (object implementing `Db\Sql` interface - there are some already prepared).
+Passed variable can be scalar, `array` (is rewriten to many `?`, `?`, `?`, ... - this is usefull for example for `column IN (?)`), `Enum` (from PHP 8.1 - enum value is passed as a scalar value), literal (is passed to SQL as string, never pass with this user input, possible SQL-injection), `bool`, `NULL` or another query (object implementing `Db\Sql` interface - there are some already prepared).
 
 > If you have an array with a many items, consider usign `ANY` with just one parametr as PostgreSQL array instead of `IN` with many params:
 
