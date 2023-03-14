@@ -59,18 +59,6 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 	}
 
 
-	public function fetch(): ?Row
-	{
-		$data = \pg_fetch_assoc($this->queryResource);
-		if ($data === FALSE) {
-			return NULL;
-		}
-
-		$this->detectColumnsDataTypes();
-		return $this->rowFactory->createRow($this, $data);
-	}
-
-
 	public function getIterator(): ResultIterator
 	{
 		return new ResultIterator($this);
@@ -108,6 +96,18 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 	public function getRowCount(): int
 	{
 		return \pg_num_rows($this->queryResource);
+	}
+
+
+	public function fetch(): ?Row
+	{
+		$data = \pg_fetch_assoc($this->queryResource);
+		if ($data === FALSE) {
+			return NULL;
+		}
+
+		$this->detectColumnsDataTypes();
+		return $this->rowFactory->createRow($this, $data);
 	}
 
 
