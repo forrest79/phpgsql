@@ -99,6 +99,12 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 	}
 
 
+	public function hasRows(): bool
+	{
+		return $this->getRowCount() > 0;
+	}
+
+
 	public function fetch(): ?Row
 	{
 		$data = \pg_fetch_assoc($this->queryResource);

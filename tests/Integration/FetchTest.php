@@ -626,6 +626,13 @@ final class FetchTest extends TestCase
 	}
 
 
+	public function testResultHasRows(): void
+	{
+		Tester\Assert::true($this->connection->query('SELECT 1 WHERE TRUE')->hasRows());
+		Tester\Assert::false($this->connection->query('SELECT 1 WHERE FALSE')->hasRows());
+	}
+
+
 	public function testCustomRowFactoryOnConnection(): void
 	{
 		$this->connection->setDefaultRowFactory($this->createCustomRowFactory());
