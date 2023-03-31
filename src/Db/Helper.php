@@ -14,10 +14,14 @@ class Helper
 			return '{}';
 		}
 		foreach ($array as $i => $value) {
-			\assert(is_scalar($value));
-			$array[$i] = \str_replace('"', '\"', (string) $value);
+			if ($value === NULL) {
+				$array[$i] = 'NULL';
+			} else {
+				\assert(is_scalar($value));
+				$array[$i] = '"' . \str_replace('"', '\"', (string) $value) . '"';
+			}
 		}
-		return '{"' . \implode('","', $array) . '"}';
+		return '{' . \implode(',', $array) . '}';
 	}
 
 
@@ -28,6 +32,11 @@ class Helper
 	{
 		if ($array === []) {
 			return '{}';
+		}
+		foreach ($array as $i => $value) {
+			if ($value === NULL) {
+				$array[$i] = 'NULL';
+			}
 		}
 		return '{' . \implode(',', $array) . '}';
 	}
