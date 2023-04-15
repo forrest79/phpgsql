@@ -15,6 +15,7 @@ final class CollectingResultsTest extends TestCase
 
 	public function testResultCollector(): void
 	{
+		/** @var list<Db\Result> $results */
 		$results = [];
 
 		$this->connection->addOnResult(static function (Db\Connection $connection, Db\Result $result) use (&$results): void {
