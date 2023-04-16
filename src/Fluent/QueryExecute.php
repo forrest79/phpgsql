@@ -99,6 +99,7 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 
 
 	/**
+	 * @deprecated Use fetchIterator() method.
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
 	 * @throws Exceptions\QueryException
@@ -106,6 +107,7 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 	 */
 	public function getIterator(): Db\ResultIterator
 	{
+		//trigger_error('Use fetchIterator() method.', E_USER_DEPRECATED);
 		return $this->execute()->getIterator();
 	}
 
@@ -183,6 +185,19 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 	public function fetchPairs(?string $key = NULL, ?string $value = NULL): array
 	{
 		return $this->execute()->fetchPairs($key, $value);
+	}
+
+
+	/**
+	 * @return Db\ResultIterator<int, Db\Row>
+	 * @throws Db\Exceptions\ConnectionException
+	 * @throws Db\Exceptions\QueryException
+	 * @throws Exceptions\QueryException
+	 * @throws Exceptions\QueryBuilderException
+	 */
+	public function fetchIterator(): Db\ResultIterator
+	{
+		return $this->execute()->fetchIterator();
 	}
 
 

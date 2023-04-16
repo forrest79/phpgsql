@@ -151,7 +151,7 @@ final class QueryExecuteFetchTest extends TestCase
 	}
 
 
-	public function testResultIterator(): void
+	public function testFetchIterator(): void
 	{
 		$this->connection->query('
 			CREATE TABLE test(
@@ -173,7 +173,7 @@ final class QueryExecuteFetchTest extends TestCase
 			['id' => 2, 'name' => 'name2'],
 			['id' => 3, 'name' => 'name1'],
 		];
-		foreach ($query as $i => $row) {
+		foreach ($query->fetchIterator() as $i => $row) {
 			Tester\Assert::same($expected[$i], $row->toArray());
 		}
 

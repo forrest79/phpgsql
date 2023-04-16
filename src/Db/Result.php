@@ -59,9 +59,13 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 	}
 
 
+	/**
+	 * @deprecated Use fetchIterator() method.
+	 */
 	public function getIterator(): ResultIterator
 	{
-		return new ResultIterator($this);
+		//trigger_error('Use fetchIterator() method.', E_USER_DEPRECATED);
+		return $this->fetchIterator();
 	}
 
 
@@ -297,6 +301,15 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 		} while ($row !== NULL);
 
 		return $data;
+	}
+
+
+	/**
+	 * @return ResultIterator<int, Row>
+	 */
+	public function fetchIterator(): ResultIterator
+	{
+		return new ResultIterator($this);
 	}
 
 

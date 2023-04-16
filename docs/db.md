@@ -209,6 +209,7 @@ When you call the `query()` or `queryArgs()` method, query is executed in DB and
    - `col1[]col2` builds array `[$column1_value][][$column2_value] => Row`
    - `col1|col2=col3` builds array `[$column1_value][$column2_value] => $column3_value`
    - `col1|col2=[]` builds array `[$column1_value][$column2_value] => Row::toArray()`
+- `Result::fetchIterator()` returns an `iterator` and with this you can get all rows on the first resulted rows iteration (`fetchAll`, `fetchPairs` and `fetchAssoc` do internal iteration on all record to prepare returned `array`).
 
 Some examples to make it clear:
 
@@ -287,10 +288,10 @@ $row = $result->fetch();
 dump($row->id); // (integer) 1
 ```
 
-You can also iterate rows without fetching it to the `array`:
+And this is how you can iterate rows without fetching it to the `array`:
 
 ```php
-foreach ($connection->query('SELECT id, nick, active FROM users ORDER BY nick') as $row) {
+foreach ($connection->query('SELECT id, nick, active FROM users ORDER BY nick')->fetchIterator() as $row) {
   assert($row instanceof Forrest79\PhPgSql\Db\Row);
 }
 ```
