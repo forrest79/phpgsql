@@ -197,6 +197,7 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 	 */
 	public function fetchIterator(): Db\ResultIterator
 	{
+		/**	@phpstan-var Db\ResultIterator<int, Db\Row> */
 		return $this->execute()->fetchIterator();
 	}
 

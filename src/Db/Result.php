@@ -65,7 +65,7 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 	public function getIterator(): ResultIterator
 	{
 		//trigger_error('Use fetchIterator() method.', E_USER_DEPRECATED);
-		return $this->fetchIterator();
+		return new ResultIterator($this);
 	}
 
 
