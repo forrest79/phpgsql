@@ -1155,7 +1155,34 @@ final class FluentQueryTest extends Tests\TestCase
 		Tester\Assert::exception(function (): void {
 			$this->query()
 				->select([1])
-				->has('table');
+				->has('non-existing-param');
+		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::NON_EXISTING_QUERY_PARAM);
+	}
+
+
+	public function testGet(): void
+	{
+		$query = new class(new Fluent\QueryBuilder()) extends Fluent\Query
+		{
+
+			/**
+			 * @return mixed
+			 */
+			public function testGet(string $param)
+			{
+				return $this->get($param);
+			}
+
+		};
+
+		Tester\Assert::same([], $query->testGet($query::PARAM_SELECT));
+
+		$query->select(['column']);
+
+		Tester\Assert::same(['column'], $query->testGet($query::PARAM_SELECT));
+
+		Tester\Assert::exception(static function () use ($query): void {
+			$query->testGet('non-existing-param');
 		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::NON_EXISTING_QUERY_PARAM);
 	}
 

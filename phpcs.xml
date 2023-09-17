@@ -86,6 +86,7 @@
 	<!-- PHP 7.4 -->
 	<rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint">
 		<exclude-pattern>src/*</exclude-pattern>
+		<exclude-pattern>tests/Unit/FluentQueryTest.php</exclude-pattern>
 	</rule>
 
 	<rule ref="SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable">

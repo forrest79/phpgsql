@@ -688,6 +688,19 @@ class Query implements Sql
 
 
 	/**
+	 * @return mixed
+	 */
+	protected function get(string $param)
+	{
+		if (!\array_key_exists($param, self::DEFAULT_PARAMS)) {
+			throw Exceptions\QueryException::nonExistingQueryParam($param, \array_keys(self::DEFAULT_PARAMS));
+		}
+
+		return $this->params[$param];
+	}
+
+
+	/**
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
