@@ -42,12 +42,21 @@ final class QueryTest extends Tests\TestCase
 	}
 
 
-	public function testPrepareQueryWithBadParams(): void
+	public function testPrepareQueryWithMissingParam(): void
 	{
 		Tester\Assert::exception(static function (): void {
 			$query = Db\Sql\Query::create('SELECT * FROM table WHERE column = ? AND column2 = ?', 1)->createQuery();
 			$query->getSql();
-		}, Db\Exceptions\QueryException::class, NULL, Db\Exceptions\QueryException::NO_PARAM);
+		}, Db\Exceptions\QueryException::class, NULL, Db\Exceptions\QueryException::MISSING_PARAM);
+	}
+
+
+	public function testPrepareQueryWithExtraParam(): void
+	{
+		Tester\Assert::exception(static function (): void {
+			$query = Db\Sql\Query::create('SELECT * FROM table WHERE column = ?', 1, 2)->createQuery();
+			$query->getSql();
+		}, Db\Exceptions\QueryException::class, NULL, Db\Exceptions\QueryException::EXTRA_PARAM);
 	}
 
 

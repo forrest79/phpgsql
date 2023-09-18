@@ -11,7 +11,8 @@ class QueryException extends Exception
 	public const PREPARED_STATEMENT_QUERY_FAILED = 3;
 	public const ASYNC_PREPARED_STATEMENT_QUERY_FAILED = 4;
 	public const CANT_PASS_PARAMS = 5;
-	public const NO_PARAM = 6;
+	public const MISSING_PARAM = 6;
+	public const EXTRA_PARAM = 7;
 
 	/** @var Db\Query|NULL */
 	private $query;
@@ -73,9 +74,19 @@ class QueryException extends Exception
 	}
 
 
-	public static function noParam(int $index): self
+	public static function missingParam(int $index): self
 	{
-		return new self(\sprintf('There is no param for index %s. Did you escape all \'?\' characters, which you want to use as \'?\' and not as parameter?', $index), self::NO_PARAM);
+		return new self(\sprintf('There is no param for index %s. Did you escape all \'?\' characters, which you want to use as \'?\' and not as parameter?', $index), self::MISSING_PARAM);
+	}
+
+
+	/**
+	 * @param array<string, mixed> $extraParams
+	 */
+	public static function extraParam(array $extraParams): self
+	{
+		$count = count($extraParams);
+		return new self('The number of \'?\' don\'t match the number of parameters. ' . ($count > 1 ? 'The last parameter is extra.' : \sprintf('The last %d parameters are extra.', $count)), self::EXTRA_PARAM);
 	}
 
 }

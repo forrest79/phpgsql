@@ -70,7 +70,7 @@ class Query implements Db\Sql
 				}
 
 				if (!\array_key_exists($origParamIndex, $params)) {
-					throw Db\Exceptions\QueryException::noParam($origParamIndex);
+					throw Db\Exceptions\QueryException::missingParam($origParamIndex);
 				}
 
 				$param = $params[$origParamIndex];
@@ -99,6 +99,10 @@ class Query implements Db\Sql
 			},
 			$sql
 		);
+
+		if (($origParamIndex > 0) && ($params !== [])) {
+			throw Db\Exceptions\QueryException::extraParam($params);
+		}
 
 		if ($parsedParams === []) {
 			$parsedParams = $params;
