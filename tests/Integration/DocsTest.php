@@ -50,7 +50,7 @@ final class DocsTest extends TestCase
 			// Check dump()
 			$source = \preg_replace(
 				'#dump\((.+?)\); // (.+)#',
-				'Tester\Assert::same(Forrest79\PhPgSql\Tests\Integration\DocsTest::dump(\1), "\2");',
+				'Tester\Assert::same("\2", Forrest79\PhPgSql\Tests\Integration\DocsTest::dump(\1));',
 				$source
 			);
 			\assert(\is_string($source));
@@ -58,7 +58,7 @@ final class DocsTest extends TestCase
 			// Check table()
 			$source = \preg_replace(
 				'#table\((\$.+?)\);\n\/\*\*\n(.+?)\n\*\/#s',
-				'Tester\Assert::same(Forrest79\PhPgSql\Tests\Integration\DocsTest::table(\1), "\2");',
+				'Tester\Assert::same("\2", Forrest79\PhPgSql\Tests\Integration\DocsTest::table(\1));',
 				$source
 			);
 
@@ -105,7 +105,7 @@ final class DocsTest extends TestCase
 		if ($var === NULL) {
 			return '(NULL)';
 		} else if (\is_string($var)) {
-			return \sprintf('(string) \'%s\'', $var);
+			return \sprintf('(string) \'%s\'', str_replace(PHP_EOL, ' ', $var));
 		} else if (\is_bool($var)) {
 			return \sprintf('(bool) %s', $var ? 'TRUE' : 'FALSE');
 		} else if (\is_numeric($var)) {

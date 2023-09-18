@@ -182,7 +182,7 @@ To pass another query, we need to prepare one and then use it:
 $query = Forrest79\PhPgSql\Db\Sql\Query::create('SELECT id FROM users WHERE inserted_datetime::date > ?', '2020-01-02');
 $queryArgs = Forrest79\PhPgSql\Db\Sql\Query::createArgs('SELECT id FROM users WHERE inserted_datetime::date > ?', ['2020-01-02']);
 
-$result = $connection->query('SELECT d.id, d.name FROM user_departments ud JOIN departments d ON d.id = ud.department_id WHERE ud.user_id IN (?) AND d.active ORDER BY ?', $query, TRUE, Forrest79\PhPgSql\Db\Sql\Literal::create('d.id'));
+$result = $connection->query('SELECT d.id, d.name FROM user_departments ud JOIN departments d ON d.id = ud.department_id WHERE ud.user_id IN (?) AND d.active ORDER BY ?', $query, Forrest79\PhPgSql\Db\Sql\Literal::create('d.id'));
 
 $rows = $result->fetchAll();
 
@@ -419,13 +419,13 @@ $userId = '1; TRUNCATE user_departments';
 try {
   $connection->query('DELETE FROM user_departments WHERE id = ?', $userId);
 } catch (Forrest79\PhPgSql\Db\Exceptions\QueryException $e) {
-  dump($e->getMessage()); // (string) 'Query failed [ERROR:  invalid input syntax for type integer: \"1; TRUNCATE user_departments\"]: 'DELETE FROM user_departments WHERE id = $1'.'
+  dump($e->getMessage()); // (string) 'Query failed [ERROR:  invalid input syntax for type integer: \"1; TRUNCATE user_departments\" CONTEXT:  unnamed portal parameter $1 = '...']: 'DELETE FROM user_departments WHERE id = $1'.'
 }
 
 try {
   $connection->query('DELETE FROM user_departments WHERE id = $1', $userId);
 } catch (Forrest79\PhPgSql\Db\Exceptions\QueryException $e) {
-  dump($e->getMessage()); // (string) 'Query failed [ERROR:  invalid input syntax for type integer: \"1; TRUNCATE user_departments\"]: 'DELETE FROM user_departments WHERE id = $1'.'
+  dump($e->getMessage()); // (string) 'Query failed [ERROR:  invalid input syntax for type integer: \"1; TRUNCATE user_departments\" CONTEXT:  unnamed portal parameter $1 = '...']: 'DELETE FROM user_departments WHERE id = $1'.'
 }
 
 dump($connection->query('SELECT COUNT(*) FROM user_departments')->fetchSingle()); // (integer) 6
