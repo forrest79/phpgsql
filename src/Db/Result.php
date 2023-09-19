@@ -357,7 +357,7 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 	 */
 	public function parseColumnValue(string $column, $rawValue)
 	{
-		assert(($rawValue === NULL) || \is_string($rawValue)); // database result all values as string or NULL
+		\assert(($rawValue === NULL) || \is_string($rawValue)); // database result all values as string or NULL
 		$value = $this->dataTypeParser->parse($this->getColumnType($column), $rawValue);
 		$this->parsedColumns[$column] = TRUE;
 		return $value;

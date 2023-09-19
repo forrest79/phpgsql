@@ -28,7 +28,7 @@ class Complex implements \ArrayAccess
 	/**
 	 * @param array<self|string|array<mixed>|Db\Sql> $conditions
 	 */
-	private function __construct(string $type, array $conditions, ?Complex $parent = NULL, ?Query $query = NULL)
+	private function __construct(string $type, array $conditions, ?self $parent = NULL, ?Query $query = NULL)
 	{
 		$this->type = $type;
 		$this->conditions = $this->normalizeConditions($conditions);
@@ -64,7 +64,7 @@ class Complex implements \ArrayAccess
 	/**
 	 * @param array<self|string|array<mixed>|Db\Sql> $conditions
 	 */
-	public function addComplexAnd(array $conditions = []): Complex
+	public function addComplexAnd(array $conditions = []): self
 	{
 		$complexAnd = self::createAnd($conditions, $this, $this->query);
 		$this->add($complexAnd);
@@ -75,7 +75,7 @@ class Complex implements \ArrayAccess
 	/**
 	 * @param array<self|string|array<mixed>|Db\Sql> $conditions
 	 */
-	public function addComplexOr(array $conditions = []): Complex
+	public function addComplexOr(array $conditions = []): self
 	{
 		$complexOr = self::createOr($conditions, $this, $this->query);
 		$this->add($complexOr);
@@ -101,7 +101,7 @@ class Complex implements \ArrayAccess
 	/**
 	 * @throws Exceptions\ComplexException
 	 */
-	public function parent(): Complex
+	public function parent(): self
 	{
 		if ($this->parent === NULL) {
 			throw Exceptions\ComplexException::noParent();
@@ -126,7 +126,7 @@ class Complex implements \ArrayAccess
 	/**
 	 * @param array<self|string|array<mixed>|Db\Sql> $conditions
 	 */
-	public static function createAnd(array $conditions = [], ?Complex $parent = NULL, ?Query $query = NULL): self
+	public static function createAnd(array $conditions = [], ?self $parent = NULL, ?Query $query = NULL): self
 	{
 		return new self(self::TYPE_AND, $conditions, $parent, $query);
 	}
@@ -135,7 +135,7 @@ class Complex implements \ArrayAccess
 	/**
 	 * @param array<self|string|array<mixed>|Db\Sql> $conditions
 	 */
-	public static function createOr(array $conditions = [], ?Complex $parent = NULL, ?Query $query = NULL): self
+	public static function createOr(array $conditions = [], ?self $parent = NULL, ?Query $query = NULL): self
 	{
 		return new self(self::TYPE_OR, $conditions, $parent, $query);
 	}

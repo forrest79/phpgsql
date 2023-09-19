@@ -120,7 +120,7 @@ final class ParseDataTypeTest extends Tests\TestCase
 		$dataTypeParser = new class implements Db\DataTypeParser {
 
 			/**
-			 * {@inheritdoc}
+			 * {@inheritDoc}
 			 */
 			public function parse(string $type, ?string $value)
 			{

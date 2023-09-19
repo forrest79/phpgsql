@@ -158,7 +158,7 @@ final class ParseDataTypeTest extends TestCase
 		Tester\Assert::false($row->type_bool_false);
 
 		Tester\Assert::true($row->type_date instanceof \DateTimeImmutable);
-		assert($row->type_date instanceof \DateTimeImmutable);
+		\assert($row->type_date instanceof \DateTimeImmutable);
 		Tester\Assert::same('2018-01-01', $row->type_date->format('Y-m-d'));
 
 		Tester\Assert::true(\is_string($row->type_time));
@@ -168,11 +168,11 @@ final class ParseDataTypeTest extends TestCase
 		Tester\Assert::same('20:30:00+02', $row->type_timetz);
 
 		Tester\Assert::true($row->type_timestamp instanceof \DateTimeImmutable);
-		assert($row->type_timestamp instanceof \DateTimeImmutable);
+		\assert($row->type_timestamp instanceof \DateTimeImmutable);
 		Tester\Assert::same('2018-01-01 20:30:00', $row->type_timestamp->format('Y-m-d H:i:s'));
 
 		Tester\Assert::true($row->type_timestamptz instanceof \DateTimeImmutable);
-		assert($row->type_timestamptz instanceof \DateTimeImmutable);
+		\assert($row->type_timestamptz instanceof \DateTimeImmutable);
 		Tester\Assert::same('2018-01-01 20:30:00+02:00', $row->type_timestamptz->setTimezone(new \DateTimeZone('+2:00'))->format('Y-m-d H:i:sP'));
 
 		Tester\Assert::true(\is_string($row->type_varchar));
@@ -315,8 +315,8 @@ final class ParseDataTypeTest extends TestCase
 
 		Tester\Assert::true(\is_array($row->type_date));
 		Tester\Assert::true($row->type_date[0] instanceof \DateTimeImmutable);
-		assert(is_array($row->type_date));
-		assert($row->type_date[0] instanceof \DateTimeImmutable);
+		\assert(\is_array($row->type_date));
+		\assert($row->type_date[0] instanceof \DateTimeImmutable);
 		Tester\Assert::same('2018-01-01', $row->type_date[0]->format('Y-m-d'));
 
 		Tester\Assert::true(\is_array($row->type_time));
@@ -329,14 +329,14 @@ final class ParseDataTypeTest extends TestCase
 
 		Tester\Assert::true(\is_array($row->type_timestamp));
 		Tester\Assert::true($row->type_timestamp[0] instanceof \DateTimeImmutable);
-		assert(is_array($row->type_timestamp));
-		assert($row->type_timestamp[0] instanceof \DateTimeImmutable);
+		\assert(\is_array($row->type_timestamp));
+		\assert($row->type_timestamp[0] instanceof \DateTimeImmutable);
 		Tester\Assert::same('2018-01-01 20:30:00', $row->type_timestamp[0]->format('Y-m-d H:i:s'));
 
 		Tester\Assert::true(\is_array($row->type_timestamptz));
 		Tester\Assert::true($row->type_timestamptz[0] instanceof \DateTimeImmutable);
-		assert(is_array($row->type_timestamptz));
-		assert($row->type_timestamptz[0] instanceof \DateTimeImmutable);
+		\assert(\is_array($row->type_timestamptz));
+		\assert($row->type_timestamptz[0] instanceof \DateTimeImmutable);
 		Tester\Assert::same('2018-01-01 20:30:00+02:00', $row->type_timestamptz[0]->setTimezone(new \DateTimeZone('+2:00'))->format('Y-m-d H:i:sP'));
 	}
 
@@ -426,7 +426,7 @@ final class ParseDataTypeTest extends TestCase
 		$this->connection->setDataTypeParser(new class implements Db\DataTypeParser {
 
 			/**
-			 * {@inheritdoc}
+			 * {@inheritDoc}
 			 */
 			public function parse(string $type, ?string $value)
 			{

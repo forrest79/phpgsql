@@ -17,7 +17,7 @@ class Helper
 			if ($value === NULL) {
 				$array[$i] = 'NULL';
 			} else {
-				\assert(is_scalar($value));
+				\assert(\is_scalar($value));
 				$array[$i] = '"' . \str_replace('"', '\"', (string) $value) . '"';
 			}
 		}

@@ -105,7 +105,7 @@ final class DocsTest extends TestCase
 		if ($var === NULL) {
 			return '(NULL)';
 		} else if (\is_string($var)) {
-			return \sprintf('(string) \'%s\'', str_replace(PHP_EOL, ' ', $var));
+			return \sprintf('(string) \'%s\'', str_replace(\PHP_EOL, ' ', $var));
 		} else if (\is_bool($var)) {
 			return \sprintf('(bool) %s', $var ? 'TRUE' : 'FALSE');
 		} else if (\is_numeric($var)) {

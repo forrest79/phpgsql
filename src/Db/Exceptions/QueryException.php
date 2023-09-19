@@ -85,8 +85,8 @@ class QueryException extends Exception
 	 */
 	public static function extraParam(array $extraParams): self
 	{
-		$count = count($extraParams);
-		return new self('The number of \'?\' don\'t match the number of parameters. ' . ($count > 1 ? 'The last parameter is extra.' : \sprintf('The last %d parameters are extra.', $count)), self::EXTRA_PARAM);
+		$count = \count($extraParams);
+		return new self('The number of \'?\' don\'t match the number of parameters. ' . ($count > 1 ? \sprintf('The last %d parameters are extra.', $count) : 'The last parameter is extra.'), self::EXTRA_PARAM);
 	}
 
 }
