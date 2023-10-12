@@ -10,10 +10,6 @@ abstract class BenchmarkCase
 
 	public function run(): void
 	{
-		if (\defined('__PHPSTAN_RUNNING__')) {
-			return;
-		}
-
 		$this->setUp();
 
 		$class = new \ReflectionClass($this);
