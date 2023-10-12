@@ -560,7 +560,7 @@ $query = $connection
   ->from('users')
   ->orderBy(Forrest79\PhPgSql\Db\Sql\Expression::create('CASE WHEN age > ? THEN 1 ELSE 2 END', 36));
 
-dump($query); // (Query) SELECT (age > $1) AS \"is_old\" FROM users ORDER BY (CASE WHEN age > $2 THEN 1 ELSE 2 END) [Params: (array) [37, 36]]
+dump($query); // (Query) SELECT (age > $1) AS \"is_old\" FROM users ORDER BY CASE WHEN age > $2 THEN 1 ELSE 2 END [Params: (array) [37, 36]]
 
 $query->execute();
 ```

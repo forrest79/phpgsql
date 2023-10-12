@@ -426,7 +426,7 @@ class QueryBuilder
 		foreach ($orderBy as $value) {
 			if ($value instanceof Db\Sql) {
 				$params[] = $value;
-				$value = '(?)';
+				$value = '?';
 			} else if ($value instanceof Query) {
 				$params[] = $value->createSqlQuery();
 				$value = '(?)';

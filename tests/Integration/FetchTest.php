@@ -519,7 +519,7 @@ final class FetchTest extends TestCase
 		');
 		$this->connection->query('INSERT INTO test(name) SELECT \'name\' || generate_series FROM generate_series(3, 1, -1)');
 
-		$result = $this->connection->query('SELECT id, name FROM test ORDER BY id');
+		$result = $this->connection->query('SELECT id, name FROM test ORDER BY ? DESC', Db\Sql\Expression::create('id = ?', 1));
 
 		Tester\Assert::same(3, \count($result));
 
