@@ -4,9 +4,9 @@ PhPgSql
 [![Latest Stable Version](https://poser.pugx.org/forrest79/phpgsql/v)](//packagist.org/packages/forrest79/phpgsql)
 [![Monthly Downloads](https://poser.pugx.org/forrest79/phpgsql/d/monthly)](//packagist.org/packages/forrest79/phpgsql)
 [![License](https://poser.pugx.org/forrest79/phpgsql/license)](//packagist.org/packages/forrest79/phpgsql)
-[![Build](https://github.com/forrest79/PhPgSql/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/forrest79/PhPgSql/actions/workflows/build.yml)
+[![Build](https://github.com/forrest79/phpgsql/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/forrest79/phpgsql/actions/workflows/build.yml)
 
-Simple and fast PHP database library for PostgreSQL with auto converting DB types to PHP and a powerfull fluent interface that can be used to simply create most of SQL queries using PHP.
+Simple and fast PHP database library for PostgreSQL with auto converting DB types to PHP and a powerful fluent interface that can be used to simply create the most of SQL queries.
 
 - lightweight
 - no magic
@@ -14,11 +14,11 @@ Simple and fast PHP database library for PostgreSQL with auto converting DB type
 - automatically convert PG data types to PHP data types
 - support async connect to DB and async query
 - simple creating queries with parameters - char `?` for variable is automatically replaced with `$1`, `$2` and so...
-  - as variable you can pass scalar, bool, array, literal or other query
+  - as a variable you can pass scalar, bool, array, literal or other query
 
 DB and fluent part can be used separately.
 
-> Examples how to use this library in application, how to extend it with some useful methods and simple repository system can be found here [https://github.com/forrest79/PhPgSql-ExtensionRepositortyExample](https://github.com/forrest79/PhPgSql-ExtensionRepositortyExample).
+> Examples of how to use this library in application, how to extend it with some useful methods and a simple repository system can be found here [https://github.com/forrest79/phpgsql-extension-repository-example](https://github.com/forrest79/phpgsql-extension-repository-example).
 
 
 ## Installation
@@ -31,7 +31,7 @@ composer require forrest79/phpgsql
 
 PhPgSql requires PHP 7.1.0 and pgsql binary extension. It doesn't work with the PDO!
 
-If you're using [PHPStan](https://phpstan.org/) you can install [settings](https://github.com/forrest79/PhPgSql-PHPStan) for this great tool. 
+If you're using [PHPStan](https://phpstan.org/) you can install [settings](https://github.com/forrest79/phpgsql-phpstan) for this great tool. 
 
 ```sh
 composer require --dev forrest79/phpgsql-phpstan
