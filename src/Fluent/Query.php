@@ -105,7 +105,7 @@ class Query implements Sql
 
 
 	/**
-	 * @param array<int|string, string|int|bool|self|Db\Sql|NULL> $columns
+	 * @param array<int|string, string|int|bool|\BackedEnum|self|Db\Sql|NULL> $columns
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
@@ -732,8 +732,8 @@ class Query implements Sql
 	{
 		if ((($data instanceof self) || ($data instanceof Db\Sql)) && ($alias === NULL)) {
 			throw Exceptions\QueryException::sqlMustHaveAlias();
-		} else if (!\is_scalar($data) && !($data instanceof self) && !($data instanceof Db\Sql)) {
-			throw Exceptions\QueryException::columnMustBeScalarOrExpression();
+		} else if (!\is_scalar($data) && !($data instanceof \BackedEnum) && !($data instanceof self) && !($data instanceof Db\Sql)) {
+			throw Exceptions\QueryException::columnMustBeScalarOrEnumOrExpression();
 		}
 	}
 

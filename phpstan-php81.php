@@ -25,6 +25,11 @@ return PHP_VERSION_ID < 80100
 					'count' => 50,
 				],
 				[ // === Compatibility with Enums (PHP 8.1) ===
+					'message' => '#Access to constant One on an unknown class Forrest79\\\\PhPgSql\\\\Tests\\\\TestEnum\.#',
+					'path' => __DIR__ . '/tests/Unit/FluentQueryTest.php',
+					'count' => 2,
+				],
+				[ // === Compatibility with Enums (PHP 8.1) ===
 					'message' => '#Access to constant (One|Two) on an unknown class Forrest79\\\\PhPgSql\\\\Tests\\\\TestEnum\.#',
 					'path' => __DIR__ . '/tests/Unit/QueryTest.php',
 					'count' => 3,

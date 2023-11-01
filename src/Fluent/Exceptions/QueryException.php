@@ -8,7 +8,7 @@ class QueryException extends Exception
 	public const TABLE_ALIAS_ALREADY_EXISTS = 2;
 	public const NON_EXISTING_QUERY_PARAM = 3;
 	public const SQL_MUST_HAVE_ALIAS = 4;
-	public const PARAM_MUST_BE_SCALAR_OR_EXPRESSION = 5;
+	public const PARAM_MUST_BE_SCALAR_OR_ENUM_OR_EXPRESSION = 5;
 	public const CANT_UPDATE_QUERY_AFTER_EXECUTE = 6;
 	public const YOU_MUST_EXECUTE_QUERY_BEFORE_THAT = 7;
 
@@ -40,9 +40,9 @@ class QueryException extends Exception
 	}
 
 
-	public static function columnMustBeScalarOrExpression(): self
+	public static function columnMustBeScalarOrEnumOrExpression(): self
 	{
-		return new self('Column must be a scalar, Fluent\Query or Db\Sql.', self::PARAM_MUST_BE_SCALAR_OR_EXPRESSION);
+		return new self('Column must be a scalar, an enum, Fluent\Query or Db\Sql.', self::PARAM_MUST_BE_SCALAR_OR_ENUM_OR_EXPRESSION);
 	}
 
 

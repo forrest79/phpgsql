@@ -5,7 +5,7 @@ namespace Forrest79\PhPgSql\Fluent;
 use Forrest79\PhPgSql\Db;
 
 /**
- * @phpstan-type QueryParams array{select: array<int|string, string|int|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: list<string>, joins: list<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: list<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: list<array<mixed>>, suffix: list<array<mixed>>}
+ * @phpstan-type QueryParams array{select: array<int|string, string|int|\BackedEnum|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: list<string>, joins: list<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: list<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: list<array<mixed>>, suffix: list<array<mixed>>}
  */
 class QueryBuilder
 {
@@ -272,7 +272,7 @@ class QueryBuilder
 			if ($columnNames !== NULL) {
 				$columnNames[] = \is_int($key) ? $value : $key;
 			}
-			$columns[] = $value . (\is_int($key) ? '' : (' AS "' . $key . '"'));
+			$columns[] = (($value instanceof \BackedEnum) ? $value->value : $value) . (\is_int($key) ? '' : (' AS "' . $key . '"'));
 		}
 
 		return \implode(', ', $columns);

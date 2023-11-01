@@ -156,7 +156,7 @@ parameters:
 		# === PHPStan imperfection ===
 
 		-
-			message: "#^Property Forrest79\\\\PhPgSql\\\\Fluent\\\\Query::\\$params \\(array\\{select: array\\<int\\|string, Forrest79\\\\PhPgSql\\\\Db\\\\Sql\\|Forrest79\\\\PhPgSql\\\\Fluent\\\\Query\\|int\\|string\\>, distinct: bool, tables: array\\<string, array\\{string, string\\}\\>, table\\-types: array\\{main: string\\|null, from: list\\<string\\>, joins: list\\<string\\>\\}, join\\-conditions: array\\<string, Forrest79\\\\PhPgSql\\\\Fluent\\\\Complex\\>, where: Forrest79\\\\PhPgSql\\\\Fluent\\\\Complex\\|null, groupBy: array\\<string\\>, having: Forrest79\\\\PhPgSql\\\\Fluent\\\\Complex\\|null, \\.\\.\\.\\}\\) does not accept .+\\.$#"
+			message: "#^Property Forrest79\\\\PhPgSql\\\\Fluent\\\\Query::\\$params \\(array\\{select: array\\<int\\|string, BackedEnum\\|Forrest79\\\\PhPgSql\\\\Db\\\\Sql\\|Forrest79\\\\PhPgSql\\\\Fluent\\\\Query\\|int\\|string\\>, distinct: bool, tables: array\\<string, array\\{string, string\\}\\>, table\\-types: array\\{main: string\\|null, from: list\\<string\\>, joins: list\\<string\\>\\}, join\\-conditions: array\\<string, Forrest79\\\\PhPgSql\\\\Fluent\\\\Complex\\>, where: Forrest79\\\\PhPgSql\\\\Fluent\\\\Complex\\|null, groupBy: array\\<string\\>, having: Forrest79\\\\PhPgSql\\\\Fluent\\\\Complex\\|null, \\.\\.\\.\\}\\) does not accept .+\\.$#"
 			path: src/Fluent/Query.php
 			count: 4
 

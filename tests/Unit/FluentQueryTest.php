@@ -83,6 +83,22 @@ final class FluentQueryTest extends Tests\TestCase
 	}
 
 
+	public function testSelectEnum(): void
+	{
+		if (\PHP_VERSION_ID < 80100) {
+			Tester\Environment::skip('Minimum PHP version is 8.1');
+		}
+
+		$query = $this->query()
+			->select([Tests\TestEnum::One, 'column' => Tests\TestEnum::One])
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('SELECT 1, 1 AS "column"', $query->getSql());
+		Tester\Assert::same([], $query->getParams());
+	}
+
+
 	public function testFromWithFluentQuery(): void
 	{
 		$query = $this->query()
@@ -1231,7 +1247,7 @@ final class FluentQueryTest extends Tests\TestCase
 	{
 		Tester\Assert::exception(function (): void {
 			$this->query()->table(['table'], 't');
-		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::PARAM_MUST_BE_SCALAR_OR_EXPRESSION);
+		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::PARAM_MUST_BE_SCALAR_OR_ENUM_OR_EXPRESSION);
 	}
 
 
