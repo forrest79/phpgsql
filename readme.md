@@ -5,6 +5,7 @@ PhPgSql
 [![Monthly Downloads](https://poser.pugx.org/forrest79/phpgsql/d/monthly)](//packagist.org/packages/forrest79/phpgsql)
 [![License](https://poser.pugx.org/forrest79/phpgsql/license)](//packagist.org/packages/forrest79/phpgsql)
 [![Build](https://github.com/forrest79/phpgsql/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/forrest79/phpgsql/actions/workflows/build.yml)
+[![codecov](https://codecov.io/gh/forrest79/phpgsql/graph/badge.svg?token=QBWAKKUSN3)](https://codecov.io/gh/forrest79/phpgsql)
 
 Simple and fast PHP database library for PostgreSQL with auto converting DB types to PHP and a powerful fluent interface that can be used to simply create the most of SQL queries.
 
