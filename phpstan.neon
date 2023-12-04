@@ -15,11 +15,6 @@ parameters:
 		# === This is OK ===
 
 		-
-			message: '#^Cannot call method getQuery\(\) on Forrest79\\PhPgSql\\Db\\AsyncQuery\|null\.$#'
-			path: %rootDir%/../../../src/Db/AsyncQuery.php
-			count: 1
-
-		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
 			path: %rootDir%/../../../src/Db/Row.php
 			count: 1
@@ -94,6 +89,11 @@ parameters:
 
 		-
 			message: '#^Strict comparison using \!\=\= between array\{\} and array\{\} will always evaluate to false\.$#'
+			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
+			count: 1
+
+		-
+			message: '#^Unused result of ternary operator\.$#'
 			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
 			count: 1
 
