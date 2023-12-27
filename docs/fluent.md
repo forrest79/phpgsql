@@ -1,10 +1,12 @@
 # PhPgSql\Fluent
 
+PhPgSql\Fluent implements a small part of PostreSQL SQL [commands](https://www.postgresql.org/docs/current/reference.html) via fluent object syntax.
+
 ## Common use
 
 Fluent interface can be used to simply create SQL queries using objects.
 
-Fluent methods are defined in the `Forrest79\PhPgSql\Fluent\Sql` interface. There're 3 objects implementing this interface. You can start your query in the same way from all these objects:
+Fluent methods are defined in the `Forrest79\PhPgSql\Fluent\Sql` interface. There are 3 objects implementing this interface. You can start your query in the same way from all these objects:
 
 - `Forrest79\PhPgSql\Fluent\Query` - this is the basic object, that generates queries (but can't execute them)
 - `Forrest79\PhPgSql\Fluent\QueryExecute` - this is `Fluent\Query` object extension, requires `Db\Connection` object and can execute queries in the database
