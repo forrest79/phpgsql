@@ -5,7 +5,27 @@ namespace Forrest79\PhPgSql\Fluent;
 use Forrest79\PhPgSql\Db;
 
 /**
- * @phpstan-type QueryParams array{select: array<int|string, string|int|\BackedEnum|Query|Db\Sql>, distinct: bool, tables: array<string, array{0: string, 1: string}>, table-types: array{main: string|NULL, from: list<string>, joins: list<string>}, join-conditions: array<string, Complex>, where: Complex|NULL, groupBy: array<string>, having: Complex|NULL, orderBy: array<string|Db\Sql|Query>, limit: int|NULL, offset: int|NULL, combine-queries: list<array{0: string|Query|Db\Sql, 1: string}>, insert-columns: array<string>, returning: array<int|string, string|int|Query|Db\Sql>, data: array<string, mixed>, rows: array<int, array<string, mixed>>, prefix: list<array<mixed>>, suffix: list<array<mixed>>}
+ * @phpstan-type QueryParams array{
+ *   select: array<int|string, string|int|\BackedEnum|Query|Db\Sql>,
+ *   distinct: bool,
+ *   tables: array<string, array{0: string, 1: string}>,
+ *   table-types: array{main: string|NULL, from: list<string>, joins: list<string>},
+ *   join-conditions: array<string, Complex>,
+ *   lateral-tables: array<string, string>,
+ *   where: Complex|NULL,
+ *   groupBy: array<string>,
+ *   having: Complex|NULL,
+ *   orderBy: array<string|Db\Sql|Query>,
+ *   limit: int|NULL,
+ *   offset: int|NULL,
+ *   combine-queries: list<array{0: string|Query|Db\Sql, 1: string}>,
+ *   insert-columns: array<string>,
+ *   returning: array<int|string, string|int|Query|Db\Sql>,
+ *   data: array<string, mixed>,
+ *   rows: array<int, array<string, mixed>>,
+ *   prefix: list<array<mixed>>,
+ *   suffix: list<array<mixed>>
+ * }
  */
 class QueryBuilder
 {
@@ -90,6 +110,7 @@ class QueryBuilder
 			'INTO',
 			$mainTable,
 			$mainTableAlias,
+			FALSE,
 			$params
 		);
 
@@ -195,6 +216,7 @@ class QueryBuilder
 				NULL,
 				$mainTable,
 				$mainTableAlias,
+				FALSE,
 				$params
 			) . ' SET ' . \implode(', ', $set) .
 			$this->getFrom($queryParams, $params, FALSE) .
@@ -218,6 +240,7 @@ class QueryBuilder
 				'FROM',
 				$mainTable,
 				$mainTableAlias,
+				FALSE,
 				$params
 			) .
 			$this->getWhere($queryParams, $params) .
@@ -296,6 +319,7 @@ class QueryBuilder
 					NULL,
 					$queryParams[Query::PARAM_TABLES][$mainTableAlias][self::TABLE_NAME],
 					$mainTableAlias,
+					isset($queryParams[Query::PARAM_LATERAL_TABLES][$mainTableAlias]),
 					$params
 				);
 			}
@@ -306,6 +330,7 @@ class QueryBuilder
 				NULL,
 				$queryParams[Query::PARAM_TABLES][$tableAlias][self::TABLE_NAME],
 				$tableAlias,
+				isset($queryParams[Query::PARAM_LATERAL_TABLES][$tableAlias]),
 				$params
 			);
 		}
@@ -339,6 +364,7 @@ class QueryBuilder
 				$joinType,
 				$queryParams[Query::PARAM_TABLES][$tableAlias][self::TABLE_NAME],
 				$tableAlias,
+				isset($queryParams[Query::PARAM_LATERAL_TABLES][$tableAlias]),
 				$params
 			);
 
@@ -596,7 +622,7 @@ class QueryBuilder
 	 * @param string|Db\Sql|Query $table
 	 * @param list<mixed> $params
 	 */
-	private function processTable(?string $type, $table, string $alias, array &$params): string
+	private function processTable(?string $type, $table, string $alias, bool $isLateral, array &$params): string
 	{
 		if ($table instanceof Db\Sql) {
 			$params[] = $table;
@@ -609,6 +635,11 @@ class QueryBuilder
 			$params[] = $table->createSqlQuery();
 			$table = '(?)';
 		}
+
+		if ($isLateral) {
+			$table = 'LATERAL ' . $table;
+		}
+
 		return (($type === NULL) ? '' : ($type . ' ')) . ($table === $alias ? $table : ($table . ' AS ' . $alias));
 	}
 

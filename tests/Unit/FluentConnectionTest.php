@@ -230,6 +230,21 @@ final class FluentConnectionTest extends Tests\TestCase
 	}
 
 
+	public function testLateral(): void
+	{
+		$query = $this->fluentConnection
+			->lateral('t2')
+			->select(['t1.column1', 't2.column2'])
+			->from('table1', 't1')
+			->from(new Db\Sql\Query('SELECT column2 FROM table2'), 't2')
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('SELECT t1.column1, t2.column2 FROM table1 AS t1, LATERAL (SELECT column2 FROM table2) AS t2', $query->getSql());
+		Tester\Assert::same([], $query->getParams());
+	}
+
+
 	public function testWhere(): void
 	{
 		$query = $this->fluentConnection

@@ -6,7 +6,7 @@ PhPgSql\Fluent implements a small part of PostreSQL SQL [commands](https://www.p
 
 Fluent interface can be used to simply create SQL queries using objects.
 
-Fluent methods are defined in the `Forrest79\PhPgSql\Fluent\Sql` interface. There are 3 objects implementing this interface. You can start your query in the same way from all these objects:
+Fluent methods are defined in the `Forrest79\PhPgSql\Fluent\Sql` interface. There are three objects implementing this interface. You can start your query in the same way from all these objects:
 
 - `Forrest79\PhPgSql\Fluent\Query` - this is the basic object, that generates queries (but can't execute them)
 - `Forrest79\PhPgSql\Fluent\QueryExecute` - this is `Fluent\Query` object extension, requires `Db\Connection` object and can execute queries in the database
@@ -14,7 +14,7 @@ Fluent methods are defined in the `Forrest79\PhPgSql\Fluent\Sql` interface. Ther
 
 Both `Query` and `QueryExecute` needs the `QueryBuilder` object. `Fluent\Connection` pass this object automatically.
 
-Fluent generates `Db\Sql\Query` object with the `?` character as placeholders for parameters that is handled by `PhPgSql\Db` part. `Db\Sql\Query` object is created and used internally but you can create it manually, if you want, with the `Fluent\Query::createSqlQuery()` method. 
+Fluent generates `Db\Sql\Query` object with the `?` character as placeholders for parameters that is handled by `PhPgSql\Db` part. `Db\Sql\Query` object is created and used internally, but you can create it manually if you want, with the `Fluent\Query::createSqlQuery()` method. 
 
 ```php
 $fluent = new Forrest79\PhPgSql\Fluent\Query(new Forrest79\PhPgSql\Fluent\QueryBuilder());
@@ -43,7 +43,7 @@ $row = $fluent
 dump($row); // (Row) ['id' => 1, 'nick' => 'Bob', 'inserted_datetime' => '2020-01-01 09:00:00', 'active' => TRUE, 'age' => 45, 'height_cm' => 178.2, 'phones' => [200300, 487412]]
 ```
 
-But you don't want to do this so complicated. Use `Fluent\Connection` to create `QueryExecute` easily:
+But you don't want to do this so complicatedly. Use `Fluent\Connection` to create `QueryExecute` easily:
 
 ```php
 $userNick = $connection
@@ -57,9 +57,9 @@ dump($userNick); // (string) 'Brandon'
 
 ## Writing SQL queries
 
-This is the list of all methods you can use to generate query. This covers most of the defaults SQL commands. If there is something missing - you must write your query manually as a string (or you can extend `Fluent\Query` and `Fluent\QueryBuilder` with your functionality - more about this later). Many methods define alias, some needs it and can't be used without it.
+This is the list of all methods you can use to generate a query. This covers most of the default SQL commands. If there is something missing - you must write your query manually as a string (or you can extend `Fluent\Query` and `Fluent\QueryBuilder` with your functionality - more about this later). Many methods define alias, some need it and can't be used without it.
 
-You can start query with whatever method you want. Methods only sets query properties and from these properties is generated final SQL query.
+You can start a query with whatever method you want. Methods only set query properties, and from these properties are generated the final SQL query.
 
 Every query is `SELECT` at first, until you call `->insert(...)`, `->update(...)`, `->delete(...)` or `->truncate(...)`, which change query type to apropriate SQL command (you can set type more than once in one query, the last is used - except `INSERT` - `SELECT`). So you can prepare you query in a common way and at the end, you can decide if you want to `SELECT` or `DELETE` data or whatsoever. If you call some method more than once, data is merged, for example, this `->select(['column1'])->select(['column2'])` is the same as `->select(['column1', 'column2'])`. Conditions are connected with the logic `AND`.
 
@@ -78,13 +78,15 @@ Every query is `SELECT` at first, until you call `->insert(...)`, `->update(...)
 - `join($join, ?string $alias = NULL, $onCondition = NULL)` (or `innerJoin(...)`/`leftJoin(...)`/`leftOuterJoin(...)`/`rightJoin(...)`/`rightOuterJoin(...)`/`fullJoin(...)`/`fullOuterJoin(...)`) - joins table or query. You must provide alias if you want to add more conditions to `ON`. `$join` can be simple string or other `Query` or `Db\Sql`. `$onCondition` can be simple `string` or other `Complex` or `Db\Sql`. `Db\Sql` can be used for some complex expression, where you need to use `?` and parameters. 
 
 
-- `crossJoin($join, ?string $alias = NULL)` - defines cross join. `$join` can be simple string or other `Query` or `Db\Sql`. There is no `ON` condition.
+- `crossJoin($join, ?string $alias = NULL)` - defines cross-join. `$join` can be simple string or other `Query` or `Db\Sql`. There is no `ON` condition.
 
 
 - `on(string $alias, $condition, ...$params)` - defines new `ON` condition for joins. More `ON` conditions for one join is connected with `AND`. If `$condition` is `string`, you can use `?` and parameters in `$params`. Otherwise `$condition` can be `Complex` or `Db\Sql`.
 
+- `lateral(string $alias)` - make subquery lateral.
 
-- `where($condition, ...$params)` (or `having(...)`) - defines `WHERE` or `HAVING` conditions. you can provide condition as a `string`. When `string` condition is used, you can add `$parameters`. When in the condition is no `?` and only one parameter is used, comparision is made between condition and parameter. If parameter is scalar, simple `=` is used, for an `array` is used `IN` operator, the same applies ale for `Query` (`Fluent\Query` or `Db\Sql`). And for `NULL` is used `IS` operator. This could be handy, when you want to use more parameter types in one condition. For example, you can provide `int` and `=` will be use and if you provide `array<int>` - `IN` operator will be used and query will be working for the both parameter types. More complex conditions can be written manually as a `string` with `?` for parameters. Or you can use `Complex` or `Db\Sql` as condition. In this case, `$params` must be blank. All `where()` or `having()` calls is connected with logic `AND`.
+
+- `where($condition, ...$params)` (or `having(...)`) - defines `WHERE` or `HAVING` conditions. you can provide condition as a `string`. When `string` condition is used, you can add `$parameters`. When in the condition is no `?` and only one parameter is used, comparision is made between condition and parameter. If parameter is scalar, simple `=` is used, for an `array` is used `IN` operator, the same applies ale for `Query` (`Fluent\Query` or `Db\Sql`). And for `NULL` is used `IS` operator. This could be handy when you want to use more parameter types in one condition. For example, you can provide `int` and `=` will be use and if you provide `array<int>` - `IN` operator will be used and the query will be working for the both parameter types. More complex conditions can be written manually as a `string` with `?` for parameters. Or you can use `Complex` or `Db\Sql` as condition. In this case, `$params` must be blank. All `where()` or `having()` calls is connected with logic `AND`.
 
 
 - `whereAnd(array $conditions = []): Complex` (or `whereOr(...)` / `havingAnd(...)` / `havingOr()`) - with these methods, you can generate condition groups. Ale provided conditions are connected with logic `AND` for `whereAnd()` and `havingAnd()` and with logic `OR` for `whereOr()` and `havingOr()`. All these methods return `Complex` object (more about this later). `$conditions` items can be simple `string`, another `array` (this is a little bit magic - this works as `where()`/`having()` method - first item in this `array` is conditions and next items are parameters), `Complex` or `Db\Sql`. 
@@ -102,19 +104,19 @@ Every query is `SELECT` at first, until you call `->insert(...)`, `->update(...)
 - `offset(int $offset)` - generates `OFFSET` statement with `int` parameter.
 
 
-- `union($query)` (or `` / `` / ``) - connects 2 queries with `UNION`, `UNION ALL`, `INTERSECT` or `EXCEPT`. Query can be simple `string,` another `Query` or `Db\Sql`.
+- `union($query)` (or `` / `` / ``) - connects two queries with `UNION`, `UNION ALL`, `INTERSECT` or `EXCEPT`. Query can be simple `string,` another `Query` or `Db\Sql`.
 
 
-- `insert(?string $into = NULL, ?array $columns = [])` - sets query as `INSERT`. When the main table is not provided yet, you can set it or rewrite it with the `$into` parameter. If you want use `INSERT ... SELECT ...` you can provide column names in `$columns` parameter (only if columns names for INSERT and SELECT differs).
+- `insert(?string $into = NULL, ?array $columns = [])` - sets query as `INSERT`. When the main table is not provided yet, you can set it or rewrite it with the `$into` parameter. If you want use `INSERT ... SELECT ...` you can provide column names in `$columns` parameter (only if column names for INSERT and SELECT differs).
 
 
-- `values(array $data)` - sets data for insertion. Key is column name and value is inserted value. Value can be scalar or `Db\Sql`. Method can be called multipletimes and provided data is merged.
+- `values(array $data)` - sets data for insertion. Key is column name and value is inserted value. Value can be scalar or `Db\Sql`. Method can be called multiple times and provided data is merged.
 
 
-- `rows(array $rows)` - this method can be used to insert multiple rows in one query. `$rows` is an `array` of arrays. Each array is one row (the same as for the `values()` method). All rows must have the same columns. Method can be called multipletimes and all rows are merged.
+- `rows(array $rows)` - this method can be used to insert multiple rows in one query. `$rows` is an `array` of arrays. Each array is one row (the same as for the `values()` method). All rows must have the same columns. Method can be called multiple and all rows are merged.
 
 
-- `update(?string $table = NULL, ?string $alias = NULL)`: - set query for updation. If main table is not set, you must set it or rewrite with the `$table` parameter. `$alias` can be provided, when you want to use `UPDATE ... FROM ...`.
+- `update(?string $table = NULL, ?string $alias = NULL)`: — set query for update. If the main table is not set, you must set it or rewrite with the `$table` parameter. `$alias` can be provided, when you want to use `UPDATE ... FROM ...`.
 
 
 - `set(array $data)` - sets data to update. Rules for the data are the same as for the `values()` method.
@@ -129,7 +131,7 @@ Every query is `SELECT` at first, until you call `->insert(...)`, `->update(...)
 - `truncate(?string $table = NULL)` - truncates table. If the main table is not set, you must provide/rewrite it with the `$table` parameter.
 
 
-- `prefix(string $queryPrefix/$querySuffix, ...$params)` (or `suffix(...)`) - with this, you can define univerzal query prefix or suffix. This is usefull for actually not supported fluent syntax. With prefix, you can create CTE (Common Table Expression) queries. With suffix, you can create `SELECT ... FOR UPDATE` for example. Definition can be simple `string` or you can use `?` and parameters.
+- `prefix(string $queryPrefix/$querySuffix, ...$params)` (or `suffix(...)`) - with this, you can define univerzal query prefix or suffix. This is useful for actually not supported fluent syntax. With prefix, you can create CTE (Common Table Expression) queries. With suffix, you can create `SELECT ... FOR UPDATE` for example. Definition can be simple `string` or you can use `?` and parameters.
 
 If you want to create a copy of existing query, just use `clone`:
 
@@ -152,7 +154,7 @@ dump($query->has($query::PARAM_WHERE)); // (bool) FALSE
 
 Every table definition command (like `->table(...)`, `->from(...)`, joins, update table, ...) has table alias definition - it's optional, but for some places, you must define alias (also for joins, if you want to use another `on()` method, you must target `ON` conditon to the concrete table with the table alias).
 
-If you want to create a alias for a column in `SELECT`, use `string` key in `array` definition (the same for `returning()`):
+If you want to create an alias for a column in `SELECT`, use `string` key in `array` definition (the same for `returning()`):
 
 ```php
 $query = $connection
@@ -209,7 +211,7 @@ Complex is a list of conditions that're all connected with `AND` or `OR`. The ma
 
 Complex can be created with the static factory methods `Complex::createAnd(...)` or `Complex::createOr(...)`. The first argument can be an `array` with the condition list. New condition can be inserted with the `add(...)` method.
 
-With methods `addComplexAnd(...)` or `addComplexOr(...)` you can add new `Complex` object to the conditions list and this new `Complex` object is returned. These `Complex` objects are connected into a tree structure (and can be connected also to the `Query` object). When you need to use simply fluent interface, you can use `parent()` method, that returns parent `Complex` or `query()` that returns connected `Query` object.
+With methods `addComplexAnd(...)` or `addComplexOr(...)` you can add new `Complex` object to the condition list and this new `Complex` object is returned. These `Complex` objects are connected into a tree structure (and can be connected also to the `Query` object). When you need to use simply fluent interface, you can use `parent()` method, that returns parent `Complex` or `query()` that returns connected `Query` object.
 
 Method `getType()` returns `AND` or `OR` and `getConditions()` returns the list of all conditions. You will probably don't need these methods at all.
 
@@ -257,9 +259,9 @@ $query = $connection->table('users')
 dump($query); // (Query) SELECT * FROM users WHERE (column = $1) OR (column2 IN ($2, $3)) OR ((column IN (SELECT 1)) AND (column2 = ANY(SELECT 2))) OR (column3 IS NOT NULL) [Params: (array) [1, 2, 3]]
 ```
 
-### Inserts
+### Insert
 
-You can insert simple row:
+You can insert a simple row:
 
 ```php
 $query = $connection
@@ -352,7 +354,7 @@ $insertedRows = $query->getAffectedRows();
 dump($insertedRows); // (integer) 2
 ```
 
-And if you're using the same names for columns in `INSERT` and `SELECT`, you can call insert without the columns list and it will be detected from the `SELECT` columns.
+And if you're using the same names for columns in `INSERT` and `SELECT`, you can call insert without the column list, and it will be detected from the `SELECT` columns.
 
 ```php
 $insertedRows = $connection
@@ -437,9 +439,10 @@ $query->execute();
 
 ## Fetching data from DB
 
-On `QueryExecute`, you can use all fetch functions as on the `Db\Result`. All `fetch*()` methods call `execute()` that run query in DB and returns the `Db\Result` object. The `execute()` method can be used everytime, but it's handy mostly for queries, that returns no data.
+On `QueryExecute`, you can use all fetch functions as on the `Db\Result`. All `fetch*()` methods call `execute()` that run query in DB and returns the `Db\Result` object. The `execute()` method can be used everytime, but it's handy mostly for queries returning no data.
 
-> You can pass query object to `foreach` without calling `execute()` or other fetch function. This is good, because just one rows iteration is made (`fetchAll()`, `fetchPairs()` and `fetchAssoc()` iterate all rows in backgroud before return an array). If you want to iterate rows just once and run query in DB earlyier than in `foreach`, just call `execute()` whenever you want and pass query object or returned result object to `foreach`.
+> You can pass a query object to `foreach` without calling `execute()` or another fetch function. This is good, because just one rows iteration is made (`fetchAll()`, `fetchPairs()` and `fetchAssoc()` iterate all rows in backgroud before return an array). If you want to iterate rows just once and run query in DB earlyier than in `foreach`, just call `execute()` whenever you want and pass query object or returned result object to `foreach`.
+> We can get the same behavior using `fetchIterator`.
 
 You can update your query till `execute()` is call, after that, no updates on query is available, you can only execute this query again by calling `reexecute()`:
 
@@ -464,9 +467,9 @@ $updatedUserNick = $query->reexecute()->fetchSingle();
 dump($updatedUserNick); // (string) 'Thomas'
 ```
 
-If you clone already executed query, copy is cloned with the reseted result, so you can still update the query and then execute it.
+If you clone an already executed query, copy is cloned with the reseted result, so you can still update the query and then execute it.
 
-You can also run async query with the `asyncExecute()` method.
+You can also run the async query with the `asyncExecute()` method.
 
 ```php
 $asyncQuery = $connection
@@ -486,7 +489,7 @@ dump($userNick); // (string) 'Bob'
 
 ## Extending
 
-You can extend generating SQL queries with your own logic (for example you can replace some placeholder with a value from your application service). Extends `QueryBuilder` and overwrites method `prepareSqlQuery(...)` that get generated string SQL and all params, so you can update this string or parameters before the `Db\Sql\Query` is returned.
+You can extend generating SQL queries with your own logic (for example, you can replace some placeholder with a value from your application service). Extends `QueryBuilder` and overwrites method `prepareSqlQuery(...)` that get generated string SQL and all params, so you can update this string or parameters before the `Db\Sql\Query` is returned.
 
 To use your new `QueryBuilder` automatically from the `Connection`, use `Connection::setQueryBuilder()` method or overwrite the `Connection::getQueryBuilder()` method.
 
@@ -518,7 +521,7 @@ dump($query1->where('id', 1)->exists()); // (bool) TRUE
 dump($query2->where('id', 10)->exists()); // (bool) FALSE
 ```
 
-Of cource, you want to use your own query right from the connection. So overwrite `Connection::createQuery()` method and return instance of your own query here.
+Of course, you want to use your own query right from the connection. So overwrite `Connection::createQuery()` method and return instance of your own query here.
 
 ## Query examples
 

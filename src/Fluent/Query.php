@@ -20,6 +20,7 @@ class Query implements Sql
 	public const PARAM_TABLES = 'tables';
 	public const PARAM_TABLE_TYPES = 'table-types';
 	public const PARAM_JOIN_CONDITIONS = 'join-conditions';
+	public const PARAM_LATERAL_TABLES = 'lateral-tables';
 	public const PARAM_WHERE = 'where';
 	public const PARAM_GROUPBY = 'groupBy';
 	public const PARAM_HAVING = 'having';
@@ -59,6 +60,7 @@ class Query implements Sql
 			self::TABLE_TYPE_JOINS => [],
 		],
 		self::PARAM_JOIN_CONDITIONS => [],
+		self::PARAM_LATERAL_TABLES => [],
 		self::PARAM_WHERE => NULL,
 		self::PARAM_GROUPBY => [],
 		self::PARAM_HAVING => NULL,
@@ -314,6 +316,16 @@ class Query implements Sql
 	{
 		$this->resetQuery();
 		$this->getComplexParam(self::PARAM_JOIN_CONDITIONS, $alias)->add($condition, ...$params);
+		return $this;
+	}
+
+
+	/**
+	 * @return static
+	 */
+	public function lateral(string $alias): self
+	{
+		$this->params[self::PARAM_LATERAL_TABLES][$alias] = $alias;
 		return $this;
 	}
 

@@ -584,6 +584,51 @@ final class FluentQueryTest extends Tests\TestCase
 	}
 
 
+	public function testLateralFrom(): void
+	{
+		$query = $this->query()
+			->select(['t1.column1', 't2.column2'])
+			->from('table1', 't1')
+			->from($this->query()->select(['column2'])->from('table2'), 't2')
+			->lateral('t2')
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('SELECT t1.column1, t2.column2 FROM table1 AS t1, LATERAL (SELECT column2 FROM table2) AS t2', $query->getSql());
+		Tester\Assert::same([], $query->getParams());
+	}
+
+
+	public function testLateralJoinWithSqlQuery(): void
+	{
+		$query = $this->query()
+			->select(['column1' => 't1.column', 'column2' => 't2.column'])
+			->from('table1', 't1')
+			->join(new Db\Sql\Query('SELECT column FROM table2'), 't2', 't2.column = t1.column')
+			->lateral('t2')
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('SELECT t1.column AS "column1", t2.column AS "column2" FROM table1 AS t1 INNER JOIN LATERAL (SELECT column FROM table2) AS t2 ON t2.column = t1.column', $query->getSql());
+		Tester\Assert::same([], $query->getParams());
+	}
+
+
+	public function testLateralJoinWithFluentQuery(): void
+	{
+		$query = $this->query()
+			->select(['column1' => 't1.column', 'column2' => 't2.column'])
+			->from('table1', 't1')
+			->join($this->query()->select(['column'])->from('table2'), 't2', 't2.column = t1.column')
+			->lateral('t2')
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('SELECT t1.column AS "column1", t2.column AS "column2" FROM table1 AS t1 INNER JOIN LATERAL (SELECT column FROM table2) AS t2 ON t2.column = t1.column', $query->getSql());
+		Tester\Assert::same([], $query->getParams());
+	}
+
+
 	public function testSelectCombine(): void
 	{
 		$query = $this->query()

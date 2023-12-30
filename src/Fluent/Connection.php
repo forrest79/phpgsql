@@ -161,6 +161,16 @@ class Connection extends Db\Connection implements Sql
 
 
 	/**
+	 * @return QueryExecute
+	 * @throws Exceptions\QueryException
+	 */
+	public function lateral(string $alias): Query
+	{
+		return $this->createQuery()->lateral($alias);
+	}
+
+
+	/**
 	 * @param string|Complex|Db\Sql $condition
 	 * @param mixed ...$params
 	 * @return QueryExecute

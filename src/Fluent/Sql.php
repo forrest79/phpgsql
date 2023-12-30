@@ -97,6 +97,9 @@ interface Sql
 	function on(string $alias, $condition, ...$params): Query;
 
 
+	function lateral(string $alias): Query;
+
+
 	/**
 	 * @param string|Complex|Db\Sql $condition
 	 * @param mixed ...$params
