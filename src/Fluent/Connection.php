@@ -414,6 +414,21 @@ class Connection extends Db\Connection implements Sql
 
 
 	/**
+	 * @param string|Query|Db\Sql $query
+	 */
+	public function with(string $as, $query, ?string $suffix = NULL, bool $notMaterialized = FALSE): Query
+	{
+		return $this->createQuery()->with($as, $query, $suffix, $notMaterialized);
+	}
+
+
+	public function recursive(): Query
+	{
+		return $this->createQuery()->recursive();
+	}
+
+
+	/**
 	 * @param mixed ...$params
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException

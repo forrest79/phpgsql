@@ -38,7 +38,7 @@ parameters:
 			count: 1
 
 		-
-			message: '#^Parameter \#2 \$queryParams of method Forrest79\\PhPgSql\\Fluent\\QueryBuilder::createSqlQuery\(\) expects array\{.+\}, array\{\} given\.$#'
+			message: '#^Parameter \#2 \$queryParams of method Forrest79\\PhPgSql\\Fluent\\QueryBuilder::createSqlQuery\(\) expects array\{.+\}, array\{.*\} given\.$#'
 			path: %rootDir%/../../../tests/Unit/FluentQueryTest.php
 			count: 1
 
@@ -156,9 +156,9 @@ parameters:
 		# === PHPStan imperfection ===
 
 		-
-			message: "#^Property Forrest79\\\\PhPgSql\\\\Fluent\\\\Query::\\$params \\(array\\{select: array\\<int\\|string, BackedEnum\\|Forrest79\\\\PhPgSql\\\\Db\\\\Sql\\|Forrest79\\\\PhPgSql\\\\Fluent\\\\Query\\|int\\|string\\>, distinct: bool, tables: array\\<string, array\\{string, string\\}\\>, table\\-types: array\\{main: string\\|null, from: list\\<string\\>, joins: list\\<string\\>\\}, join\\-conditions: array\\<string, Forrest79\\\\PhPgSql\\\\Fluent\\\\Complex\\>, lateral\\-tables: array\\<string, string\\>, where: Forrest79\\\\PhPgSql\\\\Fluent\\\\Complex\\|null, groupBy: array\\<string\\>, \\.\\.\\.\\}\\) does not accept .+\\.$#"
+			message: "#^Property Forrest79\\\\PhPgSql\\\\Fluent\\\\Query::\\$params \\(array\\{select: array\\<int\\|string, BackedEnum\\|Forrest79\\\\PhPgSql\\\\Db\\\\Sql\\|Forrest79\\\\PhPgSql\\\\Fluent\\\\Query\\|int\\|string\\>, distinct: bool, tables: array\\<string, array\\{string, string\\}\\>, table\\-types: array\\{main: string\\|null, from: list\\<string\\>, joins: list\\<string\\>\\}, with: array\\{queries: array\\<string, Forrest79\\\\PhPgSql\\\\Db\\\\Sql\\|Forrest79\\\\PhPgSql\\\\Fluent\\\\Query\\|string>, queries\\-suffix: array\\<string, string\\>, queries\\-not-materialized: array\\<string, string\\>, recursive: bool\\}, join\\-conditions: array\\<string, Forrest79\\\\PhPgSql\\\\Fluent\\\\Complex\\>, lateral\\-tables: array\\<string, string\\>, where: Forrest79\\\\PhPgSql\\\\Fluent\\\\Complex\\|null, \\.\\.\\.\\}\\) does not accept .+\\.$#"
 			path: src/Fluent/Query.php
-			count: 4
+			count: 5
 
 		# === Fix PhPgSql-PHPStan rules ===
 

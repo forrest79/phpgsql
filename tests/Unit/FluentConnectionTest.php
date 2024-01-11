@@ -547,6 +547,35 @@ final class FluentConnectionTest extends Tests\TestCase
 	}
 
 
+	public function testWith(): void
+	{
+		$query = $this->fluentConnection
+			->with('t(n)', 'VALUES (1) UNION ALL SELECT n + 1 FROM t WHERE n < 100')
+			->select(['sum(n)'])
+			->from('t')
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('WITH t(n) AS (VALUES (1) UNION ALL SELECT n + 1 FROM t WHERE n < 100) SELECT sum(n) FROM t', $query->getSql());
+		Tester\Assert::same([], $query->getParams());
+	}
+
+
+	public function testWithRecursive(): void
+	{
+		$query = $this->fluentConnection
+			->recursive()
+			->with('t(n)', 'VALUES (1) UNION ALL SELECT n + 1 FROM t WHERE n < 100')
+			->select(['sum(n)'])
+			->from('t')
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('WITH RECURSIVE t(n) AS (VALUES (1) UNION ALL SELECT n + 1 FROM t WHERE n < 100) SELECT sum(n) FROM t', $query->getSql());
+		Tester\Assert::same([], $query->getParams());
+	}
+
+
 	public function testPrefix(): void
 	{
 		$query = $this->fluentConnection

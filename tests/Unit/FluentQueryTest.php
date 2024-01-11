@@ -823,6 +823,32 @@ final class FluentQueryTest extends Tests\TestCase
 	}
 
 
+	public function testInsertSelectAllColumns(): void
+	{
+		$query = $this->query()
+			->insert('table1')
+			->select(['*'])
+			->from('table2')
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('INSERT INTO table1 SELECT * FROM table2', $query->getSql());
+		Tester\Assert::same([], $query->getParams());
+	}
+
+
+	public function testInsertSelectAllColumnsWithConcrete(): void
+	{
+		Tester\Assert::exception(function (): void {
+			$this->query()
+				->insert('table1')
+				->select(['*', 'id'])
+				->from('table2')
+				->createSqlQuery();
+		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::SELECT_ALL_COLUMNS_CANT_BE_COMBINED_WITH_CONCRETE_COLUMN_FOR_INSERT_SELECT_WITH_COLUMN_DETECTION);
+	}
+
+
 	public function testInsertRowWithArray(): void
 	{
 		Tester\Assert::exception(function (): void {
@@ -981,6 +1007,152 @@ final class FluentQueryTest extends Tests\TestCase
 
 		Tester\Assert::same('DELETE FROM table AS t WHERE column = $1 RETURNING (to_value(column)) AS "c"', $query->getSql());
 		Tester\Assert::same([100], $query->getParams());
+	}
+
+
+	public function testWith(): void
+	{
+		$query = $this->query()
+			->with('regional_sales', 'SELECT region, SUM(amount) AS total_sales FROM orders GROUP BY region')
+			->with('top_regions', new Db\Sql\Query('SELECT region FROM regional_sales WHERE total_sales > (?) AND total_sales < ?', [new Db\Sql\Query('SELECT SUM(total_sales) / 10 FROM regional_sales'), 10000]))
+			->select(['region', 'product', 'product_units' => 'SUM(quantity)', 'product_sales' => 'SUM(amount)'])
+			->from('orders')
+			->where('region', new Db\Sql\Query('SELECT region FROM top_regions'))
+			->where('region != ?', 'Prague')
+			->groupBy('region', 'product')
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('WITH regional_sales AS (SELECT region, SUM(amount) AS total_sales FROM orders GROUP BY region), top_regions AS (SELECT region FROM regional_sales WHERE total_sales > (SELECT SUM(total_sales) / 10 FROM regional_sales) AND total_sales < $1) SELECT region, product, SUM(quantity) AS "product_units", SUM(amount) AS "product_sales" FROM orders WHERE (region IN (SELECT region FROM top_regions)) AND (region != $2) GROUP BY region, product', $query->getSql());
+		Tester\Assert::same([10000, 'Prague'], $query->getParams());
+	}
+
+
+	public function testWithRecursive(): void
+	{
+		$query = $this->query()
+			->with('t(n)', 'VALUES (1) UNION ALL SELECT n + 1 FROM t WHERE n < 100')
+			->recursive()
+			->select(['sum(n)'])
+			->from('t')
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('WITH RECURSIVE t(n) AS (VALUES (1) UNION ALL SELECT n + 1 FROM t WHERE n < 100) SELECT sum(n) FROM t', $query->getSql());
+		Tester\Assert::same([], $query->getParams());
+	}
+
+
+	public function testWithSuffix(): void
+	{
+		$query = $this->query()
+			->with(
+				'search_tree(id, link, data)',
+				$this->query()
+					->select(['t.id', 't.link', 't.data'])
+					->from('tree', 't')
+					->unionAll(
+						$this->query()
+							->select(['t.id', 't.link', 't.data'])
+							->from('tree', 't')
+							->from('search_tree', 'st')
+							->where('t.id = st.link')
+					),
+				'SEARCH BREADTH FIRST BY id SET ordercol'
+			)
+			->select(['*'])
+			->from('search_tree')
+			->orderBy('ordercol')
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('WITH search_tree(id, link, data) AS ((SELECT t.id, t.link, t.data FROM tree AS t) UNION ALL (SELECT t.id, t.link, t.data FROM tree AS t, search_tree AS st WHERE t.id = st.link)) SEARCH BREADTH FIRST BY id SET ordercol SELECT * FROM search_tree ORDER BY ordercol', $query->getSql());
+		Tester\Assert::same([], $query->getParams());
+	}
+
+
+	public function testWithNotMaterialized(): void
+	{
+		$query = $this->query()
+			->with('w', 'SELECT * FROM big_table', NULL, TRUE)
+			->select(['*'])
+			->from('w', 'w1')
+			->join('w', 'w2', 'w1.key = w2.ref')
+			->where('w2.key', 123)
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('WITH w AS NOT MATERIALIZED (SELECT * FROM big_table) SELECT * FROM w AS w1 INNER JOIN w AS w2 ON w1.key = w2.ref WHERE w2.key = $1', $query->getSql());
+		Tester\Assert::same([123], $query->getParams());
+	}
+
+
+	public function testWithInsert(): void
+	{
+		$query = $this->query()
+			->with(
+				'moved_rows',
+				$this->query()
+					->delete('products')
+					->where('date >= ?', '2010-10-01')
+					->where('date < ?', '2010-11-01')
+					->returning(['*'])
+			)
+			->insert('products_log')
+			->select(['*'])
+			->from('moved_rows')
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('WITH moved_rows AS (DELETE FROM products WHERE (date >= $1) AND (date < $2) RETURNING *) INSERT INTO products_log SELECT * FROM moved_rows', $query->getSql());
+		Tester\Assert::same(['2010-10-01', '2010-11-01'], $query->getParams());
+	}
+
+
+	public function testWithDelete(): void
+	{
+		$query = $this->query()
+			->with(
+				'included_parts(sub_part, part)',
+				$this->query()
+					->select(['sub_part', 'part'])
+					->from('parts')
+					->where('part', 'our_product')
+					->unionAll(
+						$this->query()
+							->select(['p.sub_part', 'p.part'])
+							->from('included_parts', 'pr')
+							->from('parts', 'p')
+							->where('p.part = pr.sub_part')
+					)
+			)
+			->delete('parts')
+			->where('part', $this->query()->select(['part'])->from('included_parts'))
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('WITH included_parts(sub_part, part) AS ((SELECT sub_part, part FROM parts WHERE part = $1) UNION ALL (SELECT p.sub_part, p.part FROM included_parts AS pr, parts AS p WHERE p.part = pr.sub_part)) DELETE FROM parts WHERE part IN (SELECT part FROM included_parts)', $query->getSql());
+		Tester\Assert::same(['our_product'], $query->getParams());
+	}
+
+
+	public function testWithUpdate(): void
+	{
+		$query = $this->query()
+			->with(
+				't',
+				$this->query()
+					->update('products')
+					->set(['price' => Db\Sql\Literal::create('price * 1.05')])
+					->returning(['*'])
+			)
+			->select(['*'])
+			->from('t')
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('WITH t AS (UPDATE products SET price = price * 1.05 RETURNING *) SELECT * FROM t', $query->getSql());
+		Tester\Assert::same([], $query->getParams());
 	}
 
 
@@ -1299,7 +1471,7 @@ final class FluentQueryTest extends Tests\TestCase
 	public function testBadQueryBuilderType(): void
 	{
 		Tester\Assert::exception(static function (): void {
-			(new Fluent\QueryBuilder())->createSqlQuery('table', []);
+			(new Fluent\QueryBuilder())->createSqlQuery('table', [Fluent\Query::PARAM_WITH => [Fluent\Query::WITH_QUERIES => []]]);
 		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::BAD_QUERY_TYPE);
 	}
 

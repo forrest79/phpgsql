@@ -32,6 +32,7 @@ class Query implements Sql
 	public const PARAM_RETURNING = 'returning';
 	public const PARAM_DATA = 'data';
 	public const PARAM_ROWS = 'rows';
+	public const PARAM_WITH = 'with';
 	public const PARAM_PREFIX = 'prefix';
 	public const PARAM_SUFFIX = 'suffix';
 
@@ -49,6 +50,11 @@ class Query implements Sql
 	private const COMBINE_UNION_ALL = 'UNION ALL';
 	private const COMBINE_INTERSECT = 'INTERSECT';
 	private const COMBINE_EXCEPT = 'EXCEPT';
+
+	public const WITH_QUERIES = 'queries';
+	public const WITH_QUERIES_SUFFIX = 'queries-suffix';
+	public const WITH_QUERIES_NOT_MATERIALIZED = 'queries-not-materialized';
+	public const WITH_RECURSIVE = 'recursive';
 
 	private const DEFAULT_PARAMS = [
 		self::PARAM_SELECT => [],
@@ -72,6 +78,12 @@ class Query implements Sql
 		self::PARAM_RETURNING => [],
 		self::PARAM_DATA => [],
 		self::PARAM_ROWS => [],
+		self::PARAM_WITH => [
+			self::WITH_QUERIES => [],
+			self::WITH_QUERIES_SUFFIX => [],
+			self::WITH_QUERIES_NOT_MATERIALIZED => [],
+			self::WITH_RECURSIVE => FALSE,
+		],
 		self::PARAM_PREFIX => [],
 		self::PARAM_SUFFIX => [],
 	];
@@ -656,6 +668,43 @@ class Query implements Sql
 		if ($table !== NULL) {
 			$this->table($table);
 		}
+
+		return $this;
+	}
+
+
+	/**
+	 * @param string|self|Db\Sql $query
+	 * @return static
+	 * @throws Exceptions\QueryException
+	 */
+	public function with(string $as, $query, ?string $suffix = NULL, bool $notMaterialized = FALSE): self
+	{
+		$this->resetQuery();
+
+		$this->params[self::PARAM_WITH][self::WITH_QUERIES][$as] = $query;
+
+		if ($suffix !== NULL) {
+			$this->params[self::PARAM_WITH][self::WITH_QUERIES_SUFFIX][$as] = $suffix;
+		}
+
+		if ($notMaterialized) {
+			$this->params[self::PARAM_WITH][self::WITH_QUERIES_NOT_MATERIALIZED][$as] = TRUE;
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * @return static
+	 * @throws Exceptions\QueryException
+	 */
+	public function recursive(): self
+	{
+		$this->resetQuery();
+
+		$this->params[self::PARAM_WITH][self::WITH_RECURSIVE] = TRUE;
 
 		return $this;
 	}

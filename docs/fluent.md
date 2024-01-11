@@ -133,6 +133,10 @@ Every query is `SELECT` at first, until you call `->insert(...)`, `->update(...)
 
 - `prefix(string $queryPrefix/$querySuffix, ...$params)` (or `suffix(...)`) - with this, you can define univerzal query prefix or suffix. This is useful for actually not supported fluent syntax. With prefix, you can create CTE (Common Table Expression) queries. With suffix, you can create `SELECT ... FOR UPDATE` for example. Definition can be simple `string` or you can use `?` and parameters.
 
+- `with(string $as, $query, ?string $suffix = NULL, bool $notMaterialized = FALSE)` - prepare CTE (Common Table Expression) query. `$as` is query alias/name, `$query` can be simple string, `Db\Sql\Query` or `Fluent\Query`, `$suffix` is optional definition like `SEARCH BREADTH FIRST BY ...` and `$notMaterialized` can set `WITH` branch as not materialized (materialized is default). `with()` can be called multiple times. When you use it, the query will always start with `WITH ...`.   
+  
+- `recursive()` - defines `WITH` query recursive.
+
 If you want to create a copy of existing query, just use `clone`:
 
 ```php
@@ -436,6 +440,71 @@ dump($query); // (Query) TRUNCATE departments CASCADE
 
 $query->execute();
 ```
+
+### With (Common Table Expression queries)
+
+Oficial docs: https://www.postgresql.org/docs/current/queries-with.html
+
+You can use `WITH` with a simple string query, or defined it with `Db\Sql\Query` or `Fluen\Query` queries:
+
+```php
+$query = $connection
+  ->with('active_users', 'SELECT id, nick, age, height_cm FROM users WHERE active = TRUE')
+  ->with('active_departments', new Forrest79\PhPgSql\Db\Sql\Query('SELECT id FROM departments WHERE active = ?', [TRUE]))
+  ->select(['au.id', 'au.nick', 'au.age', 'au.height_cm'])
+  ->from('active_users', 'au')
+  ->join('user_departments', 'ud', 'ud.department_id = au.id')
+  ->where('ud.department_id IN (?)', new Forrest79\PhPgSql\Db\Sql\Query('SELECT id FROM active_departments'));
+
+dump($query); // (Query) WITH active_users AS (SELECT id, nick, age, height_cm FROM users WHERE active = TRUE), active_departments AS (SELECT id FROM departments WHERE active = TRUE) SELECT au.id, au.nick, au.age, au.height_cm FROM active_users AS au INNER JOIN user_departments AS ud ON ud.department_id = au.id WHERE ud.department_id IN (SELECT id FROM active_departments)
+
+$query->execute();
+```
+
+You can define `WITH` query recursive:
+
+```php
+$query = $connection
+  ->with('t(n)', 'VALUES (1) UNION ALL SELECT n + 1 FROM t WHERE n < 100')
+  ->recursive()
+  ->select(['sum(n)'])
+  ->from('t');
+
+dump($query); // (Query) WITH RECURSIVE t(n) AS (VALUES (1) UNION ALL SELECT n + 1 FROM t WHERE n < 100) SELECT sum(n) FROM t
+
+$query->execute();
+```
+
+Or with some special suffix definition:
+
+```php
+$query = $connection
+  ->with(
+    'search_tree(id, link, data)',
+    'SELECT t.id, t.link, t.data FROM tree AS t UNION ALL SELECT t.id, t.link, t.data FROM tree AS t, search_tree AS st WHERE t.id = st.link', 
+    'SEARCH BREADTH FIRST BY id SET ordercol'
+  )
+  ->select(['*'])
+  ->from('search_tree')
+  ->orderBy('ordercol');
+
+dump($query); // (Query) WITH search_tree(id, link, data) AS (SELECT t.id, t.link, t.data FROM tree AS t UNION ALL SELECT t.id, t.link, t.data FROM tree AS t, search_tree AS st WHERE t.id = st.link) SEARCH BREADTH FIRST BY id SET ordercol SELECT * FROM search_tree ORDER BY ordercol
+```
+
+Or not materialized:
+
+```php
+$query = $connection
+  ->with('w', 'SELECT * FROM big_table', NULL, TRUE)
+  ->select(['*'])
+  ->from('w', 'w1')
+  ->join('w', 'w2', 'w1.key = w2.ref')
+  ->where('w2.key', 123);
+
+dump($query); // (Query) WITH w AS NOT MATERIALIZED (SELECT * FROM big_table) SELECT * FROM w AS w1 INNER JOIN w AS w2 ON w1.key = w2.ref WHERE w2.key = $1 [Params: (array) [123]]
+```
+
+Query after `WITH` can be `SELECT`, `INSERT`, `UPDATE` or `DELETE`.
 
 ## Fetching data from DB
 

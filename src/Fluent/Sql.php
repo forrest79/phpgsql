@@ -217,6 +217,15 @@ interface Sql
 
 
 	/**
+	 * @param string|Query|Db\Sql $query
+	 */
+	function with(string $as, $query, ?string $suffix = NULL, bool $notMaterialized = FALSE): Query;
+
+
+	function recursive(): Query;
+
+
+	/**
 	 * @param mixed ...$params
 	 */
 	function prefix(string $queryPrefix, ...$params): Query;

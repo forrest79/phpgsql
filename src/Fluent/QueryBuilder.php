@@ -23,6 +23,7 @@ use Forrest79\PhPgSql\Db;
  *   returning: array<int|string, string|int|Query|Db\Sql>,
  *   data: array<string, mixed>,
  *   rows: array<int, array<string, mixed>>,
+ *   with: array{queries: array<string, string|Query|Db\Sql>, queries-suffix: array<string, string>, queries-not-materialized: array<string, string>, recursive: bool},
  *   prefix: list<array<mixed>>,
  *   suffix: list<array<mixed>>
  * }
@@ -43,6 +44,10 @@ class QueryBuilder
 		$params = [];
 
 		$sql = $this->getPrefixSuffix($queryParams, Query::PARAM_PREFIX, $params);
+
+		if ($queryParams[Query::PARAM_WITH][Query::WITH_QUERIES] !== []) {
+			$sql .= $this->createWith($queryParams, $params);
+		}
 
 		if ($queryType === Query::QUERY_SELECT) {
 			$sql .= $this->createSelect($queryParams, $params) . $this->getPrefixSuffix($queryParams, Query::PARAM_SUFFIX, $params);
@@ -146,17 +151,21 @@ class QueryBuilder
 			$selectColumns = [];
 			$data = ' ' . $this->createSelect($queryParams, $params, $selectColumns);
 			if ($columns === []) {
+				if ((\count($selectColumns) > 1) && \in_array('*', $selectColumns, TRUE)) {
+					throw Exceptions\QueryBuilderException::selectAllColumnsCantBeCombinedWithConcreteColumnForInsertSelectWithColumnDetection();
+				}
+
 				$columns = $selectColumns;
 			}
 		} else {
 			$data = ' VALUES(' . \implode('), (', $rows) . ')';
 		}
 
-		return $insert .
-			'(' . \implode(', ', $columns) . ')' .
-			$data .
-			$this->getPrefixSuffix($queryParams, Query::PARAM_SUFFIX, $params) .
-			$this->getReturning($queryParams, $params);
+		return $insert
+			. ($columns === ['*'] ? '' : '(' . \implode(', ', $columns) . ')')
+			. $data
+			. $this->getPrefixSuffix($queryParams, Query::PARAM_SUFFIX, $params)
+			. $this->getReturning($queryParams, $params);
 	}
 
 
@@ -257,6 +266,34 @@ class QueryBuilder
 	private function createTruncate(array $queryParams): string
 	{
 		return 'TRUNCATE ' . $this->getMainTableMetadata($queryParams)['table'];
+	}
+
+
+	/**
+	 * @param array<string, mixed> $queryParams
+	 * @param list<mixed> $params
+	 * @throws Exceptions\QueryBuilderException
+	 * @phpstan-param QueryParams $queryParams
+	 */
+	private function createWith(array $queryParams, array &$params): string
+	{
+		$queries = [];
+
+		foreach ($queryParams[Query::PARAM_WITH][Query::WITH_QUERIES] as $as => $query) {
+			if ($query instanceof Db\Sql) {
+				$params[] = $query;
+				$query = '?';
+			} else if ($query instanceof Query) {
+				$params[] = $query->createSqlQuery();
+				$query = '?';
+			}
+			$queries[] = $as . ' AS '
+				. (isset($queryParams[Query::PARAM_WITH][Query::WITH_QUERIES_NOT_MATERIALIZED][$as]) ? 'NOT MATERIALIZED ' : '')
+				. '(' . $query . ')'
+				. (isset($queryParams[Query::PARAM_WITH][Query::WITH_QUERIES_SUFFIX][$as]) ? (' ' . $queryParams[Query::PARAM_WITH][Query::WITH_QUERIES_SUFFIX][$as]) : '');
+		}
+
+		return 'WITH ' . ($queryParams[Query::PARAM_WITH][Query::WITH_RECURSIVE] ? 'RECURSIVE ' : '') . \implode(', ', $queries) . ' ';
 	}
 
 

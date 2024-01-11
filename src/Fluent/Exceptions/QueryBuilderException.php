@@ -14,6 +14,7 @@ class QueryBuilderException extends Exception
 	public const BAD_PARAMS_COUNT = 8;
 	public const BAD_PARAM = 9;
 	public const NO_CORRESPONDING_TABLE = 10;
+	public const SELECT_ALL_COLUMNS_CANT_BE_COMBINED_WITH_CONCRETE_COLUMN_FOR_INSERT_SELECT_WITH_COLUMN_DETECTION = 11;
 
 
 	public static function badQueryType(string $type): self
@@ -79,6 +80,12 @@ class QueryBuilderException extends Exception
 	public static function noCorrespondingTable(array $aliases): self
 	{
 		return new self('There are extra join conditions without corresponding tables: ' . implode(', ', $aliases), self::NO_CORRESPONDING_TABLE);
+	}
+
+
+	public static function selectAllColumnsCantBeCombinedWithConcreteColumnForInsertSelectWithColumnDetection(): self
+	{
+		return new self('You can\'t use \'SELECT *\' and also some concrete column for INSERT - SELECT with column detection.', self::SELECT_ALL_COLUMNS_CANT_BE_COMBINED_WITH_CONCRETE_COLUMN_FOR_INSERT_SELECT_WITH_COLUMN_DETECTION);
 	}
 
 }
