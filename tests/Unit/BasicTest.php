@@ -60,6 +60,14 @@ final class BasicTest extends Tests\TestCase
 		}, \RuntimeException::class, 'You can\'t serialize or unserialize \'Forrest79\PhPgSql\Db\Connection\' instances.');
 	}
 
+
+	public function testPreventConnectionUnserialization(): void
+	{
+		Tester\Assert::exception(static function (): void {
+			\unserialize("O:31:\"Forrest79\PhPgSql\Db\Connection\":14:{s:49:\"\00Forrest79\PhPgSql\Db\Connection\00connectionConfig\";s:0:\"\";s:48:\"\00Forrest79\PhPgSql\Db\Connection\00connectForceNew\";b:0;s:45:\"\00Forrest79\PhPgSql\Db\Connection\00connectAsync\";b:0;s:56:\"\00Forrest79\PhPgSql\Db\Connection\00connectAsyncWaitSeconds\";i:15;s:47:\"\00Forrest79\PhPgSql\Db\Connection\00errorVerbosity\";i:1;s:41:\"\00Forrest79\PhPgSql\Db\Connection\00resource\";N;s:42:\"\00Forrest79\PhPgSql\Db\Connection\00connected\";b:0;s:44:\"\00Forrest79\PhPgSql\Db\Connection\00asyncStream\";N;s:50:\"\00Forrest79\PhPgSql\Db\Connection\00defaultRowFactory\";N;s:47:\"\00Forrest79\PhPgSql\Db\Connection\00dataTypeParser\";N;s:46:\"\00Forrest79\PhPgSql\Db\Connection\00dataTypeCache\";N;s:44:\"\00Forrest79\PhPgSql\Db\Connection\00transaction\";N;s:44:\"\00Forrest79\PhPgSql\Db\Connection\00asyncHelper\";O:32:\"Forrest79\PhPgSql\Db\AsyncHelper\":3:{s:44:\"\00Forrest79\PhPgSql\Db\AsyncHelper\00connection\";r:1;s:44:\"\00Forrest79\PhPgSql\Db\AsyncHelper\00asyncQuery\";N;s:51:\"\00Forrest79\PhPgSql\Db\AsyncHelper\00asyncExecuteQuery\";N;}s:39:\"\00Forrest79\PhPgSql\Db\Connection\00events\";O:27:\"Forrest79\PhPgSql\Db\Events\":5:{s:39:\"\00Forrest79\PhPgSql\Db\Events\00connection\";r:1;s:38:\"\00Forrest79\PhPgSql\Db\Events\00onConnect\";a:0:{}s:36:\"\00Forrest79\PhPgSql\Db\Events\00onClose\";a:0:{}s:36:\"\00Forrest79\PhPgSql\Db\Events\00onQuery\";a:0:{}s:37:\"\00Forrest79\PhPgSql\Db\Events\00onResult\";a:0:{}}}");
+		}, \RuntimeException::class, 'You can\'t serialize or unserialize \'Forrest79\PhPgSql\Db\Connection\' instances.');
+	}
+
 }
 
 (new BasicTest())->run();
