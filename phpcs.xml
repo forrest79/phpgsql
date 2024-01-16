@@ -19,6 +19,10 @@
 		<exclude-pattern>src/Fluent/QueryBuilder.php</exclude-pattern>
 	</rule>
 
+	<rule ref="SlevomatCodingStandard.Classes.ClassConstantVisibility.MissingConstantVisibility">
+		<exclude-pattern>src/Fluent/Sql.php</exclude-pattern>
+	</rule>
+
 	<rule ref="SlevomatCodingStandard.Classes.ModernClassNameReference.ClassNameReferencedViaFunctionCall">
 		<exclude-pattern>src/Fluent/Exceptions/ComplexException.php</exclude-pattern>
 		<exclude-pattern>tests/Integration/DocsTest.php</exclude-pattern>

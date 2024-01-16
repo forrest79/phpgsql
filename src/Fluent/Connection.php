@@ -407,6 +407,52 @@ class Connection extends Db\Connection implements Sql
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
+	public function merge(?string $into = NULL, ?string $alias = NULL): Query
+	{
+		return $this->createQuery()->merge($into, $alias);
+	}
+
+
+	/**
+	 * @param string|Query|Db\Sql $dataSource values, table or query
+	 * @param string|Complex|Db\Sql|NULL $onCondition
+	 * @return QueryExecute
+	 * @throws Exceptions\QueryException
+	 */
+	public function using($dataSource, ?string $alias = NULL, $onCondition = NULL): Query
+	{
+		return $this->createQuery()->using($dataSource, $alias, $onCondition);
+	}
+
+
+	/**
+	 * @param string|Db\Sql $then
+	 * @param string|Complex|Db\Sql|NULL $onCondition
+	 * @return QueryExecute
+	 * @throws Exceptions\QueryException
+	 */
+	public function whenMatched($then, $onCondition = NULL): Query
+	{
+		return $this->createQuery()->whenMatched($then, $onCondition);
+	}
+
+
+	/**
+	 * @param string|Db\Sql $then
+	 * @param string|Complex|Db\Sql|NULL $onCondition
+	 * @return QueryExecute
+	 * @throws Exceptions\QueryException
+	 */
+	public function whenNotMatched($then, $onCondition = NULL): Query
+	{
+		return $this->createQuery()->whenNotMatched($then, $onCondition);
+	}
+
+
+	/**
+	 * @return QueryExecute
+	 * @throws Exceptions\QueryException
+	 */
 	public function truncate(?string $table = NULL): Query
 	{
 		return $this->createQuery()->truncate($table);

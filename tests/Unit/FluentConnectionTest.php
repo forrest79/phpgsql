@@ -535,6 +535,66 @@ final class FluentConnectionTest extends Tests\TestCase
 	}
 
 
+	public function testMerge(): void
+	{
+		$query = $this->fluentConnection
+			->merge('customer_account', 'ca')
+			->using('recent_transactions', 't', 't.customer_id = ca.customer_id')
+			->whenMatched('UPDATE SET balance = balance + transaction_value')
+			->whenNotMatched('INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)')
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('MERGE INTO customer_account AS ca USING recent_transactions AS t ON t.customer_id = ca.customer_id WHEN MATCHED THEN UPDATE SET balance = balance + transaction_value WHEN NOT MATCHED THEN INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)', $query->getSql());
+		Tester\Assert::same([], $query->getParams());
+	}
+
+
+	public function testMergeUsing(): void
+	{
+		$query = $this->fluentConnection
+			->using('recent_transactions', 't', 't.customer_id = ca.customer_id')
+			->merge('customer_account', 'ca')
+			->whenMatched('UPDATE SET balance = balance + transaction_value')
+			->whenNotMatched('INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)')
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('MERGE INTO customer_account AS ca USING recent_transactions AS t ON t.customer_id = ca.customer_id WHEN MATCHED THEN UPDATE SET balance = balance + transaction_value WHEN NOT MATCHED THEN INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)', $query->getSql());
+		Tester\Assert::same([], $query->getParams());
+	}
+
+
+	public function testMergeWhenMatched(): void
+	{
+		$query = $this->fluentConnection
+			->whenMatched('UPDATE SET balance = balance + transaction_value')
+			->merge('customer_account', 'ca')
+			->using('recent_transactions', 't', 't.customer_id = ca.customer_id')
+			->whenNotMatched('INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)')
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('MERGE INTO customer_account AS ca USING recent_transactions AS t ON t.customer_id = ca.customer_id WHEN MATCHED THEN UPDATE SET balance = balance + transaction_value WHEN NOT MATCHED THEN INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)', $query->getSql());
+		Tester\Assert::same([], $query->getParams());
+	}
+
+
+	public function testMergeWhenNotMatched(): void
+	{
+		$query = $this->fluentConnection
+			->whenNotMatched('INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)')
+			->merge('customer_account', 'ca')
+			->using('recent_transactions', 't', 't.customer_id = ca.customer_id')
+			->whenMatched('UPDATE SET balance = balance + transaction_value')
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('MERGE INTO customer_account AS ca USING recent_transactions AS t ON t.customer_id = ca.customer_id WHEN NOT MATCHED THEN INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value) WHEN MATCHED THEN UPDATE SET balance = balance + transaction_value', $query->getSql());
+		Tester\Assert::same([], $query->getParams());
+	}
+
+
 	public function testTruncate(): void
 	{
 		$query = $this->fluentConnection

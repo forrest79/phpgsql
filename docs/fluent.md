@@ -92,7 +92,7 @@ Every query is `SELECT` at first, until you call `->insert(...)`, `->update(...)
 - `whereAnd(array $conditions = []): Complex` (or `whereOr(...)` / `havingAnd(...)` / `havingOr()`) - with these methods, you can generate condition groups. Ale provided conditions are connected with logic `AND` for `whereAnd()` and `havingAnd()` and with logic `OR` for `whereOr()` and `havingOr()`. All these methods return `Complex` object (more about this later). `$conditions` items can be simple `string`, another `array` (this is a little bit magic - this works as `where()`/`having()` method - first item in this `array` is conditions and next items are parameters), `Complex` or `Db\Sql`. 
 
 
-- `groupBy(string ...$columns)`: - generates `GROUP BY` statement, one or more `string` parameters must be provided.
+- `groupBy(string ...$columns)` - generates `GROUP BY` statement, one or more `string` parameters must be provided.
 
 
 - `orderBy(...$columns): Query` - generates `ORDER BY` statement, one or more parameters must be provided. Parameter can be simple `string`, another `Query` or `Db\Sql`.
@@ -116,7 +116,7 @@ Every query is `SELECT` at first, until you call `->insert(...)`, `->update(...)
 - `rows(array $rows)` - this method can be used to insert multiple rows in one query. `$rows` is an `array` of arrays. Each array is one row (the same as for the `values()` method). All rows must have the same columns. Method can be called multiple and all rows are merged.
 
 
-- `update(?string $table = NULL, ?string $alias = NULL)`: — set query for update. If the main table is not set, you must set it or rewrite with the `$table` parameter. `$alias` can be provided, when you want to use `UPDATE ... FROM ...`.
+- `update(?string $table = NULL, ?string $alias = NULL)` - set query for update. If the main table is not set, you must set it or rewrite with the `$table` parameter. `$alias` can be provided, when you want to use `UPDATE ... FROM ...`.
 
 
 - `set(array $data)` - sets data to update. Rules for the data are the same as for the `values()` method.
@@ -126,6 +126,18 @@ Every query is `SELECT` at first, until you call `->insert(...)`, `->update(...)
 
 
 - `returning(array $returning)` - generates `RETURNING` statement for `INSERT`, `UPDATE` or `DELETE`. Syntax for `$returning` is the same as for the `select()` method.
+
+
+- `merge(?string $into = NULL, ?string $alias = NULL)` - set query for merge. If the main table is not set, you must set it or rewrite with the `$into` parameter. `$alias` can be provided.
+
+
+- `using($dataSource, ?string $alias = NULL, $onCondition = NULL)` - set a data source for a merge command. `$dataSource` can be simple string, `Db\Sql\Query` or `Fluent\Query`. `$onCondition` can be simple `string` or other `Complex` or `Db\Sql`. `Db\Sql` can be used for some complex expression, where you need to use `?` and parameters. On condition can be added or extended with the `on()` method.
+
+
+- `whenMatched($then, $onCondition = NULL)` - add matched branch to a merge command. `$then` is simple string or `Db\Sql` and `$onCondition` can be simple `string` or other `Complex` or `Db\Sql`. `Db\Sql` can be used for some complex expression, where you need to use `?` and parameters. 
+
+
+- `whenNotMatched($then, $onCondition = NULL)` - add not matched branch to a merge command. `$then` is simple string or `Db\Sql` and `$onCondition` can be simple `string` or other `Complex` or `Db\Sql`. `Db\Sql` can be used for some complex expression, where you need to use `?` and parameters.
 
 
 - `truncate(?string $table = NULL)` - truncates table. If the main table is not set, you must provide/rewrite it with the `$table` parameter.
@@ -421,6 +433,143 @@ $deleteRows = $connection
 
 dump($deleteRows); // (integer) 1
 ```
+
+### Merge
+
+Oficial docs: https://www.postgresql.org/docs/current/sql-merge.html
+
+`MERGE` command was added in the PostgreSQL v15. You can use it to conditionally insert, update, or delete rows of a table.
+
+Simple use can look like:
+
+```php
+$query = $connection
+  ->merge('customer_account', 'ca')
+  ->using('recent_transactions', 't', 't.customer_id = ca.customer_id')
+  ->whenMatched('UPDATE SET balance = balance + transaction_value')
+  ->whenNotMatched('INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)');
+
+dump($query); // (Query) MERGE INTO customer_account AS ca USING recent_transactions AS t ON t.customer_id = ca.customer_id WHEN MATCHED THEN UPDATE SET balance = balance + transaction_value WHEN NOT MATCHED THEN INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)
+```
+
+The `ON` condition can be used with the `on()` method:
+
+```php
+$query = $connection
+  ->merge('customer_account', 'ca')
+  ->using('recent_transactions', 't')
+  ->on('t', 't.customer_id = ca.customer_id')
+  ->whenMatched('UPDATE SET balance = balance + transaction_value')
+  ->whenNotMatched('INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)');
+
+dump($query); // (Query) MERGE INTO customer_account AS ca USING recent_transactions AS t ON t.customer_id = ca.customer_id WHEN MATCHED THEN UPDATE SET balance = balance + transaction_value WHEN NOT MATCHED THEN INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)
+```
+
+The `WHEN (NOT) MATCHED` branches can have conditions:
+
+```php
+$query = $connection
+  ->merge('wines', 'w')
+  ->using('wine_stock_changes', 's', 's.winename = w.winename')
+  ->whenNotMatched('INSERT VALUES(s.winename, s.stock_delta)', 's.stock_delta > 0')
+  ->whenMatched('UPDATE SET stock = w.stock + s.stock_delta', Forrest79\PhPgSql\Fluent\Complex::createAnd()->add('w.stock + s.stock_delta > ?', 0))
+  ->whenMatched('DELETE');
+
+dump($query); // (Query) MERGE INTO wines AS w USING wine_stock_changes AS s ON s.winename = w.winename WHEN NOT MATCHED AND s.stock_delta > 0 THEN INSERT VALUES(s.winename, s.stock_delta) WHEN MATCHED AND w.stock + s.stock_delta > $1 THEN UPDATE SET stock = w.stock + s.stock_delta WHEN MATCHED THEN DELETE [Params: (array) [0]]
+```
+
+@todo DO NOTHING
+
+#### Upsert
+
+The `MERGE` command can be used for simply upsert (perform UPDATE and if recond not exists yet perform INSERT). The query could look like this:
+
+```sql
+MERGE INTO users AS u
+  USING (VALUES ('Bob', FALSE)) AS source (nick, active) ON u.nick = source.nick
+  WHEN MATCHED THEN
+    UPDATE SET active = source.active
+  WHEN NOT MATCHED THEN
+    INSERT (nick, active) VALUES (source.nick, source.active);
+``` 
+
+Unfortunately, this can't be used simply with the parameters:
+
+```sql
+MERGE INTO users AS u
+  USING (VALUES (?, ?)) AS source (nick, active) ON u.nick = source.nick
+  WHEN MATCHED THEN
+    UPDATE SET active = source.active
+  WHEN NOT MATCHED THEN
+    INSERT (nick, active) VALUES (source.nick, source.active);
+```
+
+Because DB needs to know the parameter types and all parameters are treated as text. You must use a concrete cast like this:
+
+```sql
+MERGE INTO users AS u
+  USING (VALUES (?, ?::boolean)) AS source (nick, active) ON u.nick = source.nick
+  WHEN MATCHED THEN
+    UPDATE SET active = source.active
+  WHEN NOT MATCHED THEN
+    INSERT (nick, active) VALUES (source.nick, source.active);
+```
+
+For a query like this, it's not a problem. But when you want to prepare a common method for more tables and parameters, you must use a little trick.
+
+```sql
+MERGE INTO users AS u
+  USING (SELECT 1) AS x ON u.nick = $1
+  WHEN MATCHED THEN
+    UPDATE SET active = $2
+  WHEN NOT MATCHED THEN
+    INSERT (nick, active) VALUES ($1, $2);
+```
+And this is how this could be prepared with the fluent interface:
+
+```php
+$updateRow = $connection
+  ->merge('users', 'u')
+  ->using('(SELECT 1)', 'x', 'u.nick = $1')
+  ->whenMatched('UPDATE SET active = $2')
+  ->whenNotMatched(Forrest79\PhPgSql\Db\Sql\Expression::create('INSERT (nick, active) VALUES ($1, $2)', 'Bob', 'f'))
+  ->getAffectedRows();
+
+dump($updateRow); // (integer) 1
+
+$updatedRows = $connection->query('SELECT nick, active FROM users WHERE nick = ?', 'Bob')->fetchAll();
+
+table($updatedRows);
+/**
+---------------------------------
+| nick           | active       |
+|===============================|
+| (string) 'Bob' | (bool) FALSE |
+---------------------------------
+*/
+
+$insertRow = $connection
+  ->merge('users', 'u')
+  ->using('(SELECT 1)', 'x', 'u.nick = $1')
+  ->whenMatched('UPDATE SET active = $2')
+  ->whenNotMatched(Forrest79\PhPgSql\Db\Sql\Expression::create('INSERT (nick, active) VALUES ($1, $2)', 'Margaret', 't'))
+  ->getAffectedRows();
+
+dump($updateRow); // (integer) 1
+
+$insertedRows = $connection->query('SELECT nick, active FROM users WHERE nick = ?', 'Margaret')->fetchAll();
+
+table($insertedRows);
+/**
+-------------------------------------
+| nick                | active      |
+|===================================|
+| (string) 'Margaret' | (bool) TRUE |
+-------------------------------------
+*/
+```
+
+> IMPORTANT: with this trick, when `$1`, `$2`, ... is used instead of `?`, `?`, ... we must use bool parameters as `t` and `f`. Automatic bool parameters replacing remove `?` from the query and bool parameter from the parameter list and put string `'TRUE'` or `'FALSE'` right into the query. When `$1` is used, bool parameter is still removed from the list, but the query is untouched, so there will be fewer parameters than `$1`, `$2`, ... in the query. 
 
 ### Truncate
 

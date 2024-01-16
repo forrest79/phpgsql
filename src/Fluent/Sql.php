@@ -6,6 +6,8 @@ use Forrest79\PhPgSql\Db;
 
 interface Sql
 {
+	const DO_NOTHING = 'DO NOTHING';
+
 
 	/**
 	 * @param string|Query|Db\Sql $table
@@ -211,6 +213,30 @@ interface Sql
 	 * @param array<int|string, string|int|Query|Db\Sql> $returning
 	 */
 	function returning(array $returning): Query;
+
+
+	function merge(?string $into = NULL, ?string $alias = NULL): Query;
+
+
+	/**
+	 * @param string|Query|Db\Sql $dataSource values, table or query
+	 * @param string|Complex|Db\Sql|NULL $onCondition
+	 */
+	function using($dataSource, ?string $alias = NULL, $onCondition = NULL): Query;
+
+
+	/**
+	 * @param string|Db\Sql $then
+	 * @param string|Complex|Db\Sql|NULL $onCondition
+	 */
+	function whenMatched($then, $onCondition = NULL): Query;
+
+
+	/**
+	 * @param string|Db\Sql $then
+	 * @param string|Complex|Db\Sql|NULL $onCondition
+	 */
+	function whenNotMatched($then, $onCondition = NULL): Query;
 
 
 	function truncate(?string $table = NULL): Query;

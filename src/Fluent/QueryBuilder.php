@@ -9,8 +9,8 @@ use Forrest79\PhPgSql\Db;
  *   select: array<int|string, string|int|\BackedEnum|Query|Db\Sql>,
  *   distinct: bool,
  *   tables: array<string, array{0: string, 1: string}>,
- *   table-types: array{main: string|NULL, from: list<string>, joins: list<string>},
- *   join-conditions: array<string, Complex>,
+ *   table-types: array{main: string|NULL, from: list<string>, joins: list<string>, using: string|NULL},
+ *   on-conditions: array<string, Complex>,
  *   lateral-tables: array<string, string>,
  *   where: Complex|NULL,
  *   groupBy: array<string>,
@@ -23,6 +23,7 @@ use Forrest79\PhPgSql\Db;
  *   returning: array<int|string, string|int|Query|Db\Sql>,
  *   data: array<string, mixed>,
  *   rows: array<int, array<string, mixed>>,
+ *   merge: list<array{0: string, 1: string|Db\Sql, 2: Complex|NULL}>,
  *   with: array{queries: array<string, string|Query|Db\Sql>, queries-suffix: array<string, string>, queries-not-materialized: array<string, string>, recursive: bool},
  *   prefix: list<array<mixed>>,
  *   suffix: list<array<mixed>>
@@ -57,6 +58,8 @@ class QueryBuilder
 			$sql .= $this->createUpdate($queryParams, $params);
 		} else if ($queryType === Query::QUERY_DELETE) {
 			$sql .= $this->createDelete($queryParams, $params);
+		} else if ($queryType === Query::QUERY_MERGE) {
+			$sql .= $this->createMerge($queryParams, $params);
 		} else if ($queryType === Query::QUERY_TRUNCATE) {
 			$sql .= $this->createTruncate($queryParams) . $this->getPrefixSuffix($queryParams, Query::PARAM_SUFFIX, $params);
 		} else {
@@ -111,8 +114,7 @@ class QueryBuilder
 	{
 		['table' => $mainTable, 'alias' => $mainTableAlias] = $this->getMainTableMetadata($queryParams);
 
-		$insert = 'INSERT ' . $this->processTable(
-			'INTO',
+		$insert = 'INSERT INTO ' . $this->processTable(
 			$mainTable,
 			$mainTableAlias,
 			FALSE,
@@ -222,7 +224,6 @@ class QueryBuilder
 		}
 
 		return 'UPDATE ' . $this->processTable(
-				NULL,
 				$mainTable,
 				$mainTableAlias,
 				FALSE,
@@ -245,8 +246,7 @@ class QueryBuilder
 	private function createDelete(array $queryParams, array &$params): string
 	{
 		['table' => $mainTable, 'alias' => $mainTableAlias] = $this->getMainTableMetadata($queryParams);
-		return 'DELETE ' . $this->processTable(
-				'FROM',
+		return 'DELETE FROM ' . $this->processTable(
 				$mainTable,
 				$mainTableAlias,
 				FALSE,
@@ -255,6 +255,73 @@ class QueryBuilder
 			$this->getWhere($queryParams, $params) .
 			$this->getPrefixSuffix($queryParams, Query::PARAM_SUFFIX, $params) .
 			$this->getReturning($queryParams, $params);
+	}
+
+
+	/**
+	 * @param array<string, mixed> $queryParams
+	 * @param list<mixed> $params
+	 * @throws Exceptions\QueryBuilderException
+	 * @phpstan-param QueryParams $queryParams
+	 */
+	private function createMerge(array $queryParams, array &$params): string
+	{
+		['table' => $mainTable, 'alias' => $mainTableAlias] = $this->getMainTableMetadata($queryParams);
+
+		$usingAlias = $queryParams[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_USING];
+		if ($usingAlias === NULL) {
+			throw Exceptions\QueryBuilderException::noUsing();
+		}
+
+		if (!isset($queryParams[Query::PARAM_ON_CONDITIONS][$usingAlias])) {
+			throw Exceptions\QueryBuilderException::noOnCondition($usingAlias);
+		}
+
+		if ($queryParams[Query::PARAM_MERGE] === []) {
+			throw Exceptions\QueryBuilderException::noWhen();
+		}
+
+		$merge = 'MERGE INTO ' . $this->processTable(
+				$mainTable,
+				$mainTableAlias,
+				FALSE,
+				$params
+			) . ' USING ' . $this->processTable(
+				$queryParams[Query::PARAM_TABLES][$usingAlias][self::TABLE_NAME],
+				$usingAlias,
+				FALSE,
+				$params
+			) . ' ON ' . $this->processComplex(
+				$queryParams[Query::PARAM_ON_CONDITIONS][$usingAlias],
+				$params
+			);
+
+		foreach ($queryParams[Query::PARAM_MERGE] as $when) {
+			[$type, $then, $onCondition] = $when;
+
+			$merge .= ' WHEN';
+
+			if ($type === Query::MERGE_WHEN_NOT_MATCHED) {
+				$merge .= ' NOT';
+			} else if ($type !== Query::MERGE_WHEN_MATCHED) {
+				throw new Exceptions\ShouldNotHappenException(\sprintf('Bad WHEN type \'%s\' for MERGE.', $type));
+			}
+
+			$merge .= ' MATCHED';
+
+			if ($onCondition !== NULL) {
+				$merge .= ' AND ' . $this->processComplex($onCondition, $params);
+			}
+
+			if ($then instanceof Db\Sql) {
+				$params[] = $then;
+				$then = '?';
+			}
+
+			$merge .= ' THEN ' . $then;
+		}
+
+		return $merge;
 	}
 
 
@@ -353,7 +420,6 @@ class QueryBuilder
 			$mainTableAlias = $queryParams[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_MAIN];
 			if ($mainTableAlias !== NULL) {
 				$from[] = $this->processTable(
-					NULL,
 					$queryParams[Query::PARAM_TABLES][$mainTableAlias][self::TABLE_NAME],
 					$mainTableAlias,
 					isset($queryParams[Query::PARAM_LATERAL_TABLES][$mainTableAlias]),
@@ -364,7 +430,6 @@ class QueryBuilder
 
 		foreach ($queryParams[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_FROM] as $tableAlias) {
 			$from[] = $this->processTable(
-				NULL,
 				$queryParams[Query::PARAM_TABLES][$tableAlias][self::TABLE_NAME],
 				$tableAlias,
 				isset($queryParams[Query::PARAM_LATERAL_TABLES][$tableAlias]),
@@ -387,7 +452,7 @@ class QueryBuilder
 		$joins = [];
 
 		$aliasesWithoutTables = array_diff(
-			array_keys($queryParams[Query::PARAM_JOIN_CONDITIONS]),
+			array_keys($queryParams[Query::PARAM_ON_CONDITIONS]),
 			$queryParams[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_JOINS]
 		);
 		if ($aliasesWithoutTables !== []) {
@@ -397,8 +462,7 @@ class QueryBuilder
 		foreach ($queryParams[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_JOINS] as $tableAlias) {
 			$joinType = $queryParams[Query::PARAM_TABLES][$tableAlias][self::TABLE_TYPE];
 
-			$table = $this->processTable(
-				$joinType,
+			$table = $joinType . ' ' . $this->processTable(
 				$queryParams[Query::PARAM_TABLES][$tableAlias][self::TABLE_NAME],
 				$tableAlias,
 				isset($queryParams[Query::PARAM_LATERAL_TABLES][$tableAlias]),
@@ -408,12 +472,12 @@ class QueryBuilder
 			if ($joinType === Query::JOIN_CROSS) {
 				$joins[] = $table;
 			} else {
-				if (!isset($queryParams[Query::PARAM_JOIN_CONDITIONS][$tableAlias])) {
-					throw Exceptions\QueryBuilderException::noJoinConditions($tableAlias);
+				if (!isset($queryParams[Query::PARAM_ON_CONDITIONS][$tableAlias])) {
+					throw Exceptions\QueryBuilderException::noOnCondition($tableAlias);
 				}
 
 				$joins[] = $table . ' ON ' . $this->processComplex(
-					$queryParams[Query::PARAM_JOIN_CONDITIONS][$tableAlias],
+					$queryParams[Query::PARAM_ON_CONDITIONS][$tableAlias],
 					$params
 				);
 			}
@@ -574,7 +638,7 @@ class QueryBuilder
 			return ' ' . \implode(' ', $processedItems);
 		}
 
-		throw Exceptions\QueryBuilderException::badParam('$type', $type, [Query::PARAM_PREFIX, Query::PARAM_SUFFIX]);
+		throw new Exceptions\ShouldNotHappenException(\sprintf('Bad prefix/suffix type with value \'%s\'. Valid values are \'%s\'.', $type, \implode('\', \'', [Query::PARAM_PREFIX, Query::PARAM_SUFFIX])));
 	}
 
 
@@ -655,11 +719,10 @@ class QueryBuilder
 
 
 	/**
-	 * @param string|NULL $type
 	 * @param string|Db\Sql|Query $table
 	 * @param list<mixed> $params
 	 */
-	private function processTable(?string $type, $table, string $alias, bool $isLateral, array &$params): string
+	private function processTable($table, string $alias, bool $isLateral, array &$params): string
 	{
 		if ($table instanceof Db\Sql) {
 			$params[] = $table;
@@ -677,7 +740,7 @@ class QueryBuilder
 			$table = 'LATERAL ' . $table;
 		}
 
-		return (($type === NULL) ? '' : ($type . ' ')) . ($table === $alias ? $table : ($table . ' AS ' . $alias));
+		return ($table === $alias) ? $table : ($table . ' AS ' . $alias);
 	}
 
 

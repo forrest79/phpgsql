@@ -13,13 +13,14 @@ class Query implements Sql
 	public const QUERY_INSERT = 'insert';
 	public const QUERY_UPDATE = 'update';
 	public const QUERY_DELETE = 'delete';
+	public const QUERY_MERGE = 'merge';
 	public const QUERY_TRUNCATE = 'truncate';
 
 	public const PARAM_SELECT = 'select';
 	public const PARAM_DISTINCT = 'distinct';
 	public const PARAM_TABLES = 'tables';
 	public const PARAM_TABLE_TYPES = 'table-types';
-	public const PARAM_JOIN_CONDITIONS = 'join-conditions';
+	public const PARAM_ON_CONDITIONS = 'on-conditions';
 	public const PARAM_LATERAL_TABLES = 'lateral-tables';
 	public const PARAM_WHERE = 'where';
 	public const PARAM_GROUPBY = 'groupBy';
@@ -32,6 +33,7 @@ class Query implements Sql
 	public const PARAM_RETURNING = 'returning';
 	public const PARAM_DATA = 'data';
 	public const PARAM_ROWS = 'rows';
+	public const PARAM_MERGE = 'merge';
 	public const PARAM_WITH = 'with';
 	public const PARAM_PREFIX = 'prefix';
 	public const PARAM_SUFFIX = 'suffix';
@@ -39,6 +41,7 @@ class Query implements Sql
 	public const TABLE_TYPE_MAIN = 'main';
 	public const TABLE_TYPE_FROM = 'from';
 	public const TABLE_TYPE_JOINS = 'joins';
+	public const TABLE_TYPE_USING = 'using';
 
 	private const JOIN_INNER = 'INNER JOIN';
 	private const JOIN_LEFT_OUTER = 'LEFT OUTER JOIN';
@@ -50,6 +53,9 @@ class Query implements Sql
 	private const COMBINE_UNION_ALL = 'UNION ALL';
 	private const COMBINE_INTERSECT = 'INTERSECT';
 	private const COMBINE_EXCEPT = 'EXCEPT';
+
+	public const MERGE_WHEN_MATCHED = 'when-matched';
+	public const MERGE_WHEN_NOT_MATCHED = 'when-not-matched';
 
 	public const WITH_QUERIES = 'queries';
 	public const WITH_QUERIES_SUFFIX = 'queries-suffix';
@@ -64,8 +70,9 @@ class Query implements Sql
 			self::TABLE_TYPE_MAIN => NULL,
 			self::TABLE_TYPE_FROM => [],
 			self::TABLE_TYPE_JOINS => [],
+			self::TABLE_TYPE_USING => NULL,
 		],
-		self::PARAM_JOIN_CONDITIONS => [],
+		self::PARAM_ON_CONDITIONS => [],
 		self::PARAM_LATERAL_TABLES => [],
 		self::PARAM_WHERE => NULL,
 		self::PARAM_GROUPBY => [],
@@ -78,6 +85,7 @@ class Query implements Sql
 		self::PARAM_RETURNING => [],
 		self::PARAM_DATA => [],
 		self::PARAM_ROWS => [],
+		self::PARAM_MERGE => [],
 		self::PARAM_WITH => [
 			self::WITH_QUERIES => [],
 			self::WITH_QUERIES_SUFFIX => [],
@@ -289,8 +297,8 @@ class Query implements Sql
 
 		$this->checkAlias($name, $alias);
 
-		if (($type === self::TABLE_TYPE_MAIN) && ($this->params[self::PARAM_TABLE_TYPES][self::TABLE_TYPE_MAIN] !== NULL)) {
-			throw Exceptions\QueryException::onlyOneMainTable();
+		if (in_array($type, [self::TABLE_TYPE_MAIN, self::TABLE_TYPE_USING], TRUE) && ($this->params[self::PARAM_TABLE_TYPES][$type] !== NULL)) {
+			throw ($type === self::TABLE_TYPE_MAIN) ? Exceptions\QueryException::onlyOneMainTable() : Exceptions\QueryException::onlyOneUsing();
 		}
 
 		if ($alias === NULL) {
@@ -304,14 +312,14 @@ class Query implements Sql
 
 		$this->params[self::PARAM_TABLES][$alias] = [$name, $type];
 
-		if ($type === self::TABLE_TYPE_MAIN) {
+		if (in_array($type, [self::TABLE_TYPE_MAIN, self::TABLE_TYPE_USING], TRUE)) {
 			$this->params[self::PARAM_TABLE_TYPES][$type] = $alias;
 		} else {
 			$this->params[self::PARAM_TABLE_TYPES][$type === self::TABLE_TYPE_FROM ? $type : self::TABLE_TYPE_JOINS][] = $alias;
 		}
 
 		if ($onCondition !== NULL) {
-			$this->getComplexParam(self::PARAM_JOIN_CONDITIONS, $alias)->add($onCondition);
+			$this->getComplexParam(self::PARAM_ON_CONDITIONS, $alias)->add($onCondition);
 		}
 
 		return $this;
@@ -327,7 +335,7 @@ class Query implements Sql
 	public function on(string $alias, $condition, ...$params): self
 	{
 		$this->resetQuery();
-		$this->getComplexParam(self::PARAM_JOIN_CONDITIONS, $alias)->add($condition, ...$params);
+		$this->getComplexParam(self::PARAM_ON_CONDITIONS, $alias)->add($condition, ...$params);
 		return $this;
 	}
 
@@ -437,12 +445,12 @@ class Query implements Sql
 
 	private function getComplexParam(string $param, ?string $alias = NULL): Complex
 	{
-		if ($param === self::PARAM_JOIN_CONDITIONS) {
+		if ($param === self::PARAM_ON_CONDITIONS) {
 			if (!isset($this->params[$param][$alias])) {
 				$this->params[$param][$alias] = Complex::createAnd();
 			}
 			return $this->params[$param][$alias];
-		} elseif (($param === self::PARAM_WHERE) || ($param === self::PARAM_HAVING)) {
+		} else if (($param === self::PARAM_WHERE) || ($param === self::PARAM_HAVING)) {
 			if ($this->params[$param] === NULL) {
 				$this->params[$param] = Complex::createAnd();
 			}
@@ -659,6 +667,76 @@ class Query implements Sql
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
+	public function merge(?string $into = NULL, ?string $alias = NULL): self
+	{
+		$this->resetQuery();
+
+		$this->queryType = self::QUERY_MERGE;
+
+		if ($into !== NULL) {
+			$this->table($into, $alias);
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * @param string|self|Db\Sql $dataSource values, table or query
+	 * @param string|Complex|Db\Sql|NULL $onCondition
+	 * @return static
+	 * @throws Exceptions\QueryException
+	 */
+	public function using($dataSource, ?string $alias = NULL, $onCondition = NULL): self
+	{
+		return $this->addTable(self::TABLE_TYPE_USING, $dataSource, $alias, $onCondition);
+	}
+
+
+	/**
+	 * @param string|Db\Sql $then
+	 * @param string|Complex|Db\Sql|NULL $onCondition
+	 * @return static
+	 * @throws Exceptions\QueryException
+	 */
+	public function whenMatched($then, $onCondition = NULL): self
+	{
+		$this->resetQuery();
+
+		$this->params[self::PARAM_MERGE][] = [
+			self::MERGE_WHEN_MATCHED,
+			$then,
+			$onCondition === NULL ? NULL : Complex::createAnd()->add($onCondition),
+		];
+
+		return $this;
+	}
+
+
+	/**
+	 * @param string|Db\Sql $then
+	 * @param string|Complex|Db\Sql|NULL $onCondition
+	 * @return static
+	 * @throws Exceptions\QueryException
+	 */
+	public function whenNotMatched($then, $onCondition = NULL): self
+	{
+		$this->resetQuery();
+
+		$this->params[self::PARAM_MERGE][] = [
+			self::MERGE_WHEN_NOT_MATCHED,
+			$then,
+			$onCondition === NULL ? NULL : Complex::createAnd()->add($onCondition),
+		];
+
+		return $this;
+	}
+
+
+	/**
+	 * @return static
+	 * @throws Exceptions\QueryException
+	 */
 	public function truncate(?string $table = NULL): self
 	{
 		$this->resetQuery();
@@ -815,8 +893,8 @@ class Query implements Sql
 	{
 		$this->resetQuery();
 
-		foreach ($this->params[self::PARAM_JOIN_CONDITIONS] as $alias => $joinCondition) {
-			$this->params[self::PARAM_JOIN_CONDITIONS][$alias] = clone $joinCondition;
+		foreach ($this->params[self::PARAM_ON_CONDITIONS] as $alias => $joinCondition) {
+			$this->params[self::PARAM_ON_CONDITIONS][$alias] = clone $joinCondition;
 		}
 
 		if ($this->params[self::PARAM_WHERE] !== NULL) {

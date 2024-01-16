@@ -580,7 +580,7 @@ final class FluentQueryTest extends Tests\TestCase
 				->from('table', 't')
 				->join('another', 'x')
 				->createSqlQuery();
-		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::NO_JOIN_CONDITIONS);
+		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::NO_ON_CONDITION);
 	}
 
 
@@ -974,14 +974,6 @@ final class FluentQueryTest extends Tests\TestCase
 	}
 
 
-	public function testTruncate(): void
-	{
-		$query = $this->query()->truncate('table')->createSqlQuery()->createQuery();
-		Tester\Assert::same('TRUNCATE table', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
-	}
-
-
 	public function testReturningFluentQuery(): void
 	{
 		$query = $this->query()
@@ -1007,6 +999,157 @@ final class FluentQueryTest extends Tests\TestCase
 
 		Tester\Assert::same('DELETE FROM table AS t WHERE column = $1 RETURNING (to_value(column)) AS "c"', $query->getSql());
 		Tester\Assert::same([100], $query->getParams());
+	}
+
+
+	public function testMerge(): void
+	{
+		$query = $this->query()
+			->merge('customer_account', 'ca')
+			->using('recent_transactions', 't', 't.customer_id = ca.customer_id')
+			->whenMatched('UPDATE SET balance = balance + transaction_value')
+			->whenNotMatched('INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)')
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('MERGE INTO customer_account AS ca USING recent_transactions AS t ON t.customer_id = ca.customer_id WHEN MATCHED THEN UPDATE SET balance = balance + transaction_value WHEN NOT MATCHED THEN INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)', $query->getSql());
+		Tester\Assert::same([], $query->getParams());
+	}
+
+
+	public function testMergeUsingFluentQuery(): void
+	{
+		$query = $this->query()
+			->merge('customer_account', 'ca')
+			->using($this->query()->select(['customer_id', 'transaction_value'])->from('recent_transactions')->where('customer_id > ?', 10), 't', 't.customer_id = ca.customer_id')
+			->whenMatched('UPDATE SET balance = balance + transaction_value')
+			->whenNotMatched('INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)')
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('MERGE INTO customer_account AS ca USING (SELECT customer_id, transaction_value FROM recent_transactions WHERE customer_id > $1) AS t ON t.customer_id = ca.customer_id WHEN MATCHED THEN UPDATE SET balance = balance + transaction_value WHEN NOT MATCHED THEN INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)', $query->getSql());
+		Tester\Assert::same([10], $query->getParams());
+	}
+
+
+	public function testMergeUsingSql(): void
+	{
+		$query = $this->query()
+			->merge('customer_account', 'ca')
+			->using(new Db\Sql\Query('SELECT customer_id, transaction_value FROM recent_transactions WHERE customer_id > ?', [10]), 't', 't.customer_id = ca.customer_id')
+			->whenMatched('UPDATE SET balance = balance + transaction_value')
+			->whenNotMatched('INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)')
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('MERGE INTO customer_account AS ca USING (SELECT customer_id, transaction_value FROM recent_transactions WHERE customer_id > $1) AS t ON t.customer_id = ca.customer_id WHEN MATCHED THEN UPDATE SET balance = balance + transaction_value WHEN NOT MATCHED THEN INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)', $query->getSql());
+		Tester\Assert::same([10], $query->getParams());
+	}
+
+
+	public function testMergeOnComplex(): void
+	{
+		$query = $this->query()
+			->merge('customer_account', 'ca')
+			->using('(SELECT customer_id, transaction_value FROM recent_transactions)', 't', Fluent\Complex::createAnd()->add('t.customer_id = ca.customer_id')->add('t.customer_id > ?', 10))
+			->whenMatched('UPDATE SET balance = balance + transaction_value')
+			->whenNotMatched('INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)')
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('MERGE INTO customer_account AS ca USING (SELECT customer_id, transaction_value FROM recent_transactions) AS t ON (t.customer_id = ca.customer_id) AND (t.customer_id > $1) WHEN MATCHED THEN UPDATE SET balance = balance + transaction_value WHEN NOT MATCHED THEN INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)', $query->getSql());
+		Tester\Assert::same([10], $query->getParams());
+	}
+
+
+	public function testMergeWhenOn(): void
+	{
+		$query = $this->query()
+			->merge('wines', 'w')
+			->using('wine_stock_changes', 's', 's.winename = w.winename')
+			->whenNotMatched('INSERT VALUES(s.winename, s.stock_delta)', 's.stock_delta > 0')
+			->whenMatched('UPDATE SET stock = w.stock + s.stock_delta', Fluent\Complex::createAnd()->add('w.stock + s.stock_delta > ?', 0))
+			->whenMatched('UPDATE SET stock = w.stock - s.stock_delta', Db\Sql\Expression::create('w.stock + s.stock_delta < ?', 0))
+			->whenMatched('DELETE')
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('MERGE INTO wines AS w USING wine_stock_changes AS s ON s.winename = w.winename WHEN NOT MATCHED AND s.stock_delta > 0 THEN INSERT VALUES(s.winename, s.stock_delta) WHEN MATCHED AND w.stock + s.stock_delta > $1 THEN UPDATE SET stock = w.stock + s.stock_delta WHEN MATCHED AND w.stock + s.stock_delta < $2 THEN UPDATE SET stock = w.stock - s.stock_delta WHEN MATCHED THEN DELETE', $query->getSql());
+		Tester\Assert::same([0, 0], $query->getParams());
+	}
+
+
+	public function testMergeDoNothing(): void
+	{
+		$query = $this->query()
+			->merge('wines', 'w')
+			->using('wine_stock_changes', 's', 's.winename = w.winename')
+			->whenNotMatched('INSERT VALUES(s.winename, s.stock_delta)')
+			->whenMatched(Fluent\Query::DO_NOTHING)
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('MERGE INTO wines AS w USING wine_stock_changes AS s ON s.winename = w.winename WHEN NOT MATCHED THEN INSERT VALUES(s.winename, s.stock_delta) WHEN MATCHED THEN DO NOTHING', $query->getSql());
+		Tester\Assert::same([], $query->getParams());
+	}
+
+
+	public function testMergeCommonUpsert(): void
+	{
+		$query = $this->query()
+			->merge('wines', 'w')
+			->using('(SELECT 1)', 's', 'w.winename = $1')
+			->whenNotMatched(Db\Sql\Expression::create('INSERT (winename, balance) VALUES($1, $2)', 'Red wine', 10))
+			->whenMatched('UPDATE SET balance = $2')
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('MERGE INTO wines AS w USING (SELECT 1) AS s ON w.winename = $1 WHEN NOT MATCHED THEN INSERT (winename, balance) VALUES($1, $2) WHEN MATCHED THEN UPDATE SET balance = $2', $query->getSql());
+		Tester\Assert::same(['Red wine', 10], $query->getParams());
+	}
+
+
+	public function testMergeNoUsing(): void
+	{
+		Tester\Assert::exception(function (): void {
+			$this->query()
+				->merge('customer_account', 'ca')
+				->whenMatched('UPDATE SET balance = balance + transaction_value')
+				->whenNotMatched('INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)')
+				->createSqlQuery();
+		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::NO_USING);
+	}
+
+
+	public function testMergeNoOn(): void
+	{
+		Tester\Assert::exception(function (): void {
+			$this->query()
+				->merge('customer_account', 'ca')
+				->using('recent_transactions', 't')
+				->whenMatched('UPDATE SET balance = balance + transaction_value')
+				->whenNotMatched('INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)')
+				->createSqlQuery();
+		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::NO_ON_CONDITION);
+	}
+
+
+	public function testMergeNoWhen(): void
+	{
+		Tester\Assert::exception(function (): void {
+			$this->query()
+				->merge('customer_account', 'ca')
+				->using('recent_transactions', 't', 't.customer_id = ca.customer_id')
+				->createSqlQuery();
+		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::NO_WHEN);
+	}
+
+
+	public function testTruncate(): void
+	{
+		$query = $this->query()->truncate('table')->createSqlQuery()->createQuery();
+		Tester\Assert::same('TRUNCATE table', $query->getSql());
+		Tester\Assert::same([], $query->getParams());
 	}
 
 
@@ -1320,7 +1463,7 @@ final class FluentQueryTest extends Tests\TestCase
 		Tester\Assert::false($query->has($query::PARAM_DISTINCT));
 		Tester\Assert::false($query->has($query::PARAM_TABLES));
 		Tester\Assert::false($query->has($query::PARAM_TABLE_TYPES));
-		Tester\Assert::false($query->has($query::PARAM_JOIN_CONDITIONS));
+		Tester\Assert::false($query->has($query::PARAM_ON_CONDITIONS));
 		Tester\Assert::false($query->has($query::PARAM_WHERE));
 		Tester\Assert::false($query->has($query::PARAM_GROUPBY));
 		Tester\Assert::false($query->has($query::PARAM_HAVING));
@@ -1355,7 +1498,7 @@ final class FluentQueryTest extends Tests\TestCase
 		Tester\Assert::true($query->has($query::PARAM_DISTINCT));
 		Tester\Assert::true($query->has($query::PARAM_TABLES));
 		Tester\Assert::true($query->has($query::PARAM_TABLE_TYPES));
-		Tester\Assert::true($query->has($query::PARAM_JOIN_CONDITIONS));
+		Tester\Assert::true($query->has($query::PARAM_ON_CONDITIONS));
 		Tester\Assert::true($query->has($query::PARAM_WHERE));
 		Tester\Assert::true($query->has($query::PARAM_GROUPBY));
 		Tester\Assert::true($query->has($query::PARAM_HAVING));
