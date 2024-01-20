@@ -316,7 +316,7 @@ class Connection
 	{
 		$query = $this->normalizeSqlQuery($sqlQuery, $params)->createQuery();
 
-		$startTime = $this->events->hasOnQuery() ? \microtime(TRUE) : NULL;
+		$startTime = $this->events->hasOnQuery() ? \hrtime(TRUE) : NULL;
 
 		$queryParams = $query->getParams();
 		if ($queryParams === []) {
@@ -330,7 +330,7 @@ class Connection
 		}
 
 		if ($startTime !== NULL) {
-			$this->events->onQuery($query, \microtime(TRUE) - $startTime);
+			$this->events->onQuery($query, \hrtime(TRUE) - $startTime);
 		}
 
 		return $this->createResult($resource, $query);
@@ -362,7 +362,7 @@ class Connection
 	 */
 	public function execute(string $sql): self
 	{
-		$startTime = $this->events->hasOnQuery() ? \microtime(TRUE) : NULL;
+		$startTime = $this->events->hasOnQuery() ? \hrtime(TRUE) : NULL;
 
 		$resource = @\pg_query($this->getConnectedResource(), $sql); // intentionally @
 		if ($resource === FALSE) {
@@ -370,7 +370,7 @@ class Connection
 		}
 
 		if ($startTime !== NULL) {
-			$this->events->onQuery(new Query($sql, []), \microtime(TRUE) - $startTime);
+			$this->events->onQuery(new Query($sql, []), \hrtime(TRUE) - $startTime);
 		}
 
 		return $this;
@@ -583,9 +583,9 @@ class Connection
 		\assert($this->resource !== NULL);
 
 		if ($this->connected === FALSE) {
-			$start = \microtime(TRUE);
+			$start = \hrtime(TRUE);
 			do {
-				$test = \microtime(TRUE);
+				$test = \hrtime(TRUE);
 				switch (\pg_connect_poll($this->resource)) {
 					case \PGSQL_POLLING_READING:
 						while (!self::asyncIsReadable($this->asyncStream));
@@ -605,7 +605,7 @@ class Connection
 
 						return $this->resource;
 				}
-			} while (($test - $start) <= $this->connectAsyncWaitSeconds);
+			} while ((($test - $start) / 1000000000) <= $this->connectAsyncWaitSeconds);
 			throw Exceptions\ConnectionException::asyncConnectTimeout($test, $this->connectAsyncWaitSeconds);
 		}
 

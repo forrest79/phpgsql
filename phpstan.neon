@@ -93,7 +93,7 @@ parameters:
 			count: 1
 
 		-
-			message: '#^Call to function microtime\(\) on a separate line has no effect\.$#'
+			message: '#^Call to function hrtime\(\) on a separate line has no effect\.$#'
 			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
 			count: 1
 

@@ -19,7 +19,7 @@ class PreparedStatement extends PreparedStatementHelper
 	{
 		$statementName = $this->prepareStatement();
 
-		$startTime = $this->events->hasOnQuery() ? \microtime(TRUE) : NULL;
+		$startTime = $this->events->hasOnQuery() ? \hrtime(TRUE) : NULL;
 
 		$params = self::prepareParams($params);
 
@@ -31,7 +31,7 @@ class PreparedStatement extends PreparedStatementHelper
 		}
 
 		if ($startTime !== NULL) {
-			$this->events->onQuery($query, \microtime(TRUE) - $startTime, $statementName);
+			$this->events->onQuery($query, \hrtime(TRUE) - $startTime, $statementName);
 		}
 
 		return $this->connection->createResult($resource, $query);

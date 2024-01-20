@@ -12,7 +12,7 @@ class Events
 	/** @var list<callable(Connection): void> function (Connection $connection) {} */
 	private array $onClose = [];
 
-	/** @var list<callable(Connection, Query, float|NULL, string|NULL): void> function (Connection $connection, Query $query, float|NULL $time, string|NULL $prepareStatementName) {} */
+	/** @var list<callable(Connection, Query, int|float|NULL, string|NULL): void> function (Connection $connection, Query $query, int|float|NULL $timeNs, string|NULL $prepareStatementName) {} */
 	private array $onQuery = [];
 
 	/** @var list<callable(Connection, Result): void> function (Connection $connection, Result $result) {} */
@@ -73,10 +73,10 @@ class Events
 	}
 
 
-	public function onQuery(Query $query, float|NULL $time = NULL, string|NULL $prepareStatementName = NULL): void
+	public function onQuery(Query $query, float|NULL $timeNs = NULL, string|NULL $prepareStatementName = NULL): void
 	{
 		foreach ($this->onQuery as $event) {
-			$event($this->connection, $query, $time, $prepareStatementName);
+			$event($this->connection, $query, $timeNs, $prepareStatementName);
 		}
 	}
 

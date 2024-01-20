@@ -215,11 +215,11 @@ final class BasicPhpBenchmark extends BenchmarkCase
 
 
 	/**
-	 * @title microtime with miliseconds
+	 * @title hrtime as number
 	 */
-	public function benchmarkMicrotimeMs(): void
+	public function benchmarkHrtimeMs(): void
 	{
-		\microtime(TRUE);
+		\hrtime(TRUE);
 	}
 
 
