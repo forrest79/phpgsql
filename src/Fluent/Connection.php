@@ -362,6 +362,40 @@ class Connection extends Db\Connection implements Sql
 
 
 	/**
+	 * @param string|list<string>|NULL $columnsOrConstraint
+	 * @param string|Complex|Db\Sql|NULL $where
+	 * @return QueryExecute
+	 * @throws Exceptions\QueryException
+	 */
+	public function onConflict($columnsOrConstraint = NULL, $where = NULL): Query
+	{
+		return $this->createQuery()->onConflict($columnsOrConstraint, $where);
+	}
+
+
+	/**
+	 * @param array<int|string, string|Db\Sql> $set
+	 * @param string|Complex|Db\Sql|NULL $where
+	 * @return QueryExecute
+	 * @throws Exceptions\QueryException
+	 */
+	public function doUpdate(array $set, $where = NULL): Query
+	{
+		return $this->createQuery()->doUpdate($set, $where);
+	}
+
+
+	/**
+	 * @return QueryExecute
+	 * @throws Exceptions\QueryException
+	 */
+	public function doNothing(): Query
+	{
+		return $this->createQuery()->doNothing();
+	}
+
+
+	/**
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
@@ -427,25 +461,25 @@ class Connection extends Db\Connection implements Sql
 
 	/**
 	 * @param string|Db\Sql $then
-	 * @param string|Complex|Db\Sql|NULL $onCondition
+	 * @param string|Complex|Db\Sql|NULL $condition
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function whenMatched($then, $onCondition = NULL): Query
+	public function whenMatched($then, $condition = NULL): Query
 	{
-		return $this->createQuery()->whenMatched($then, $onCondition);
+		return $this->createQuery()->whenMatched($then, $condition);
 	}
 
 
 	/**
 	 * @param string|Db\Sql $then
-	 * @param string|Complex|Db\Sql|NULL $onCondition
+	 * @param string|Complex|Db\Sql|NULL $condition
 	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function whenNotMatched($then, $onCondition = NULL): Query
+	public function whenNotMatched($then, $condition = NULL): Query
 	{
-		return $this->createQuery()->whenNotMatched($then, $onCondition);
+		return $this->createQuery()->whenNotMatched($then, $condition);
 	}
 
 

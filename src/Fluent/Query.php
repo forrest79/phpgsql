@@ -30,6 +30,7 @@ class Query implements Sql
 	public const PARAM_OFFSET = 'offset';
 	public const PARAM_COMBINE_QUERIES = 'combine-queries';
 	public const PARAM_INSERT_COLUMNS = 'insert-columns';
+	public const PARAM_INSERT_ONCONFLICT = 'insert-onconflict';
 	public const PARAM_RETURNING = 'returning';
 	public const PARAM_DATA = 'data';
 	public const PARAM_ROWS = 'rows';
@@ -53,6 +54,11 @@ class Query implements Sql
 	private const COMBINE_UNION_ALL = 'UNION ALL';
 	private const COMBINE_INTERSECT = 'INTERSECT';
 	private const COMBINE_EXCEPT = 'EXCEPT';
+
+	public const INSERT_ONCONFLICT_COLUMNS_OR_CONSTRAINT = 'columns-or-constraint';
+	public const INSERT_ONCONFLICT_WHERE = 'where';
+	public const INSERT_ONCONFLICT_DO = 'do';
+	public const INSERT_ONCONFLICT_DO_WHERE = 'do-where';
 
 	public const MERGE_WHEN_MATCHED = 'when-matched';
 	public const MERGE_WHEN_NOT_MATCHED = 'when-not-matched';
@@ -82,6 +88,12 @@ class Query implements Sql
 		self::PARAM_OFFSET => NULL,
 		self::PARAM_COMBINE_QUERIES => [],
 		self::PARAM_INSERT_COLUMNS => [],
+		self::PARAM_INSERT_ONCONFLICT => [
+			self::INSERT_ONCONFLICT_COLUMNS_OR_CONSTRAINT => NULL,
+			self::INSERT_ONCONFLICT_WHERE => NULL,
+			self::INSERT_ONCONFLICT_DO => NULL,
+			self::INSERT_ONCONFLICT_DO_WHERE => NULL,
+		],
 		self::PARAM_RETURNING => [],
 		self::PARAM_DATA => [],
 		self::PARAM_ROWS => [],
@@ -162,7 +174,9 @@ class Query implements Sql
 	public function distinct(): self
 	{
 		$this->resetQuery();
+
 		$this->params[self::PARAM_DISTINCT] = TRUE;
+
 		return $this;
 	}
 
@@ -298,7 +312,7 @@ class Query implements Sql
 		$this->checkAlias($name, $alias);
 
 		if (in_array($type, [self::TABLE_TYPE_MAIN, self::TABLE_TYPE_USING], TRUE) && ($this->params[self::PARAM_TABLE_TYPES][$type] !== NULL)) {
-			throw ($type === self::TABLE_TYPE_MAIN) ? Exceptions\QueryException::onlyOneMainTable() : Exceptions\QueryException::onlyOneUsing();
+			throw ($type === self::TABLE_TYPE_MAIN) ? Exceptions\QueryException::onlyOneMainTable() : Exceptions\QueryException::mergeOnlyOneUsing();
 		}
 
 		if ($alias === NULL) {
@@ -335,7 +349,9 @@ class Query implements Sql
 	public function on(string $alias, $condition, ...$params): self
 	{
 		$this->resetQuery();
+
 		$this->getComplexParam(self::PARAM_ON_CONDITIONS, $alias)->add($condition, ...$params);
+
 		return $this;
 	}
 
@@ -359,7 +375,9 @@ class Query implements Sql
 	public function where($condition, ...$params): self
 	{
 		$this->resetQuery();
+
 		$this->getComplexParam(self::PARAM_WHERE)->add($condition, ...$params);
+
 		return $this;
 	}
 
@@ -371,8 +389,10 @@ class Query implements Sql
 	public function whereAnd(array $conditions = []): Complex
 	{
 		$this->resetQuery();
+
 		$complex = Complex::createAnd($conditions, NULL, $this);
 		$this->getComplexParam(self::PARAM_WHERE)->add($complex);
+
 		return $complex;
 	}
 
@@ -384,8 +404,10 @@ class Query implements Sql
 	public function whereOr(array $conditions = []): Complex
 	{
 		$this->resetQuery();
+
 		$complex = Complex::createOr($conditions, NULL, $this);
 		$this->getComplexParam(self::PARAM_WHERE)->add($complex);
+
 		return $complex;
 	}
 
@@ -398,7 +420,9 @@ class Query implements Sql
 	public function groupBy(string ...$columns): self
 	{
 		$this->resetQuery();
+
 		$this->params[self::PARAM_GROUPBY] = \array_merge($this->params[self::PARAM_GROUPBY], $columns);
+
 		return $this;
 	}
 
@@ -412,7 +436,9 @@ class Query implements Sql
 	public function having($condition, ...$params): self
 	{
 		$this->resetQuery();
+
 		$this->getComplexParam(self::PARAM_HAVING)->add($condition, ...$params);
+
 		return $this;
 	}
 
@@ -424,8 +450,10 @@ class Query implements Sql
 	public function havingAnd(array $conditions = []): Complex
 	{
 		$this->resetQuery();
+
 		$complex = Complex::createAnd($conditions, NULL, $this);
 		$this->getComplexParam(self::PARAM_HAVING)->add($complex);
+
 		return $complex;
 	}
 
@@ -437,8 +465,10 @@ class Query implements Sql
 	public function havingOr(array $conditions = []): Complex
 	{
 		$this->resetQuery();
+
 		$complex = Complex::createOr($conditions, NULL, $this);
 		$this->getComplexParam(self::PARAM_HAVING)->add($complex);
+
 		return $complex;
 	}
 
@@ -469,7 +499,9 @@ class Query implements Sql
 	public function orderBy(...$columns): self
 	{
 		$this->resetQuery();
+
 		$this->params[self::PARAM_ORDERBY] = \array_merge($this->params[self::PARAM_ORDERBY], $columns);
+
 		return $this;
 	}
 
@@ -481,7 +513,9 @@ class Query implements Sql
 	public function limit(int $limit): self
 	{
 		$this->resetQuery();
+
 		$this->params[self::PARAM_LIMIT] = $limit;
+
 		return $this;
 	}
 
@@ -493,7 +527,9 @@ class Query implements Sql
 	public function offset(int $offset): self
 	{
 		$this->resetQuery();
+
 		$this->params[self::PARAM_OFFSET] = $offset;
+
 		return $this;
 	}
 
@@ -578,8 +614,10 @@ class Query implements Sql
 	public function values(array $data): self
 	{
 		$this->resetQuery();
+
 		$this->queryType = self::QUERY_INSERT;
 		$this->params[self::PARAM_DATA] = $data + $this->params[self::PARAM_DATA];
+
 		return $this;
 	}
 
@@ -595,6 +633,59 @@ class Query implements Sql
 
 		$this->queryType = self::QUERY_INSERT;
 		$this->params[self::PARAM_ROWS] = \array_merge($this->params[self::PARAM_ROWS], $rows);
+
+		return $this;
+	}
+
+
+	/**
+	 * @param string|list<string>|NULL $columnsOrConstraint
+	 * @param string|Complex|Db\Sql|NULL $where
+	 * @return static
+	 * @throws Exceptions\QueryException
+	 */
+	public function onConflict($columnsOrConstraint = NULL, $where = NULL): self
+	{
+		$this->resetQuery();
+
+		if (\is_string($columnsOrConstraint) && ($where !== NULL)) {
+			throw Exceptions\QueryException::onConflictWhereNotForConstraint();
+		}
+
+		$this->params[self::PARAM_INSERT_ONCONFLICT][self::INSERT_ONCONFLICT_COLUMNS_OR_CONSTRAINT] = $columnsOrConstraint ?? FALSE;
+		$this->params[self::PARAM_INSERT_ONCONFLICT][self::INSERT_ONCONFLICT_WHERE] = $where === NULL ? NULL : Complex::createAnd()->add($where);
+
+		return $this;
+	}
+
+
+	/**
+	 * @param array<int|string, string|Db\Sql> $set
+	 * @param string|Complex|Db\Sql|NULL $where
+	 * @return static
+	 * @throws Exceptions\QueryException
+	 */
+	public function doUpdate(array $set, $where = NULL): self
+	{
+		$this->resetQuery();
+
+		$this->params[self::PARAM_INSERT_ONCONFLICT][self::INSERT_ONCONFLICT_DO] = $set;
+		$this->params[self::PARAM_INSERT_ONCONFLICT][self::INSERT_ONCONFLICT_DO_WHERE] = $where === NULL ? NULL : Complex::createAnd()->add($where);
+
+		return $this;
+	}
+
+
+	/**
+	 * @return static
+	 * @throws Exceptions\QueryException
+	 */
+	public function doNothing(): self
+	{
+		$this->resetQuery();
+
+		$this->params[self::PARAM_INSERT_ONCONFLICT][self::INSERT_ONCONFLICT_DO] = FALSE;
+		$this->params[self::PARAM_INSERT_ONCONFLICT][self::INSERT_ONCONFLICT_DO_WHERE] = NULL;
 
 		return $this;
 	}
@@ -626,8 +717,10 @@ class Query implements Sql
 	public function set(array $data): self
 	{
 		$this->resetQuery();
+
 		$this->queryType = self::QUERY_UPDATE;
 		$this->params[self::PARAM_DATA] = $data + $this->params[self::PARAM_DATA];
+
 		return $this;
 	}
 
@@ -658,7 +751,9 @@ class Query implements Sql
 	public function returning(array $returning): self
 	{
 		$this->resetQuery();
+
 		$this->params[self::PARAM_RETURNING] = \array_merge($this->params[self::PARAM_RETURNING], $returning);
+
 		return $this;
 	}
 
@@ -695,18 +790,18 @@ class Query implements Sql
 
 	/**
 	 * @param string|Db\Sql $then
-	 * @param string|Complex|Db\Sql|NULL $onCondition
+	 * @param string|Complex|Db\Sql|NULL $condition
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function whenMatched($then, $onCondition = NULL): self
+	public function whenMatched($then, $condition = NULL): self
 	{
 		$this->resetQuery();
 
 		$this->params[self::PARAM_MERGE][] = [
 			self::MERGE_WHEN_MATCHED,
 			$then,
-			$onCondition === NULL ? NULL : Complex::createAnd()->add($onCondition),
+			$condition === NULL ? NULL : Complex::createAnd()->add($condition),
 		];
 
 		return $this;
@@ -715,18 +810,18 @@ class Query implements Sql
 
 	/**
 	 * @param string|Db\Sql $then
-	 * @param string|Complex|Db\Sql|NULL $onCondition
+	 * @param string|Complex|Db\Sql|NULL $condition
 	 * @return static
 	 * @throws Exceptions\QueryException
 	 */
-	public function whenNotMatched($then, $onCondition = NULL): self
+	public function whenNotMatched($then, $condition = NULL): self
 	{
 		$this->resetQuery();
 
 		$this->params[self::PARAM_MERGE][] = [
 			self::MERGE_WHEN_NOT_MATCHED,
 			$then,
-			$onCondition === NULL ? NULL : Complex::createAnd()->add($onCondition),
+			$condition === NULL ? NULL : Complex::createAnd()->add($condition),
 		];
 
 		return $this;
@@ -796,8 +891,10 @@ class Query implements Sql
 	public function prefix(string $queryPrefix, ...$params): self
 	{
 		$this->resetQuery();
+
 		\array_unshift($params, $queryPrefix);
 		$this->params[self::PARAM_PREFIX][] = $params;
+
 		return $this;
 	}
 
@@ -810,8 +907,10 @@ class Query implements Sql
 	public function suffix(string $querySuffix, ...$params): self
 	{
 		$this->resetQuery();
+
 		\array_unshift($params, $querySuffix);
 		$this->params[self::PARAM_SUFFIX][] = $params;
+
 		return $this;
 	}
 

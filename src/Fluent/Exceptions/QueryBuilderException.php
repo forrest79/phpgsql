@@ -14,8 +14,11 @@ class QueryBuilderException extends Exception
 	public const BAD_PARAMS_COUNT = 8;
 	public const NO_CORRESPONDING_TABLE = 9;
 	public const SELECT_ALL_COLUMNS_CANT_BE_COMBINED_WITH_CONCRETE_COLUMN_FOR_INSERT_SELECT_WITH_COLUMN_DETECTION = 10;
-	public const NO_USING = 11;
-	public const NO_WHEN = 12;
+	public const MERGE_NO_USING = 11;
+	public const MERGE_NO_WHEN = 12;
+	public const ON_CONFLICT_NO_DO = 13;
+	public const ON_CONFLICT_DO_WITHOUT_DEFINITION = 14;
+	public const ON_CONFLICT_DO_UPDATE_SET_SINGLE_COLUMN_CAN_BE_ONLY_STRING = 15;
 
 
 	public static function badQueryType(string $type): self
@@ -81,15 +84,33 @@ class QueryBuilderException extends Exception
 	}
 
 
-	public static function noUsing(): self
+	public static function mergeNoUsing(): self
 	{
-		return new self('No USING for MERGE.', self::NO_USING);
+		return new self('There is missing USING statement for MERGE command.', self::MERGE_NO_USING);
 	}
 
 
-	public static function noWhen(): self
+	public static function mergeNoWhen(): self
 	{
-		return new self('No WHEN for MERGE.', self::NO_WHEN);
+		return new self('There must be at least one WHEN statement for MERGE command.', self::MERGE_NO_WHEN);
+	}
+
+
+	public static function onConflictNoDo(): self
+	{
+		return new self('There is missing DO statement for ON CONFLICT clause.', self::ON_CONFLICT_NO_DO);
+	}
+
+
+	public static function onConflictDoWithoutDefinition(): self
+	{
+		return new self('There is existing DO statement but ON CONFLICT clause is missing.', self::ON_CONFLICT_DO_WITHOUT_DEFINITION);
+	}
+
+
+	public static function onConflictDoUpdateSetSingleColumnCanBeOnlyString(): self
+	{
+		return new self('ON CONFLICT UPDATE SET array value without alias (string key) must be only string.', self::ON_CONFLICT_DO_UPDATE_SET_SINGLE_COLUMN_CAN_BE_ONLY_STRING);
 	}
 
 }

@@ -6,8 +6,6 @@ use Forrest79\PhPgSql\Db;
 
 interface Sql
 {
-	const DO_NOTHING = 'DO NOTHING';
-
 
 	/**
 	 * @param string|Query|Db\Sql $table
@@ -197,6 +195,23 @@ interface Sql
 	function rows(array $rows): Query;
 
 
+	/**
+	 * @param string|list<string>|NULL $columnsOrConstraint
+	 * @param string|Complex|Db\Sql|NULL $where
+	 */
+	function onConflict($columnsOrConstraint = NULL, $where = NULL): Query;
+
+
+	/**
+	 * @param array<int|string, string|Db\Sql> $set
+	 * @param string|Complex|Db\Sql|NULL $where
+	 */
+	function doUpdate(array $set, $where = NULL): Query;
+
+
+	function doNothing(): Query;
+
+
 	function update(?string $table = NULL, ?string $alias = NULL): Query;
 
 
@@ -227,16 +242,16 @@ interface Sql
 
 	/**
 	 * @param string|Db\Sql $then
-	 * @param string|Complex|Db\Sql|NULL $onCondition
+	 * @param string|Complex|Db\Sql|NULL $condition
 	 */
-	function whenMatched($then, $onCondition = NULL): Query;
+	function whenMatched($then, $condition = NULL): Query;
 
 
 	/**
 	 * @param string|Db\Sql $then
-	 * @param string|Complex|Db\Sql|NULL $onCondition
+	 * @param string|Complex|Db\Sql|NULL $condition
 	 */
-	function whenNotMatched($then, $onCondition = NULL): Query;
+	function whenNotMatched($then, $condition = NULL): Query;
 
 
 	function truncate(?string $table = NULL): Query;

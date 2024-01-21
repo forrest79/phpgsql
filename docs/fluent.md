@@ -83,6 +83,7 @@ Every query is `SELECT` at first, until you call `->insert(...)`, `->update(...)
 
 - `on(string $alias, $condition, ...$params)` - defines new `ON` condition for joins. More `ON` conditions for one join is connected with `AND`. If `$condition` is `string`, you can use `?` and parameters in `$params`. Otherwise `$condition` can be `Complex` or `Db\Sql`.
 
+
 - `lateral(string $alias)` - make subquery lateral.
 
 
@@ -116,6 +117,15 @@ Every query is `SELECT` at first, until you call `->insert(...)`, `->update(...)
 - `rows(array $rows)` - this method can be used to insert multiple rows in one query. `$rows` is an `array` of arrays. Each array is one row (the same as for the `values()` method). All rows must have the same columns. Method can be called multiple and all rows are merged.
 
 
+- `onConflict($columnsOrConstraint = NULL, $where = NULL)` - this method can start `ON CONFLICT` statement for `INSERT`. When `array` is used as the `$columnsOrConstraint`, the list of columns is used, when `string` is used, constraint is used. This parameter can be completely ommited. Where condition `$where` can be defined only for the list of colums and can be simple `string` or other `Complex` or `Db\Sql`. `Db\Sql` can be used for some complex expression, where you need to use `?` and parameters.
+
+
+- `doUpdate(array $set, $where = NULL)` - if conflict is detected, `UPDATE` is made instead of `INSERT`. Items od array `$set` can be defined in three ways. When only a `string` value is used (or key is an integer), this value is interpreted as `UPDATE SET value = EXCLUDED.value`. Only strings can be used without a key. When the array item has a `string` key, then `string` or `Db\Sql` value can be used, and now you must define a concrete statement to set (i.e., `['column' => 'EXCLUDED.column || source_table.column2']` is interpreted as `UPDATE SET column = EXCLUDED.column || source_table.column2`). `Db\Sql` can be used if you need to use parameters.
+
+
+- `doNothing()` - if conflict is detected, nothing is done.
+
+
 - `update(?string $table = NULL, ?string $alias = NULL)` - set query for update. If the main table is not set, you must set it or rewrite with the `$table` parameter. `$alias` can be provided, when you want to use `UPDATE ... FROM ...`.
 
 
@@ -134,7 +144,7 @@ Every query is `SELECT` at first, until you call `->insert(...)`, `->update(...)
 - `using($dataSource, ?string $alias = NULL, $onCondition = NULL)` - set a data source for a merge command. `$dataSource` can be simple string, `Db\Sql\Query` or `Fluent\Query`. `$onCondition` can be simple `string` or other `Complex` or `Db\Sql`. `Db\Sql` can be used for some complex expression, where you need to use `?` and parameters. On condition can be added or extended with the `on()` method.
 
 
-- `whenMatched($then, $onCondition = NULL)` - add matched branch to a merge command. `$then` is simple string or `Db\Sql` and `$onCondition` can be simple `string` or other `Complex` or `Db\Sql`. `Db\Sql` can be used for some complex expression, where you need to use `?` and parameters. 
+- `whenMatched($then, $onCondition = NULL)` - add matched branch to a merge command. `$then` is simple string or `Db\Sql` and `$onCondition` can be simple `string` or other `Complex` or `Db\Sql`. `Db\Sql` can be used for some complex expression, where you need to use `?` and parameters.
 
 
 - `whenNotMatched($then, $onCondition = NULL)` - add not matched branch to a merge command. `$then` is simple string or `Db\Sql` and `$onCondition` can be simple `string` or other `Complex` or `Db\Sql`. `Db\Sql` can be used for some complex expression, where you need to use `?` and parameters.
@@ -145,7 +155,9 @@ Every query is `SELECT` at first, until you call `->insert(...)`, `->update(...)
 
 - `prefix(string $queryPrefix/$querySuffix, ...$params)` (or `suffix(...)`) - with this, you can define univerzal query prefix or suffix. This is useful for actually not supported fluent syntax. With prefix, you can create CTE (Common Table Expression) queries. With suffix, you can create `SELECT ... FOR UPDATE` for example. Definition can be simple `string` or you can use `?` and parameters.
 
+
 - `with(string $as, $query, ?string $suffix = NULL, bool $notMaterialized = FALSE)` - prepare CTE (Common Table Expression) query. `$as` is query alias/name, `$query` can be simple string, `Db\Sql\Query` or `Fluent\Query`, `$suffix` is optional definition like `SEARCH BREADTH FIRST BY ...` and `$notMaterialized` can set `WITH` branch as not materialized (materialized is default). `with()` can be called multiple times. When you use it, the query will always start with `WITH ...`.   
+
   
 - `recursive()` - defines `WITH` query recursive.
 
@@ -384,6 +396,117 @@ dump($insertedRows); // (integer) 2
 ```
 
 You have to use alias `u2` when you're inserting to the same table as selecting from.
+
+#### UPSERT
+
+If you want to write an UPSERT command, use `onConflict()` method with `doUpdate()` or `doNothing()`.
+
+Simple use - check column `id` for conflict update `nick` is conflict is detected.
+
+```php
+$insertedOrUpdatedRows = $connection
+  ->insert('users')
+  ->values([
+    'id' => '20',
+    'nick' => 'Jimmy',
+  ])
+  ->onConflict(['id'])
+  ->doUpdate(['nick'])
+  ->getAffectedRows();
+
+dump($insertedOrUpdatedRows); // (integer) 1
+```
+
+The same with `WHERE` statement on conflicted columns.
+
+```php
+$insertedOrUpdatedWithWhereOnConflictRows = $connection
+  ->insert('users')
+  ->values([
+    'id' => '20',
+    'nick' => 'James',
+  ])
+  ->onConflict(['id'], Forrest79\PhPgSql\Fluent\Complex::createAnd()->add('users.nick != ?', 'James'))
+  ->doUpdate(['nick'])
+  ->getAffectedRows();
+
+dump($insertedOrUpdatedWithWhereOnConflictRows); // (integer) 1
+```
+The same with `WHERE` statement on `UPDATE SET`.
+
+```php
+$insertedOrUpdatedWithWhereOnUpdateRows = $connection
+  ->insert('users')
+  ->values([
+    'id' => '20',
+    'nick' => 'Margaret',
+  ])
+  ->onConflict(['id'])
+  ->doUpdate(['nick'], Forrest79\PhPgSql\Fluent\Complex::createAnd()->add('users.nick != ?', 'Margaret'))
+  ->getAffectedRows();
+
+dump($insertedOrUpdatedWithWhereOnUpdateRows); // (integer) 1
+```
+
+And to ignore conflicting inserts:
+
+```php
+$insertedOrUpdatedDoNothingRows = $connection
+  ->insert('users')
+  ->values([
+    'id' => '1',
+    'nick' => 'Steve',
+  ])
+  ->onConflict()
+  ->doNothing()
+  ->getAffectedRows();
+
+dump($insertedOrUpdatedDoNothingRows); // (integer) 0
+```
+
+To use constraint name in `ON CONFLICT`:
+
+```php
+$insertedOrUpdatedWithConstraintRows = $connection
+  ->insert('users')
+  ->values([
+    'id' => '20',
+    'nick' => 'Jimmy',
+  ])
+  ->onConflict('users_pkey')
+  ->doUpdate(['nick'])
+  ->getAffectedRows();
+
+dump($insertedOrUpdatedWithConstraintRows); // (integer) 1
+```
+
+And the last to use manully `SET` with string or also with parameters:
+
+```php
+$insertedOrUpdatedRows = $connection
+  ->insert('users')
+  ->values([
+    'id' => '20',
+    'nick' => 'Jimmy',
+  ])
+  ->onConflict(['id'])
+  ->doUpdate(['nick' => 'EXCLUDED.nick || users.id'])
+  ->getAffectedRows();
+
+dump($insertedOrUpdatedRows); // (integer) 1
+
+$insertedOrUpdatedRows = $connection
+  ->insert('users')
+  ->values([
+    'id' => '20',
+    'nick' => 'Jimmy',
+  ])
+  ->onConflict(['id'])
+  ->doUpdate(['nick' => Forrest79\PhPgSql\Db\Sql\Expression::create('EXCLUDED.nick || ?', 'updated')])
+  ->getAffectedRows();
+
+dump($insertedOrUpdatedRows); // (integer) 1
+```
 
 ### Update
 

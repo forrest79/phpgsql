@@ -20,6 +20,7 @@ use Forrest79\PhPgSql\Db;
  *   offset: int|NULL,
  *   combine-queries: list<array{0: string|Query|Db\Sql, 1: string}>,
  *   insert-columns: array<string>,
+ *   insert-onconflict: array{columns-or-constraint: string|list<string>|FALSE|NULL, where: Complex|NULL, do: array<int|string, string|Db\Sql>|FALSE|NULL, do-where: Complex|NULL},
  *   returning: array<int|string, string|int|Query|Db\Sql>,
  *   data: array<string, mixed>,
  *   rows: array<int, array<string, mixed>>,
@@ -163,9 +164,64 @@ class QueryBuilder
 			$data = ' VALUES(' . \implode('), (', $rows) . ')';
 		}
 
+		$onConflict = '';
+		$onConflictColumnsOrConstraint = $queryParams[Query::PARAM_INSERT_ONCONFLICT][Query::INSERT_ONCONFLICT_COLUMNS_OR_CONSTRAINT];
+		$onConflictDo = $queryParams[Query::PARAM_INSERT_ONCONFLICT][Query::INSERT_ONCONFLICT_DO];
+
+		if (($onConflictColumnsOrConstraint !== NULL) && ($onConflictDo === NULL)) {
+			throw Exceptions\QueryBuilderException::onConflictNoDo();
+		} else if (($onConflictColumnsOrConstraint === NULL) && ($onConflictDo !== NULL)) {
+			throw Exceptions\QueryBuilderException::onConflictDoWithoutDefinition();
+		} else if (($onConflictColumnsOrConstraint !== NULL) && ($onConflictDo !== NULL)) {
+			$onConflict = ' ON CONFLICT';
+
+			if (\is_array($onConflictColumnsOrConstraint)) {
+				$onConflict .= ' (' . \implode(', ', $onConflictColumnsOrConstraint) . ')';
+			} else if ($onConflictColumnsOrConstraint !== FALSE) {
+				$onConflict .= ' ON CONSTRAINT ' . $onConflictColumnsOrConstraint;
+			}
+
+			$onConflictWhere = $queryParams[Query::PARAM_INSERT_ONCONFLICT][Query::INSERT_ONCONFLICT_WHERE];
+			if ($onConflictWhere !== NULL) {
+				$onConflict .= ' WHERE ' . $this->processComplex($onConflictWhere, $params);
+			}
+
+			$onConflict .= ' DO ';
+
+			if ($onConflictDo === FALSE) {
+				$onConflict .= 'NOTHING';
+			} else {
+				$onConflict .= 'UPDATE SET ';
+
+				$set = [];
+				foreach ($onConflictDo as $column => $value) {
+					if (\is_int($column)) {
+						if (!\is_string($value)) {
+							throw Exceptions\QueryBuilderException::onConflictDoUpdateSetSingleColumnCanBeOnlyString();
+						}
+
+						$set[] = $value . ' = EXCLUDED.' . $value;
+					} else if ($value instanceof Db\Sql) {
+						$set[] = $column . ' = ?';
+						$params[] = $value;
+					} else {
+						$set[] = $column . ' = ' . $value;
+					}
+				}
+
+				$onConflict .= \implode(', ', $set);
+
+				$onConflictDoWhere = $queryParams[Query::PARAM_INSERT_ONCONFLICT][Query::INSERT_ONCONFLICT_DO_WHERE];
+				if ($onConflictDoWhere !== NULL) {
+					$onConflict .= ' WHERE ' . $this->processComplex($onConflictDoWhere, $params);
+				}
+			}
+		}
+
 		return $insert
 			. ($columns === ['*'] ? '' : '(' . \implode(', ', $columns) . ')')
 			. $data
+			. $onConflict
 			. $this->getPrefixSuffix($queryParams, Query::PARAM_SUFFIX, $params)
 			. $this->getReturning($queryParams, $params);
 	}
@@ -270,7 +326,7 @@ class QueryBuilder
 
 		$usingAlias = $queryParams[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_USING];
 		if ($usingAlias === NULL) {
-			throw Exceptions\QueryBuilderException::noUsing();
+			throw Exceptions\QueryBuilderException::mergeNoUsing();
 		}
 
 		if (!isset($queryParams[Query::PARAM_ON_CONDITIONS][$usingAlias])) {
@@ -278,7 +334,7 @@ class QueryBuilder
 		}
 
 		if ($queryParams[Query::PARAM_MERGE] === []) {
-			throw Exceptions\QueryBuilderException::noWhen();
+			throw Exceptions\QueryBuilderException::mergeNoWhen();
 		}
 
 		$merge = 'MERGE INTO ' . $this->processTable(
@@ -297,7 +353,7 @@ class QueryBuilder
 			);
 
 		foreach ($queryParams[Query::PARAM_MERGE] as $when) {
-			[$type, $then, $onCondition] = $when;
+			[$type, $then, $condition] = $when;
 
 			$merge .= ' WHEN';
 
@@ -309,8 +365,8 @@ class QueryBuilder
 
 			$merge .= ' MATCHED';
 
-			if ($onCondition !== NULL) {
-				$merge .= ' AND ' . $this->processComplex($onCondition, $params);
+			if ($condition !== NULL) {
+				$merge .= ' AND ' . $this->processComplex($condition, $params);
 			}
 
 			if ($then instanceof Db\Sql) {

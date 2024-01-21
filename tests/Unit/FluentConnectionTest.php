@@ -483,6 +483,60 @@ final class FluentConnectionTest extends Tests\TestCase
 	}
 
 
+	public function testOnConflict(): void
+	{
+		$query = $this->fluentConnection
+			->onConflict()
+			->doNothing()
+			->insert('table')
+			->values([
+				'name' => 'Bob',
+				'info' => 'Text',
+			])
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('INSERT INTO table(name, info) VALUES($1, $2) ON CONFLICT DO NOTHING', $query->getSql());
+		Tester\Assert::same(['Bob', 'Text'], $query->getParams());
+	}
+
+
+	public function testDoUpdate(): void
+	{
+		$query = $this->fluentConnection
+			->doUpdate(['info'])
+			->onConflict(['name'])
+			->insert('table')
+			->values([
+				'name' => 'Bob',
+				'info' => 'Text',
+			])
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('INSERT INTO table(name, info) VALUES($1, $2) ON CONFLICT (name) DO UPDATE SET info = EXCLUDED.info', $query->getSql());
+		Tester\Assert::same(['Bob', 'Text'], $query->getParams());
+	}
+
+
+	public function testDoNothing(): void
+	{
+		$query = $this->fluentConnection
+			->doNothing()
+			->onConflict()
+			->insert('table')
+			->values([
+				'name' => 'Bob',
+				'info' => 'Text',
+			])
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('INSERT INTO table(name, info) VALUES($1, $2) ON CONFLICT DO NOTHING', $query->getSql());
+		Tester\Assert::same(['Bob', 'Text'], $query->getParams());
+	}
+
+
 	public function testUpdate(): void
 	{
 		$query = $this->fluentConnection

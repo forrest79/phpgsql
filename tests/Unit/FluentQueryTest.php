@@ -837,6 +837,220 @@ final class FluentQueryTest extends Tests\TestCase
 	}
 
 
+	public function testInsertOnConflictDoUpdate(): void
+	{
+		$query = $this->query()
+			->insert('table')
+			->values([
+				'name' => 'Bob',
+				'info' => 'Text',
+			])
+			->onConflict(['name'])
+			->doUpdate(['info'])
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('INSERT INTO table(name, info) VALUES($1, $2) ON CONFLICT (name) DO UPDATE SET info = EXCLUDED.info', $query->getSql());
+		Tester\Assert::same(['Bob', 'Text'], $query->getParams());
+	}
+
+
+	public function testInsertOnConflictWithWhereDoUpdate(): void
+	{
+		$query = $this->query()
+			->insert('table')
+			->values([
+				'name' => 'Bob',
+				'age' => 20,
+				'info' => 'Text',
+			])
+			->onConflict(['name', 'age'], Fluent\Complex::createAnd()->add('age < ?', 30))
+			->doUpdate(['info'])
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('INSERT INTO table(name, age, info) VALUES($1, $2, $3) ON CONFLICT (name, age) WHERE age < $4 DO UPDATE SET info = EXCLUDED.info', $query->getSql());
+		Tester\Assert::same(['Bob', 20, 'Text', 30], $query->getParams());
+	}
+
+
+	public function testInsertOnConflictConstraintDoUpdate(): void
+	{
+		$query = $this->query()
+			->insert('table')
+			->values([
+				'name' => 'Bob',
+				'age' => 20,
+				'info' => 'Text',
+			])
+			->onConflict('name_ukey')
+			->doUpdate(['info'])
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('INSERT INTO table(name, age, info) VALUES($1, $2, $3) ON CONFLICT ON CONSTRAINT name_ukey DO UPDATE SET info = EXCLUDED.info', $query->getSql());
+		Tester\Assert::same(['Bob', 20, 'Text'], $query->getParams());
+	}
+
+
+	public function testInsertOnConflictConstraintWithWhereDoUpdate(): void
+	{
+		Tester\Assert::exception(function (): void {
+			$this->query()
+				->insert('table')
+				->values([
+					'name' => 'Bob',
+					'age' => 20,
+					'info' => 'Text',
+				])
+				->onConflict('name_ukey', Fluent\Complex::createAnd()->add('age < ?', 30))
+				->doUpdate(['info'])
+				->createSqlQuery();
+		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::ON_CONFLICT_WHERE_NOT_FOR_CONSTRAINT);
+	}
+
+
+	public function testInsertOnConflictDoUpdateWithComplexSet(): void
+	{
+		$query = $this->query()
+			->insert('table')
+			->values([
+				'name' => 'Bob',
+				'info' => 'Text',
+			])
+			->onConflict(['name'])
+			->doUpdate(['info', 'name' => 'EXCLUDED.name || table.age'])
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('INSERT INTO table(name, info) VALUES($1, $2) ON CONFLICT (name) DO UPDATE SET info = EXCLUDED.info, name = EXCLUDED.name || table.age', $query->getSql());
+		Tester\Assert::same(['Bob', 'Text'], $query->getParams());
+	}
+
+
+	public function testInsertOnConflictDoUpdateWithExpressionSet(): void
+	{
+		$query = $this->query()
+			->insert('table')
+			->values([
+				'name' => 'Bob',
+				'info' => 'Text',
+			])
+			->onConflict(['name'])
+			->doUpdate(['info', 'name' => Db\Sql\Expression::create('EXCLUDED.name || ?', 'Jimmy')])
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('INSERT INTO table(name, info) VALUES($1, $2) ON CONFLICT (name) DO UPDATE SET info = EXCLUDED.info, name = EXCLUDED.name || $3', $query->getSql());
+		Tester\Assert::same(['Bob', 'Text', 'Jimmy'], $query->getParams());
+	}
+
+
+	public function testInsertOnConflictDoUpdateWithWhere(): void
+	{
+		$query = $this->query()
+			->insert('table')
+			->values([
+				'name' => 'Bob',
+				'age' => 20,
+				'info' => 'Text',
+			])
+			->onConflict(['name', 'age'])
+			->doUpdate(['info'], Fluent\Complex::createAnd()->add('age < ?', 30))
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('INSERT INTO table(name, age, info) VALUES($1, $2, $3) ON CONFLICT (name, age) DO UPDATE SET info = EXCLUDED.info WHERE age < $4', $query->getSql());
+		Tester\Assert::same(['Bob', 20, 'Text', 30], $query->getParams());
+	}
+
+
+	public function testInsertOnConflictDoNothing(): void
+	{
+		$query = $this->query()
+			->insert('table')
+			->values([
+				'name' => 'Bob',
+				'info' => 'Text',
+			])
+			->onConflict()
+			->doNothing()
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('INSERT INTO table(name, info) VALUES($1, $2) ON CONFLICT DO NOTHING', $query->getSql());
+		Tester\Assert::same(['Bob', 'Text'], $query->getParams());
+	}
+
+
+	public function testInsertOnConflictWithReturning(): void
+	{
+		$query = $this->query()
+			->insert('table')
+			->values([
+				'name' => 'Bob',
+				'info' => 'Text',
+			])
+			->onConflict(['name'])
+			->doUpdate(['info'])
+			->returning(['id'])
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('INSERT INTO table(name, info) VALUES($1, $2) ON CONFLICT (name) DO UPDATE SET info = EXCLUDED.info RETURNING id', $query->getSql());
+		Tester\Assert::same(['Bob', 'Text'], $query->getParams());
+	}
+
+
+	public function testInsertOnConflictDoUpdateWithoutOnConflictDefinition(): void
+	{
+		Tester\Assert::exception(function (): void {
+			$this->query()
+				->insert('table')
+				->values([
+					'name' => 'Bob',
+					'age' => 20,
+					'info' => 'Text',
+				])
+				->doUpdate(['info'])
+				->createSqlQuery();
+		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::ON_CONFLICT_DO_WITHOUT_DEFINITION);
+	}
+
+
+	public function testInsertOnConflictWithoutDoStatement(): void
+	{
+		Tester\Assert::exception(function (): void {
+			$this->query()
+				->insert('table')
+				->values([
+					'name' => 'Bob',
+					'age' => 20,
+					'info' => 'Text',
+				])
+				->onConflict(['name'])
+				->createSqlQuery();
+		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::ON_CONFLICT_NO_DO);
+	}
+
+
+	public function testInsertOnConflictDoUpdateWithExpressionAsSimpleColumn(): void
+	{
+		Tester\Assert::exception(function (): void {
+			$this->query()
+				->insert('table')
+				->values([
+					'name' => 'Bob',
+					'age' => 20,
+					'info' => 'Text',
+				])
+				->onConflict(['name'])
+				->doUpdate([Db\Sql\Expression::create('EXCLUDED.name || ?', 'Jimmy')])
+				->createSqlQuery();
+		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::ON_CONFLICT_DO_UPDATE_SET_SINGLE_COLUMN_CAN_BE_ONLY_STRING);
+	}
+
+
 	public function testInsertSelectAllColumnsWithConcrete(): void
 	{
 		Tester\Assert::exception(function (): void {
@@ -1085,7 +1299,7 @@ final class FluentQueryTest extends Tests\TestCase
 			->merge('wines', 'w')
 			->using('wine_stock_changes', 's', 's.winename = w.winename')
 			->whenNotMatched('INSERT VALUES(s.winename, s.stock_delta)')
-			->whenMatched(Fluent\Query::DO_NOTHING)
+			->whenMatched('DO NOTHING')
 			->createSqlQuery()
 			->createQuery();
 
@@ -1117,7 +1331,21 @@ final class FluentQueryTest extends Tests\TestCase
 				->whenMatched('UPDATE SET balance = balance + transaction_value')
 				->whenNotMatched('INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)')
 				->createSqlQuery();
-		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::NO_USING);
+		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::MERGE_NO_USING);
+	}
+
+
+	public function testMergeMoreUsings(): void
+	{
+		Tester\Assert::exception(function (): void {
+			$this->query()
+				->merge('customer_account', 'ca')
+				->using('recent_transactions1', 't1')
+				->using('recent_transactions2', 't2')
+				->whenMatched('UPDATE SET balance = balance + transaction_value')
+				->whenNotMatched('INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)')
+				->createSqlQuery();
+		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::MERGE_ONLY_ONE_USING);
 	}
 
 
@@ -1141,7 +1369,7 @@ final class FluentQueryTest extends Tests\TestCase
 				->merge('customer_account', 'ca')
 				->using('recent_transactions', 't', 't.customer_id = ca.customer_id')
 				->createSqlQuery();
-		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::NO_WHEN);
+		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::MERGE_NO_WHEN);
 	}
 
 

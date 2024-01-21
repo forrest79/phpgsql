@@ -11,7 +11,8 @@ class QueryException extends Exception
 	public const PARAM_MUST_BE_SCALAR_OR_ENUM_OR_EXPRESSION = 5;
 	public const CANT_UPDATE_QUERY_AFTER_EXECUTE = 6;
 	public const YOU_MUST_EXECUTE_QUERY_BEFORE_THAT = 7;
-	public const ONLY_ONE_USING = 8;
+	public const MERGE_ONLY_ONE_USING = 8;
+	public const ON_CONFLICT_WHERE_NOT_FOR_CONSTRAINT = 9;
 
 
 	public static function onlyOneMainTable(): self
@@ -59,9 +60,15 @@ class QueryException extends Exception
 	}
 
 
-	public static function onlyOneUsing(): self
+	public static function mergeOnlyOneUsing(): self
 	{
-		return new self('USING can be set only once.', self::ONLY_ONE_USING);
+		return new self('USING can be set only once.', self::MERGE_ONLY_ONE_USING);
+	}
+
+
+	public static function onConflictWhereNotForConstraint(): self
+	{
+		return new self('ON CONFLICT with constraint can\'t have a WHERE clause.', self::ON_CONFLICT_WHERE_NOT_FOR_CONSTRAINT);
 	}
 
 }

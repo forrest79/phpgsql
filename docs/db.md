@@ -785,7 +785,7 @@ dump($result2->fetchSingle()); // (string) 'Brandon'
 
 ## Transactions
 
-There is simple transaction helper object. Call `transaction()` method on a connection and you will get the `Transaction` object. With this object, you can control transaction or use savepoints.
+There is a simple transaction helper object. Call `transaction()` method on a connection and you will get the `Transaction` object. With this object, you can control transaction or use savepoints.
 
 There are methods to control transaction `begin()`, `commit()` and `rollback()` that corresponds to SQL commands. With `begin()` method you can set isolation level - for example repeatable read: `begin('ISOLATION LEVEL REPEATABLE READ')`.
 
