@@ -299,9 +299,9 @@ class Connection extends Db\Connection implements Sql
 	 * @param list<string>|NULL $columns
 	 * @throws Exceptions\QueryException
 	 */
-	public function insert(string|NULL $into = NULL, array|NULL $columns = []): QueryExecute
+	public function insert(string|NULL $into = NULL, string|NULL $alias = NULL, array|NULL $columns = []): QueryExecute
 	{
-		return $this->createQuery()->insert($into, $columns);
+		return $this->createQuery()->insert($into, $alias, $columns);
 	}
 
 

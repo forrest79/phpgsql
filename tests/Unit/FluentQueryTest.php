@@ -687,7 +687,7 @@ final class FluentQueryTest extends Tests\TestCase
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('INSERT INTO table(column, column_from, column_fluent_query, column_query) VALUES($1, 3, (SELECT \'test_fluent\' WHERE 4 = $2), (SELECT \'test\' WHERE 5 = $3)) RETURNING column', $query->getSql());
+		Tester\Assert::same('INSERT INTO table (column, column_from, column_fluent_query, column_query) VALUES($1, 3, (SELECT \'test_fluent\' WHERE 4 = $2), (SELECT \'test\' WHERE 5 = $3)) RETURNING column', $query->getSql());
 		Tester\Assert::same([1, 4, 5], $query->getParams());
 	}
 
@@ -707,7 +707,7 @@ final class FluentQueryTest extends Tests\TestCase
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('INSERT INTO table(column2, column3, column1) VALUES($1, $2, $3)', $query->getSql());
+		Tester\Assert::same('INSERT INTO table (column2, column3, column1) VALUES($1, $2, $3)', $query->getSql());
 		Tester\Assert::same([2, 1, 3], $query->getParams());
 	}
 
@@ -728,7 +728,7 @@ final class FluentQueryTest extends Tests\TestCase
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('INSERT INTO table(column) VALUES($1), ($2), ($3), (4), ((SELECT \'test_fluent\' WHERE 6 = $4)), ((SELECT \'test\' WHERE 7 = $5)) RETURNING column', $query->getSql());
+		Tester\Assert::same('INSERT INTO table (column) VALUES($1), ($2), ($3), (4), ((SELECT \'test_fluent\' WHERE 6 = $4)), ((SELECT \'test\' WHERE 7 = $5)) RETURNING column', $query->getSql());
 		Tester\Assert::same([1, 2, 3, 6, 7], $query->getParams());
 	}
 
@@ -748,7 +748,7 @@ final class FluentQueryTest extends Tests\TestCase
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('INSERT INTO table(column) VALUES($1), ($2), ($3), ($4)', $query->getSql());
+		Tester\Assert::same('INSERT INTO table (column) VALUES($1), ($2), ($3), ($4)', $query->getSql());
 		Tester\Assert::same([1, 2, 3, 4], $query->getParams());
 	}
 
@@ -756,14 +756,14 @@ final class FluentQueryTest extends Tests\TestCase
 	public function testInsertSelect(): void
 	{
 		$query = $this->query()
-			->insert('table', ['name'])
+			->insert('table', columns: ['name'])
 			->select(['column'])
 			->from('table2', 't2')
 			->returning(['name'])
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('INSERT INTO table(name) SELECT column FROM table2 AS t2 RETURNING name', $query->getSql());
+		Tester\Assert::same('INSERT INTO table (name) SELECT column FROM table2 AS t2 RETURNING name', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
 	}
 
@@ -778,7 +778,7 @@ final class FluentQueryTest extends Tests\TestCase
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('INSERT INTO table(column, name) SELECT column, column2 AS "name" FROM table2 AS t2 RETURNING column', $query->getSql());
+		Tester\Assert::same('INSERT INTO table (column, name) SELECT column, column2 AS "name" FROM table2 AS t2 RETURNING column', $query->getSql());
 		Tester\Assert::same([], $query->getParams());
 	}
 
@@ -810,7 +810,7 @@ final class FluentQueryTest extends Tests\TestCase
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('INSERT INTO table(name, info) VALUES($1, $2) ON CONFLICT (name) DO UPDATE SET info = EXCLUDED.info', $query->getSql());
+		Tester\Assert::same('INSERT INTO table (name, info) VALUES($1, $2) ON CONFLICT (name) DO UPDATE SET info = EXCLUDED.info', $query->getSql());
 		Tester\Assert::same(['Bob', 'Text'], $query->getParams());
 	}
 
@@ -829,7 +829,7 @@ final class FluentQueryTest extends Tests\TestCase
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('INSERT INTO table(name, age, info) VALUES($1, $2, $3) ON CONFLICT (name, age) WHERE age < $4 DO UPDATE SET info = EXCLUDED.info', $query->getSql());
+		Tester\Assert::same('INSERT INTO table (name, age, info) VALUES($1, $2, $3) ON CONFLICT (name, age) WHERE age < $4 DO UPDATE SET info = EXCLUDED.info', $query->getSql());
 		Tester\Assert::same(['Bob', 20, 'Text', 30], $query->getParams());
 	}
 
@@ -848,7 +848,7 @@ final class FluentQueryTest extends Tests\TestCase
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('INSERT INTO table(name, age, info) VALUES($1, $2, $3) ON CONFLICT ON CONSTRAINT name_ukey DO UPDATE SET info = EXCLUDED.info', $query->getSql());
+		Tester\Assert::same('INSERT INTO table (name, age, info) VALUES($1, $2, $3) ON CONFLICT ON CONSTRAINT name_ukey DO UPDATE SET info = EXCLUDED.info', $query->getSql());
 		Tester\Assert::same(['Bob', 20, 'Text'], $query->getParams());
 	}
 
@@ -873,17 +873,17 @@ final class FluentQueryTest extends Tests\TestCase
 	public function testInsertOnConflictDoUpdateWithComplexSet(): void
 	{
 		$query = $this->query()
-			->insert('table')
+			->insert('table', 't')
 			->values([
 				'name' => 'Bob',
 				'info' => 'Text',
 			])
 			->onConflict(['name'])
-			->doUpdate(['info', 'name' => 'EXCLUDED.name || table.age'])
+			->doUpdate(['info', 'name' => 'EXCLUDED.name || t.age'])
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('INSERT INTO table(name, info) VALUES($1, $2) ON CONFLICT (name) DO UPDATE SET info = EXCLUDED.info, name = EXCLUDED.name || table.age', $query->getSql());
+		Tester\Assert::same('INSERT INTO table AS t (name, info) VALUES($1, $2) ON CONFLICT (name) DO UPDATE SET info = EXCLUDED.info, name = EXCLUDED.name || t.age', $query->getSql());
 		Tester\Assert::same(['Bob', 'Text'], $query->getParams());
 	}
 
@@ -901,7 +901,7 @@ final class FluentQueryTest extends Tests\TestCase
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('INSERT INTO table(name, info) VALUES($1, $2) ON CONFLICT (name) DO UPDATE SET info = EXCLUDED.info, name = EXCLUDED.name || $3', $query->getSql());
+		Tester\Assert::same('INSERT INTO table (name, info) VALUES($1, $2) ON CONFLICT (name) DO UPDATE SET info = EXCLUDED.info, name = EXCLUDED.name || $3', $query->getSql());
 		Tester\Assert::same(['Bob', 'Text', 'Jimmy'], $query->getParams());
 	}
 
@@ -920,7 +920,7 @@ final class FluentQueryTest extends Tests\TestCase
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('INSERT INTO table(name, age, info) VALUES($1, $2, $3) ON CONFLICT (name, age) DO UPDATE SET info = EXCLUDED.info WHERE age < $4', $query->getSql());
+		Tester\Assert::same('INSERT INTO table (name, age, info) VALUES($1, $2, $3) ON CONFLICT (name, age) DO UPDATE SET info = EXCLUDED.info WHERE age < $4', $query->getSql());
 		Tester\Assert::same(['Bob', 20, 'Text', 30], $query->getParams());
 	}
 
@@ -938,7 +938,7 @@ final class FluentQueryTest extends Tests\TestCase
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('INSERT INTO table(name, info) VALUES($1, $2) ON CONFLICT DO NOTHING', $query->getSql());
+		Tester\Assert::same('INSERT INTO table (name, info) VALUES($1, $2) ON CONFLICT DO NOTHING', $query->getSql());
 		Tester\Assert::same(['Bob', 'Text'], $query->getParams());
 	}
 
@@ -957,7 +957,7 @@ final class FluentQueryTest extends Tests\TestCase
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('INSERT INTO table(name, info) VALUES($1, $2) ON CONFLICT (name) DO UPDATE SET info = EXCLUDED.info RETURNING id', $query->getSql());
+		Tester\Assert::same('INSERT INTO table (name, info) VALUES($1, $2) ON CONFLICT (name) DO UPDATE SET info = EXCLUDED.info RETURNING id', $query->getSql());
 		Tester\Assert::same(['Bob', 'Text'], $query->getParams());
 	}
 
@@ -1405,7 +1405,7 @@ final class FluentQueryTest extends Tests\TestCase
 	public function testWithNotMaterialized(): void
 	{
 		$query = $this->query()
-			->with('w', 'SELECT * FROM big_table', NULL, TRUE)
+			->with('w', 'SELECT * FROM big_table', notMaterialized: TRUE)
 			->select(['*'])
 			->from('w', 'w1')
 			->join('w', 'w2', 'w1.key = w2.ref')
@@ -1541,7 +1541,7 @@ final class FluentQueryTest extends Tests\TestCase
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('INSERT INTO table(column) VALUES($1) ON CONFLICT (column) DO NOTHING RETURNING column', $query->getSql());
+		Tester\Assert::same('INSERT INTO table (column) VALUES($1) ON CONFLICT (column) DO NOTHING RETURNING column', $query->getSql());
 		Tester\Assert::same(['value'], $query->getParams());
 
 		$query = $this->query()
@@ -1697,7 +1697,7 @@ final class FluentQueryTest extends Tests\TestCase
 		Tester\Assert::true($query->has($query::PARAM_PREFIX));
 		Tester\Assert::true($query->has($query::PARAM_SUFFIX));
 
-		$query = $this->query()->insert('table', ['column'])->select(['1'])->returning(['column']);
+		$query = $this->query()->insert('table', columns: ['column'])->select(['1'])->returning(['column']);
 
 		Tester\Assert::true($query->has($query::PARAM_INSERT_COLUMNS));
 		Tester\Assert::true($query->has($query::PARAM_RETURNING));

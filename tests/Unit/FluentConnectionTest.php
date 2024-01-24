@@ -448,7 +448,7 @@ final class FluentConnectionTest extends Tests\TestCase
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('INSERT INTO table(column) VALUES($1)', $query->getSql());
+		Tester\Assert::same('INSERT INTO table (column) VALUES($1)', $query->getSql());
 		Tester\Assert::same([1], $query->getParams());
 	}
 
@@ -461,7 +461,7 @@ final class FluentConnectionTest extends Tests\TestCase
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('INSERT INTO table(column) VALUES($1)', $query->getSql());
+		Tester\Assert::same('INSERT INTO table (column) VALUES($1)', $query->getSql());
 		Tester\Assert::same([1], $query->getParams());
 	}
 
@@ -477,7 +477,7 @@ final class FluentConnectionTest extends Tests\TestCase
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('INSERT INTO table(column) VALUES($1), ($2)', $query->getSql());
+		Tester\Assert::same('INSERT INTO table (column) VALUES($1), ($2)', $query->getSql());
 		Tester\Assert::same([1, 2], $query->getParams());
 	}
 
@@ -495,7 +495,7 @@ final class FluentConnectionTest extends Tests\TestCase
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('INSERT INTO table(name, info) VALUES($1, $2) ON CONFLICT DO NOTHING', $query->getSql());
+		Tester\Assert::same('INSERT INTO table (name, info) VALUES($1, $2) ON CONFLICT DO NOTHING', $query->getSql());
 		Tester\Assert::same(['Bob', 'Text'], $query->getParams());
 	}
 
@@ -513,7 +513,7 @@ final class FluentConnectionTest extends Tests\TestCase
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('INSERT INTO table(name, info) VALUES($1, $2) ON CONFLICT (name) DO UPDATE SET info = EXCLUDED.info', $query->getSql());
+		Tester\Assert::same('INSERT INTO table (name, info) VALUES($1, $2) ON CONFLICT (name) DO UPDATE SET info = EXCLUDED.info', $query->getSql());
 		Tester\Assert::same(['Bob', 'Text'], $query->getParams());
 	}
 
@@ -531,7 +531,7 @@ final class FluentConnectionTest extends Tests\TestCase
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('INSERT INTO table(name, info) VALUES($1, $2) ON CONFLICT DO NOTHING', $query->getSql());
+		Tester\Assert::same('INSERT INTO table (name, info) VALUES($1, $2) ON CONFLICT DO NOTHING', $query->getSql());
 		Tester\Assert::same(['Bob', 'Text'], $query->getParams());
 	}
 
@@ -583,7 +583,7 @@ final class FluentConnectionTest extends Tests\TestCase
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('INSERT INTO table(column) VALUES($1) RETURNING column', $query->getSql());
+		Tester\Assert::same('INSERT INTO table (column) VALUES($1) RETURNING column', $query->getSql());
 		Tester\Assert::same([1], $query->getParams());
 	}
 

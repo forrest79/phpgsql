@@ -223,7 +223,7 @@ class QueryBuilder
 		}
 
 		return $insert
-			. ($columns === ['*'] ? '' : '(' . \implode(', ', $columns) . ')')
+			. ($columns === ['*'] ? '' : ' (' . \implode(', ', $columns) . ')')
 			. $data
 			. $onConflict
 			. $this->getPrefixSuffix($queryParams, Query::PARAM_SUFFIX, $params)

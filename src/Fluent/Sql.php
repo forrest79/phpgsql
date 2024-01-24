@@ -144,7 +144,7 @@ interface Sql
 	/**
 	 * @param list<string>|NULL $columns
 	 */
-	function insert(string|NULL $into = NULL, array|NULL $columns = []): Query;
+	function insert(string|NULL $into = NULL, string|NULL $alias = NULL, array|NULL $columns = []): Query;
 
 
 	/**

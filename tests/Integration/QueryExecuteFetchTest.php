@@ -197,7 +197,7 @@ final class QueryExecuteFetchTest extends TestCase
 		');
 
 		$query = $this->connection
-			->insert('test', ['name'])
+			->insert('test', columns: ['name'])
 			->select(['\'name\' || generate_series FROM generate_series(3, 1, -1)']);
 
 		Tester\Assert::same(3, $query->getAffectedRows());

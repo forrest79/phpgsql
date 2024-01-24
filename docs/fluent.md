@@ -108,7 +108,7 @@ Every query is `SELECT` at first, until you call `->insert(...)`, `->update(...)
 - `union($query)` (or `` / `` / ``) - connects two queries with `UNION`, `UNION ALL`, `INTERSECT` or `EXCEPT`. Query can be simple `string,` another `Query` or `Db\Sql`.
 
 
-- `insert(?string $into = NULL, ?array $columns = [])` - sets query as `INSERT`. When the main table is not provided yet, you can set it or rewrite it with the `$into` parameter. If you want use `INSERT ... SELECT ...` you can provide column names in `$columns` parameter (only if column names for INSERT and SELECT differs).
+- `insert(?string $into = NULL, string $alias = NULL, ?array $columns = [])` - sets query as `INSERT`. When the main table is not provided yet, you can set it or rewrite it with the `$into` parameter. If you want use `INSERT ... SELECT ...` you can provide column names in `$columns` parameter (only if column names for INSERT and SELECT differs).
 
 
 - `values(array $data)` - sets data for insertion. Key is column name and value is inserted value. Value can be scalar or `Db\Sql`. Method can be called multiple times and provided data is merged.
@@ -303,7 +303,7 @@ $query = $connection
     'phones' => Forrest79\PhPgSql\Db\Helper::createStringPgArray(['732123456', '736987654']),
   ]);
  
-dump($query); // (Query) INSERT INTO users(nick, inserted_datetime, active, age, height_cm, phones) VALUES($1, now(), TRUE, $2, $3, $4) [Params: (array) ['James', 37, (NULL), '{\"732123456\",\"736987654\"}']]
+dump($query); // (Query) INSERT INTO users (nick, inserted_datetime, active, age, height_cm, phones) VALUES($1, now(), TRUE, $2, $3, $4) [Params: (array) ['James', 37, (NULL), '{\"732123456\",\"736987654\"}']]
 
 $result = $query->execute();
 
@@ -344,7 +344,7 @@ $query = $connection
     ['nick' => 'Zoey'],
   ]);
 
-dump($query); // (Query) INSERT INTO users(nick) VALUES($1), ($2), ($3) [Params: (array) ['Luis', 'Gilbert', 'Zoey']]
+dump($query); // (Query) INSERT INTO users (nick) VALUES($1), ($2), ($3) [Params: (array) ['Luis', 'Gilbert', 'Zoey']]
 
 $insertedRows = $query->getAffectedRows();
 
@@ -355,7 +355,7 @@ Here are column names detected from the first row. You can also pass the columns
 
 ```php
 $insertedRows = $connection
-  ->insert('users', ['nick', 'age'])
+  ->insert('users', columns: ['nick', 'age'])
   ->rows([
     ['Luis', 31],
     ['Gilbert', 18],
@@ -370,12 +370,12 @@ And of course, you can use `INSERT` - `SELECT`:
 
 ```php
 $query = $connection
-  ->insert('users', ['nick'])
+  ->insert('users', columns: ['nick'])
   ->select(['name' || '\'_\'' || 'age'])
   ->from('departments')
   ->where('id', [1, 2]);
 
-dump($query); // (Query) INSERT INTO users(nick) SELECT TRUE FROM departments WHERE id IN ($1, $2) [Params: (array) [1, 2]]
+dump($query); // (Query) INSERT INTO users (nick) SELECT TRUE FROM departments WHERE id IN ($1, $2) [Params: (array) [1, 2]]
 
 $insertedRows = $query->getAffectedRows();
 
@@ -480,17 +480,17 @@ $insertedOrUpdatedWithConstraintRows = $connection
 dump($insertedOrUpdatedWithConstraintRows); // (integer) 1
 ```
 
-And the last to use manully `SET` with string or also with parameters:
+And the last to use manully `SET` with string (here we can use alias for `INTO` table) or also with parameters:
 
 ```php
 $insertedOrUpdatedRows = $connection
-  ->insert('users')
+  ->insert('users', 'u')
   ->values([
     'id' => '20',
     'nick' => 'Jimmy',
   ])
   ->onConflict(['id'])
-  ->doUpdate(['nick' => 'EXCLUDED.nick || users.id'])
+  ->doUpdate(['nick' => 'EXCLUDED.nick || u.id'])
   ->getAffectedRows();
 
 dump($insertedOrUpdatedRows); // (integer) 1

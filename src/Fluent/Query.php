@@ -559,14 +559,14 @@ class Query implements Sql
 	 * @param list<string>|NULL $columns
 	 * @throws Exceptions\QueryException
 	 */
-	public function insert(string|NULL $into = NULL, array|NULL $columns = []): static
+	public function insert(string|NULL $into = NULL, string|NULL $alias = NULL, array|NULL $columns = []): static
 	{
 		$this->resetQuery();
 
 		$this->queryType = self::QUERY_INSERT;
 
 		if ($into !== NULL) {
-			$this->table($into);
+			$this->table($into, $alias);
 		}
 
 		$this->params[self::PARAM_INSERT_COLUMNS] = $columns;

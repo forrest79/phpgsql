@@ -29,20 +29,20 @@ CREATE TABLE user_departments
   FOREIGN KEY (department_id) REFERENCES departments (id) ON UPDATE RESTRICT ON DELETE CASCADE
 );
 
-INSERT INTO users(nick, inserted_datetime, active, age, height_cm, phones) VALUES
+INSERT INTO users (nick, inserted_datetime, active, age, height_cm, phones) VALUES
 ('Bob', '2020-01-01 09:00:00', TRUE, 45, 178.2, ARRAY[200300, 487412]), -- ID: 1
 ('Brandon', '2020-01-02 12:05:00', TRUE, 24, 180.4, NULL), -- ID: 2
 ('Steve', '2020-01-02 12:05:00', FALSE, 41, 168.0, NULL), -- ID: 3
 ('Monica', '2020-01-03 13:10:00', TRUE, 36, 175.7, NULL), -- ID: 4
 ('Ingrid', '2020-01-04 14:15:00', TRUE, 18, 168.2, ARRAY[805305]); -- ID: 5
 
-INSERT INTO departments(name, rooms, active) VALUES
+INSERT INTO departments (name, rooms, active) VALUES
 ('IT', ARRAY['A103', 'B201', 'B202'], TRUE), -- ID: 1
 ('HR', ARRAY['A101', 'A102'], TRUE), -- ID: 2
 ('Sales', ARRAY['B210'], TRUE), -- ID: 3
 ('Drivers', ARRAY[]::text[], FALSE); -- ID: 4
 
-INSERT INTO user_departments(user_id, department_id) VALUES
+INSERT INTO user_departments (user_id, department_id) VALUES
 (1, 1), -- ID: 1
 (2, 1), -- ID: 2
 (5, 1), -- ID: 3
