@@ -80,8 +80,8 @@ final class PreparedStatementTest extends TestCase
 	{
 		$queryDuration = 0;
 		$queryPrapareStatementName = NULL;
-		$this->connection->addOnQuery(static function (Db\Connection $connection, Db\Query $query, ?float $duration, ?string $prepareStatementName) use (&$queryDuration, &$queryPrapareStatementName): void {
-			$queryDuration = $duration;
+		$this->connection->addOnQuery(static function (Db\Connection $connection, Db\Query $query, float|NULL $timeNs, string|NULL $prepareStatementName) use (&$queryDuration, &$queryPrapareStatementName): void {
+			$queryDuration = $timeNs;
 			$queryPrapareStatementName = $prepareStatementName;
 		});
 
@@ -101,6 +101,7 @@ final class PreparedStatementTest extends TestCase
   				name text
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(name) SELECT \'name\' || generate_series FROM generate_series(2, 1, -1)');
 
 		$preparedStatement = $this->connection->asyncPrepareStatement('SELECT id, name FROM test WHERE id = ?');
@@ -153,8 +154,8 @@ final class PreparedStatementTest extends TestCase
 	{
 		$queryDuration = NULL;
 		$queryPrapareStatementName = NULL;
-		$this->connection->addOnQuery(static function (Db\Connection $connection, Db\Query $query, ?float $duration, ?string $prepareStatementName) use (&$queryDuration, &$queryPrapareStatementName): void {
-			$queryDuration = $duration;
+		$this->connection->addOnQuery(static function (Db\Connection $connection, Db\Query $query, float|NULL $timeNs, string|NULL $prepareStatementName) use (&$queryDuration, &$queryPrapareStatementName): void {
+			$queryDuration = $timeNs;
 			$queryPrapareStatementName = $prepareStatementName;
 		});
 

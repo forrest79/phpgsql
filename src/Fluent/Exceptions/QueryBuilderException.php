@@ -70,7 +70,7 @@ class QueryBuilderException extends Exception
 
 
 	/**
-	 * @param array<string> $aliases
+	 * @param list<string> $aliases
 	 */
 	public static function noCorrespondingTable(array $aliases): self
 	{

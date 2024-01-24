@@ -87,7 +87,11 @@ class QueryBuilder
 	 * @throws Exceptions\QueryBuilderException
 	 * @phpstan-param QueryParams $queryParams
 	 */
-	private function createSelect(array $queryParams, array &$params, ?array &$insertSelectColumnNames = NULL): string
+	private function createSelect(
+		array $queryParams,
+		array &$params,
+		array|NULL &$insertSelectColumnNames = NULL,
+	): string
 	{
 		$selectSql = 'SELECT ' .
 			$this->getSelectDistinct($queryParams) .
@@ -119,7 +123,7 @@ class QueryBuilder
 			$mainTable,
 			$mainTableAlias,
 			FALSE,
-			$params
+			$params,
 		);
 
 		$columns = [];
@@ -228,11 +232,10 @@ class QueryBuilder
 
 
 	/**
-	 * @param Db\Sql\Query|Query|mixed $value
 	 * @param list<string> $values
-	 * @param list<Db\Sql\Query|Query|mixed> $params
+	 * @param list<mixed> $params
 	 */
-	private static function prepareRow($value, array &$values, array &$params): void
+	private static function prepareRow(mixed $value, array &$values, array &$params): void
 	{
 		if ($value instanceof Db\Sql\Query) {
 			$values[] = '(?)';
@@ -280,11 +283,11 @@ class QueryBuilder
 		}
 
 		return 'UPDATE ' . $this->processTable(
-				$mainTable,
-				$mainTableAlias,
-				FALSE,
-				$params
-			) . ' SET ' . \implode(', ', $set) .
+			$mainTable,
+			$mainTableAlias,
+			FALSE,
+			$params,
+		) . ' SET ' . \implode(', ', $set) .
 			$this->getFrom($queryParams, $params, FALSE) .
 			$this->getJoins($queryParams, $params) .
 			$this->getWhere($queryParams, $params) .
@@ -302,12 +305,13 @@ class QueryBuilder
 	private function createDelete(array $queryParams, array &$params): string
 	{
 		['table' => $mainTable, 'alias' => $mainTableAlias] = $this->getMainTableMetadata($queryParams);
+
 		return 'DELETE FROM ' . $this->processTable(
-				$mainTable,
-				$mainTableAlias,
-				FALSE,
-				$params
-			) .
+			$mainTable,
+			$mainTableAlias,
+			FALSE,
+			$params,
+		) .
 			$this->getWhere($queryParams, $params) .
 			$this->getPrefixSuffix($queryParams, Query::PARAM_SUFFIX, $params) .
 			$this->getReturning($queryParams, $params);
@@ -338,19 +342,19 @@ class QueryBuilder
 		}
 
 		$merge = 'MERGE INTO ' . $this->processTable(
-				$mainTable,
-				$mainTableAlias,
-				FALSE,
-				$params
-			) . ' USING ' . $this->processTable(
-				$queryParams[Query::PARAM_TABLES][$usingAlias][self::TABLE_NAME],
-				$usingAlias,
-				FALSE,
-				$params
-			) . ' ON ' . $this->processComplex(
-				$queryParams[Query::PARAM_ON_CONDITIONS][$usingAlias],
-				$params
-			);
+			$mainTable,
+			$mainTableAlias,
+			FALSE,
+			$params,
+		) . ' USING ' . $this->processTable(
+			$queryParams[Query::PARAM_TABLES][$usingAlias][self::TABLE_NAME],
+			$usingAlias,
+			FALSE,
+			$params,
+		) . ' ON ' . $this->processComplex(
+			$queryParams[Query::PARAM_ON_CONDITIONS][$usingAlias],
+			$params,
+		);
 
 		foreach ($queryParams[Query::PARAM_MERGE] as $when) {
 			[$type, $then, $condition] = $when;
@@ -433,11 +437,11 @@ class QueryBuilder
 	/**
 	 * @param array<string, mixed> $queryParams
 	 * @param list<mixed> $params
-	 * @param array<string>|NULL $columnNames
+	 * @param list<string>|NULL $columnNames
 	 * @throws Exceptions\QueryBuilderException
 	 * @phpstan-param QueryParams $queryParams
 	 */
-	private function getSelectColumns(array $queryParams, array &$params, ?array &$columnNames = NULL): string
+	private function getSelectColumns(array $queryParams, array &$params, array|NULL &$columnNames = NULL): string
 	{
 		if ($queryParams[Query::PARAM_SELECT] === []) {
 			throw Exceptions\QueryBuilderException::noColumnsToSelect();
@@ -479,7 +483,7 @@ class QueryBuilder
 					$queryParams[Query::PARAM_TABLES][$mainTableAlias][self::TABLE_NAME],
 					$mainTableAlias,
 					isset($queryParams[Query::PARAM_LATERAL_TABLES][$mainTableAlias]),
-					$params
+					$params,
 				);
 			}
 		}
@@ -489,7 +493,7 @@ class QueryBuilder
 				$queryParams[Query::PARAM_TABLES][$tableAlias][self::TABLE_NAME],
 				$tableAlias,
 				isset($queryParams[Query::PARAM_LATERAL_TABLES][$tableAlias]),
-				$params
+				$params,
 			);
 		}
 
@@ -509,10 +513,11 @@ class QueryBuilder
 
 		$aliasesWithoutTables = array_diff(
 			array_keys($queryParams[Query::PARAM_ON_CONDITIONS]),
-			$queryParams[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_JOINS]
+			$queryParams[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_JOINS],
 		);
+
 		if ($aliasesWithoutTables !== []) {
-			throw Exceptions\QueryBuilderException::noCorrespondingTable($aliasesWithoutTables);
+			throw Exceptions\QueryBuilderException::noCorrespondingTable(\array_values($aliasesWithoutTables));
 		}
 
 		foreach ($queryParams[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_JOINS] as $tableAlias) {
@@ -522,7 +527,7 @@ class QueryBuilder
 				$queryParams[Query::PARAM_TABLES][$tableAlias][self::TABLE_NAME],
 				$tableAlias,
 				isset($queryParams[Query::PARAM_LATERAL_TABLES][$tableAlias]),
-				$params
+				$params,
 			);
 
 			if ($joinType === Query::JOIN_CROSS) {
@@ -534,7 +539,7 @@ class QueryBuilder
 
 				$joins[] = $table . ' ON ' . $this->processComplex(
 					$queryParams[Query::PARAM_ON_CONDITIONS][$tableAlias],
-					$params
+					$params,
 				);
 			}
 		}
@@ -742,6 +747,7 @@ class QueryBuilder
 		if ($queryParams[Query::PARAM_RETURNING] === []) {
 			return '';
 		}
+
 		$columns = [];
 		foreach ($queryParams[Query::PARAM_RETURNING] as $key => $value) {
 			if ($value instanceof Db\Sql) {
@@ -751,8 +757,10 @@ class QueryBuilder
 				$params[] = $value->createSqlQuery();
 				$value = '(?)';
 			}
+
 			$columns[] = $value . (\is_int($key) ? '' : (' AS "' . $key . '"'));
 		}
+
 		return ' RETURNING ' . \implode(', ', $columns);
 	}
 
@@ -768,6 +776,7 @@ class QueryBuilder
 		if ($queryParams[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_MAIN] === NULL) {
 			throw Exceptions\QueryBuilderException::noMainTable();
 		}
+
 		$alias = $queryParams[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_MAIN];
 
 		return ['table' => $queryParams[Query::PARAM_TABLES][$alias][self::TABLE_NAME], 'alias' => $alias];
@@ -775,10 +784,9 @@ class QueryBuilder
 
 
 	/**
-	 * @param string|Db\Sql|Query $table
 	 * @param list<mixed> $params
 	 */
-	private function processTable($table, string $alias, bool $isLateral, array &$params): string
+	private function processTable(string|Db\Sql|Query $table, string $alias, bool $isLateral, array &$params): string
 	{
 		if ($table instanceof Db\Sql) {
 			$params[] = $table;
@@ -842,6 +850,7 @@ class QueryBuilder
 					if ($param instanceof Query) {
 						$param = $param->createSqlQuery();
 					}
+
 					$params[] = $param;
 				}
 			}

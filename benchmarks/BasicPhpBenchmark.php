@@ -12,13 +12,11 @@ final class BasicPhpBenchmark extends BenchmarkCase
 	private const ARRAY = [1];
 	private const NULL_ARRAY = NULL;
 
-	/** @var int */
-	protected $defaultRepeat = 1000000;
+	protected int $defaultRepeat = 1000000;
 
 	private const TEST_ARRAY = [1, 2, 3];
 
-	/** @var callable */
-	private $updateFunction;
+	private \Closure $updateFunction;
 
 
 	protected function setUp(): void

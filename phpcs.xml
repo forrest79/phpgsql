@@ -1,39 +1,8 @@
 <?xml version="1.0"?>
-<ruleset name="PhPgSql">
-	<rule ref="./vendor/forrest79/phpcs/Forrest79CodingStandard/ruleset.xml"/>
-
-	<rule ref="Generic.Arrays.ArrayIndent.OpenBraceIncorrect">
-		<exclude-pattern>tests/Integration/ParseDataTypeTest.php</exclude-pattern>
-	</rule>
-
-	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedForeach">
-		<exclude-pattern>benchmarks/BasicPhpBenchmark.php</exclude-pattern>
-	</rule>
-
-	<rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
-		<exclude-pattern>tests/*</exclude-pattern>
-		<exclude-pattern>benchmarks/*</exclude-pattern>
-	</rule>
-
-	<rule ref="PSR2.Methods.FunctionCallSignature.Indent">
-		<exclude-pattern>src/Fluent/QueryBuilder.php</exclude-pattern>
-	</rule>
-
-	<rule ref="SlevomatCodingStandard.Classes.ClassConstantVisibility.MissingConstantVisibility">
-		<exclude-pattern>src/Fluent/Sql.php</exclude-pattern>
-	</rule>
-
-	<rule ref="SlevomatCodingStandard.Classes.ModernClassNameReference.ClassNameReferencedViaFunctionCall">
-		<exclude-pattern>src/Fluent/Exceptions/ComplexException.php</exclude-pattern>
-		<exclude-pattern>tests/Integration/DocsTest.php</exclude-pattern>
-	</rule>
-
-	<rule ref="SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal">
-		<exclude-pattern>src/*</exclude-pattern>
-	</rule>
-
-	<rule ref="SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.MissingVariable">
-		<exclude-pattern>src/Fluent/Complex.php</exclude-pattern>
+<ruleset name="PhpFpmRequest">
+	<rule ref="./vendor/forrest79/phpcs/Forrest79CodingStandard/ruleset-fully-qualified-global.xml">
+		<exclude name="SlevomatCodingStandard.Attributes.AttributesOrder"/>
+		<exclude name="SlevomatCodingStandard.Functions.DisallowTrailingCommaInClosureUse"/>
 	</rule>
 
 	<rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
@@ -44,79 +13,5 @@
 				benchmarks=>Forrest79\PhPgSql\Benchmarks,
 			"/>
 		</properties>
-	</rule>
-
-	<!-- PHP 7.3 -->
-	<rule ref="SlevomatCodingStandard.Functions.RequireTrailingCommaInCall.MissingTrailingComma">
-		<exclude-pattern>src/*</exclude-pattern>
-		<exclude-pattern>tests/*</exclude-pattern>
-		<exclude-pattern>benchmarks/*</exclude-pattern>
-	</rule>
-
-	<!-- PHP 8.0 -->
-	<rule ref="SlevomatCodingStandard.Functions.RequireTrailingCommaInClosureUse.MissingTrailingComma">
-		<exclude-pattern>tests/Integration/BasicTest.php</exclude-pattern>
-	</rule>
-
-	<!-- PHP 8.0 -->
-	<rule ref="SlevomatCodingStandard.Functions.RequireTrailingCommaInDeclaration.MissingTrailingComma">
-		<exclude-pattern>src/*</exclude-pattern>
-		<exclude-pattern>tests/Integration/BasicTest.php</exclude-pattern>
-	</rule>
-
-	<rule ref="SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter">
-		<exclude-pattern>src/Db/DummyColumnValueParser.php</exclude-pattern>
-		<exclude-pattern>tests/Integration/AsyncTest.php</exclude-pattern>
-		<exclude-pattern>tests/Integration/BasicTest.php</exclude-pattern>
-		<exclude-pattern>tests/Integration/CollectingResultsTest.php</exclude-pattern>
-		<exclude-pattern>tests/Integration/FetchTest.php</exclude-pattern>
-		<exclude-pattern>tests/Integration/PreparedStatementTest.php</exclude-pattern>
-		<exclude-pattern>tests/Unit/FluentConnectionTest.php</exclude-pattern>
-	</rule>
-
-	<!-- PHP 7.4 -->
-	<rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint">
-		<exclude-pattern>src/*</exclude-pattern>
-		<exclude-pattern>tests/*</exclude-pattern>
-	</rule>
-
-	<!-- PHP 7.4 -->
-	<rule ref="SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint">
-		<exclude-pattern>src/*</exclude-pattern>
-		<exclude-pattern>tests/*</exclude-pattern>
-		<exclude-pattern>benchmarks/*</exclude-pattern>
-	</rule>
-
-	<!-- PHP 7.4 -->
-	<rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint">
-		<exclude-pattern>src/*</exclude-pattern>
-		<exclude-pattern>tests/Unit/FluentQueryTest.php</exclude-pattern>
-	</rule>
-
-	<rule ref="SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable">
-		<exclude-pattern>src/Db/Row.php</exclude-pattern>
-		<exclude-pattern>benchmarks/BasicPhpBenchmark.php</exclude-pattern>
-		<exclude-pattern>tests/Integration/DocsTest.php</exclude-pattern>
-	</rule>
-
-	<rule ref="SlevomatCodingStandard.Whitespaces.DuplicateSpaces.DuplicateSpaces">
-		<exclude-pattern>src/Db/Result.php</exclude-pattern>
-	</rule>
-
-	<rule ref="Squiz.Commenting.FunctionComment.InvalidNoReturn">
-		<exclude-pattern>src/Db/Connection.php</exclude-pattern>
-	</rule>
-
-	<rule ref="Squiz.Scope.MethodScope.Missing">
-		<exclude-pattern>src/Db/ColumnValueParser.php</exclude-pattern>
-		<exclude-pattern>src/Db/DataTypeCache.php</exclude-pattern>
-		<exclude-pattern>src/Db/DataTypeParser.php</exclude-pattern>
-		<exclude-pattern>src/Db/RowFactory.php</exclude-pattern>
-		<exclude-pattern>src/Db/Sql.php</exclude-pattern>
-		<exclude-pattern>src/Fluent/Sql.php</exclude-pattern>
-	</rule>
-
-	<rule ref="Squiz.Strings.DoubleQuoteUsage.ContainsVar">
-		<exclude-pattern>benchmarks/BasicPhpBenchmark.php</exclude-pattern>
 	</rule>
 </ruleset>

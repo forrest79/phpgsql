@@ -9,11 +9,9 @@ use Forrest79\PhPgSql\Db;
  */
 class QueryExecute extends Query implements \Countable, \IteratorAggregate
 {
-	/** @var Db\Connection */
-	private $connection;
+	private Db\Connection $connection;
 
-	/** @var Db\Result|NULL */
-	private $result;
+	private Db\Result|NULL $result = NULL;
 
 
 	public function __construct(QueryBuilder $queryBuilder, Db\Connection $connection)
@@ -31,6 +29,7 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 		if ($this->result !== NULL) {
 			throw Exceptions\QueryException::cantUpdateQueryAfterExecute();
 		}
+
 		parent::resetQuery();
 	}
 
@@ -46,6 +45,7 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 		if ($this->result === NULL) {
 			$this->result = $this->connection->query($this->createSqlQuery());
 		}
+
 		return $this->result;
 	}
 
@@ -81,6 +81,7 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 		if ($this->result === NULL) {
 			throw Exceptions\QueryException::youMustExecuteQueryBeforeThat();
 		}
+
 		return $this->result->free();
 	}
 
@@ -107,7 +108,7 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 	 */
 	public function getIterator(): Db\ResultIterator
 	{
-		//trigger_error('Use fetchIterator() method.', E_USER_DEPRECATED);
+		\trigger_error('Use fetchIterator() method.', \E_USER_DEPRECATED);
 		return $this->execute()->getIterator();
 	}
 
@@ -130,7 +131,7 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	public function fetch(): ?Db\Row
+	public function fetch(): Db\Row|NULL
 	{
 		return $this->execute()->fetch();
 	}
@@ -143,7 +144,7 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	public function fetchSingle()
+	public function fetchSingle(): mixed
 	{
 		return $this->execute()->fetchSingle();
 	}
@@ -156,7 +157,7 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	public function fetchAll(?int $offset = NULL, ?int $limit = NULL): array
+	public function fetchAll(int|NULL $offset = NULL, int|NULL $limit = NULL): array
 	{
 		return $this->execute()->fetchAll($offset, $limit);
 	}
@@ -182,7 +183,7 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	public function fetchPairs(?string $key = NULL, ?string $value = NULL): array
+	public function fetchPairs(string|NULL $key = NULL, string|NULL $value = NULL): array
 	{
 		return $this->execute()->fetchPairs($key, $value);
 	}
@@ -217,6 +218,7 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 	public function __clone()
 	{
 		$this->releaseResult(FALSE); // must be before parent clone - we need to allow resetQuery() first
+
 		parent::__clone();
 	}
 

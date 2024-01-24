@@ -6,8 +6,7 @@ use Forrest79\PhPgSql\Db;
 
 class Literal implements Db\Sql
 {
-	/** @var string */
-	private $value;
+	private string $value;
 
 
 	public function __construct(string $value)
@@ -23,7 +22,7 @@ class Literal implements Db\Sql
 
 
 	/**
-	 * @return array<mixed>
+	 * @return list<mixed>
 	 */
 	public function getParams(): array
 	{

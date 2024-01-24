@@ -2,14 +2,9 @@ includes:
 	- %rootDir%/conf/bleedingEdge.neon
 	- %rootDir%/../phpstan-strict-rules/rules.neon
 	- %rootDir%/../../forrest79/phpgsql-phpstan/extension.neon
-	- %rootDir%/../../../phpstan-php80.php
-	- %rootDir%/../../../phpstan-php81.php
 
 parameters:
 	level: max
-
-	bootstrapFiles:
-		- %rootDir%/../../../phpstan-bootstrap.php
 
 	ignoreErrors:
 		# === This is OK ===
@@ -23,22 +18,17 @@ parameters:
 		# === This is OK (just for tests or benchmarks) ===
 
 		-
-			message: '#^Parameter \#1 \$table of method Forrest79\\PhPgSql\\Fluent\\Query::table\(\) expects Forrest79\\PhPgSql\\Db\\Sql\|Forrest79\\PhPgSql\\Fluent\\Query\|string, array<int, string> given\.$#'
-			path: %rootDir%/../../../tests/Unit/FluentQueryTest.php
-			count: 1
-
-		-
-			message: '#^Parameter \#(1|2|3) \$(c|onC)ondition of method Forrest79\\PhPgSql\\Fluent\\Query::(where|having|join|on)\(\) expects Forrest79\\PhPgSql\\Db\\Sql\|Forrest79\\PhPgSql\\Fluent\\Complex\|string(\|null)?, (array<int, string>|null) given\.$#'
-			path: %rootDir%/../../../tests/Unit/FluentQueryTest.php
-			count: 4
-
-		-
-			message: '#^Parameter \#1 \$condition of method Forrest79\\PhPgSql\\Fluent\\Query::having\(\) expects Forrest79\\PhPgSql\\Db\\Sql\|Forrest79\\PhPgSql\\Fluent\\Complex\|string(\|null)?, Forrest79\\PhPgSql\\Db\\Query given\.$#'
-			path: %rootDir%/../../../tests/Unit/FluentQueryTest.php
-			count: 1
+			message: '#^Parameter \#1 \$result of function pg_.+ expects PgSql\\Result, PgSql\\Result\|false given\.$#'
+			path: %rootDir%/../../../tests/Integration/PgFunctionsTest.php
+			count: 47
 
 		-
 			message: '#^Parameter \#2 \$queryParams of method Forrest79\\PhPgSql\\Fluent\\QueryBuilder::createSqlQuery\(\) expects array\{.+\}, array\{.*\} given\.$#'
+			path: %rootDir%/../../../tests/Unit/FluentQueryTest.php
+			count: 1
+
+		-
+			message: '#^Parameter \#1 \$columns of method Forrest79\\PhPgSql\\Fluent\\Query::select\(\) expects array\<int\|string, BackedEnum\|bool\|Forrest79\\PhPgSql\\Db\\Sql\|Forrest79\\PhPgSql\\Fluent\\Query\|int\|string\|null\>, array\<string, array\<int, string\>\> given\.$#'
 			path: %rootDir%/../../../tests/Unit/FluentQueryTest.php
 			count: 1
 
@@ -51,6 +41,26 @@ parameters:
 			message: '#^Expression ".+" on a separate line does not do anything\.$#'
 			path: %rootDir%/../../../tests/Integration/FetchTest.php
 			count: 8
+
+		-
+			message: '#^Offset 1 does not exist on Forrest79\\PhPgSql\\Db\\Row\.$#'
+			path: %rootDir%/../../../tests/Integration/FetchTest.php
+			count: 1
+
+		-
+			message: '#^Cannot assign offset 1 to Forrest79\\PhPgSql\\Db\\Row\.$#'
+			path: %rootDir%/../../../tests/Integration/FetchTest.php
+			count: 1
+
+		-
+			message: '#^Offset 1 on Forrest79\\PhPgSql\\Db\\Row in isset\(\) does not exist\.$#'
+			path: %rootDir%/../../../tests/Integration/FetchTest.php
+			count: 1
+
+		-
+			message: '#^Cannot unset offset 1 on Forrest79\\PhPgSql\\Db\\Row\.$#'
+			path: %rootDir%/../../../tests/Integration/FetchTest.php
+			count: 1
 
 		-
 			message: '#^Expression ".+" on a separate line does not do anything\.$#'
@@ -97,6 +107,11 @@ parameters:
 			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
 			count: 1
 
+		-
+			message: '#^Strict comparison using \!\=\= between array\<int, string\> and null will always evaluate to true\.$#'
+			path: %rootDir%/../../../benchmarks/GetFieldTypesBenchmark.php
+			count: 3
+
 		# === Explicit mixed check (correct type is checked in tests)
 
 		-
@@ -122,9 +137,14 @@ parameters:
 		# === We know, that this can happen ===
 
 		-
-			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
-			path: %rootDir%/../../../src/Fluent/Complex.php
-			count: 1
+			message: '#^Instanceof between .+ and .+ will always evaluate to (true|false)\.$#'
+			path: %rootDir%/../../../src/Fluent/Query.php
+			count: 3
+
+		-
+			message: '#^Result of && is always false\.$#'
+			path: %rootDir%/../../../src/Fluent/Query.php
+			count: 3
 
 		-
 			message: "#^Strict comparison using === between 'suffix' and 'suffix' will always evaluate to true\\.$#"
@@ -139,14 +159,24 @@ parameters:
 		# === We know, that this can't happen ===
 
 		-
-			message: '#^Method Forrest79\\PhPgSql\\Db\\Connection::getConnectedResource\(\) should return resource but returns resource\|null\.$#'
-			path: %rootDir%/../../../src/Db/Connection.php
-			count: 2
+			message: '#^Property Forrest79\\PhPgSql\\Fluent\\Complex::\$conditions \(list\<list\<mixed\>\|Forrest79\\PhPgSql\\Fluent\\Complex\>\) does not accept non\-empty\-array\<int, list\<mixed\>\|Forrest79\\PhPgSql\\Fluent\\Complex\>\.$#'
+			path: %rootDir%/../../../src/Fluent/Complex.php
+			count: 1
+
+		-
+			message: '#^Parameter \#2 \$rawValues of method Forrest79\\PhPgSql\\Db\\RowFactory::createRow\(\) expects array\<string, string\|null\>, array\<int\|string, string\|null\> given\.$#'
+			path: %rootDir%/../../../src/Db/Result.php
+			count: 1
 
 		-
 			message: '#^Method Forrest79\\PhPgSql\\Db\\ResultIterator::current\(\) should return Forrest79\\PhPgSql\\Db\\Row but returns Forrest79\\PhPgSql\\Db\\Row\|null\.$#'
 			path: %rootDir%/../../../src/Db/ResultIterator.php
 			count: 1
+
+		-
+			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
+			path: %rootDir%/../../../src/Db/Row.php
+			count: 3
 
 		-
 			message: '#^Parameter \#2 \$expected of static method Forrest79\\PhPgSql\\Fluent\\Exceptions\\QueryBuilderException::badParamsCount\(\) expects int, int(\<0, max\>)?\|false(\|null)? given\.$#' # (|null)? is for forward PHP 8 compatibility

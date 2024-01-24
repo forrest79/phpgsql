@@ -85,10 +85,6 @@ final class FluentQueryTest extends Tests\TestCase
 
 	public function testSelectEnum(): void
 	{
-		if (\PHP_VERSION_ID < 80100) {
-			Tester\Environment::skip('Minimum PHP version is 8.1');
-		}
-
 		$query = $this->query()
 			->select([Tests\TestEnum::One, 'column' => Tests\TestEnum::One])
 			->createSqlQuery()
@@ -209,18 +205,6 @@ final class FluentQueryTest extends Tests\TestCase
 
 		Tester\Assert::same('SELECT x.column FROM table AS t WHERE x.id IN ($1, $2)', $query->getSql());
 		Tester\Assert::same([1, 2], $query->getParams());
-	}
-
-
-	public function testWhereWithBadType(): void
-	{
-		Tester\Assert::exception(function (): void {
-			$this->query()->where(['x.id = 1']);
-		}, Fluent\Exceptions\ComplexException::class, NULL, Fluent\Exceptions\ComplexException::UNSUPPORTED_CONDITION_TYPE);
-
-		Tester\Assert::exception(function (): void {
-			$this->query()->where(NULL);
-		}, Fluent\Exceptions\ComplexException::class, NULL, Fluent\Exceptions\ComplexException::UNSUPPORTED_CONDITION_TYPE);
 	}
 
 
@@ -361,14 +345,6 @@ final class FluentQueryTest extends Tests\TestCase
 
 		Tester\Assert::same('SELECT x.column FROM table AS t HAVING x.id IN ($1, $2)', $query->getSql());
 		Tester\Assert::same([1, 2], $query->getParams());
-	}
-
-
-	public function testHavingWithBadType(): void
-	{
-		Tester\Assert::exception(function (): void {
-			$this->query()->having(new Db\Query('x.id = 1', []));
-		}, Fluent\Exceptions\ComplexException::class, NULL, Fluent\Exceptions\ComplexException::UNSUPPORTED_CONDITION_TYPE);
 	}
 
 
@@ -526,14 +502,6 @@ final class FluentQueryTest extends Tests\TestCase
 	}
 
 
-	public function testJoinWithBadTypeOn(): void
-	{
-		Tester\Assert::exception(function (): void {
-			$this->query()->join('another', 'x', ['x.column = t.id']);
-		}, Fluent\Exceptions\ComplexException::class, NULL, Fluent\Exceptions\ComplexException::UNSUPPORTED_CONDITION_TYPE);
-	}
-
-
 	public function testJoinWithAddOn(): void
 	{
 		$complexOn = Fluent\Complex::createOr()
@@ -553,14 +521,6 @@ final class FluentQueryTest extends Tests\TestCase
 
 		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another AS x ON (x.column = t.id) AND (x.id = 1) AND (x.id = $1) AND (x.type_id = $2) AND ((x.complex_id = t.id) OR (x.complex_id IN ($3, $4)))', $query->getSql());
 		Tester\Assert::same([2, 'test', 3, 4], $query->getParams());
-	}
-
-
-	public function testJoinWithAddOnWithBadType(): void
-	{
-		Tester\Assert::exception(function (): void {
-			$this->query()->on('x', ['x.id = 1']);
-		}, Fluent\Exceptions\ComplexException::class, NULL, Fluent\Exceptions\ComplexException::UNSUPPORTED_CONDITION_TYPE);
 	}
 
 
@@ -651,7 +611,7 @@ final class FluentQueryTest extends Tests\TestCase
 			->union(
 				$this->query()
 					->select(['column'])
-					->from('table2', 't2')
+					->from('table2', 't2'),
 			)
 			->createSqlQuery()
 			->createQuery();
@@ -1427,9 +1387,9 @@ final class FluentQueryTest extends Tests\TestCase
 							->select(['t.id', 't.link', 't.data'])
 							->from('tree', 't')
 							->from('search_tree', 'st')
-							->where('t.id = st.link')
+							->where('t.id = st.link'),
 					),
-				'SEARCH BREADTH FIRST BY id SET ordercol'
+				'SEARCH BREADTH FIRST BY id SET ordercol',
 			)
 			->select(['*'])
 			->from('search_tree')
@@ -1467,7 +1427,7 @@ final class FluentQueryTest extends Tests\TestCase
 					->delete('products')
 					->where('date >= ?', '2010-10-01')
 					->where('date < ?', '2010-11-01')
-					->returning(['*'])
+					->returning(['*']),
 			)
 			->insert('products_log')
 			->select(['*'])
@@ -1494,8 +1454,8 @@ final class FluentQueryTest extends Tests\TestCase
 							->select(['p.sub_part', 'p.part'])
 							->from('included_parts', 'pr')
 							->from('parts', 'p')
-							->where('p.part = pr.sub_part')
-					)
+							->where('p.part = pr.sub_part'),
+					),
 			)
 			->delete('parts')
 			->where('part', $this->query()->select(['part'])->from('included_parts'))
@@ -1515,7 +1475,7 @@ final class FluentQueryTest extends Tests\TestCase
 				$this->query()
 					->update('products')
 					->set(['price' => Db\Sql\Literal::create('price * 1.05')])
-					->returning(['*'])
+					->returning(['*']),
 			)
 			->select(['*'])
 			->from('t')
@@ -1769,10 +1729,7 @@ final class FluentQueryTest extends Tests\TestCase
 		$query = new class(new Fluent\QueryBuilder()) extends Fluent\Query
 		{
 
-			/**
-			 * @return mixed
-			 */
-			public function testGet(string $param)
+			public function testGet(string $param): mixed
 			{
 				return $this->get($param);
 			}
@@ -1822,7 +1779,7 @@ final class FluentQueryTest extends Tests\TestCase
 	}
 
 
-	public function testQueyableMustHaveAlias(): void
+	public function testTableQueryableMustHaveAlias(): void
 	{
 		Tester\Assert::exception(function (): void {
 			$this->query()
@@ -1831,10 +1788,19 @@ final class FluentQueryTest extends Tests\TestCase
 	}
 
 
-	public function testParamMustBeScalarOrQuery(): void
+	public function testColumQueryableMustHaveAlias(): void
 	{
 		Tester\Assert::exception(function (): void {
-			$this->query()->table(['table'], 't');
+			$this->query()
+				->select([$this->query()->select([1])]);
+		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::SQL_MUST_HAVE_ALIAS);
+	}
+
+
+	public function testColumnMustBeScalarOrEnumOrExpression(): void
+	{
+		Tester\Assert::exception(function (): void {
+			$this->query()->select(['t' => ['table']]);
 		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::PARAM_MUST_BE_SCALAR_OR_ENUM_OR_EXPRESSION);
 	}
 

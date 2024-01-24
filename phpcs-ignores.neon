@@ -1,0 +1,822 @@
+ignoreErrors:
+	-
+		sniff: Generic.CodeAnalysis.EmptyStatement.DetectedForeach
+		message: Empty FOREACH statement detected
+		count: 2
+		path: benchmarks/BasicPhpBenchmark.php
+
+	-
+		sniff: PSR1.Files.SideEffects.FoundWithSymbols
+		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 9 and the first side effect is on line 7.'
+		count: 1
+		path: benchmarks/BasicPhpBenchmark.php
+
+	-
+		sniff: SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
+		message: Unused variable $item.
+		count: 2
+		path: benchmarks/BasicPhpBenchmark.php
+
+	-
+		sniff: Squiz.Strings.DoubleQuoteUsage.ContainsVar
+		message: 'Variable "$i" not allowed in double quoted string; use sprintf() instead'
+		count: 1
+		path: benchmarks/BasicPhpBenchmark.php
+
+	-
+		sniff: Squiz.Strings.DoubleQuoteUsage.ContainsVar
+		message: 'Variable "$x1" not allowed in double quoted string; use sprintf() instead'
+		count: 1
+		path: benchmarks/BasicPhpBenchmark.php
+
+	-
+		sniff: Squiz.Strings.DoubleQuoteUsage.ContainsVar
+		message: 'Variable "$x2" not allowed in double quoted string; use sprintf() instead'
+		count: 1
+		path: benchmarks/BasicPhpBenchmark.php
+
+	-
+		sniff: Squiz.Strings.DoubleQuoteUsage.ContainsVar
+		message: 'Variable "$y1" not allowed in double quoted string; use sprintf() instead'
+		count: 1
+		path: benchmarks/BasicPhpBenchmark.php
+
+	-
+		sniff: Squiz.Strings.DoubleQuoteUsage.ContainsVar
+		message: 'Variable "$y2" not allowed in double quoted string; use sprintf() instead'
+		count: 1
+		path: benchmarks/BasicPhpBenchmark.php
+
+	-
+		sniff: Squiz.Strings.DoubleQuoteUsage.ContainsVar
+		message: 'Variable "$z1" not allowed in double quoted string; use sprintf() instead'
+		count: 1
+		path: benchmarks/BasicPhpBenchmark.php
+
+	-
+		sniff: Squiz.Strings.DoubleQuoteUsage.ContainsVar
+		message: 'Variable "$z2" not allowed in double quoted string; use sprintf() instead'
+		count: 1
+		path: benchmarks/BasicPhpBenchmark.php
+
+	-
+		sniff: PSR1.Files.SideEffects.FoundWithSymbols
+		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 9 and the first side effect is on line 7.'
+		count: 1
+		path: benchmarks/GetFieldTypesBenchmark.php
+
+	-
+		sniff: PSR1.Files.SideEffects.FoundWithSymbols
+		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 9 and the first side effect is on line 7.'
+		count: 1
+		path: benchmarks/PdoBenchmark.php
+
+	-
+		sniff: PSR1.Files.SideEffects.FoundWithSymbols
+		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 9 and the first side effect is on line 7.'
+		count: 1
+		path: benchmarks/PgQueryBenchmark.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Db/AsyncHelper.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Db/AsyncPreparedStatement.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Db/AsyncQuery.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "parseColumnValue"
+		count: 1
+		path: src/Db/ColumnValueParser.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Db/Connection.php
+
+	-
+		sniff: Squiz.Commenting.FunctionComment.InvalidNoReturn
+		message: 'Function has no return statement, but annotation @return is present'
+		count: 1
+		path: src/Db/Connection.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "load"
+		count: 1
+		path: src/Db/DataTypeCache.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Db/DataTypeCaches/PhpFile.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "parse"
+		count: 1
+		path: src/Db/DataTypeParser.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Db/DataTypeParsers/Basic.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Db/DummyColumnValueParser.php
+
+	-
+		sniff: SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
+		message: Unused parameter $column.
+		count: 1
+		path: src/Db/DummyColumnValueParser.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Db/Events.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Db/Exceptions/ConnectionException.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Db/Exceptions/DataTypeCacheException.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Db/Exceptions/DataTypeParserException.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Db/Exceptions/QueryException.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Db/Exceptions/ResultException.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Db/Exceptions/RowException.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Db/Helper.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Db/PreparedStatement.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Db/Result.php
+
+	-
+		sniff: SlevomatCodingStandard.Whitespaces.DuplicateSpaces.DuplicateSpaces
+		message: Duplicate spaces at position 24.
+		count: 3
+		path: src/Db/Result.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Db/ResultIterator.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Db/Row.php
+
+	-
+		sniff: SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
+		message: Unused variable $value.
+		count: 1
+		path: src/Db/Row.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Db/RowFactories/Basic.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "createRow"
+		count: 1
+		path: src/Db/RowFactory.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "getParams"
+		count: 1
+		path: src/Db/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "getSql"
+		count: 1
+		path: src/Db/Sql.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Db/Sql/Expression.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Db/Sql/Literal.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Db/Sql/Query.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Db/Transaction.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Fluent/Complex.php
+
+	-
+		sniff: SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
+		message: 'Method \Forrest79\PhPgSql\Fluent\Complex::offsetExists() does not have native type hint for its parameter $offset but it should be possible to add it based on @param annotation "int".'
+		count: 1
+		path: src/Fluent/Complex.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Fluent/Connection.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Fluent/Exceptions/ComplexException.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Fluent/Exceptions/QueryBuilderException.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Fluent/Exceptions/QueryException.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Fluent/Exceptions/ShouldNotHappenException.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Fluent/Query.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Fluent/QueryBuilder.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Fluent/QueryExecute.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "crossJoin"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "delete"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "distinct"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "except"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "from"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "fullJoin"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "fullOuterJoin"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "groupBy"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "having"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "havingAnd"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "havingOr"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "innerJoin"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "insert"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "intersect"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "join"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "lateral"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "leftJoin"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "leftOuterJoin"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "limit"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "merge"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "offset"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "on"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "onConflict"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "doUpdate"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "doNothing"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "orderBy"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "prefix"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "recursive"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "returning"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "rightJoin"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "rightOuterJoin"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "rows"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "select"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "set"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "suffix"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "table"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "truncate"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "union"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "unionAll"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "update"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "using"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "values"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "whenMatched"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "whenNotMatched"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "where"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "whereAnd"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "whereOr"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "with"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: PSR1.Files.SideEffects.FoundWithSymbols
+		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 13 and the first side effect is on line 8.'
+		count: 1
+		path: tests/Integration/AsyncTest.php
+
+	-
+		sniff: SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
+		message: Unused parameter $connection.
+		count: 1
+		path: tests/Integration/AsyncTest.php
+
+	-
+		sniff: SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
+		message: Unused parameter $query.
+		count: 1
+		path: tests/Integration/AsyncTest.php
+
+	-
+		sniff: PSR1.Files.SideEffects.FoundWithSymbols
+		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 13 and the first side effect is on line 8.'
+		count: 1
+		path: tests/Integration/BasicTest.php
+
+	-
+		sniff: SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
+		message: Unused parameter $connection.
+		count: 2
+		path: tests/Integration/BasicTest.php
+
+	-
+		sniff: PSR1.Files.SideEffects.FoundWithSymbols
+		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 13 and the first side effect is on line 8.'
+		count: 1
+		path: tests/Integration/CollectingResultsTest.php
+
+	-
+		sniff: SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
+		message: Unused parameter $connection.
+		count: 1
+		path: tests/Integration/CollectingResultsTest.php
+
+	-
+		sniff: PSR1.Files.SideEffects.FoundWithSymbols
+		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 13 and the first side effect is on line 8.'
+		count: 1
+		path: tests/Integration/DataTypeCacheTest.php
+
+	-
+		sniff: PSR1.Files.SideEffects.FoundWithSymbols
+		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 14 and the first side effect is on line 9.'
+		count: 1
+		path: tests/Integration/DocsTest.php
+
+	-
+		sniff: SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
+		message: Unused variable $connection.
+		count: 1
+		path: tests/Integration/DocsTest.php
+
+	-
+		sniff: PSR1.Files.SideEffects.FoundWithSymbols
+		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 13 and the first side effect is on line 8.'
+		count: 1
+		path: tests/Integration/FetchTest.php
+
+	-
+		sniff: SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
+		message: Unused parameter $rawValues.
+		count: 1
+		path: tests/Integration/FetchTest.php
+
+	-
+		sniff: PSR1.Files.SideEffects.FoundWithSymbols
+		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 15 and the first side effect is on line 9.'
+		count: 1
+		path: tests/Integration/FluentQueryTest.php
+
+	-
+		sniff: Generic.Arrays.ArrayIndent.OpenBraceIncorrect
+		message: Array open brace not indented correctly; expected at least 8 spaces but found 0
+		count: 2
+		path: tests/Integration/ParseDataTypeTest.php
+
+	-
+		sniff: PSR1.Files.SideEffects.FoundWithSymbols
+		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 13 and the first side effect is on line 8.'
+		count: 1
+		path: tests/Integration/ParseDataTypeTest.php
+
+	-
+		sniff: PSR1.Files.SideEffects.FoundWithSymbols
+		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 15 and the first side effect is on line 8.'
+		count: 1
+		path: tests/Integration/PgFunctionsTest.php
+
+	-
+		sniff: PSR1.Files.SideEffects.FoundWithSymbols
+		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 13 and the first side effect is on line 8.'
+		count: 1
+		path: tests/Integration/PreparedStatementTest.php
+
+	-
+		sniff: SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
+		message: Unused parameter $connection.
+		count: 2
+		path: tests/Integration/PreparedStatementTest.php
+
+	-
+		sniff: SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
+		message: Unused parameter $query.
+		count: 2
+		path: tests/Integration/PreparedStatementTest.php
+
+	-
+		sniff: PSR1.Files.SideEffects.FoundWithSymbols
+		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 15 and the first side effect is on line 9.'
+		count: 1
+		path: tests/Integration/QueryExecuteFetchTest.php
+
+	-
+		sniff: PSR1.Files.SideEffects.FoundWithSymbols
+		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 10 and the first side effect is on line 8.'
+		count: 1
+		path: tests/Integration/TestCase.php
+
+	-
+		sniff: PSR1.Files.SideEffects.FoundWithSymbols
+		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 13 and the first side effect is on line 8.'
+		count: 1
+		path: tests/Integration/TransactionTest.php
+
+	-
+		sniff: PSR1.Files.SideEffects.FoundWithSymbols
+		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 9 and the first side effect is on line 7.'
+		count: 1
+		path: tests/TestCase.php
+
+	-
+		sniff: PSR1.Files.SideEffects.FoundWithSymbols
+		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 14 and the first side effect is on line 9.'
+		count: 1
+		path: tests/Unit/BasicTest.php
+
+	-
+		sniff: PSR1.Files.SideEffects.FoundWithSymbols
+		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 14 and the first side effect is on line 9.'
+		count: 1
+		path: tests/Unit/FluentComplexTest.php
+
+	-
+		sniff: PSR1.Files.SideEffects.FoundWithSymbols
+		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 15 and the first side effect is on line 10.'
+		count: 1
+		path: tests/Unit/FluentConnectionTest.php
+
+	-
+		sniff: SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
+		message: Unused parameter $params.
+		count: 1
+		path: tests/Unit/FluentConnectionTest.php
+
+	-
+		sniff: SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
+		message: Unused parameter $sql.
+		count: 1
+		path: tests/Unit/FluentConnectionTest.php
+
+	-
+		sniff: PSR1.Files.SideEffects.FoundWithSymbols
+		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 15 and the first side effect is on line 10.'
+		count: 1
+		path: tests/Unit/FluentQueryTest.php
+
+	-
+		sniff: PSR1.Files.SideEffects.FoundWithSymbols
+		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 14 and the first side effect is on line 9.'
+		count: 1
+		path: tests/Unit/ParseDataTypeTest.php
+
+	-
+		sniff: PSR1.Files.SideEffects.FoundWithSymbols
+		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 14 and the first side effect is on line 9.'
+		count: 1
+		path: tests/Unit/QueryTest.php
+
+	-
+		sniff: PSR1.Files.SideEffects.FoundWithSymbols
+		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 5 and the first side effect is on line 4.'
+		count: 1
+		path: tests/prepare-db-config.php

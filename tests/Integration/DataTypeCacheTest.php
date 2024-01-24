@@ -12,8 +12,7 @@ require_once __DIR__ . '/TestCase.php';
  */
 final class DataTypeCacheTest extends TestCase
 {
-	/** @var string */
-	private $cacheDirectory;
+	private string $cacheDirectory;
 
 
 	protected function setUp(): void
@@ -64,7 +63,7 @@ final class DataTypeCacheTest extends TestCase
 
 		\file_put_contents(
 			$this->getDataTypeCacheFile($this->connection),
-			'<?php declare(strict_types=1);' . \PHP_EOL . 'return [1=>\'' . $type . '\'];'
+			'<?php declare(strict_types=1);' . \PHP_EOL . 'return [1=>\'' . $type . '\'];',
 		);
 
 		$dataTypeCacheNew = $this->createDataTypeCache();
@@ -85,6 +84,7 @@ final class DataTypeCacheTest extends TestCase
   				name text
 			);
 		');
+
 		$this->connection->query('INSERT INTO test1(name) VALUES(?)', 'phpgsql');
 
 		$result1 = $this->connection->query('SELECT id, name FROM test1');
@@ -94,12 +94,14 @@ final class DataTypeCacheTest extends TestCase
 		$result1->free();
 
 		$this->connection->query('CREATE EXTENSION hstore');
+
 		$this->connection->query('
 			CREATE TABLE test2(
 				id serial,
   				data hstore
 			);
 		');
+
 		$this->connection->query('INSERT INTO test2(data) VALUES(NULL)');
 
 		$result2 = $this->connection->query('SELECT id, data FROM test2');

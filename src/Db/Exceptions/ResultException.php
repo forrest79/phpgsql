@@ -40,10 +40,7 @@ class ResultException extends Exception
 	}
 
 
-	/**
-	 * @param mixed $value
-	 */
-	public static function fetchAssocOnlyScalarAsKey(string $assocDesc, string $column, $value): self
+	public static function fetchAssocOnlyScalarAsKey(string $assocDesc, string $column, mixed $value): self
 	{
 		return new self(\sprintf('You can use only scalar type as a key in associative descriptor \'%s\'. Column \'%s\' was parsed as \'%s\'.', $assocDesc, $column, \gettype($value)), self::FETCH_ASSOC_ONLY_SCALAR_AS_KEY);
 	}
@@ -61,10 +58,7 @@ class ResultException extends Exception
 	}
 
 
-	/**
-	 * @param int|string|FALSE $oid
-	 */
-	public static function noOidInDataTypeCache($oid): self
+	public static function noOidInDataTypeCache(int|string|FALSE $oid): self
 	{
 		return new self(\sprintf('There is no oid \'%s\' in data type cache. Try clear your data type cache.', $oid === FALSE ? 'FALSE' : $oid), self::NO_OID_IN_DATA_TYPE_CACHE);
 	}

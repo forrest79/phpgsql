@@ -4,15 +4,14 @@ namespace Forrest79\PhPgSql\Db;
 
 final class Query
 {
-	/** @var string */
-	private $sql;
+	private string $sql;
 
-	/** @var array<mixed> */
-	private $params;
+	/** @var list<mixed> */
+	private array $params;
 
 
 	/**
-	 * @param array<mixed> $params
+	 * @param list<mixed> $params
 	 */
 	public function __construct(string $sql, array $params)
 	{
@@ -28,7 +27,7 @@ final class Query
 
 
 	/**
-	 * @return array<mixed>
+	 * @return list<mixed>
 	 */
 	public function getParams(): array
 	{

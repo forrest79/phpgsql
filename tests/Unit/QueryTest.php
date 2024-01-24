@@ -119,10 +119,6 @@ final class QueryTest extends Tests\TestCase
 
 	public function testPrepareQueryWithEnum(): void
 	{
-		if (\PHP_VERSION_ID < 80100) {
-			Tester\Environment::skip('Minimum PHP version is 8.1');
-		}
-
 		$query = Db\Sql\Query::create('SELECT * FROM table WHERE column = ?', Tests\TestEnum::One)->createQuery();
 		Tester\Assert::same('SELECT * FROM table WHERE column = $1', $query->getSql());
 		Tester\Assert::same([1], $query->getParams()); // @todo backward compatibility with PHP < 8.1: Tests\TestEnum::One->value
@@ -131,10 +127,6 @@ final class QueryTest extends Tests\TestCase
 
 	public function testPrepareQueryWithArrayOfEnums(): void
 	{
-		if (\PHP_VERSION_ID < 80100) {
-			Tester\Environment::skip('Minimum PHP version is 8.1');
-		}
-
 		$query = Db\Sql\Query::create('SELECT * FROM table WHERE column IN (?)', [Tests\TestEnum::Two, Tests\TestEnum::One])->createQuery();
 		Tester\Assert::same('SELECT * FROM table WHERE column IN ($1, $2)', $query->getSql());
 		Tester\Assert::same([2, 1], $query->getParams()); // @todo backward compatibility with PHP < 8.1: Tests\TestEnum::Two->value, Tests\TestEnum::One->value
@@ -154,13 +146,13 @@ final class QueryTest extends Tests\TestCase
 		$subquery = Db\Sql\Query::create(
 			'SELECT id FROM subtable WHERE when = ? AND text ILIKE \'When\?\' AND year > ?',
 			Db\Sql\Literal::create('now()'),
-			2005
+			2005,
 		);
 		$query = Db\Sql\Query::create(
 			'SELECT * FROM table WHERE column = ? OR id IN (?) OR type IN (?)',
 			'yes',
 			$subquery,
-			[3, 2, 1]
+			[3, 2, 1],
 		)->createQuery();
 		Tester\Assert::same('SELECT * FROM table WHERE column = $1 OR id IN (SELECT id FROM subtable WHERE when = now() AND text ILIKE \'When?\' AND year > $2) OR type IN ($3, $4, $5)', $query->getSql());
 		Tester\Assert::same(['yes', 2005, 3, 2, 1], $query->getParams());
@@ -184,8 +176,8 @@ final class QueryTest extends Tests\TestCase
 
 
 			/**
-			 * @param array<mixed> $params
-			 * @return array<mixed>
+			 * @param list<mixed> $params
+			 * @return list<mixed>
 			 */
 			public function publicPrepareParams(array $params): array
 			{

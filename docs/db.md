@@ -18,7 +18,7 @@ Pass `TRUE` as the second parameter to force new connection (otherwise, existing
 
 Pass `TRUE` as the third parameter to connect asynchronously (will be described later).
 
-> Personal note: I'm thinking about removing this in then next big release.
+> Personal note: I'm thinking about removing this in the next big release.
 
 You can create a blank `Connection` object and set connection parameters on this object with functions `setConnectionConfig()`, `setConnectForceNew()` and `setConnectAsync()`. You must set it before `connect()` is executed.
 
@@ -29,7 +29,7 @@ $connection->setConnectForceNew(TRUE);
 $connection->setConnectAsync(TRUE);
 ```
 
-For async connections, you can set timeout with `setConnectAsyncWaitSeconds()` method. Default value is 15 seconds.
+For async connections, you can set timeout with `setConnectAsyncWaitSeconds()` method. A default value is 15 seconds.
 
 ```php
 $connection = new Forrest79\PhPgSql\Db\Connection();
@@ -59,7 +59,7 @@ Of course, you can get back info about actual configuration:
 $connectionConfig = $connection->getConnectionConfig();
 ```
 
-You can check, if connection is connected:
+You can check if connection is connected:
 
 ```php
 if ($connection->isConnected()) {
@@ -75,7 +75,7 @@ if ($connection->ping()) {
 }
 ```
 
-If there is some error on database site, an exception is thrown. This library is not trying to parse database exceptions to some specific types (foreign key violation, ...). You will get error message right from the PostgreSQL and you can set a format for this message.
+If there is some error on the database site, an exception is thrown. This library is not trying to parse database exceptions to some specific types (foreign key violation, ...). You will get an error message right from the PostgreSQL, and you can set a format for this message.
 
 ```php
 $connection->setErrorVerbosity(PGSQL_ERRORS_DEFAULT);
@@ -110,19 +110,19 @@ Note about serialization: `Connection` object can't be serialized and deserializ
 
 ### Running queries and getting results
 
-So we have properly set connection. What do we need to know about executing an SQL query? Important is how to safely pass parameters into query. There is whole chapter about it below. For know just use `?` character on a place, where you want to pass parameter.
+So we have properly set connection. What do we need to know about executing an SQL query? Important is how to safely pass parameters into the query. There is a whole chapter about it below. For know just use `?` character on a place, where you want to pass parameter.
 
 Prepared statements and asynchronous queries will be described later.
 
 The only function you need to know is `query()` (or `queryArgs()`). If you only use this one to execute queries, you won't make a mistake.
 
-But there is another one function `execute()`. You can use this one, no result is needed from query and also when you have no params to pass. Another advantage is, you can run more queries at once, just separate it with `;` characted (these queries are executed one by one in one statement/transaction and they are sending to PostgreSQL a little bit quicker (but really just a little bit) than with the `query()` method).
+But there is another one function `execute()`. You can use this one, no result is needed from a query and also when you have no params to pass. Another advantage is, you can run more queries at once, just separate it with `;` characted (these queries are executed one by one in one statement/transaction, and they are sending to PostgreSQL a little bit quicker (but really just a little bit) than with the `query()` method).
 
 ```php
 $connection->execute('DELETE FROM user_departments WHERE id = 1; DELETE FROM user_departments WHERE id = 2');
 ```
 
-Also with the `query()` method you can use the same queries separated with the `;` (but you will get result only for the last one and you also can't use parameters). When you use `query()` without parameters, internally is used `pg_query()` function (the same as when you call `execute()`), that is a little bit quicker to process (but again, just a little bit, you don't need to care about this much).
+Also with the `query()` method you can use the same queries separated with the `;` (but you will get the result only for the last one, and you also can't use parameters). When you use `query()` without parameters, internally is used `pg_query()` function (the same as when you call `execute()`), that is a little bit quicker to process (but again, just a little bit, you don't need to care about this much).
 
 > The same is true also for `asyncQuery()` and `asyncExecute()`. When you use `asyncQuery` without parameters, you can also pass more queries separated with `;` and internally is used the same `pg_send_query()` function.
 
@@ -199,17 +199,17 @@ table($rows);
 
 > `ORDER BY` defined with a literal is just for example. You can write this directly to the query.
 
-When you call the `query()` or `queryArgs()` method, query is executed in DB and a `Result` object is returned. When you don't need the query result, you don't have to use this. But mostly, you want data from your query, or you want to know how many rows was affected by your query. This and more can be fetched from the result.
+When you call the `query()` or `queryArgs()` method, the query is executed in DB and a `Result` object is returned. When you don't need the query result, you don't have to use this. But mostly, you want data from your query, or you want to know how many rows were affected by your query. This and more can be fetched from the result.
 
 - `Result::fetch()` returns next row from the result (you can call it in a cycle, `NULL` is returned, when there is no next row).
 - `Result::fetchSingle()` returns single value from row (first value/column from the first row)
-- `Result::fetchAll()` returns an `array` of all rows. You can pass offset and limit (IMPORTANT: this will not affect SQL query definition, offset and limit are just used for returned rows from DB).
-- `Result::fetchPairs()` returns associative array `key->value`, first parameter is a column for the `key` and second is for the `value`. Columns are detected, when you omit both argument. First column in a query is used as a `key` a second as a `value`. You can omit key column and pass value column, in this case, you will get array list of values.
+- `Result::fetchAll()` returns an `array` of all rows. You can pass `offset` and `limit` (IMPORTANT: this will not affect SQL query definition, the offset and limit are just used for returned rows from DB).
+- `Result::fetchPairs()` returns associative array `key->value`, first parameter is a column for the `key` and second is for the `value`. Columns are detected when you omit both arguments. First column in a query is used as a `key` a second as a `value`. You can omit key column and pass value column, in this case, you will get an array list of values.
 - `Result::fetchAssoc()` return array with a specified structure:
    - `col1[]col2` builds array `[$column1_value][][$column2_value] => Row`
    - `col1|col2=col3` builds array `[$column1_value][$column2_value] => $column3_value`
    - `col1|col2=[]` builds array `[$column1_value][$column2_value] => Row::toArray()`
-- `Result::fetchIterator()` returns an `iterator` and with this you can get all rows on the first resulted rows iteration (`fetchAll`, `fetchPairs` and `fetchAssoc` do internal iteration on all record to prepare returned `array`).
+- `Result::fetchIterator()` returns an `iterator` and with this you can get all rows on the first resulted rows iteration (`fetchAll`, `fetchPairs` and `fetchAssoc` do internal iteration on all records to prepare returned `array`).
 
 Some examples to make it clear:
 
@@ -270,7 +270,7 @@ $count = $result->getRowCount(); // ->count() or count($result)
 dump($count); // (integer) 5
 ```
 
-There is also posibility to seek in the result - so you can skip some rows or return back to previous rows:
+There is also a possibility to seek in the result - so you can skip some rows or return back to previous rows:
 
 ```php
 $result = $connection->query('SELECT id, nick, active FROM users ORDER BY nick');
@@ -316,7 +316,7 @@ dump($columns); // (array) ['id', 'nick', 'active']
 
 All row data (columns) are automatically parsed to the correct PHP types (detected from the DB column type - but no DB structure is read, PG send type of all columns in the result).
 
-You can get your own data (manually passed, not from DB) parsed to the same type as have the column in result:
+You can get your own data (manually passed, not from DB) parsed to the same type as have the column in the result:
 
 ```php
 $result = $connection->query('SELECT id, nick, active FROM users');
@@ -325,7 +325,7 @@ $data = $result->parseColumnValue('id', '123');
 dump($data); // (integer) 123
 ```
 
-On the result object, we can also check, what columns was accesed in our application. You can check this before your request ends, and you can get possible columns, that are not needed to be selected from the DB:
+On the result object, we can also check what columns were accessed in our application. You can check this before your request ends, and you can get possible columns that are not needed to be selected from the DB:
 
 ```php
 $result = $connection->query('SELECT id, nick, active FROM users ORDER BY id');
@@ -345,7 +345,7 @@ $parsedColumns = $result->getParsedColumns();
 dump($parsedColumns); // (NULL)
 ```
 
-We get an `array` with the column names as key and `TRUE`/`FALSE` as a value. `TRUE` means, that this columns was accessed in the application. When `NULL` is returned, it means, that no column was accessed. This could be for example for `INSERT` queries or even for `SELECT` queries if no column was accessed.
+We get an `array` with the column names as a key and `TRUE`/`FALSE` as a value. The `TRUE` means, that these columns were accessed in the application. When `NULL` is returned, it means that no column was accessed. This could be for example for `INSERT` queries or even for `SELECT` queries if no column was accessed.
 
 And for `INSERT`/`UPDATE`/`DELETE` results we can get number of affected rows with the `getAffectedRows()` method:
 
@@ -380,7 +380,7 @@ assert($resource !== FALSE);
 
 #### Safely passing parameters
 
-Important is know how to safety pass parameters to a query. You can do something like this:
+Important is to know how to safety pass parameters to a query. You can do something like this:
 
 ```php
 $userId = 1;
@@ -398,9 +398,9 @@ $connection->query('DELETE FROM user_departments WHERE id = ' . $userId);
 dump($connection->query('SELECT COUNT(*) FROM user_departments')->fetchSingle()); // (integer) 0
 ```
 
-We need to pass parameters not as concatenating strings but separated from a query - we have SQL query with placeholders for parameters and list of parameters. In this case DB can fail on this query, because `$userId` is not valid integer and it can't be used in condition with the `id` column.
+We need to pass parameters not as concatenating strings but separated from a query - we have SQL query with placeholders for parameters and list of parameters. In this case DB can fail on this query, because `$userId` is not valid integer, and it can't be used in condition with the `id` column.
 
-In this library, there are two possible ways how to do this. Use `?` characted for a parameter. This works automatically, and we can use some special functionallity as passing arrays, literals, bools, null or another queries. We can also use classic parameters `$1`, `$2`, ..., but with this, no special features are available, and imporatant is, you can't combine `?` with the `$1` syntax.
+In this library, there are two possible ways how to do this. Use `?` characted for a parameter. This works automatically, and we can use some special functionallity as passing arrays, literals, bools, null or another querie. We can also use classic parameters `$1`, `$2`, ..., but with this, no special features are available, and imporatant is, you can't combine `?` with the `$1` syntax.
 
 Safe example can be:
 
@@ -440,16 +440,16 @@ dump($stringWithQuestionmark); // (string) 'Question?'
 
 #### Literals, expressions and using queries in query
 
-Sometimes you need to pass as a parameter piece of some SQL code. For these situations, there're prepared objects implementing `Forrest79\PhPgSql\Db\Sql` interface. This object can ba passed to a `?` in a query. Every object implementing this interface is pass to the query as is (be carefour, this could perform an SQL injection). These objects include a SQL string part and you can use also parameters defined with a `?` character in the SQL part (when you use these parameters, they are pass safely to the final query and no SQL injection is performed here).
+Sometimes you need to pass as a parameter piece of some SQL code. For these situations, there're prepared objects implementing `Forrest79\PhPgSql\Db\Sql` interface. This object can ba passed to a `?` in a query. Every object implementing this interface is pass to the query as is (be carefour, this could perform an SQL injection). These objects include a SQL string part, and you can use also parameters defined with a `?` character in the SQL part (when you use these parameters, they are pass safely to the final query and no SQL injection is performed here).
 
-> These objects can be used also in fluent part of this library. You can use for example `Expression` as `SELECT` columns, so you can pass here securely some parameters (for example windows function, cases, ...). Other example - in `INSERT` or `UPDATE`, you can use `Literal` as inserted/updated value.
+> These objects can be used also in fluent part of this library. You can use for example `Expression` as `SELECT` columns, so you can pass here securely some parameters (for example windows function, cases, ...). Another example - in `INSERT` or `UPDATE`, you can use `Literal` as inserted/updated value.
 
 Existing objects:
 - `Forrest79\PhPgSql\Db\Sql\Literal` - can't have parameters, just SQL part
 - `Forrest79\PhPgSql\Db\Sql\Expression` - can have parameters
 - `Forrest79\PhPgSql\Db\Sql\Query` - this object implements logic, that convert SQL with `?` to `$1`, `$2` format (and some other stuff)
 
-> There is another similar `Query` object `Forrest79\PhPgSql\Db\Query` - this object can't be extended, can't be used as `?` parameter and is used only to carry final prepared query in the format, that is passed to the `pg_*` functions.
+> There is another similar `Query` object `Forrest79\PhPgSql\Db\Query` - this object can't be extended, can't be used with `?` parameter and is used only to carry the final prepared query in the format, that is passed to the `pg_*` functions.
 
 Literal example:
 
@@ -487,9 +487,9 @@ dump($query->getParams()); // (array) [1]
 
 ## Rows and using a custom row factory
 
-All data from DB are automatically converted to PHP types (more about this later). This is done lazy on the `Row` object. Lazy because converting some types can be slow and expensive and when you don't need some column, it's unnecessary to convert it.
+All data from DB are automatically converted to PHP types (more about this later). This is done lazy on the `Row` object. Lazy because converting some types can be slow and expensive, and when you don't need some column, it's unnecessary to convert it.
 
-Row implements these interfaces `ArrayAccess`, `IteratorAggregate`, `Countable`, `JsonSerializable`. With this you can access column value as object property `$row->column_name` and also as a array key `$row['column_name']`. You can get column count on a row `count($row)` and simply encode whole row as a JSON `json_encode($row)`.
+Row implements these interfaces `ArrayAccess`, `IteratorAggregate`, `Countable`, `JsonSerializable`. With this you can access column value as object property `$row->column_name` and also as an array key `$row['column_name']`. You can get column count on a row `count($row)` and simply encode whole row as a JSON `json_encode($row)`.
 
 ```php
 $row = Forrest79\PhPgSql\Db\Row::from(['id' => 1, 'text' => 'Some text']);
@@ -498,7 +498,7 @@ dump($row->count()); // (integer) 2
 dump(json_encode($row)); // (string) '{\"id\":1,\"text\":\"Some text\"}'
 ```
 
-Row has ability to set new value on it:
+Row has the ability to set new value on it:
 
 ```php
 $row = Forrest79\PhPgSql\Db\Row::from([]);
@@ -506,7 +506,7 @@ $row->new_value = 'Test';
 $row['new_value2'] = 123;
 ```
 
-You can also use classic `isset()` (and it works in the PHP way - column with the `NULL` value returns `FALSE` - use `hasColumn()` method to check if column exists in a row. Delete some column with the `unset()` function.
+You can also use classic `isset()` (and it works in the PHP way - column with the `NULL` value returns `FALSE` - use `hasColumn()` method to check if column exists in a row). Delete some column with the `unset()` function.
 
 ```php
 $row = Forrest79\PhPgSql\Db\Row::from(['existing_column' => 1, 'null_column' => NULL]);
@@ -545,7 +545,7 @@ foreach ($row as $column => $value) {
 }
 ```
 
-Sometimes can be handy creating a new `Row` from some data (like in examples above) - just use static factory method `Row::from()`:
+Sometimes can be handy creating a new `Row` from some data (like in the examples above) - just use static factory method `Row::from()`:
 
 ```php
 $row = Forrest79\PhPgSql\Db\Row::from(['id' => 1, 'text' => 'Some text']);
@@ -564,7 +564,7 @@ dump(unserialize($serializedRow)); // (Row) ['id' => 1, 'text' => 'Some text']
 
 ### Using a custom row factory
 
-You can simply use your own row object. Your row object must `extends` existing `Row` object and you must implement your own `RowFactory` to create your own rows. Then you can set your factory to the `Connection` and it will be used for all new query results or you can set it just for concrete `Result` object.
+You can simply use your own row object. Your row object must `extends` existing `Row` object, and you must implement your own `RowFactory` to create your own rows. Then you can set your factory to the `Connection` and it will be used for all new query results, or you can set it just for concrete `Result` object.
 
 ```php
 class MyOwnRow extends Forrest79\PhPgSql\Db\Row
@@ -593,13 +593,13 @@ $row = $connection->query('SELECT age FROM users WHERE id = 2')->fetch();
 dump($row->age()); // (string) '24 years'
 ```
 
-> By default, is used `Forrest79\PhPgSql\Db\RowFactories\Basic` row factory that produce default `Row` objects.
+> By default, is used `Forrest79\PhPgSql\Db\RowFactories\Basic` row factory that produces default `Row` objects.
 
 ## Data type converting
 
-This library automatically converts PostgreSQL types to the PHP types. Basic types are converted by `Forrest79\PhPgSql\Db\DataTypeParsers\Basic`. If some type is not able to be parsed, an exception is thrown. If you need to parse another types or if you want to change parsing behavior, you can extend this parser or write your own.
+This library automatically converts PostgreSQL types to the PHP types. Basic types are converted by `Forrest79\PhPgSql\Db\DataTypeParsers\Basic`. If some type is not able to be parsed, an exception is thrown. If you need to parse another type or if you want to change parsing behavior, you can extend this parser or write your own.
 
-**Important!** To determine PG types from PG result is by default used function `pg_field_type()`. This function has one undocumented behavior, it's sending SQL query `select oid,typname from pg_type` (`https://github.com/php/php-src/blob/master/ext/pgsql/pgsql.c`) in every request to get proper type names. This `SELECT` is relatively fast and parsing works out of the box with this. But this `SELECT` can be slower for bigger databases and in common, there is no need to run it for all requests. We can cache this data and then use function `pg_field_type_oid()`. Cache is needed to be flushed only if database structure is changed. You can use simple cache for this and this is the recommended way. One option is to prepare your own cache with `DataTypesCache` interface or use one already prepared. This saves cache to the PHP file (it's really fast especially with opcache). More about caching is in the chapter **How to use cache** later.
+**Important!** To determine PG types from the PG result is by default used function `pg_field_type()`. This function has one undocumented behavior. It's sending SQL query `select oid,typname from pg_type` (`https://github.com/php/php-src/blob/master/ext/pgsql/pgsql.c`) in every request to get proper type names. This `SELECT` is relatively fast and parsing works out of the box with this. But this `SELECT` can be slower for bigger databases and in common, there is no need to run it for all requests. We can cache this data and then use function `pg_field_type_oid()`. Cache is needed to be flushed only if database structure is changed. You can use simple cache for this and this is the recommended way. One option is to prepare your own cache with `DataTypesCache` interface or use one already prepared. This saves cache to the PHP file (it's really fast especially with opcache). More about caching is in the chapter **How to use cache** later.
 
 ```php
 $rows = $connection->query('SELECT * FROM users')->fetchAll();
@@ -618,13 +618,13 @@ table($rows);
 */
 ```
 
-> There're some PostgreSQL types, that is hard to convert to PHP type (some types of arrays, hstore...) and this types can be simple converted to the JSON in a DB and this JSON can be simply converted in PHP. Parser throw an exception and give you a hint - convert type in SELECT to JSON. If you need parsing without converting to JSON, you need to write your own PHP logic (and you can create a pull-request for this :-)).
+> There're some PostgreSQL types that are hard to convert to the PHP type (some types of arrays, hstore...), and these types can be simply converted to the JSON in a DB, and this JSON can be simply converted in PHP. The parser throws an exception and gives you a hint - convert type in SELECT to JSON. If you need parsing without converting to JSON, you need to write your own PHP logic (and you can create a pull-request for this :-)).
 
 > Internal info: There is the interface `Forrest79\PhPgSql\Db\ColumnValueParser` that is required by the `Row` object. Main implemetation is in the `Result` object, that makes the real values parsing. Second is the `DummyColumnValueParser` that is used for manually created rows or for unserialized rows and this parser does nothing and just return a value.
 
 ### How to extend default data type parsing
 
-If you need to parse some special DB type, you have two options. You can create your own data type parser implementing interface `Forrest79\PhPgSql\Db\DataTypeParser` with the only one public function `parse(string $type, ?string $value): mixed`, that get DB type and value as `string` (or `NULL`) and return PHP value. The second option is preferable - you can extend existing `Forrest79\PhPgSql\Db\DataTypeParsers\Basic` and only add new/update existing types.
+If you need to parse some special DB type, you have two options. You can create your own data type parser implementing interface `Forrest79\PhPgSql\Db\DataTypeParser` with the only one public function `parse(string $type, string|NULL $value): mixed`, that get DB type and value as `string` (or `NULL`) and return PHP value. The second option is preferable - you can extend existing `Forrest79\PhPgSql\Db\DataTypeParsers\Basic` and only add new/update existing types.
 
 To use your own data type parser, set it on connection with the method `setDataTypeParser()`.
 
@@ -633,7 +633,7 @@ Let's say, we want to parse `point` data type:
 ```php
 class PointDataTypeParser extends Forrest79\PhPgSql\Db\DataTypeParsers\Basic
 {
-  public function parse(string $type, ?string $value)
+  public function parse(string $type, string|NULL $value): mixed
   {
     if (($type === 'point') && ($value !== NULL)) {
       return \array_map('intval', \explode(',', \substr($value, 1, -1), 2));
@@ -651,7 +651,7 @@ dump($point); // (array) [1, 2]
 
 ### How to use data type cache
 
-The preferable way is to use caching to a PHP file. There is prepared caching mechanisms for this `Forrest79\PhPgSql\Db\DataTypeCaches\PhpFile`. You just need to provide existing temp directory to the constructor:
+The preferable way is to use caching to a PHP file. There is prepared caching mechanism for this `Forrest79\PhPgSql\Db\DataTypeCaches\PhpFile`. You just need to provide existing temp directory to the constructor:
 
 ```php
 $phpFileCache = new Forrest79\PhPgSql\Db\DataTypeCaches\PhpFile('/tmp/cache'); // we need connection to load data from DB and each connection can has different data types
@@ -669,16 +669,16 @@ If you want to use your own caching mechanisms, just implement interface `Forres
 
 ## Asynchronous functionality
 
-We can also run query asynchronously. Use `asyncQuery()` or `asyncQueryArgs()` methods (the syntax is the same as `query()` and `queryArgs()`):
+We can also run a query asynchronously. Use `asyncQuery()` or `asyncQueryArgs()` methods (the syntax is the same as `query()` and `queryArgs()`):
 
 ```php
 $asyncQuery = $connection->asyncQuery('SELECT * FROM users WHERE id = ?', 1);
 // or $asyncQuery = $connection->asyncQueryArgs('SELECT * FROM users WHERE id = ?', [1]);
 ```
 
-This return the `AsyncQuery` object. On this object you can get results for all sent queries with the method `getNextResult()` and get the query asociated with this async query with the `getQuery()` method, that returns `Forrest79\PhPgSql\Db\Query`.
+This returns the `AsyncQuery` object. On this object you can get results for all sent queries with the method `getNextResult()` and get the query asociated with this async query with the `getQuery()` method, that returns `Forrest79\PhPgSql\Db\Query`.
 
-You can run just one async query on connection (but you can run more queries separated with `;` at once in one function call - but only when you don't use parameters - this is `pgsql` extension limitations - with parameters, you can run just one query at once) at once. Before we can run new async query, you need to complete the previous one. When you pass more queries in one method call, you must call the `getNextResult()` method for every query you pass. Results are getting in the same order as queries was passed to the DB. The method `getNextResult()` returns the same `Result` object as the standard `query()`/`queryArgs()` methods.
+You can run just one async query on connection (but you can run more queries separated with `;` at once in one function call - but only when you don't use parameters - this is `pgsql` extension limitations - with parameters, you can run just one query at once) at once. Before we can run a new async query, you need to complete the previous one. When you pass more queries in one method call, you must call the `getNextResult()` method for every query you pass. Results are getting in the same order as queries was passed to the DB. The method `getNextResult()` returns the same `Result` object as the standard `query()`/`queryArgs()` methods.
 
 ```php
 $asyncQuery = $connection->asyncQuery('SELECT nick FROM users WHERE id = ?', 1);
@@ -708,7 +708,7 @@ $nick2 = $asyncQuery->getNextResult()->fetchSingle(); // this will wait till sec
 dump($nick2); // (string) 'Brandon'
 ```
 
-If you want to run simple SQL query or queries (separated with `;`) without parameters and you don't care about results, you can use async version `execute()` method - `asyncExecute()`. To be sure, that all queries is completed, call `completeAsyncExecute()`.
+If you want to run a simple SQL query or queries (separated with `;`) without parameters, and you don't care about results, you can use async version `execute()` method - `asyncExecute()`. To be sure, that all queries are completed, call `completeAsyncExecute()`.
 
 ```php
 $connection->asyncExecute('UPDATE users SET nick = \'Stuart\' WHERE id = 1; UPDATE users SET nick = \'Nicolas\' WHERE id = 2');
@@ -744,15 +744,15 @@ dump($connection->isBusy()); // (bool) FALSE
 
 ## Prepared statements
 
-There is also support for prepared statements. You can prepare query on database with defined placeholders and repeatedly run this query with different arguments.
+There is also support for prepared statements. You can prepare a query on database with defined placeholders and repeatedly run this query with different arguments.
 
-> Using prepared statement for a repeated query has better performance than sending one query repeatedly with different arguments. But this difference is not really big. You can live without using prepared statements at all.
+> Using a prepared statement for a repeated query has better performance than sending one query repeatedly with different arguments. But this difference is not really big. You can live without using prepared statements at all.
 
 In a query, you can also use `?` for parameters (or `$1`, `$2`, ... - but not combine it), but in prepared statements you can use as a parameter only scalars, nothing else.
 
-> That's because prepared query must run with the same parameters types.
+> That's because the prepared query must run with the same parameters types.
 
-Query can be prepared with  the `prepareStatement()` method on connection. You will get the `PreparedStatement` object. This object has two methods `execute()`/`executeArgs()` that will run query with passed arguments and get back classic `Result` object.
+Query can be prepared with  the `prepareStatement()` method on connection. You will get the `PreparedStatement` object. This object has two methods `execute()`/`executeArgs()` that will run the query with passed arguments and get back classic `Result` object.
 
 ```php
 $prepareStatement = $connection->prepareStatement('SELECT nick FROM users WHERE id = ?');
@@ -764,7 +764,7 @@ $result2 = $prepareStatement->executeArgs([2]);
 dump($result2->fetchSingle()); // (string) 'Brandon'
 ```
 
-And of course, there is a async version too. Just use method `asyncPrepareStatement()` and it will return the classic `AsyncQuery`.
+And of course, there is an async version too. Just use method `asyncPrepareStatement()` and it will return the classic `AsyncQuery`.
 
 ```php
 $prepareStatement = $connection->asyncPrepareStatement('SELECT nick FROM users WHERE id = ?');
@@ -787,7 +787,7 @@ dump($result2->fetchSingle()); // (string) 'Brandon'
 
 There is a simple transaction helper object. Call `transaction()` method on a connection and you will get the `Transaction` object. With this object, you can control transaction or use savepoints.
 
-There are methods to control transaction `begin()`, `commit()` and `rollback()` that corresponds to SQL commands. With `begin()` method you can set isolation level - for example repeatable read: `begin('ISOLATION LEVEL REPEATABLE READ')`.
+There are methods to control transaction `begin()`, `commit()` and `rollback()` that corresponds to SQL commands. With `begin()` method you can set isolation level - for an example repeatable read: `begin('ISOLATION LEVEL REPEATABLE READ')`.
 
 ```php
 $transaction = $connection->transaction();
@@ -813,7 +813,7 @@ $transaction->rollback();
 dump($connection->query('SELECT nick FROM users WHERE id = ?', 2)->fetchSingle()); // (string) 'Brandon'
 ```
 
-You can also use savepoints with the methods `savepoint()`, `releaseSavepoint()` and `rollbackToSavepoint()`. You must provide a savepoint name to the every method.
+You can also use savepoints with the methods `savepoint()`, `releaseSavepoint()` and `rollbackToSavepoint()`. You must provide a savepoint name to every method.
 
 ```php
 $transaction = $connection->transaction();
@@ -851,7 +851,7 @@ $transaction->commit();
 dump($connection->query('SELECT nick FROM users WHERE id = ?', 2)->fetchSingle()); // (string) 'Brandon'
 ```
 
-Last usefull method is the `isInTransaction()`. With this you can test if a connection is actually in active transaction.
+Last usefull method is the `isInTransaction()`. With this, you can test if a connection is actually in active transaction.
 
 > This method is also provided on the connection object.
 
@@ -871,12 +871,12 @@ dump($connection->isInTransaction()); // (bool) FALSE
 
 ## Listen to events
 
-You can listen for some events:
+You can listen to some events:
 
-- `addOnConnect()` - this is called after connection is made, `Connection` object is passed - so for example you can run some queries here... 
+- `addOnConnect()` - this is called after connection is made, `Connection` object is passed - so for an example you can run some queries here... 
 - `addOnClose()` - this is called right before connection is closed, connection is still active, so you can perform some cleaning here. `Connection` object is also passed.
-- `addOnQuery()` - this is called for every query/execute/async/prepared statement executed on the connection. `Connection` object is passed and `Query` object is passed. When query is not async, `float $time` is passed (we can't measure time for async queries) and if query is from a prepared statement, name is passed in `$prepareStatementName` parameter.
-- `addOnResult()` - this is called when `Result` object is created (only for queries that creates results). `Connection` and `Result` objects are passed. Can be usefull when you want to collect all your results and check what columns was read at the end of the request.
+- `addOnQuery()` - this is called for every query/execute/async/prepared statement executed on the connection. `Connection` object is passed and `Query` object is passed. When a query is not async, `float $time` is passed (we can't measure time for async queries) and if a query is from a prepared statement, name is passed in `$prepareStatementName` parameter.
+- `addOnResult()` - this is called when `Result` object is created (only for queries that creates results). `Connection` and `Result` objects are passed. It can be useful when you want to collect all your results and check what columns were read at the end of the request.
 
 ```php
 $connection->addOnConnect(function (Forrest79\PhPgSql\Db\Connection $connection): void {
@@ -887,7 +887,7 @@ $connection->addOnClose(function (Forrest79\PhPgSql\Db\Connection $connection): 
 	// this is call right before connection is closed...
 });
 
-$connection->addOnQuery(function (Forrest79\PhPgSql\Db\Connection $connection, Forrest79\PhPgSql\Db\Query $query, ?float $time, ?string $prepareStatementName): void {
+$connection->addOnQuery(function (Forrest79\PhPgSql\Db\Connection $connection, Forrest79\PhPgSql\Db\Query $query, float|NULL $timeNs, string|NULL $prepareStatementName): void {
   // $time === NULL for async queries, $prepareStatementName !== NULL for prepared statements queries
   dump($query->getSql()); // (string) 'SELECT nick FROM users WHERE id = $1'
   dump($query->getParams()); // (array) [3]
@@ -903,7 +903,7 @@ $connection->addOnResult(function (Forrest79\PhPgSql\Db\Connection $connection, 
 $connection->query('SELECT nick FROM users WHERE id = ?', 3);
 ```
 
-## Some usefull helpers
+## Some useful helpers
 
 On the `Forrest79\PhPgSql\Db\Helpers` object are three usefull static methods:
 
@@ -923,11 +923,11 @@ $array2 = Forrest79\PhPgSql\Db\Helper::createStringPgArray([1.2, 3.4]);
 dump($array2); // (string) '{\"1.2\",\"3.4\"}'
 ```
 
-- `dump($sql, $params, $type = 'cli'/'html')` - print the SQL query with highlighted syntax. If you pass parameters, query is printed with these parameters and you can simply copy it and run in the DB. `$type` can be `cli` or `html` (`html` is also everything different from `cli`)
+- `dump($sql, $params, $type = 'cli'/'html')` - print the SQL query with highlighted syntax. If you pass parameters, the query is printed with these parameters, and you can simply copy it and run in the DB. `$type` can be `cli` or `html` (`html` is also everything different from `cli`)
 
 ## Getting notices
 
-In PostgreSQL a notice can be raised. This is very handy for development purposes (debuging). Notices can be read with the `getNotices(bool $clearAfterRead = TRUE)` method. You can call this function after query or at the end of the PHP script. If you pass `FALSE` as a parametr, notices won't be cleared after read.
+In PostgreSQL a notice can be raised. This is very handy for development purposes (debuging). Notices can be read with the `getNotices(bool $clearAfterRead = TRUE)` method. You can call this function after the query or at the end of the PHP script. If you pass `FALSE` as a parametr, notices won't be cleared after read.
 
 ```php
 $connection->execute('DO $BODY$ BEGIN RAISE NOTICE \'Test notice\'; END; $BODY$ LANGUAGE plpgsql;');

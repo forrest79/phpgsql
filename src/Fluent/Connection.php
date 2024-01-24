@@ -6,16 +6,13 @@ use Forrest79\PhPgSql\Db;
 
 class Connection extends Db\Connection implements Sql
 {
-	/** @var QueryBuilder */
-	private $queryBuilder;
+	private QueryBuilder|NULL $queryBuilder = NULL;
 
 
 	/**
-	 * @param string|Query|Db\Sql $table
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function table($table, ?string $alias = NULL): Query
+	public function table(string|Query|Db\Sql $table, string|NULL $alias = NULL): QueryExecute
 	{
 		return $this->createQuery()->table($table, $alias);
 	}
@@ -23,179 +20,174 @@ class Connection extends Db\Connection implements Sql
 
 	/**
 	 * @param array<int|string, string|int|bool|Query|Db\Sql|NULL> $columns
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function select(array $columns): Query
+	public function select(array $columns): QueryExecute
 	{
 		return $this->createQuery()->select($columns);
 	}
 
 
 	/**
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function distinct(): Query
+	public function distinct(): QueryExecute
 	{
 		return $this->createQuery()->distinct();
 	}
 
 
 	/**
-	 * @param string|Query|Db\Sql $from
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function from($from, ?string $alias = NULL): Query
+	public function from(string|Query|Db\Sql $from, string|NULL $alias = NULL): QueryExecute
 	{
 		return $this->createQuery()->from($from, $alias);
 	}
 
 
 	/**
-	 * @param string|Query|Db\Sql $join table or query
-	 * @param string|Complex|Db\Sql|NULL $onCondition
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function join($join, ?string $alias = NULL, $onCondition = NULL): Query
+	public function join(
+		string|Query|Db\Sql $join,
+		string|NULL $alias = NULL,
+		string|Complex|Db\Sql|NULL $onCondition = NULL,
+	): QueryExecute
 	{
 		return $this->createQuery()->join($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @param string|Query|Db\Sql $join table or query
-	 * @param string|Complex|Db\Sql|NULL $onCondition
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function innerJoin($join, ?string $alias = NULL, $onCondition = NULL): Query
+	public function innerJoin(
+		string|Query|Db\Sql $join,
+		string|NULL $alias = NULL,
+		string|Complex|Db\Sql|NULL $onCondition = NULL,
+	): QueryExecute
 	{
 		return $this->createQuery()->innerJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @param string|Query|Db\Sql $join table or query
-	 * @param string|Complex|Db\Sql|NULL $onCondition
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function leftJoin($join, ?string $alias = NULL, $onCondition = NULL): Query
+	public function leftJoin(
+		string|Query|Db\Sql $join,
+		string|NULL $alias = NULL,
+		string|Complex|Db\Sql|NULL $onCondition = NULL,
+	): QueryExecute
 	{
 		return $this->createQuery()->leftJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @param string|Query|Db\Sql $join table or query
-	 * @param string|Complex|Db\Sql|NULL $onCondition
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function leftOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Query
+	public function leftOuterJoin(
+		string|Query|Db\Sql $join,
+		string|NULL $alias = NULL,
+		string|Complex|Db\Sql|NULL $onCondition = NULL,
+	): QueryExecute
 	{
 		return $this->createQuery()->leftOuterJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @param string|Query|Db\Sql $join table or query
-	 * @param string|Complex|Db\Sql|NULL $onCondition
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function rightJoin($join, ?string $alias = NULL, $onCondition = NULL): Query
+	public function rightJoin(
+		string|Query|Db\Sql $join,
+		string|NULL $alias = NULL,
+		string|Complex|Db\Sql|NULL $onCondition = NULL,
+	): QueryExecute
 	{
 		return $this->createQuery()->rightJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @param string|Query|Db\Sql $join table or query
-	 * @param string|Complex|Db\Sql|NULL $onCondition
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function rightOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Query
+	public function rightOuterJoin(
+		string|Query|Db\Sql $join,
+		string|NULL $alias = NULL,
+		string|Complex|Db\Sql|NULL $onCondition = NULL,
+	): QueryExecute
 	{
 		return $this->createQuery()->rightOuterJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @param string|Query|Db\Sql $join table or query
-	 * @param string|Complex|Db\Sql|NULL $onCondition
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function fullJoin($join, ?string $alias = NULL, $onCondition = NULL): Query
+	public function fullJoin(
+		string|Query|Db\Sql $join,
+		string|NULL $alias = NULL,
+		string|Complex|Db\Sql|NULL $onCondition = NULL,
+	): QueryExecute
 	{
 		return $this->createQuery()->fullJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @param string|Query|Db\Sql $join table or query
-	 * @param string|Complex|Db\Sql|NULL $onCondition
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function fullOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Query
+	public function fullOuterJoin(
+		string|Query|Db\Sql $join,
+		string|NULL $alias = NULL,
+		string|Complex|Db\Sql|NULL $onCondition = NULL,
+	): QueryExecute
 	{
 		return $this->createQuery()->fullOuterJoin($join, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @param string|Query|Db\Sql $join table or query
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function crossJoin($join, ?string $alias = NULL): Query
+	public function crossJoin(string|Query|Db\Sql $join, string|NULL $alias = NULL): QueryExecute
 	{
 		return $this->createQuery()->crossJoin($join, $alias);
 	}
 
 
 	/**
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function lateral(string $alias): Query
+	public function lateral(string $alias): QueryExecute
 	{
 		return $this->createQuery()->lateral($alias);
 	}
 
 
 	/**
-	 * @param string|Complex|Db\Sql $condition
-	 * @param mixed ...$params
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function on(string $alias, $condition, ...$params): Query
+	public function on(string $alias, string|Complex|Db\Sql $condition, mixed ...$params): QueryExecute
 	{
 		return $this->createQuery()->on($alias, $condition, ...$params);
 	}
 
 
 	/**
-	 * @param string|Complex|Db\Sql $condition
-	 * @param mixed ...$params
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function where($condition, ...$params): Query
+	public function where(string|Complex|Db\Sql $condition, mixed ...$params): QueryExecute
 	{
 		return $this->createQuery()->where($condition, ...$params);
 	}
 
 
 	/**
-	 * @param array<string|array<mixed>|Db\Sql|Complex> $conditions
+	 * @param list<string|list<mixed>|Db\Sql|Complex> $conditions
 	 * @throws Exceptions\QueryException
 	 */
 	public function whereAnd(array $conditions = []): Complex
@@ -205,7 +197,7 @@ class Connection extends Db\Connection implements Sql
 
 
 	/**
-	 * @param array<string|array<mixed>|Db\Sql|Complex> $conditions
+	 * @param list<string|list<mixed>|Db\Sql|Complex> $conditions
 	 * @throws Exceptions\QueryException
 	 */
 	public function whereOr(array $conditions = []): Complex
@@ -215,30 +207,25 @@ class Connection extends Db\Connection implements Sql
 
 
 	/**
-	 * @param string ...$columns
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function groupBy(string ...$columns): Query
+	public function groupBy(string ...$columns): QueryExecute
 	{
 		return $this->createQuery()->groupBy(...$columns);
 	}
 
 
 	/**
-	 * @param string|Complex|Db\Sql $condition
-	 * @param mixed ...$params
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function having($condition, ...$params): Query
+	public function having(string|Complex|Db\Sql $condition, mixed ...$params): QueryExecute
 	{
 		return $this->createQuery()->having($condition, ...$params);
 	}
 
 
 	/**
-	 * @param array<string|array<mixed>|Db\Sql|Complex> $conditions
+	 * @param list<string|list<mixed>|Db\Sql|Complex> $conditions
 	 * @throws Exceptions\QueryException
 	 */
 	public function havingAnd(array $conditions = []): Complex
@@ -248,7 +235,7 @@ class Connection extends Db\Connection implements Sql
 
 
 	/**
-	 * @param array<string|array<mixed>|Db\Sql|Complex> $conditions
+	 * @param list<string|list<mixed>|Db\Sql|Complex> $conditions
 	 * @throws Exceptions\QueryException
 	 */
 	public function havingOr(array $conditions = []): Complex
@@ -258,82 +245,61 @@ class Connection extends Db\Connection implements Sql
 
 
 	/**
-	 * @param string|Query|Db\Sql ...$columns
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function orderBy(...$columns): Query
+	public function orderBy(string|Query|Db\Sql ...$columns): QueryExecute
 	{
 		return $this->createQuery()->orderBy(...$columns);
 	}
 
 
 	/**
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function limit(int $limit): Query
+	public function limit(int $limit): QueryExecute
 	{
 		return $this->createQuery()->limit($limit);
 	}
 
 
 	/**
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function offset(int $offset): Query
+	public function offset(int $offset): QueryExecute
 	{
 		return $this->createQuery()->offset($offset);
 	}
 
 
-	/**
-	 * @param string|Query|Db\Sql $query
-	 * @return QueryExecute
-	 */
-	public function union($query): Query
+	public function union(string|Query|Db\Sql $query): QueryExecute
 	{
 		return $this->createQuery()->union($query);
 	}
 
 
-	/**
-	 * @param string|Query|Db\Sql $query
-	 * @return QueryExecute
-	 */
-	public function unionAll($query): Query
+	public function unionAll(string|Query|Db\Sql $query): QueryExecute
 	{
 		return $this->createQuery()->unionAll($query);
 	}
 
 
-	/**
-	 * @param string|Query|Db\Sql $query
-	 * @return QueryExecute
-	 */
-	public function intersect($query): Query
+	public function intersect(string|Query|Db\Sql $query): QueryExecute
 	{
 		return $this->createQuery()->intersect($query);
 	}
 
 
-	/**
-	 * @param string|Query|Db\Sql $query
-	 * @return QueryExecute
-	 */
-	public function except($query): Query
+	public function except(string|Query|Db\Sql $query): QueryExecute
 	{
 		return $this->createQuery()->except($query);
 	}
 
 
 	/**
-	 * @param array<string>|NULL $columns
-	 * @return QueryExecute
+	 * @param list<string>|NULL $columns
 	 * @throws Exceptions\QueryException
 	 */
-	public function insert(?string $into = NULL, ?array $columns = []): Query
+	public function insert(string|NULL $into = NULL, array|NULL $columns = []): QueryExecute
 	{
 		return $this->createQuery()->insert($into, $columns);
 	}
@@ -341,21 +307,19 @@ class Connection extends Db\Connection implements Sql
 
 	/**
 	 * @param array<string, mixed> $data
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function values(array $data): Query
+	public function values(array $data): QueryExecute
 	{
 		return $this->createQuery()->values($data);
 	}
 
 
 	/**
-	 * @param array<array<string, mixed>> $rows
-	 * @return QueryExecute
+	 * @param list<array<string, mixed>> $rows
 	 * @throws Exceptions\QueryException
 	 */
-	public function rows(array $rows): Query
+	public function rows(array $rows): QueryExecute
 	{
 		return $this->createQuery()->rows($rows);
 	}
@@ -363,11 +327,12 @@ class Connection extends Db\Connection implements Sql
 
 	/**
 	 * @param string|list<string>|NULL $columnsOrConstraint
-	 * @param string|Complex|Db\Sql|NULL $where
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function onConflict($columnsOrConstraint = NULL, $where = NULL): Query
+	public function onConflict(
+		string|array|NULL $columnsOrConstraint = NULL,
+		string|Complex|Db\Sql|NULL $where = NULL,
+	): QueryExecute
 	{
 		return $this->createQuery()->onConflict($columnsOrConstraint, $where);
 	}
@@ -375,31 +340,27 @@ class Connection extends Db\Connection implements Sql
 
 	/**
 	 * @param array<int|string, string|Db\Sql> $set
-	 * @param string|Complex|Db\Sql|NULL $where
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function doUpdate(array $set, $where = NULL): Query
+	public function doUpdate(array $set, string|Complex|Db\Sql|NULL $where = NULL): QueryExecute
 	{
 		return $this->createQuery()->doUpdate($set, $where);
 	}
 
 
 	/**
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function doNothing(): Query
+	public function doNothing(): QueryExecute
 	{
 		return $this->createQuery()->doNothing();
 	}
 
 
 	/**
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function update(?string $table = NULL, ?string $alias = NULL): Query
+	public function update(string|NULL $table = NULL, string|NULL $alias = NULL): QueryExecute
 	{
 		return $this->createQuery()->update($table, $alias);
 	}
@@ -407,20 +368,18 @@ class Connection extends Db\Connection implements Sql
 
 	/**
 	 * @param array<string, mixed> $data
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function set(array $data): Query
+	public function set(array $data): QueryExecute
 	{
 		return $this->createQuery()->set($data);
 	}
 
 
 	/**
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function delete(?string $from = NULL, ?string $alias = NULL): Query
+	public function delete(string|NULL $from = NULL, string|NULL $alias = NULL): QueryExecute
 	{
 		return $this->createQuery()->delete($from, $alias);
 	}
@@ -428,103 +387,93 @@ class Connection extends Db\Connection implements Sql
 
 	/**
 	 * @param array<int|string, string|int|Query|Db\Sql> $returning
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function returning(array $returning): Query
+	public function returning(array $returning): QueryExecute
 	{
 		return $this->createQuery()->returning($returning);
 	}
 
 
 	/**
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function merge(?string $into = NULL, ?string $alias = NULL): Query
+	public function merge(string|NULL $into = NULL, string|NULL $alias = NULL): QueryExecute
 	{
 		return $this->createQuery()->merge($into, $alias);
 	}
 
 
 	/**
-	 * @param string|Query|Db\Sql $dataSource values, table or query
-	 * @param string|Complex|Db\Sql|NULL $onCondition
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function using($dataSource, ?string $alias = NULL, $onCondition = NULL): Query
+	public function using(
+		string|Query|Db\Sql $dataSource,
+		string|NULL $alias = NULL,
+		string|Complex|Db\Sql|NULL $onCondition = NULL,
+	): QueryExecute
 	{
 		return $this->createQuery()->using($dataSource, $alias, $onCondition);
 	}
 
 
 	/**
-	 * @param string|Db\Sql $then
-	 * @param string|Complex|Db\Sql|NULL $condition
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function whenMatched($then, $condition = NULL): Query
+	public function whenMatched(string|Db\Sql $then, string|Complex|Db\Sql|NULL $condition = NULL): QueryExecute
 	{
 		return $this->createQuery()->whenMatched($then, $condition);
 	}
 
 
 	/**
-	 * @param string|Db\Sql $then
-	 * @param string|Complex|Db\Sql|NULL $condition
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function whenNotMatched($then, $condition = NULL): Query
+	public function whenNotMatched(string|Db\Sql $then, string|Complex|Db\Sql|NULL $condition = NULL): QueryExecute
 	{
 		return $this->createQuery()->whenNotMatched($then, $condition);
 	}
 
 
 	/**
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function truncate(?string $table = NULL): Query
+	public function truncate(string|NULL $table = NULL): QueryExecute
 	{
 		return $this->createQuery()->truncate($table);
 	}
 
 
-	/**
-	 * @param string|Query|Db\Sql $query
-	 */
-	public function with(string $as, $query, ?string $suffix = NULL, bool $notMaterialized = FALSE): Query
+	public function with(
+		string $as,
+		string|Query|Db\Sql $query,
+		string|NULL $suffix = NULL,
+		bool $notMaterialized = FALSE,
+	): QueryExecute
 	{
 		return $this->createQuery()->with($as, $query, $suffix, $notMaterialized);
 	}
 
 
-	public function recursive(): Query
+	public function recursive(): QueryExecute
 	{
 		return $this->createQuery()->recursive();
 	}
 
 
 	/**
-	 * @param mixed ...$params
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function prefix(string $queryPrefix, ...$params): Query
+	public function prefix(string $queryPrefix, mixed ...$params): QueryExecute
 	{
 		return $this->createQuery()->prefix($queryPrefix, ...$params);
 	}
 
 
 	/**
-	 * @param mixed ...$params
-	 * @return QueryExecute
 	 * @throws Exceptions\QueryException
 	 */
-	public function suffix(string $querySuffix, ...$params): Query
+	public function suffix(string $querySuffix, mixed ...$params): QueryExecute
 	{
 		return $this->createQuery()->suffix($querySuffix, ...$params);
 	}

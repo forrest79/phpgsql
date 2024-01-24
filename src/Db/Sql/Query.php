@@ -6,18 +6,16 @@ use Forrest79\PhPgSql\Db;
 
 class Query implements Db\Sql
 {
-	/** @var string */
-	private $sql;
+	private string $sql;
 
-	/** @var array<mixed> */
-	private $params;
+	/** @var list<mixed> */
+	private array $params;
 
-	/** @var Db\Query */
-	private $query;
+	private Db\Query|NULL $query = NULL;
 
 
 	/**
-	 * @param array<mixed> $params
+	 * @param list<mixed> $params
 	 */
 	public function __construct(string $sql, array $params = [])
 	{
@@ -33,7 +31,7 @@ class Query implements Db\Sql
 
 
 	/**
-	 * @return array<mixed>
+	 * @return list<mixed>
 	 */
 	public function getParams(): array
 	{
@@ -49,19 +47,19 @@ class Query implements Db\Sql
 		if ($this->query === NULL) {
 			$this->query = self::prepareQuery($this->sql, $this->params, 0);
 		}
+
 		return $this->query;
 	}
 
 
 	/**
-	 * @param array<mixed> $params
+	 * @param list<mixed> $params
 	 */
 	private static function prepareQuery(string $sql, array $params, int $paramIndex): Db\Query
 	{
 		$origParamIndex = 0;
 		$parsedParams = [];
 
-		/** @var string $sql */
 		$sql = \preg_replace_callback(
 			'/([\\\\]?)\?/',
 			static function ($matches) use (&$params, &$parsedParams, &$origParamIndex, &$paramIndex): string {
@@ -97,33 +95,32 @@ class Query implements Db\Sql
 
 				return '$' . ++$paramIndex;
 			},
-			$sql
+			$sql,
 		);
 
+		\assert(\is_string($sql));
+
 		if (($origParamIndex > 0) && ($params !== [])) {
-			throw Db\Exceptions\QueryException::extraParam($params);
+			throw Db\Exceptions\QueryException::extraParam(\array_values($params));
 		}
 
 		if ($parsedParams === []) {
-			$parsedParams = $params;
+			$parsedParams = \array_values($params);
 		}
 
 		return new Db\Query($sql, $parsedParams);
 	}
 
 
-	/**
-	 * @param mixed ...$params
-	 * @return self
-	 */
-	public static function create(string $sql, ...$params): self
+	public static function create(string $sql, mixed ...$params): self
 	{
+		\assert(\array_is_list($params));
 		return new self($sql, $params);
 	}
 
 
 	/**
-	 * @param array<mixed> $params
+	 * @param list<mixed> $params
 	 */
 	public static function createArgs(string $sql, array $params): self
 	{

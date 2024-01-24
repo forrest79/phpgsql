@@ -28,7 +28,7 @@ class QueryException extends Exception
 
 
 	/**
-	 * @param array<string> $params
+	 * @param list<string> $params
 	 */
 	public static function nonExistingQueryParam(string $param, array $params): self
 	{

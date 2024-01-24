@@ -9,7 +9,7 @@ interface Sql
 
 
 	/**
-	 * @return array<mixed>
+	 * @return list<mixed>
 	 */
 	function getParams(): array;
 

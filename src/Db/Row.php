@@ -8,14 +8,13 @@ namespace Forrest79\PhPgSql\Db;
  */
 class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializable
 {
-	/** @var ColumnValueParser */
-	private $columnValueParser;
+	private ColumnValueParser $columnValueParser;
 
 	/** @var array<string, string|NULL> */
-	private $rawValues;
+	private array $rawValues;
 
 	/** @var array<string, mixed> */
-	private $values;
+	private array $values;
 
 
 	/**
@@ -31,19 +30,15 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 
 
 	/**
-	 * @return mixed
 	 * @throws Exceptions\RowException
 	 */
-	public function __get(string $column)
+	public function __get(string $column): mixed
 	{
 		return $this->getValue($column);
 	}
 
 
-	/**
-	 * @param mixed $value
-	 */
-	public function __set(string $column, $value): void
+	public function __set(string $column, mixed $value): void
 	{
 		$this->setValue($column, $value);
 	}
@@ -70,6 +65,7 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 		foreach ($this->rawValues as $column => $value) {
 			$this->parseValue($column);
 		}
+
 		return $this->values;
 	}
 
@@ -90,53 +86,55 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 
 
 	/**
-	 * @param mixed $column
-	 * @return mixed
+	 * @param string $column
 	 * @throws Exceptions\RowException
 	 */
 	#[\ReturnTypeWillChange]
-	public function offsetGet($column)
+	public function offsetGet(mixed $column): mixed
 	{
 		if (!\is_string($column)) {
 			throw Exceptions\RowException::notStringKey();
 		}
+
 		return $this->getValue($column);
 	}
 
 
 	/**
-	 * @param mixed $column
-	 * @param mixed $value
+	 * @param string|NULL $column
 	 */
-	public function offsetSet($column, $value): void
+	public function offsetSet(mixed $column, mixed $value): void
 	{
 		if (!\is_string($column)) {
 			throw Exceptions\RowException::notStringKey();
 		}
+
 		$this->setValue($column, $value);
 	}
 
 
 	/**
-	 * @param mixed $column
+	 * @param string $column
 	 */
-	public function offsetExists($column): bool
+	public function offsetExists(mixed $column): bool
 	{
 		if (!\is_string($column)) {
 			throw Exceptions\RowException::notStringKey();
 		}
+
 		return $this->hasColumn($column) && ($this->getValue($column) !== NULL);
 	}
 
 
 	/**
-	 * @param mixed $column
+	 * @param string $column
 	 */
-	public function offsetUnset($column): void
+	public function offsetUnset(mixed $column): void
 	{
 		if (!\is_string($column)) {
 			throw Exceptions\RowException::notStringKey();
 		}
+
 		$this->removeValue($column);
 	}
 
@@ -157,10 +155,9 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 
 
 	/**
-	 * @return mixed
 	 * @throws Exceptions\RowException
 	 */
-	private function getValue(string $column)
+	private function getValue(string $column): mixed
 	{
 		if (!\array_key_exists($column, $this->values)) {
 			throw Exceptions\RowException::noColumn($column);
@@ -201,11 +198,7 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 	}
 
 
-	/**
-	 * @param mixed $value
-	 * @return void
-	 */
-	private function setValue(string $column, $value): void
+	private function setValue(string $column, mixed $value): void
 	{
 		$this->values[$column] = $value;
 		unset($this->rawValues[$column]);

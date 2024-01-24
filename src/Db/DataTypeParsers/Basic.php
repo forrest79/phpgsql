@@ -9,10 +9,9 @@ class Basic implements Db\DataTypeParser
 {
 
 	/**
-	 * @return mixed
 	 * @throws Exceptions\DataTypeParserException
 	 */
-	public function parse(string $type, ?string $value)
+	public function parse(string $type, string|NULL $value): mixed
 	{
 		if ($value === NULL) {
 			return NULL;
@@ -97,7 +96,7 @@ class Basic implements Db\DataTypeParser
 	/**
 	 * @return list<mixed>
 	 */
-	protected function parseArray(string $value, ?callable $typeFnc = NULL): array
+	protected function parseArray(string $value, callable|NULL $typeFnc = NULL): array
 	{
 		if ((\substr($value, 0, 1) !== '{') || (\substr($value, -1) !== '}')) {
 			throw Exceptions\DataTypeParserException::valueIsNotArray($value);
@@ -143,12 +142,15 @@ class Basic implements Db\DataTypeParser
 	protected function parseTimestamp(string $value): \DateTimeImmutable
 	{
 		$datetime = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $value);
+
 		if ($datetime === FALSE) {
 			$datetime = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s.u', $value);
 		}
+
 		if ($datetime === FALSE) {
 			throw Exceptions\DataTypeParserException::cantConvertDatetime('Y-m-d H:i:s/Y-m-d H:i:s.u', $value);
 		}
+
 		return $datetime;
 	}
 
@@ -159,12 +161,15 @@ class Basic implements Db\DataTypeParser
 	protected function parseTimestampTz(string $value): \DateTimeImmutable
 	{
 		$datetime = \DateTimeImmutable::createFromFormat('Y-m-d H:i:sP', $value);
+
 		if ($datetime === FALSE) {
 			$datetime = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s.uP', $value);
 		}
+
 		if ($datetime === FALSE) {
 			throw Exceptions\DataTypeParserException::cantConvertDatetime('Y-m-d H:i:sP/Y-m-d H:i:s.uP', $value);
 		}
+
 		return $datetime;
 	}
 

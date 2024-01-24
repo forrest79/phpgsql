@@ -14,15 +14,14 @@ class QueryException extends Exception
 	public const MISSING_PARAM = 6;
 	public const EXTRA_PARAM = 7;
 
-	/** @var Db\Query|NULL */
-	private $query;
+	private Db\Query|NULL $query;
 
 
 	public function __construct(
 		string $message = '',
 		int $code = 0,
-		?Db\Query $query = NULL,
-		?\Throwable $previous = NULL
+		Db\Query|NULL $query = NULL,
+		\Throwable|NULL $previous = NULL,
 	)
 	{
 		parent::__construct($message, $code, $previous);
@@ -30,7 +29,7 @@ class QueryException extends Exception
 	}
 
 
-	public function getQuery(): ?Db\Query
+	public function getQuery(): Db\Query|NULL
 	{
 		return $this->query;
 	}
@@ -51,7 +50,7 @@ class QueryException extends Exception
 	public static function preparedStatementQueryFailed(
 		string $preparedStatementName,
 		Db\Query $query,
-		string $error
+		string $error,
 	): self
 	{
 		return new self(\sprintf('Prepared statement failed [%s]: \'%s\', query: \'%s\'.', $error, $preparedStatementName, $query->getSql()), self::PREPARED_STATEMENT_QUERY_FAILED, $query);
@@ -61,7 +60,7 @@ class QueryException extends Exception
 	public static function asyncPreparedStatementQueryFailed(
 		string $preparedStatementName,
 		Db\Query $query,
-		string $error
+		string $error,
 	): self
 	{
 		return new self(\sprintf('Async prepared statement failed [%s]: \'%s\', query \'%s\'.', $error, $preparedStatementName, $query->getSql()), self::ASYNC_PREPARED_STATEMENT_QUERY_FAILED, $query);
@@ -81,7 +80,7 @@ class QueryException extends Exception
 
 
 	/**
-	 * @param array<string, mixed> $extraParams
+	 * @param list<mixed> $extraParams
 	 */
 	public static function extraParam(array $extraParams): self
 	{

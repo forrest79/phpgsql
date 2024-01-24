@@ -4,8 +4,7 @@ namespace Forrest79\PhPgSql\Db;
 
 class Transaction
 {
-	/** @var Connection */
-	protected $connection;
+	protected Connection $connection;
 
 
 	public function __construct(Connection $connection)
@@ -18,9 +17,10 @@ class Transaction
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
-	public function begin(?string $mode = NULL): self
+	public function begin(string|NULL $mode = NULL): self
 	{
 		$this->connection->query('BEGIN' . ($mode === NULL ? '' : (' ' . $mode)));
+
 		return $this;
 	}
 
@@ -32,6 +32,7 @@ class Transaction
 	public function commit(): self
 	{
 		$this->connection->query('COMMIT');
+
 		return $this;
 	}
 
@@ -43,6 +44,7 @@ class Transaction
 	public function rollback(): self
 	{
 		$this->connection->query('ROLLBACK');
+
 		return $this;
 	}
 
@@ -54,6 +56,7 @@ class Transaction
 	public function savepoint(string $name): self
 	{
 		$this->connection->query('SAVEPOINT ' . $name);
+
 		return $this;
 	}
 
@@ -65,6 +68,7 @@ class Transaction
 	public function releaseSavepoint(string $name): self
 	{
 		$this->connection->query('RELEASE SAVEPOINT ' . $name);
+
 		return $this;
 	}
 
@@ -76,6 +80,7 @@ class Transaction
 	public function rollbackToSavepoint(string $name): self
 	{
 		$this->connection->query('ROLLBACK TO SAVEPOINT ' . $name);
+
 		return $this;
 	}
 

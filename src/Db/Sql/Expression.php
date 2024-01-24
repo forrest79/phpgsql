@@ -6,16 +6,14 @@ use Forrest79\PhPgSql\Db;
 
 class Expression implements Db\Sql
 {
-	/** @var string */
-	private $sql;
+	private string $sql;
 
-	/** @var array<mixed> */
-	private $params;
+	/** @var list<mixed> */
+	private array $params;
 
 
 	/**
-	 * @param string $value
-	 * @param array<mixed> $params
+	 * @param list<mixed> $params
 	 */
 	public function __construct(string $value, array $params)
 	{
@@ -31,7 +29,7 @@ class Expression implements Db\Sql
 
 
 	/**
-	 * @return array<mixed>
+	 * @return list<mixed>
 	 */
 	public function getParams(): array
 	{
@@ -39,18 +37,15 @@ class Expression implements Db\Sql
 	}
 
 
-	/**
-	 * @param mixed ...$params
-	 * @return self
-	 */
-	public static function create(string $value, ...$params): self
+	public static function create(string $value, mixed ...$params): self
 	{
+		\assert(\array_is_list($params));
 		return new self($value, $params);
 	}
 
 
 	/**
-	 * @param array<mixed> $params
+	 * @param list<mixed> $params
 	 */
 	public static function createArgs(string $value, array $params): self
 	{

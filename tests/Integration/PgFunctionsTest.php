@@ -2,6 +2,7 @@
 
 namespace Forrest79\PhPgSql\Tests\Integration;
 
+use PgSql;
 use Tester;
 
 require_once __DIR__ . '/TestCase.php';
@@ -35,19 +36,9 @@ final class PgFunctionsTest extends TestCase
 
 		Tester\Assert::true($success1);
 
-		if (\PHP_VERSION_ID < 80000) {
-			$success2 = @\pg_free_result($result1); // intentionally @ - `E_WARNING: pg_free_result(): supplied resource is not a valid PostgreSQL result resource`
-
-			Tester\Assert::false($success2);
-		} else if (\PHP_VERSION_ID >= 80100) {
-			Tester\Assert::exception(static function () use ($result1): void {
-				\pg_free_result($result1);
-			}, \Error::class, 'PostgreSQL result has already been closed');
-		} else {
-			Tester\Assert::exception(static function () use ($result1): void {
-				\pg_free_result($result1);
-			}, \TypeError::class, 'pg_free_result(): supplied resource is not a valid PostgreSQL result resource');
-		}
+		Tester\Assert::exception(static function () use ($result1): void {
+			\pg_free_result($result1);
+		}, \Error::class, 'PostgreSQL result has already been closed');
 	}
 
 
@@ -93,11 +84,7 @@ final class PgFunctionsTest extends TestCase
 	{
 		$result1 = @\pg_query($this->getConnectionResource(), 'SELECTx 1 AS clm1, \'test\' AS clm2');
 		Tester\Assert::contains('ERROR:  syntax error at or near "SELECTx"', \pg_last_error($this->getConnectionResource()));
-		if (\PHP_VERSION_ID < 80000) {
-			Tester\Assert::false(\pg_result_error($result1)); // pg_result_error() is just for async queries
-		} else {
-			Tester\Assert::false($result1);
-		}
+		Tester\Assert::false($result1);
 
 		// ---
 
@@ -440,19 +427,13 @@ final class PgFunctionsTest extends TestCase
 	}
 
 
-	/**
-	 * @return resource
-	 */
-	private function getConnectionResource()
+	private function getConnectionResource(): PgSql\Connection
 	{
 		return $this->connection->getResource();
 	}
 
 
-	/**
-	 * @param resource|FALSE $result
-	 */
-	private static function pgResultError($result): string
+	private static function pgResultError(PgSql\Result|FALSE $result): string
 	{
 		$error = \pg_result_error($result);
 		if ($error === FALSE) {

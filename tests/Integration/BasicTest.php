@@ -71,6 +71,7 @@ final class BasicTest extends TestCase
 	public function testConnectionNoConfig(): void
 	{
 		$this->connection->setConnectionConfig('');
+
 		Tester\Assert::exception(function (): void {
 			$this->connection->connect();
 		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::NO_CONFIG);
@@ -95,6 +96,7 @@ final class BasicTest extends TestCase
 	public function testFailedConnection(): void
 	{
 		$this->connection->setConnectionConfig(\str_replace('user=', 'user=non-existing-user-', $this->getConfig()));
+
 		Tester\Assert::exception(function (): void {
 			$this->connection->ping();
 		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::CONNECTION_FAILED);
@@ -104,15 +106,19 @@ final class BasicTest extends TestCase
 	public function testChangeConnectionSettingsAfterConnected(): void
 	{
 		Tester\Assert::true($this->connection->ping());
+
 		Tester\Assert::exception(function (): void {
 			$this->connection->setConnectionConfig('');
 		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::CANT_CHANGE_WHEN_CONNECTED);
+
 		Tester\Assert::exception(function (): void {
-			$this->connection->setConnectForceNew(TRUE);
+			$this->connection->setConnectForceNew();
 		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::CANT_CHANGE_WHEN_CONNECTED);
+
 		Tester\Assert::exception(function (): void {
-			$this->connection->setConnectAsync(TRUE);
+			$this->connection->setConnectAsync();
 		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::CANT_CHANGE_WHEN_CONNECTED);
+
 		Tester\Assert::exception(function (): void {
 			$this->connection->setConnectAsyncWaitSeconds(5);
 		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::CANT_CHANGE_WHEN_CONNECTED);
@@ -120,8 +126,8 @@ final class BasicTest extends TestCase
 		$this->connection->close();
 
 		$this->connection->setConnectionConfig('');
-		$this->connection->setConnectForceNew(TRUE);
-		$this->connection->setConnectAsync(TRUE);
+		$this->connection->setConnectForceNew();
+		$this->connection->setConnectAsync();
 		$this->connection->setConnectAsyncWaitSeconds(5);
 	}
 
@@ -143,26 +149,27 @@ final class BasicTest extends TestCase
 		$this->connection->addOnQuery(static function (
 			Db\Connection $connection,
 			Db\Query $query,
-			float $duration
+			float $duration,
 		) use (
 			&$hasQuery,
 			&$hasExecute,
-			&$queryDuration
+			&$queryDuration,
 		): void {
 			if ($query->getSql() === 'SELECT 1') {
 				$hasQuery = TRUE;
 			} else if ($query->getSql() === 'SELECT 2') {
 				$hasExecute = TRUE;
 			}
+
 			$queryDuration = $duration;
 		});
 
 		$this->connection->addOnResult(static function (
 			Db\Connection $connection,
-			Db\Result $result
+			Db\Result $result,
 		) use (
 			&$hasQueryResult,
-			&$hasExecuteResult
+			&$hasExecuteResult,
 		): void {
 			if ($result->getQuery()->getSql() === 'SELECT 1') {
 				$hasQueryResult = TRUE;
@@ -217,7 +224,7 @@ final class BasicTest extends TestCase
 	{
 		$result = $this->connection->query(
 			'SELECT generate_series FROM ?',
-			Db\Sql\Expression::createArgs('generate_series(?::integer, ?::integer, ?::integer)', [2, 1, -1])
+			Db\Sql\Expression::createArgs('generate_series(?::integer, ?::integer, ?::integer)', [2, 1, -1]),
 		);
 
 		$rows = $result->fetchAssoc('generate_series');
@@ -239,7 +246,7 @@ final class BasicTest extends TestCase
 			},
 			Db\Exceptions\QueryException::class,
 			'#^.+\[ERROR:  cannot insert multiple commands into a prepared statement].+\.$#',
-			Db\Exceptions\QueryException::QUERY_FAILED
+			Db\Exceptions\QueryException::QUERY_FAILED,
 		);
 	}
 
@@ -305,6 +312,7 @@ final class BasicTest extends TestCase
   				name text
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(name) VALUES(?)', 'phpgsql');
 
 		$row = $this->connection->query('SELECT id, name FROM test')->fetch();

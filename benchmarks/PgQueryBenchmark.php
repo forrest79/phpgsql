@@ -2,23 +2,25 @@
 
 namespace Forrest79\PhPgSql\Benchmarks;
 
+use PgSql;
+
 require __DIR__ . '/boostrap.php';
 
 final class PgQueryBenchmark extends BenchmarkCase
 {
-	/** @var resource */
-	private $resource;
+	private PgSql\Connection $connection;
 
 
 	protected function setUp(): void
 	{
 		parent::setUp();
 
-		$resource = \pg_connect(\PHPGSQL_CONNECTION_CONFIG);
-		if ($resource === FALSE) {
+		$connection = \pg_connect(\PHPGSQL_CONNECTION_CONFIG);
+		if ($connection === FALSE) {
 			throw new \RuntimeException('pg_connect failed');
 		}
-		$this->resource = $resource;
+
+		$this->connection = $connection;
 	}
 
 
@@ -33,7 +35,7 @@ final class PgQueryBenchmark extends BenchmarkCase
 	 */
 	public function benchmarkPgQuery(): void
 	{
-		$queryResource = \pg_query($this->resource, 'SELECT ' . \rand(0, 1000));
+		$queryResource = \pg_query($this->connection, 'SELECT ' . \rand(0, 1000));
 		if ($queryResource === FALSE) {
 			throw new \RuntimeException('pg_query failed');
 		}
@@ -45,7 +47,7 @@ final class PgQueryBenchmark extends BenchmarkCase
 	 */
 	public function benchmarkPgQueryParams(): void
 	{
-		$queryResource = \pg_query_params($this->resource, 'SELECT ' . \rand(0, 1000), []);
+		$queryResource = \pg_query_params($this->connection, 'SELECT ' . \rand(0, 1000), []);
 		if ($queryResource === FALSE) {
 			throw new \RuntimeException('pg_query_params failed');
 		}
@@ -57,7 +59,7 @@ final class PgQueryBenchmark extends BenchmarkCase
 	 */
 	public function benchmarkPgQueryWithParameters(): void
 	{
-		$queryResource = \pg_query($this->resource, 'SELECT 1 WHERE 1 = 1 AND 2 = 2 AND 3 = 3 AND 4 = 4 AND 5 = 5');
+		$queryResource = \pg_query($this->connection, 'SELECT 1 WHERE 1 = 1 AND 2 = 2 AND 3 = 3 AND 4 = 4 AND 5 = 5');
 		if ($queryResource === FALSE) {
 			throw new \RuntimeException('pg_query failed');
 		}
@@ -69,7 +71,7 @@ final class PgQueryBenchmark extends BenchmarkCase
 	 */
 	public function benchmarkPgQueryParamsWithParameters(): void
 	{
-		$queryResource = \pg_query_params($this->resource, 'SELECT 1 WHERE 1 = $1 AND 2 = $2 AND 3 = $3 AND 4 = $4 AND 5 = $5', [1, 2, 3, 4, 5]);
+		$queryResource = \pg_query_params($this->connection, 'SELECT 1 WHERE 1 = $1 AND 2 = $2 AND 3 = $3 AND 4 = $4 AND 5 = $5', [1, 2, 3, 4, 5]);
 		if ($queryResource === FALSE) {
 			throw new \RuntimeException('pg_query_params failed');
 		}
@@ -79,7 +81,7 @@ final class PgQueryBenchmark extends BenchmarkCase
 	protected function tearDown(): void
 	{
 		parent::tearDown();
-		\pg_close($this->resource);
+		\pg_close($this->connection);
 	}
 
 }

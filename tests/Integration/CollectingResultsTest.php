@@ -28,6 +28,7 @@ final class CollectingResultsTest extends TestCase
   				name text
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(name) VALUES(?)', 'phpgsql');
 
 		$row = $this->connection->query('SELECT id, name FROM test')->fetch();

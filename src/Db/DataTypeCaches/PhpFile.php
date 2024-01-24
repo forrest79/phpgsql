@@ -6,11 +6,10 @@ use Forrest79\PhPgSql\Db;
 
 class PhpFile extends DbLoader
 {
-	/** @var array<string, array<int, string>> */
-	private $cache = [];
+	private string $cacheDirectory;
 
-	/** @var string */
-	private $cacheDirectory;
+	/** @var array<string, array<int, string>> */
+	private array $cache = [];
 
 
 	public function __construct(string $cacheDirectory)
@@ -44,7 +43,7 @@ class PhpFile extends DbLoader
 					$tempFile = $cacheFile . '.tmp';
 					\file_put_contents(
 						$tempFile,
-						'<?php declare(strict_types=1);' . \PHP_EOL . \sprintf('return [%s];', self::prepareCacheArray($this->loadFromDb($connection)))
+						'<?php declare(strict_types=1);' . \PHP_EOL . \sprintf('return [%s];', self::prepareCacheArray($this->loadFromDb($connection))),
 					);
 					\rename($tempFile, $cacheFile); // atomic replace (in Linux)
 

@@ -6,6 +6,6 @@ if (!\defined('PHPGSQL_CONNECTION_CONFIG')) {
 		'PHPGSQL_CONNECTION_CONFIG',
 		$envConfig === FALSE
 			? 'host=localhost port=5432 user=postgres password=postgres'
-			: $envConfig
+			: $envConfig,
 	);
 }

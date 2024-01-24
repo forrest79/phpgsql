@@ -51,7 +51,7 @@ final class DocsTest extends TestCase
 			$source = \preg_replace(
 				'#dump\((.+?)\); // (.+)#',
 				'Tester\Assert::same("\2", Forrest79\PhPgSql\Tests\Integration\DocsTest::dump(\1));',
-				$source
+				$source,
 			);
 			\assert(\is_string($source));
 
@@ -59,7 +59,7 @@ final class DocsTest extends TestCase
 			$source = \preg_replace(
 				'#table\((\$.+?)\);\n\/\*\*\n(.+?)\n\*\/#s',
 				'Tester\Assert::same("\2", Forrest79\PhPgSql\Tests\Integration\DocsTest::table(\1));',
-				$source
+				$source,
 			);
 
 			\file_put_contents($tempFile, '<?php declare(strict_types=1);' . \PHP_EOL . \PHP_EOL . $source);
@@ -97,10 +97,7 @@ final class DocsTest extends TestCase
 	}
 
 
-	/**
-	 * @param mixed $var
-	 */
-	public static function dump($var): string
+	public static function dump(mixed $var): string
 	{
 		if ($var === NULL) {
 			return '(NULL)';
@@ -152,7 +149,7 @@ final class DocsTest extends TestCase
 			return '(Query) ' . $dbQuery->getSql() . ($dbQuery->getParams() === [] ? '' : \sprintf(' [Params: %s]', self::dump($dbQuery->getParams())));
 		}
 
-		throw new \InvalidArgumentException(\sprintf('Unknown type: \'%s\'', (\gettype($var) === 'object') ? \get_class($var) : \gettype($var)));
+		throw new \InvalidArgumentException(\sprintf('Unknown type: \'%s\'', (\gettype($var) === 'object') ? $var::class : \gettype($var)));
 	}
 
 

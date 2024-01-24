@@ -5,11 +5,7 @@ namespace Forrest79\PhPgSql\Db;
 class DummyColumnValueParser implements ColumnValueParser
 {
 
-	/**
-	 * @param mixed $rawValue
-	 * @return mixed
-	 */
-	public function parseColumnValue(string $column, $rawValue)
+	public function parseColumnValue(string $column, mixed $rawValue): mixed
 	{
 		return $rawValue;
 	}

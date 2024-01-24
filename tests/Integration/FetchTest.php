@@ -21,6 +21,7 @@ final class FetchTest extends TestCase
   				name text
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(name) VALUES(?)', 'phpgsql');
 
 		$result = $this->connection->query('SELECT id, name FROM test');
@@ -41,6 +42,7 @@ final class FetchTest extends TestCase
 				id integer
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(id) VALUES(?)', 999);
 
 		$result = $this->connection->query('SELECT id FROM test');
@@ -62,6 +64,7 @@ final class FetchTest extends TestCase
 				name character varying
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(type, name) SELECT generate_series, \'name\' || generate_series FROM generate_series(3, 1, -1)');
 
 		$result = $this->connection->query('SELECT id, type, name FROM test ORDER BY id');
@@ -96,6 +99,7 @@ final class FetchTest extends TestCase
 				name character varying
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(type, name) SELECT generate_series, \'name\' || generate_series FROM generate_series(3, 1, -1)');
 
 		$result1 = $this->connection->query('SELECT id, type, name FROM test ORDER BY id');
@@ -131,6 +135,7 @@ final class FetchTest extends TestCase
 				name character varying
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(type, name) SELECT generate_series, \'test\' FROM generate_series(3, 1, -1)');
 
 		$result1 = $this->connection->query('SELECT id, type, name FROM test ORDER BY id');
@@ -190,6 +195,7 @@ final class FetchTest extends TestCase
 				name character varying
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(type, name) SELECT generate_series, \'test\' FROM generate_series(3, 1, -1)');
 
 		$result1 = $this->connection->query('SELECT id, type, name FROM test ORDER BY id');
@@ -237,6 +243,7 @@ final class FetchTest extends TestCase
 				name character varying
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(type, name) SELECT generate_series, \'test\' || generate_series FROM generate_series(3, 1, -1)');
 
 		$result = $this->connection->query('SELECT id, type, name FROM test ORDER BY id');
@@ -259,6 +266,7 @@ final class FetchTest extends TestCase
 				type integer
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(type) SELECT generate_series FROM generate_series(3, 1, -1)');
 
 		$result = $this->connection->query('SELECT id, type FROM test ORDER BY id');
@@ -295,6 +303,7 @@ final class FetchTest extends TestCase
 				type integer
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(type) SELECT generate_series FROM generate_series(3, 1, -1)');
 
 		$result = $this->connection->query('SELECT id, type FROM test ORDER BY id');
@@ -337,6 +346,7 @@ final class FetchTest extends TestCase
 				test_date date
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(test_date) VALUES(CURRENT_DATE)');
 
 		$result = $this->connection->query('SELECT id, test_date FROM test');
@@ -357,6 +367,7 @@ final class FetchTest extends TestCase
 				name character varying
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(name) SELECT \'name\' || generate_series FROM generate_series(3, 1, -1)');
 
 		$result = $this->connection->query('SELECT id, name FROM test ORDER BY id');
@@ -381,6 +392,7 @@ final class FetchTest extends TestCase
 				name character varying
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(name) SELECT \'name\' || generate_series FROM generate_series(3, 1, -1)');
 
 		$result = $this->connection->query('SELECT id, name FROM test ORDER BY id');
@@ -401,6 +413,7 @@ final class FetchTest extends TestCase
 				type integer
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(type) SELECT generate_series FROM generate_series(3, 1, -1)');
 
 		$result = $this->connection->query('SELECT type FROM test ORDER BY id');
@@ -425,7 +438,7 @@ final class FetchTest extends TestCase
 
 		Tester\Assert::same(
 			'{"number_column":1,"text_column":"test","boolean_column":true,"null_column":null}',
-			\json_encode($row)
+			\json_encode($row),
 		);
 
 		$result->free();
@@ -469,6 +482,7 @@ final class FetchTest extends TestCase
 				name character varying
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(name) SELECT \'name\' || generate_series FROM generate_series(3, 1, -1)');
 
 		$result = $this->connection->query('SELECT id, name FROM test ORDER BY id');
@@ -495,6 +509,7 @@ final class FetchTest extends TestCase
   				name text
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(name) VALUES(?)', 'phpgsql');
 
 		$result = $this->connection->query('SELECT id, name FROM test');
@@ -517,6 +532,7 @@ final class FetchTest extends TestCase
 				name character varying
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(name) SELECT \'name\' || generate_series FROM generate_series(3, 1, -1)');
 
 		$result = $this->connection->query('SELECT id, name FROM test ORDER BY ? DESC', Db\Sql\Expression::create('id = ?', 1));
@@ -544,6 +560,7 @@ final class FetchTest extends TestCase
   				name text
 			);
 		');
+
 		$result = $this->connection->query('INSERT INTO test(name) SELECT \'name\' || generate_series FROM generate_series(3, 1, -1)');
 
 		Tester\Assert::same(3, $result->getAffectedRows());
@@ -560,6 +577,7 @@ final class FetchTest extends TestCase
   				name text
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(name) VALUES(?)', 'phpgsql');
 
 		$result = $this->connection->query('SELECT id, name FROM test');
@@ -582,6 +600,7 @@ final class FetchTest extends TestCase
   				name text
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(name) VALUES(?)', 'phpgsql');
 
 		$result = $this->connection->query('SELECT id, name FROM test');
@@ -600,6 +619,7 @@ final class FetchTest extends TestCase
   				name text
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(name) VALUES(?)', 'phpgsql');
 
 		$result = $this->connection->query('SELECT id, name FROM test');
@@ -643,6 +663,7 @@ final class FetchTest extends TestCase
   				name text
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(name) VALUES(?)', 'phpgsql');
 
 		$result = $this->connection->query('SELECT id, name FROM test');
@@ -663,6 +684,7 @@ final class FetchTest extends TestCase
   				name text
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(name) VALUES(?)', 'phpgsql');
 
 		$result = $this->connection->query('SELECT id, name FROM test');
@@ -693,6 +715,7 @@ final class FetchTest extends TestCase
   				name text
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(name) VALUES(?)', 'phpgsql');
 
 		$result = $this->connection->query('SELECT id, name FROM test');
@@ -758,6 +781,7 @@ final class FetchTest extends TestCase
 		if ($row === NULL) {
 			throw new \RuntimeException('No data from database were returned');
 		}
+
 		return $row;
 	}
 

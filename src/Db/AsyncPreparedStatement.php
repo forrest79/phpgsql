@@ -4,8 +4,7 @@ namespace Forrest79\PhPgSql\Db;
 
 class AsyncPreparedStatement extends PreparedStatementHelper
 {
-	/** @var AsyncHelper */
-	private $asyncHelper;
+	private AsyncHelper $asyncHelper;
 
 
 	public function __construct(Connection $connection, AsyncHelper $asyncHelper, Events $events, string $query)
@@ -15,17 +14,15 @@ class AsyncPreparedStatement extends PreparedStatementHelper
 	}
 
 
-	/**
-	 * @param mixed ...$params
-	 */
-	public function execute(...$params): AsyncQuery
+	public function execute(mixed ...$params): AsyncQuery
 	{
+		\assert(\array_is_list($params));
 		return $this->executeArgs($params);
 	}
 
 
 	/**
-	 * @param array<mixed> $params
+	 * @param list<mixed> $params
 	 */
 	public function executeArgs(array $params): AsyncQuery
 	{
@@ -40,7 +37,7 @@ class AsyncPreparedStatement extends PreparedStatementHelper
 			throw Exceptions\QueryException::asyncPreparedStatementQueryFailed(
 				$statementName,
 				$query,
-				$this->connection->getLastError()
+				$this->connection->getLastError(),
 			);
 		}
 
@@ -56,23 +53,27 @@ class AsyncPreparedStatement extends PreparedStatementHelper
 	{
 		if ($this->statementName === NULL) {
 			$statementName = self::getNextStatementName();
+
 			$this->query = self::prepareQuery($this->query);
+
 			$success = @\pg_send_prepare($this->connection->getResource(), $statementName, $this->query); // intentionally @
 			if ($success === FALSE) {
 				throw Exceptions\QueryException::asyncPreparedStatementQueryFailed(
 					$statementName,
 					new Query($this->query, []),
-					$this->connection->getLastError()
+					$this->connection->getLastError(),
 				);
 			}
+
 			$result = \pg_get_result($this->connection->getResource());
 			if (($result === FALSE) || (!$this->asyncHelper::checkAsyncQueryResult($result))) {
 				throw Exceptions\QueryException::asyncPreparedStatementQueryFailed(
 					$statementName,
 					new Query($this->query, []),
-					($result !== FALSE) ? (string) \pg_result_error($result) : $this->connection->getLastError()
+					($result !== FALSE) ? (string) \pg_result_error($result) : $this->connection->getLastError(),
 				);
 			}
+
 			$this->statementName = $statementName;
 		}
 

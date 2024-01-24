@@ -4,8 +4,7 @@ namespace Forrest79\PhPgSql\Benchmarks;
 
 abstract class BenchmarkCase
 {
-	/** @var int */
-	protected $defaultRepeat = 10000;
+	protected int $defaultRepeat = 10000;
 
 
 	public function run(): void
@@ -38,7 +37,7 @@ abstract class BenchmarkCase
 			$this->runBenchmark(
 				$method,
 				self::getAnotation($docComment, 'title') ?? \substr($benchmarkMethod, 9),
-				$repeat > 0 ? $repeat : $this->defaultRepeat
+				$repeat > 0 ? $repeat : $this->defaultRepeat,
 			);
 		}
 
@@ -76,7 +75,7 @@ abstract class BenchmarkCase
 	}
 
 
-	private static function getAnotation(string $docComment, string $name): ?string
+	private static function getAnotation(string $docComment, string $name): string|NULL
 	{
 		if ((int) \preg_match(\sprintf('#[\\s*]@%s[\\s*](.+)#', \preg_quote($name, '#')), $docComment, $m) === 0) {
 			return NULL;

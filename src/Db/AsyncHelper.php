@@ -2,16 +2,15 @@
 
 namespace Forrest79\PhPgSql\Db;
 
+use PgSql;
+
 class AsyncHelper
 {
-	/** @var Connection */
-	private $connection;
+	private Connection $connection;
 
-	/** @var AsyncQuery|NULL */
-	private $asyncQuery;
+	private AsyncQuery|NULL $asyncQuery = NULL;
 
-	/** @var string|NULL */
-	private $asyncExecuteQuery;
+	private string|NULL $asyncExecuteQuery = NULL;
 
 
 	public function __construct(Connection $connection)
@@ -20,15 +19,16 @@ class AsyncHelper
 	}
 
 
-	public function createAndSetAsyncQuery(Query $query, ?string $preparedStatementName = NULL): AsyncQuery
+	public function createAndSetAsyncQuery(Query $query, string|NULL $preparedStatementName = NULL): AsyncQuery
 	{
 		$this->asyncQuery = new AsyncQuery($this->connection, $this, $query, $preparedStatementName);
 		$this->asyncExecuteQuery = NULL;
+
 		return $this->asyncQuery;
 	}
 
 
-	public function getAsyncQuery(): ?AsyncQuery
+	public function getAsyncQuery(): AsyncQuery|NULL
 	{
 		return $this->asyncQuery;
 	}
@@ -41,7 +41,7 @@ class AsyncHelper
 	}
 
 
-	public function getAsyncExecuteQuery(): ?string
+	public function getAsyncExecuteQuery(): string|NULL
 	{
 		return $this->asyncExecuteQuery;
 	}
@@ -54,10 +54,7 @@ class AsyncHelper
 	}
 
 
-	/**
-	 * @param resource $result
-	 */
-	public static function checkAsyncQueryResult($result): bool
+	public static function checkAsyncQueryResult(PgSql\Result $result): bool
 	{
 		return !\in_array(\pg_result_status($result), [\PGSQL_BAD_RESPONSE, \PGSQL_NONFATAL_ERROR, \PGSQL_FATAL_ERROR], TRUE);
 	}

@@ -9,17 +9,13 @@ require_once __DIR__ . '/../TestCase.php';
 
 abstract class TestCase extends Tests\TestCase
 {
-	/** @var Db\Connection */
-	protected $connection;
+	protected Db\Connection $connection;
 
-	/** @var string */
-	private $dbname;
+	private string $dbname;
 
-	/** @var string */
-	private $config;
+	private string $config;
 
-	/** @var Db\Connection */
-	private $adminConnection;
+	private Db\Connection $adminConnection;
 
 
 	protected function setUp(): void

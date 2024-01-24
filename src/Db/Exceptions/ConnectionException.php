@@ -38,6 +38,7 @@ class ConnectionException extends Exception
 		if ($lastPhpError !== NULL && $lastPhpError['type'] === \E_WARNING) {
 			$message = ': ' . $lastPhpError['message'];
 		}
+
 		return new self('Connection failed' . $message, self::CONNECTION_FAILED);
 	}
 
@@ -102,9 +103,9 @@ class ConnectionException extends Exception
 			\sprintf(
 				'Result async query \'%s\' is different from actual connection async query \'%s\', async query results can\'t be read.',
 				$resultQuery,
-				$actualQuery
+				$actualQuery,
 			),
-			self::ASYNC_ANOTHER_QUERY_IS_RUNNING
+			self::ASYNC_ANOTHER_QUERY_IS_RUNNING,
 		);
 	}
 

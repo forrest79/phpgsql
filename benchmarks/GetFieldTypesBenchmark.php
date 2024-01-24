@@ -2,6 +2,8 @@
 
 namespace Forrest79\PhPgSql\Benchmarks;
 
+use PgSql;
+
 require __DIR__ . '/boostrap.php';
 
 final class GetFieldTypesBenchmark extends BenchmarkCase
@@ -14,7 +16,7 @@ final class GetFieldTypesBenchmark extends BenchmarkCase
 	];
 
 	/** @var array<int, string> */
-	private $cache = [
+	private array $cache = [
 		23 => 'int4',
 		25 => 'text',
 		705 => 'unknown',
@@ -22,29 +24,28 @@ final class GetFieldTypesBenchmark extends BenchmarkCase
 		1184 => 'timestamptz',
 	];
 
-	/** @var resource */
-	private $resource;
+	private PgSql\Connection $connection;
 
-	/** @var resource */
-	private $queryResource;
+	private PgSql\Result $queryResult;
 
 
 	protected function setUp(): void
 	{
 		parent::setUp();
 
-		$resource = \pg_connect(\PHPGSQL_CONNECTION_CONFIG);
-		if ($resource === FALSE) {
+		$connection = \pg_connect(\PHPGSQL_CONNECTION_CONFIG);
+		if ($connection === FALSE) {
 			throw new \RuntimeException('pg_connect failed');
 		}
-		$this->resource = $resource;
 
-		$queryResource = \pg_query($resource, 'SELECT 1 AS col1, \'a\' AS col2, TRUE AS col3, now() AS col4');
-		if ($queryResource === FALSE) {
+		$this->connection = $connection;
+
+		$queryResult = \pg_query($connection, 'SELECT 1 AS col1, \'a\' AS col2, TRUE AS col3, now() AS col4');
+		if ($queryResult === FALSE) {
 			throw new \RuntimeException('pg_query failed');
 		}
 
-		$this->queryResource = $queryResource;
+		$this->queryResult = $queryResult;
 	}
 
 
@@ -63,12 +64,13 @@ final class GetFieldTypesBenchmark extends BenchmarkCase
 	{
 		$type = NULL;
 		$types = [];
-		$fieldsCnt = \pg_num_fields($this->queryResource);
+		$fieldsCnt = \pg_num_fields($this->queryResult);
 		for ($i = 0; $i < $fieldsCnt; $i++) {
 			if ($this->cache !== NULL) { // just to simulate condition in real code in Result
-				$type = \pg_field_type($this->queryResource, $i);
+				$type = \pg_field_type($this->queryResult, $i);
 			}
-			$types[\pg_field_name($this->queryResource, $i)] = $type;
+
+			$types[\pg_field_name($this->queryResult, $i)] = $type;
 		}
 	}
 
@@ -80,12 +82,13 @@ final class GetFieldTypesBenchmark extends BenchmarkCase
 	{
 		$type = NULL;
 		$types = [];
-		$fieldsCnt = \pg_num_fields($this->queryResource);
+		$fieldsCnt = \pg_num_fields($this->queryResult);
 		for ($i = 0; $i < $fieldsCnt; $i++) {
 			if ($this->cache !== NULL) { // just to simulate condition in real code in Result
-				$type = $this->cache[\pg_field_type_oid($this->queryResource, $i)];
+				$type = $this->cache[\pg_field_type_oid($this->queryResult, $i)];
 			}
-			$types[\pg_field_name($this->queryResource, $i)] = $type;
+
+			$types[\pg_field_name($this->queryResult, $i)] = $type;
 		}
 	}
 
@@ -100,8 +103,9 @@ final class GetFieldTypesBenchmark extends BenchmarkCase
 		$columns = \array_keys(self::COLUMNS);
 		foreach ($columns as $column) {
 			if ($this->cache !== NULL) { // just to simulate condition in real code in Result
-				$type = $this->cache[\pg_field_type_oid($this->queryResource, \pg_field_num($this->queryResource, $column))];
+				$type = $this->cache[\pg_field_type_oid($this->queryResult, \pg_field_num($this->queryResult, $column))];
 			}
+
 			$types[$column] = $type;
 		}
 	}
@@ -110,7 +114,7 @@ final class GetFieldTypesBenchmark extends BenchmarkCase
 	protected function tearDown(): void
 	{
 		parent::tearDown();
-		\pg_close($this->resource);
+		\pg_close($this->connection);
 	}
 
 }

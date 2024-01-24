@@ -7,10 +7,7 @@ use Forrest79\PhPgSql\Db;
 interface Sql
 {
 
-	/**
-	 * @param string|Query|Db\Sql $table
-	 */
-	function table($table, ?string $alias = NULL): Query;
+	function table(string|Query|Db\Sql $table, string|NULL $alias = NULL): Query;
 
 
 	/**
@@ -22,99 +19,85 @@ interface Sql
 	function distinct(): Query;
 
 
-	/**
-	 * @param string|Query|Db\Sql $from
-	 */
-	function from($from, ?string $alias = NULL): Query;
+	function from(string|Query|Db\Sql $from, string|NULL $alias = NULL): Query;
 
 
-	/**
-	 * @param string|Query|Db\Sql $join table or query
-	 * @param string|Complex|Db\Sql|NULL $onCondition
-	 */
-	function join($join, ?string $alias = NULL, $onCondition = NULL): Query;
+	function join(
+		string|Query|Db\Sql $join,
+		string|NULL $alias = NULL,
+		string|Complex|Db\Sql|NULL $onCondition = NULL,
+	): Query;
 
 
-	/**
-	 * @param string|Query|Db\Sql $join table or query
-	 * @param string|Complex|Db\Sql|NULL $onCondition
-	 */
-	function innerJoin($join, ?string $alias = NULL, $onCondition = NULL): Query;
+	function innerJoin(
+		string|Query|Db\Sql $join,
+		string|NULL $alias = NULL,
+		string|Complex|Db\Sql|NULL $onCondition = NULL,
+	): Query;
 
 
-	/**
-	 * @param string|Query|Db\Sql $join table or query
-	 * @param string|Complex|Db\Sql|NULL $onCondition
-	 */
-	function leftJoin($join, ?string $alias = NULL, $onCondition = NULL): Query;
+	function leftJoin(
+		string|Query|Db\Sql $join,
+		string|NULL $alias = NULL,
+		string|Complex|Db\Sql|NULL $onCondition = NULL,
+	): Query;
 
 
-	/**
-	 * @param string|Query|Db\Sql $join table or query
-	 * @param string|Complex|Db\Sql|NULL $onCondition
-	 */
-	function leftOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Query;
+	function leftOuterJoin(
+		string|Query|Db\Sql $join,
+		string|NULL $alias = NULL,
+		string|Complex|Db\Sql|NULL $onCondition = NULL,
+	): Query;
 
 
-	/**
-	 * @param string|Query|Db\Sql $join table or query
-	 * @param string|Complex|Db\Sql|NULL $onCondition
-	 */
-	function rightJoin($join, ?string $alias = NULL, $onCondition = NULL): Query;
+	function rightJoin(
+		string|Query|Db\Sql $join,
+		string|NULL $alias = NULL,
+		string|Complex|Db\Sql|NULL $onCondition = NULL,
+	): Query;
 
 
-	/**
-	 * @param string|Query|Db\Sql $join table or query
-	 * @param string|Complex|Db\Sql|NULL $onCondition
-	 */
-	function rightOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Query;
+	function rightOuterJoin(
+		string|Query|Db\Sql $join,
+		string|NULL $alias = NULL,
+		string|Complex|Db\Sql|NULL $onCondition = NULL,
+	): Query;
 
 
-	/**
-	 * @param string|Query|Db\Sql $join table or query
-	 * @param string|Complex|Db\Sql|NULL $onCondition
-	 */
-	function fullJoin($join, ?string $alias = NULL, $onCondition = NULL): Query;
+	function fullJoin(
+		string|Query|Db\Sql $join,
+		string|NULL $alias = NULL,
+		string|Complex|Db\Sql|NULL $onCondition = NULL,
+	): Query;
 
 
-	/**
-	 * @param string|Query|Db\Sql $join table or query
-	 * @param string|Complex|Db\Sql|NULL $onCondition
-	 */
-	function fullOuterJoin($join, ?string $alias = NULL, $onCondition = NULL): Query;
+	function fullOuterJoin(
+		string|Query|Db\Sql $join,
+		string|NULL $alias = NULL,
+		string|Complex|Db\Sql|NULL $onCondition = NULL,
+	): Query;
 
 
-	/**
-	 * @param string|Query|Db\Sql $join table or query
-	 */
-	function crossJoin($join, ?string $alias = NULL): Query;
+	function crossJoin(string|Query|Db\Sql $join, string|NULL $alias = NULL): Query;
 
 
-	/**
-	 * @param string|Complex|Db\Sql $condition
-	 * @param mixed ...$params
-	 */
-	function on(string $alias, $condition, ...$params): Query;
+	function on(string $alias, string|Complex|Db\Sql $condition, mixed ...$params): Query;
 
 
 	function lateral(string $alias): Query;
 
 
-	/**
-	 * @param string|Complex|Db\Sql $condition
-	 * @param mixed ...$params
-	 */
-	function where($condition, ...$params): Query;
+	function where(string|Complex|Db\Sql $condition, mixed ...$params): Query;
 
 
 	/**
-	 * @param array<string|array<mixed>|Db\Sql|Complex> $conditions
+	 * @param list<string|list<mixed>|Db\Sql|Complex> $conditions
 	 */
 	function whereAnd(array $conditions = []): Complex;
 
 
 	/**
-	 * @param array<string|array<mixed>|Db\Sql|Complex> $conditions
+	 * @param list<string|list<mixed>|Db\Sql|Complex> $conditions
 	 */
 	function whereOr(array $conditions = []): Complex;
 
@@ -122,29 +105,22 @@ interface Sql
 	function groupBy(string ...$columns): Query;
 
 
-	/**
-	 * @param string|Complex|Db\Sql $condition
-	 * @param mixed ...$params
-	 */
-	function having($condition, ...$params): Query;
+	function having(string|Complex|Db\Sql $condition, mixed ...$params): Query;
 
 
 	/**
-	 * @param array<string|array<mixed>|Db\Sql|Complex> $conditions
+	 * @param list<string|list<mixed>|Db\Sql|Complex> $conditions
 	 */
 	function havingAnd(array $conditions = []): Complex;
 
 
 	/**
-	 * @param array<string|array<mixed>|Db\Sql|Complex> $conditions
+	 * @param list<string|list<mixed>|Db\Sql|Complex> $conditions
 	 */
 	function havingOr(array $conditions = []): Complex;
 
 
-	/**
-	 * @param string|Query|Db\Sql ...$columns
-	 */
-	function orderBy(...$columns): Query;
+	function orderBy(string|Query|Db\Sql ...$columns): Query;
 
 
 	function limit(int $limit): Query;
@@ -153,34 +129,22 @@ interface Sql
 	function offset(int $offset): Query;
 
 
-	/**
-	 * @param string|Query|Db\Sql $query
-	 */
-	function union($query): Query;
+	function union(string|Query|Db\Sql $query): Query;
+
+
+	function unionAll(string|Query|Db\Sql $query): Query;
+
+
+	function intersect(string|Query|Db\Sql $query): Query;
+
+
+	function except(string|Query|Db\Sql $query): Query;
 
 
 	/**
-	 * @param string|Query|Db\Sql $query
+	 * @param list<string>|NULL $columns
 	 */
-	function unionAll($query): Query;
-
-
-	/**
-	 * @param string|Query|Db\Sql $query
-	 */
-	function intersect($query): Query;
-
-
-	/**
-	 * @param string|Query|Db\Sql $query
-	 */
-	function except($query): Query;
-
-
-	/**
-	 * @param array<string>|NULL $columns
-	 */
-	function insert(?string $into = NULL, ?array $columns = []): Query;
+	function insert(string|NULL $into = NULL, array|NULL $columns = []): Query;
 
 
 	/**
@@ -190,29 +154,27 @@ interface Sql
 
 
 	/**
-	 * @param array<array<string, mixed>> $rows
+	 * @param list<array<string, mixed>> $rows
 	 */
 	function rows(array $rows): Query;
 
 
 	/**
 	 * @param string|list<string>|NULL $columnsOrConstraint
-	 * @param string|Complex|Db\Sql|NULL $where
 	 */
-	function onConflict($columnsOrConstraint = NULL, $where = NULL): Query;
+	function onConflict(string|array|NULL $columnsOrConstraint = NULL, string|Complex|Db\Sql|NULL $where = NULL): Query;
 
 
 	/**
 	 * @param array<int|string, string|Db\Sql> $set
-	 * @param string|Complex|Db\Sql|NULL $where
 	 */
-	function doUpdate(array $set, $where = NULL): Query;
+	function doUpdate(array $set, string|Complex|Db\Sql|NULL $where = NULL): Query;
 
 
 	function doNothing(): Query;
 
 
-	function update(?string $table = NULL, ?string $alias = NULL): Query;
+	function update(string|NULL $table = NULL, string|NULL $alias = NULL): Query;
 
 
 	/**
@@ -221,7 +183,7 @@ interface Sql
 	function set(array $data): Query;
 
 
-	function delete(?string $from = NULL, ?string $alias = NULL): Query;
+	function delete(string|NULL $from = NULL, string|NULL $alias = NULL): Query;
 
 
 	/**
@@ -230,51 +192,39 @@ interface Sql
 	function returning(array $returning): Query;
 
 
-	function merge(?string $into = NULL, ?string $alias = NULL): Query;
+	function merge(string|NULL $into = NULL, string|NULL $alias = NULL): Query;
 
 
-	/**
-	 * @param string|Query|Db\Sql $dataSource values, table or query
-	 * @param string|Complex|Db\Sql|NULL $onCondition
-	 */
-	function using($dataSource, ?string $alias = NULL, $onCondition = NULL): Query;
+	function using(
+		string|Query|Db\Sql $dataSource,
+		string|NULL $alias = NULL,
+		string|Complex|Db\Sql|NULL $onCondition = NULL,
+	): Query;
 
 
-	/**
-	 * @param string|Db\Sql $then
-	 * @param string|Complex|Db\Sql|NULL $condition
-	 */
-	function whenMatched($then, $condition = NULL): Query;
+	function whenMatched(string|Db\Sql $then, string|Complex|Db\Sql|NULL $condition = NULL): Query;
 
 
-	/**
-	 * @param string|Db\Sql $then
-	 * @param string|Complex|Db\Sql|NULL $condition
-	 */
-	function whenNotMatched($then, $condition = NULL): Query;
+	function whenNotMatched(string|Db\Sql $then, string|Complex|Db\Sql|NULL $condition = NULL): Query;
 
 
-	function truncate(?string $table = NULL): Query;
+	function truncate(string|NULL $table = NULL): Query;
 
 
-	/**
-	 * @param string|Query|Db\Sql $query
-	 */
-	function with(string $as, $query, ?string $suffix = NULL, bool $notMaterialized = FALSE): Query;
+	function with(
+		string $as,
+		string|Query|Db\Sql $query,
+		string|NULL $suffix = NULL,
+		bool $notMaterialized = FALSE,
+	): Query;
 
 
 	function recursive(): Query;
 
 
-	/**
-	 * @param mixed ...$params
-	 */
-	function prefix(string $queryPrefix, ...$params): Query;
+	function prefix(string $queryPrefix, mixed ...$params): Query;
 
 
-	/**
-	 * @param mixed ...$params
-	 */
-	function suffix(string $querySuffix, ...$params): Query;
+	function suffix(string $querySuffix, mixed ...$params): Query;
 
 }

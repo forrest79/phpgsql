@@ -5,17 +5,15 @@ namespace Forrest79\PhPgSql\Db;
 class PreparedStatement extends PreparedStatementHelper
 {
 
-	/**
-	 * @param mixed ...$params
-	 */
-	public function execute(...$params): Result
+	public function execute(mixed ...$params): Result
 	{
+		\assert(\array_is_list($params));
 		return $this->executeArgs($params);
 	}
 
 
 	/**
-	 * @param array<mixed> $params
+	 * @param list<mixed> $params
 	 */
 	public function executeArgs(array $params): Result
 	{
@@ -44,15 +42,18 @@ class PreparedStatement extends PreparedStatementHelper
 	{
 		if ($this->statementName === NULL) {
 			$statementName = self::getNextStatementName();
+
 			$this->query = self::prepareQuery($this->query);
+
 			$resource = @\pg_prepare($this->connection->getResource(), $statementName, $this->query); // intentionally @
 			if ($resource === FALSE) {
 				throw Exceptions\QueryException::preparedStatementQueryFailed(
 					$statementName,
 					new Query($this->query, []),
-					$this->connection->getLastError()
+					$this->connection->getLastError(),
 				);
 			}
+
 			$this->statementName = $statementName;
 		}
 

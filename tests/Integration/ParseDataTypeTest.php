@@ -425,10 +425,7 @@ final class ParseDataTypeTest extends TestCase
 	{
 		$this->connection->setDataTypeParser(new class implements Db\DataTypeParser {
 
-			/**
-			 * {@inheritDoc}
-			 */
-			public function parse(string $type, ?string $value)
+			public function parse(string $type, string|NULL $value): mixed
 			{
 				if (($type === 'point') && ($value !== NULL)) {
 					return \array_map('intval', \explode(',', \substr($value, 1, -1), 2));

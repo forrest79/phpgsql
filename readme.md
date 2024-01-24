@@ -30,7 +30,7 @@ The recommended way to install PhPgSql is through Composer:
 composer require forrest79/phpgsql
 ```
 
-PhPgSql requires PHP 7.1.0 and pgsql binary extension. It doesn't work with the PDO!
+PhPgSql requires PHP 8.1.0 and pgsql binary extension. It doesn't work with the PDO!
 
 If you're using [PHPStan](https://phpstan.org/) you can install [settings](https://github.com/forrest79/phpgsql-phpstan) for this great tool. 
 

@@ -6,8 +6,7 @@ class ComplexException extends Exception
 {
 	public const NO_PARENT = 1;
 	public const NO_QUERY = 2;
-	public const UNSUPPORTED_CONDITION_TYPE = 3;
-	public const ONLY_STRING_CONDITION_CAN_HAVE_PARAMS = 4;
+	public const ONLY_STRING_CONDITION_CAN_HAVE_PARAMS = 3;
 
 
 	public static function noParent(): self
@@ -19,23 +18,6 @@ class ComplexException extends Exception
 	public static function noQuery(): self
 	{
 		return new self('This complex has no query assigned.', self::NO_QUERY);
-	}
-
-
-	/**
-	 * @param mixed $condition
-	 */
-	public static function unsupportedConditionType($condition): self
-	{
-		if (\is_object($condition)) {
-			$type = \get_class($condition);
-		} else {
-			$type = \gettype($condition);
-		}
-		return new self(
-			\sprintf('Only string, Fluent\Complex or Db\Sql can be used in condition. Type \'%s\' was given.', $type),
-			self::UNSUPPORTED_CONDITION_TYPE
-		);
 	}
 
 

@@ -14,8 +14,7 @@ require_once __DIR__ . '/../TestCase.php';
  */
 final class FluentConnectionTest extends Tests\TestCase
 {
-	/** @var Fluent\Connection */
-	private $fluentConnection;
+	private Fluent\Connection $fluentConnection;
 
 
 	protected function setUp(): void

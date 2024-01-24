@@ -7,14 +7,11 @@ namespace Forrest79\PhPgSql\Db;
  */
 class ResultIterator implements \Iterator
 {
-	/** @var Result */
-	private $result;
+	private Result $result;
 
-	/** @var Row|NULL */
-	private $row;
+	private Row|NULL $row = NULL;
 
-	/** @var int */
-	private $pointer;
+	private int $pointer;
 
 
 	public function __construct(Result $result)

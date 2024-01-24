@@ -12,8 +12,7 @@ require_once __DIR__ . '/TestCase.php';
  */
 final class TransactionTest extends TestCase
 {
-	/** @var Db\Transaction */
-	protected $transactions;
+	protected Db\Transaction $transactions;
 
 
 	protected function setUp(): void

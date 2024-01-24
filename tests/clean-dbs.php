@@ -7,7 +7,8 @@ if ($connection !== FALSE) {
 	$resource = \pg_query($connection, 'SELECT \'DROP DATABASE \' || datname || \';\' FROM pg_database WHERE datistemplate = FALSE AND datname LIKE \'phpgsql_%_%\';');
 	if ($resource !== FALSE) {
 		while ($row = \pg_fetch_row($resource)) {
-			\pg_query($row[0]);
+			\assert(\is_string($row[0]));
+			\pg_query($connection, $row[0]);
 		}
 	}
 }

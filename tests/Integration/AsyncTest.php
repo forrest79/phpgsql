@@ -16,7 +16,9 @@ final class AsyncTest extends TestCase
 	public function testIsConnected(): void
 	{
 		Tester\Assert::false($this->connection->isConnected());
+
 		$this->connection->execute('SELECT 1');
+
 		Tester\Assert::true($this->connection->isConnected());
 	}
 
@@ -45,6 +47,7 @@ final class AsyncTest extends TestCase
   				name text
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(name) SELECT \'name\' || generate_series FROM generate_series(2, 1, -1)');
 
 		$asyncQuery1 = $this->connection->asyncQuery('SELECT id, name FROM test WHERE id = ?', 1);
@@ -78,10 +81,13 @@ final class AsyncTest extends TestCase
 	public function testQueryEvent(): void
 	{
 		$queryDuration = 0;
-		$this->connection->addOnQuery(static function (Db\Connection $connection, Db\Query $query, ?float $duration) use (&$queryDuration): void {
-			$queryDuration = $duration;
+
+		$this->connection->addOnQuery(static function (Db\Connection $connection, Db\Query $query, float|NULL $timeNs) use (&$queryDuration): void {
+			$queryDuration = $timeNs;
 		});
+
 		$this->connection->asyncQuery('SELECT 1');
+
 		Tester\Assert::null($queryDuration);
 	}
 
@@ -89,10 +95,13 @@ final class AsyncTest extends TestCase
 	public function testExecuteEvent(): void
 	{
 		$wasEvent = FALSE;
+
 		$this->connection->addOnQuery(static function () use (&$wasEvent): void {
 			$wasEvent = TRUE;
 		});
+
 		$this->connection->asyncExecute('SELECT 1')->completeAsyncExecute();
+
 		Tester\Assert::true($wasEvent);
 	}
 
@@ -125,6 +134,7 @@ final class AsyncTest extends TestCase
 	public function testGetQueryResultAfterExecute(): void
 	{
 		$asyncQuery = $this->connection->asyncQuery('SELECT 1');
+
 		Tester\Assert::exception(function () use ($asyncQuery): void {
 			$this->connection->asyncExecute('SELECT 2');
 			$asyncQuery->getNextResult();
@@ -135,7 +145,9 @@ final class AsyncTest extends TestCase
 	public function testCancelAsyncQuery(): void
 	{
 		$asyncQuery = $this->connection->asyncQuery('SELECT 1');
+
 		$this->connection->cancelAsyncQuery();
+
 		Tester\Assert::exception(static function () use ($asyncQuery): void {
 			$asyncQuery->getNextResult();
 		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::ASYNC_NO_QUERY_IS_SENT);
@@ -157,6 +169,7 @@ final class AsyncTest extends TestCase
 	public function testMoreAsyncQueriesWithoutCompletePrevious(): void
 	{
 		$this->connection->asyncQuery('SELECT 1');
+
 		Tester\Assert::exception(function (): void {
 			$this->connection->asyncQuery('SELECT 2');
 		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::ASYNC_QUERY_SENT_FAILED);
@@ -198,6 +211,7 @@ final class AsyncTest extends TestCase
 	{
 		$this->connection->asyncExecute('SELECT pg_sleep(1)');
 		Tester\Assert::true($this->connection->isBusy());
+
 		$this->connection->completeAsyncExecute();
 		Tester\Assert::false($this->connection->isBusy());
 	}

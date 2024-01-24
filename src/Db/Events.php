@@ -4,20 +4,19 @@ namespace Forrest79\PhPgSql\Db;
 
 class Events
 {
-	/** @var Connection */
-	private $connection;
+	private Connection $connection;
 
 	/** @var list<callable(Connection): void> function (Connection $connection) {} */
-	private $onConnect = [];
+	private array $onConnect = [];
 
 	/** @var list<callable(Connection): void> function (Connection $connection) {} */
-	private $onClose = [];
+	private array $onClose = [];
 
-	/** @var list<callable(Connection, Query, ?float, ?string): void> function (Connection $connection, Query $query, ?float $time, ?string $prepareStatementName) {} */
-	private $onQuery = [];
+	/** @var list<callable(Connection, Query, float|NULL, string|NULL): void> function (Connection $connection, Query $query, float|NULL $time, string|NULL $prepareStatementName) {} */
+	private array $onQuery = [];
 
 	/** @var list<callable(Connection, Result): void> function (Connection $connection, Result $result) {} */
-	private $onResult = [];
+	private array $onResult = [];
 
 
 	public function __construct(Connection $connection)
@@ -29,6 +28,7 @@ class Events
 	public function addOnConnect(callable $callback): self
 	{
 		$this->onConnect[] = $callback;
+
 		return $this;
 	}
 
@@ -36,6 +36,7 @@ class Events
 	public function addOnClose(callable $callback): self
 	{
 		$this->onClose[] = $callback;
+
 		return $this;
 	}
 
@@ -43,6 +44,7 @@ class Events
 	public function addOnQuery(callable $callback): self
 	{
 		$this->onQuery[] = $callback;
+
 		return $this;
 	}
 
@@ -50,6 +52,7 @@ class Events
 	public function addOnResult(callable $callback): self
 	{
 		$this->onResult[] = $callback;
+
 		return $this;
 	}
 
@@ -70,7 +73,7 @@ class Events
 	}
 
 
-	public function onQuery(Query $query, ?float $time = NULL, ?string $prepareStatementName = NULL): void
+	public function onQuery(Query $query, float|NULL $time = NULL, string|NULL $prepareStatementName = NULL): void
 	{
 		foreach ($this->onQuery as $event) {
 			$event($this->connection, $query, $time, $prepareStatementName);

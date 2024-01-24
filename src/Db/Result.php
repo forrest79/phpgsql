@@ -2,46 +2,42 @@
 
 namespace Forrest79\PhPgSql\Db;
 
+use PgSql;
+
 /**
  * @implements \IteratorAggregate<int, Row>
  */
 class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 {
-	/** @var resource */
-	protected $queryResource;
+	protected PgSql\Result $queryResource;
 
-	/** @var Query */
-	private $query;
+	private Query $query;
 
-	/** @var RowFactory */
-	private $rowFactory;
+	private RowFactory $rowFactory;
 
-	/** @var DataTypeParser */
-	private $dataTypeParser;
+	private DataTypeParser $dataTypeParser;
 
 	/** @var array<int, string>|NULL */
-	private $dataTypesCache;
+	private array|NULL $dataTypesCache;
 
-	/** @var int */
-	private $affectedRows;
+	private int|NULL $affectedRows = NULL;
 
-	/** @var array<string, string> */
-	private $columnsDataTypes;
+	/** @var array<string, string>|NULL */
+	private array|NULL $columnsDataTypes = NULL;
 
 	/** @var array<string, bool> */
-	private $parsedColumns = [];
+	private array $parsedColumns = [];
 
 
 	/**
-	 * @param resource $queryResource
 	 * @param array<int, string>|NULL $dataTypesCache
 	 */
 	public function __construct(
-		$queryResource,
+		PgSql\Result $queryResource,
 		Query $query,
 		RowFactory $rowFactory,
 		DataTypeParser $dataTypeParser,
-		?array $dataTypesCache
+		array|NULL $dataTypesCache,
 	)
 	{
 		$this->queryResource = $queryResource;
@@ -55,6 +51,7 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 	public function setRowFactory(RowFactory $rowFactory): self
 	{
 		$this->rowFactory = $rowFactory;
+
 		return $this;
 	}
 
@@ -64,7 +61,7 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 	 */
 	public function getIterator(): ResultIterator
 	{
-		//trigger_error('Use fetchIterator() method.', E_USER_DEPRECATED);
+		\trigger_error('Use fetchIterator() method.', \E_USER_DEPRECATED);
 		return new ResultIterator($this);
 	}
 
@@ -75,10 +72,7 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 	}
 
 
-	/**
-	 * @return resource
-	 */
-	public function getResource()
+	public function getResource(): PgSql\Result
 	{
 		return $this->queryResource;
 	}
@@ -109,14 +103,14 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 	}
 
 
-	public function fetch(): ?Row
+	public function fetch(): Row|NULL
 	{
 		$data = \pg_fetch_assoc($this->queryResource);
 		if ($data === FALSE) {
 			return NULL;
 		}
 
-		$this->detectColumnsDataTypes();
+		$this->detectColumnDataTypes();
 		return $this->rowFactory->createRow($this, $data);
 	}
 
@@ -126,7 +120,7 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 	 *
 	 * @return mixed value on success, NULL if no next record
 	 */
-	public function fetchSingle()
+	public function fetchSingle(): mixed
 	{
 		$row = $this->fetch();
 		if ($row === NULL) {
@@ -142,7 +136,7 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 	 *
 	 * @return list<Row>
 	 */
-	public function fetchAll(?int $offset = NULL, ?int $limit = NULL): array
+	public function fetchAll(int|NULL $offset = NULL, int|NULL $limit = NULL): array
 	{
 		$limit = $limit ?? -1;
 		$this->seek($offset ?? 0);
@@ -221,12 +215,14 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 					} else { // get concrete Row column
 						$x = $row->{$parts[$i + 1]};
 					}
+
 					continue 2;
 				} else if ($part !== '|') { // associative-array node
 					$val = $row->$part;
 					if (($val !== NULL) && !\is_scalar($val)) {
 						throw Exceptions\ResultException::fetchAssocOnlyScalarAsKey($assocDesc, $part, $val);
 					}
+
 					$x = &$x[(string) $val];
 				}
 			}
@@ -248,7 +244,7 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 	 * @throws Exceptions\ResultException
 	 * @credit dibi (https://dibiphp.com/) | David Grudl
 	 */
-	public function fetchPairs(?string $key = NULL, ?string $value = NULL): array
+	public function fetchPairs(string|NULL $key = NULL, string|NULL $value = NULL): array
 	{
 		$this->seek(0);
 		$row = $this->fetch();
@@ -271,11 +267,11 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 					$data[] = $row[$key];
 					$row = $this->fetch();
 				} while ($row !== NULL);
+
 				return $data;
 			}
 
 			$value = $tmp[1];
-
 		} else {
 			if ($row->hasColumn($value) === FALSE) {
 				throw Exceptions\ResultException::noColumn($value);
@@ -286,6 +282,7 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 					$data[] = $row[$value];
 					$row = $this->fetch();
 				} while ($row !== NULL);
+
 				return $data;
 			}
 
@@ -338,6 +335,7 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 		if ($type === NULL) {
 			throw Exceptions\ResultException::noColumn($column);
 		}
+
 		return $type;
 	}
 
@@ -351,15 +349,13 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 	}
 
 
-	/**
-	 * @param mixed $rawValue
-	 * @return mixed
-	 */
-	public function parseColumnValue(string $column, $rawValue)
+	public function parseColumnValue(string $column, mixed $rawValue): mixed
 	{
 		\assert(($rawValue === NULL) || \is_string($rawValue)); // database result all values as string or NULL
 		$value = $this->dataTypeParser->parse($this->getColumnType($column), $rawValue);
+
 		$this->parsedColumns[$column] = TRUE;
+
 		return $value;
 	}
 
@@ -369,22 +365,25 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 	 */
 	private function getColumnsDataTypes(): array
 	{
-		$this->detectColumnsDataTypes();
+		$this->detectColumnDataTypes();
+		\assert($this->columnsDataTypes !== NULL);
+
 		return $this->columnsDataTypes;
 	}
 
 
-	private function detectColumnsDataTypes(): void
+	private function detectColumnDataTypes(): void
 	{
 		if ($this->columnsDataTypes === NULL) {
 			$this->columnsDataTypes = [];
 			$fieldsCnt = \pg_num_fields($this->queryResource);
 			for ($i = 0; $i < $fieldsCnt; $i++) {
 				$name = \pg_field_name($this->queryResource, $i);
-				\assert(\is_string($name));
+
 				if (isset($this->columnsDataTypes[$name])) {
 					throw Exceptions\ResultException::columnNameIsAlreadyInUse($name);
 				}
+
 				if ($this->dataTypesCache === NULL) {
 					$type = \pg_field_type($this->queryResource, $i);
 				} else {
@@ -392,8 +391,10 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 					if (!isset($this->dataTypesCache[$typeOid])) {
 						throw Exceptions\ResultException::noOidInDataTypeCache($typeOid);
 					}
+
 					$type = $this->dataTypesCache[$typeOid];
 				}
+
 				$this->columnsDataTypes[$name] = $type;
 			}
 		}
@@ -403,7 +404,7 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 	/**
 	 * @return array<string, bool>|NULL NULL = no column was used
 	 */
-	public function getParsedColumns(): ?array
+	public function getParsedColumns(): array|NULL
 	{
 		return $this->parsedColumns === []
 			? NULL

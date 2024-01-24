@@ -48,6 +48,7 @@ final class QueryExecuteFetchTest extends TestCase
 				id integer
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(id) VALUES(?)', 999);
 
 		$query = $this->connection
@@ -72,6 +73,7 @@ final class QueryExecuteFetchTest extends TestCase
 				name character varying
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(type, name) SELECT generate_series, \'name\' || generate_series FROM generate_series(3, 1, -1)');
 
 		$query = $this->connection
@@ -100,6 +102,7 @@ final class QueryExecuteFetchTest extends TestCase
 				name character varying
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(type, name) SELECT generate_series, \'name\' || generate_series FROM generate_series(3, 1, -1)');
 
 		$query = $this->connection
@@ -125,6 +128,7 @@ final class QueryExecuteFetchTest extends TestCase
 				name character varying
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(name) SELECT \'name\' || generate_series FROM generate_series(3, 1, -1)');
 
 		$query = $this->connection
@@ -159,6 +163,7 @@ final class QueryExecuteFetchTest extends TestCase
 				name character varying
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(name) SELECT \'name\' || generate_series FROM generate_series(3, 1, -1)');
 
 		$query = $this->connection
@@ -173,6 +178,7 @@ final class QueryExecuteFetchTest extends TestCase
 			['id' => 2, 'name' => 'name2'],
 			['id' => 3, 'name' => 'name1'],
 		];
+
 		foreach ($query->fetchIterator() as $i => $row) {
 			Tester\Assert::same($expected[$i], $row->toArray());
 		}
@@ -189,6 +195,7 @@ final class QueryExecuteFetchTest extends TestCase
   				name text
 			);
 		');
+
 		$query = $this->connection
 			->insert('test', ['name'])
 			->select(['\'name\' || generate_series FROM generate_series(3, 1, -1)']);
@@ -206,6 +213,7 @@ final class QueryExecuteFetchTest extends TestCase
 				id integer
 			);
 		');
+
 		$this->connection->query('INSERT INTO test(id) VALUES(?)', 999);
 
 		$query = $this->connection

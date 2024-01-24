@@ -4,20 +4,15 @@ namespace Forrest79\PhPgSql\Db;
 
 abstract class PreparedStatementHelper
 {
-	/** @var int */
-	private static $id = 1;
+	private static int $id = 1;
 
-	/** @var Connection */
-	protected $connection;
+	protected Connection $connection;
 
-	/** @var Events */
-	protected $events;
+	protected Events $events;
 
-	/** @var string */
-	protected $query;
+	protected string $query;
 
-	/** @var string|NULL */
-	protected $statementName = NULL;
+	protected string|NULL $statementName = NULL;
 
 
 	public function __construct(Connection $connection, Events $events, string $query)
@@ -47,14 +42,14 @@ abstract class PreparedStatementHelper
 
 				return '$' . ++$paramIndex;
 			},
-			$query
+			$query,
 		);
 	}
 
 
 	/**
-	 * @param array<mixed> $params
-	 * @return array<mixed>
+	 * @param list<mixed> $params
+	 * @return list<mixed>
 	 */
 	protected static function prepareParams(array $params): array
 	{
@@ -62,6 +57,7 @@ abstract class PreparedStatementHelper
 			if (\is_bool($value)) {
 				return $value ? 'TRUE' : 'FALSE';
 			}
+
 			return $value;
 		}, $params);
 	}

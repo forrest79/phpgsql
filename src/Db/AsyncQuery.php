@@ -4,24 +4,20 @@ namespace Forrest79\PhPgSql\Db;
 
 class AsyncQuery
 {
-	/** @var Connection */
-	private $connection;
+	private Connection $connection;
 
-	/** @var AsyncHelper */
-	private $asyncHelper;
+	private AsyncHelper $asyncHelper;
 
-	/** @var Query */
-	private $query;
+	private Query $query;
 
-	/** @var string|NULL */
-	private $preparedStatementName;
+	private string|NULL $preparedStatementName;
 
 
 	public function __construct(
 		Connection $connection,
 		AsyncHelper $asyncHelper,
 		Query $query,
-		?string $preparedStatementName = NULL
+		string|NULL $preparedStatementName = NULL,
 	)
 	{
 		$this->connection = $connection;
@@ -49,7 +45,7 @@ class AsyncQuery
 		} else if (($actualAsyncQuery !== $this) || ($actualAsyncExecuteQuery !== NULL)) {
 			throw Exceptions\ConnectionException::anotherAsyncQueryIsRunning(
 				$this->getQuery()->getSql(),
-				$actualAsyncExecuteQuery ?? $actualAsyncQuery->getQuery()->getSql()
+				$actualAsyncExecuteQuery ?? $actualAsyncQuery->getQuery()->getSql(),
 			);
 		}
 
@@ -66,7 +62,7 @@ class AsyncQuery
 				throw Exceptions\QueryException::asyncPreparedStatementQueryFailed(
 					$this->preparedStatementName,
 					$this->getQuery(),
-					(string) \pg_result_error($result)
+					(string) \pg_result_error($result),
 				);
 			}
 		}

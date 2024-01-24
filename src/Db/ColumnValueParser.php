@@ -5,10 +5,6 @@ namespace Forrest79\PhPgSql\Db;
 interface ColumnValueParser
 {
 
-	/**
-	 * @param mixed $rawValue
-	 * @return mixed
-	 */
-	function parseColumnValue(string $column, $rawValue);
+	function parseColumnValue(string $column, mixed $rawValue): mixed;
 
 }
