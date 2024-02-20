@@ -190,7 +190,9 @@ class Complex implements \ArrayAccess
 	 */
 	public function offsetUnset(mixed $offset): void
 	{
-		unset($this->conditions[$offset]);
+		$conditions = $this->conditions;
+		unset($conditions[$offset]);
+		$this->conditions = array_values($conditions);
 	}
 
 
