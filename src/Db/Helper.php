@@ -10,20 +10,7 @@ class Helper
 	 */
 	public static function createStringPgArray(array $array): string
 	{
-		if ($array === []) {
-			return '{}';
-		}
-
-		foreach ($array as $i => $value) {
-			if ($value === NULL) {
-				$array[$i] = 'NULL';
-			} else {
-				\assert(\is_scalar($value));
-				$array[$i] = '"' . \str_replace('"', '\"', (string) $value) . '"';
-			}
-		}
-
-		return '{' . \implode(',', $array) . '}';
+		return self::doCreatePgArray($array, TRUE);
 	}
 
 
@@ -32,6 +19,15 @@ class Helper
 	 */
 	public static function createPgArray(array $array): string
 	{
+		return self::doCreatePgArray($array, FALSE);
+	}
+
+
+	/**
+	 * @param list<mixed> $array
+	 */
+	private static function doCreatePgArray(array $array, bool $string): string
+	{
 		if ($array === []) {
 			return '{}';
 		}
@@ -39,6 +35,15 @@ class Helper
 		foreach ($array as $i => $value) {
 			if ($value === NULL) {
 				$array[$i] = 'NULL';
+			} else if ($string) {
+				if ($value instanceof \BackedEnum) {
+					$value = $value->value;
+				}
+
+				\assert(\is_scalar($value));
+				$array[$i] = '"' . \str_replace('"', '\"', (string) $value) . '"';
+			} else if ($value instanceof \BackedEnum) {
+				$array[$i] = $value->value;
 			}
 		}
 
