@@ -83,7 +83,7 @@ class QueryBuilder
 	/**
 	 * @param array<string, mixed> $queryParams
 	 * @param list<mixed> $params
-	 * @param array<string>|NULL $insertSelectColumnNames
+	 * @param list<string>|NULL $insertSelectColumnNames
 	 * @throws Exceptions\QueryBuilderException
 	 * @phpstan-param QueryParams $queryParams
 	 */
@@ -158,6 +158,8 @@ class QueryBuilder
 			$selectColumns = [];
 			$data = ' ' . $this->createSelect($queryParams, $params, $selectColumns);
 			if ($columns === []) {
+				\assert($selectColumns !== NULL);
+
 				if ((\count($selectColumns) > 1) && \in_array('*', $selectColumns, TRUE)) {
 					throw Exceptions\QueryBuilderException::selectAllColumnsCantBeCombinedWithConcreteColumnForInsertSelectWithColumnDetection();
 				}
@@ -449,6 +451,16 @@ class QueryBuilder
 
 		$columns = [];
 		foreach ($queryParams[Query::PARAM_SELECT] as $key => $value) {
+			if ($columnNames !== NULL) {
+				if (\is_int($key) && !\is_string($value)) {
+					throw Exceptions\QueryBuilderException::missingColumnAlias();
+				}
+
+				\assert(\is_string($key) || \is_string($value));
+
+				$columnNames[] = \is_int($key) ? $value : $key;
+			}
+
 			if ($value instanceof Db\Sql) {
 				$params[] = $value;
 				$value = '(?)';
@@ -456,9 +468,7 @@ class QueryBuilder
 				$params[] = $value->createSqlQuery();
 				$value = '(?)';
 			}
-			if ($columnNames !== NULL) {
-				$columnNames[] = \is_int($key) ? $value : $key;
-			}
+
 			$columns[] = (($value instanceof \BackedEnum) ? $value->value : $value) . (\is_int($key) ? '' : (' AS "' . $key . '"'));
 		}
 

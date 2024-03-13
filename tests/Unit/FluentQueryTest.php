@@ -797,6 +797,38 @@ final class FluentQueryTest extends Tests\TestCase
 	}
 
 
+	public function testInsertSelectNoColumn(): void
+	{
+		Tester\Assert::exception(function (): void {
+			$this->query()
+				->insert('table1')
+				->select([])
+				->from('table2')
+				->createSqlQuery();
+		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::NO_DATA_TO_INSERT);
+	}
+
+
+	public function testInsertSelectMissingColumnAlias(): void
+	{
+		Tester\Assert::exception(function (): void {
+			$this->query()
+				->insert('table1')
+				->select([1])
+				->from('table2')
+				->createSqlQuery();
+		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::MISSING_COLUMN_ALIAS);
+
+		Tester\Assert::exception(function (): void {
+			$this->query()
+				->insert('table1')
+				->select([Tests\TestEnum::One])
+				->from('table2')
+				->createSqlQuery();
+		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::MISSING_COLUMN_ALIAS);
+	}
+
+
 	public function testInsertOnConflictDoUpdate(): void
 	{
 		$query = $this->query()

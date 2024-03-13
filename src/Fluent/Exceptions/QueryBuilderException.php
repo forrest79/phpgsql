@@ -19,6 +19,7 @@ class QueryBuilderException extends Exception
 	public const ON_CONFLICT_NO_DO = 13;
 	public const ON_CONFLICT_DO_WITHOUT_DEFINITION = 14;
 	public const ON_CONFLICT_DO_UPDATE_SET_SINGLE_COLUMN_CAN_BE_ONLY_STRING = 15;
+	public const MISSING_COLUMN_ALIAS = 16;
 
 
 	public static function badQueryType(string $type): self
@@ -111,6 +112,12 @@ class QueryBuilderException extends Exception
 	public static function onConflictDoUpdateSetSingleColumnCanBeOnlyString(): self
 	{
 		return new self('ON CONFLICT UPDATE SET array value without alias (string key) must be only string.', self::ON_CONFLICT_DO_UPDATE_SET_SINGLE_COLUMN_CAN_BE_ONLY_STRING);
+	}
+
+
+	public static function missingColumnAlias(): self
+	{
+		return new self('Non-string columns for INSERT-SELECT must have an alias.', self::MISSING_COLUMN_ALIAS);
 	}
 
 }
