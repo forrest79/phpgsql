@@ -326,6 +326,12 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 	}
 
 
+	public function hasAffectedRows(): bool
+	{
+		return $this->getAffectedRows() > 0;
+	}
+
+
 	/**
 	 * @throws Exceptions\ResultException
 	 */

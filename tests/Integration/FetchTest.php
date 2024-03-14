@@ -564,6 +564,25 @@ final class FetchTest extends TestCase
 		$result = $this->connection->query('INSERT INTO test(name) SELECT \'name\' || generate_series FROM generate_series(3, 1, -1)');
 
 		Tester\Assert::same(3, $result->getAffectedRows());
+		Tester\Assert::true($result->hasAffectedRows());
+
+		$result->free();
+	}
+
+
+	public function testNoAffectedRows(): void
+	{
+		$this->connection->query('
+			CREATE TABLE test(
+				id serial,
+  				name text
+			);
+		');
+
+		$result = $this->connection->query('UPDATE test SET name = \'name\' WHERE id = 1');
+
+		Tester\Assert::same(0, $result->getAffectedRows());
+		Tester\Assert::false($result->hasAffectedRows());
 
 		$result->free();
 	}
