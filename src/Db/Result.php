@@ -48,7 +48,7 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 	}
 
 
-	public function setRowFactory(RowFactory $rowFactory): self
+	public function setRowFactory(RowFactory $rowFactory): static
 	{
 		$this->rowFactory = $rowFactory;
 
