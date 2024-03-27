@@ -314,7 +314,7 @@ class Connection
 	 */
 	public function queryArgs(string|Sql\Query $sqlQuery, array $params): Result
 	{
-		$pgQuery = $this->normalizeSqlQuery($sqlQuery, $params)->createPgQuery();
+		$pgQuery = $this->prepareSqlQuery($this->normalizeSqlQuery($sqlQuery, $params))->createPgQuery();
 
 		$startTime = $this->events->hasOnQuery() ? \hrtime(TRUE) : NULL;
 
@@ -395,7 +395,7 @@ class Connection
 	 */
 	public function asyncQueryArgs(string|Sql\Query $sqlQuery, array $params): AsyncQuery
 	{
-		$pgQuery = $this->normalizeSqlQuery($sqlQuery, $params)->createPgQuery();
+		$pgQuery = $this->prepareSqlQuery($this->normalizeSqlQuery($sqlQuery, $params))->createPgQuery();
 
 		$queryParams = $pgQuery->params;
 		if ($queryParams === []) {
@@ -559,6 +559,15 @@ class Connection
 			$query = new Sql\Query($query, $params);
 		}
 
+		return $query;
+	}
+
+
+	/**
+	 * Extend this function to update query before execution.
+	 */
+	protected function prepareSqlQuery(Sql\Query $query): Sql\Query
+	{
 		return $query;
 	}
 
