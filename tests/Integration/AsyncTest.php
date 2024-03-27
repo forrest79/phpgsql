@@ -82,7 +82,7 @@ final class AsyncTest extends TestCase
 	{
 		$queryDuration = 0;
 
-		$this->connection->addOnQuery(static function (Db\Connection $connection, Db\Query $query, float|NULL $timeNs) use (&$queryDuration): void {
+		$this->connection->addOnQuery(static function (Db\Connection $connection, Db\PgQuery $query, float|NULL $timeNs) use (&$queryDuration): void {
 			$queryDuration = $timeNs;
 		});
 

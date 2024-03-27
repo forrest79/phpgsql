@@ -80,7 +80,7 @@ final class PreparedStatementTest extends TestCase
 	{
 		$queryDuration = 0;
 		$queryPrapareStatementName = NULL;
-		$this->connection->addOnQuery(static function (Db\Connection $connection, Db\Query $query, float|NULL $timeNs, string|NULL $prepareStatementName) use (&$queryDuration, &$queryPrapareStatementName): void {
+		$this->connection->addOnQuery(static function (Db\Connection $connection, Db\PgQuery $query, float|NULL $timeNs, string|NULL $prepareStatementName) use (&$queryDuration, &$queryPrapareStatementName): void {
 			$queryDuration = $timeNs;
 			$queryPrapareStatementName = $prepareStatementName;
 		});
@@ -154,7 +154,7 @@ final class PreparedStatementTest extends TestCase
 	{
 		$queryDuration = NULL;
 		$queryPrapareStatementName = NULL;
-		$this->connection->addOnQuery(static function (Db\Connection $connection, Db\Query $query, float|NULL $timeNs, string|NULL $prepareStatementName) use (&$queryDuration, &$queryPrapareStatementName): void {
+		$this->connection->addOnQuery(static function (Db\Connection $connection, Db\PgQuery $query, float|NULL $timeNs, string|NULL $prepareStatementName) use (&$queryDuration, &$queryPrapareStatementName): void {
 			$queryDuration = $timeNs;
 			$queryPrapareStatementName = $prepareStatementName;
 		});

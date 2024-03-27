@@ -24,10 +24,10 @@ $query = $fluent
   ->from('users')
   ->where('id', 1)
   ->createSqlQuery()
-  ->createQuery();
+  ->createPgQuery();
 
-dump($query->getSql()); // (string) 'SELECT * FROM users WHERE id = $1'
-dump($query->getParams()); // (array) [1]
+dump($query->sql); // (string) 'SELECT * FROM users WHERE id = $1'
+dump($query->params); // (array) [1]
 ```
 
 With the `QueryExecute` object you can run this query in DB. This object has all `fetch*()` methods as the `Db\Result` object.

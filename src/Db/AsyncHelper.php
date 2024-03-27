@@ -19,7 +19,7 @@ class AsyncHelper
 	}
 
 
-	public function createAndSetAsyncQuery(Query $query, string|NULL $preparedStatementName = NULL): AsyncQuery
+	public function createAndSetAsyncQuery(PgQuery $query, string|NULL $preparedStatementName = NULL): AsyncQuery
 	{
 		$this->asyncQuery = new AsyncQuery($this->connection, $this, $query, $preparedStatementName);
 		$this->asyncExecuteQuery = NULL;

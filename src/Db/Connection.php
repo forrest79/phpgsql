@@ -314,33 +314,33 @@ class Connection
 	 */
 	public function queryArgs(string|Sql\Query $sqlQuery, array $params): Result
 	{
-		$query = $this->normalizeSqlQuery($sqlQuery, $params)->createQuery();
+		$pgQuery = $this->normalizeSqlQuery($sqlQuery, $params)->createPgQuery();
 
 		$startTime = $this->events->hasOnQuery() ? \hrtime(TRUE) : NULL;
 
-		$queryParams = $query->getParams();
+		$queryParams = $pgQuery->params;
 		if ($queryParams === []) {
-			$resource = @\pg_query($this->getConnectedResource(), $query->getSql()); // intentionally @
+			$resource = @\pg_query($this->getConnectedResource(), $pgQuery->sql); // intentionally @
 		} else {
-			$resource = @\pg_query_params($this->getConnectedResource(), $query->getSql(), $queryParams); // intentionally @
+			$resource = @\pg_query_params($this->getConnectedResource(), $pgQuery->sql, $queryParams); // intentionally @
 		}
 
 		if ($resource === FALSE) {
-			throw Exceptions\QueryException::queryFailed($query, $this->getLastError());
+			throw Exceptions\QueryException::queryFailed($pgQuery, $this->getLastError());
 		}
 
 		if ($startTime !== NULL) {
-			$this->events->onQuery($query, \hrtime(TRUE) - $startTime);
+			$this->events->onQuery($pgQuery, \hrtime(TRUE) - $startTime);
 		}
 
-		return $this->createResult($resource, $query);
+		return $this->createResult($resource, $pgQuery);
 	}
 
 
 	/**
 	 * @internal
 	 */
-	public function createResult(PgSql\Result $resource, Query $query): Result
+	public function createResult(PgSql\Result $resource, PgQuery $query): Result
 	{
 		$result = new Result(
 			$resource,
@@ -366,11 +366,11 @@ class Connection
 
 		$resource = @\pg_query($this->getConnectedResource(), $sql); // intentionally @
 		if ($resource === FALSE) {
-			throw Exceptions\QueryException::queryFailed(new Query($sql, []), $this->getLastError());
+			throw Exceptions\QueryException::queryFailed(new PgQuery($sql, []), $this->getLastError());
 		}
 
 		if ($startTime !== NULL) {
-			$this->events->onQuery(new Query($sql, []), \hrtime(TRUE) - $startTime);
+			$this->events->onQuery(new PgQuery($sql, []), \hrtime(TRUE) - $startTime);
 		}
 
 		return $this;
@@ -395,13 +395,13 @@ class Connection
 	 */
 	public function asyncQueryArgs(string|Sql\Query $sqlQuery, array $params): AsyncQuery
 	{
-		$query = $this->normalizeSqlQuery($sqlQuery, $params)->createQuery();
+		$pgQuery = $this->normalizeSqlQuery($sqlQuery, $params)->createPgQuery();
 
-		$queryParams = $query->getParams();
+		$queryParams = $pgQuery->params;
 		if ($queryParams === []) {
-			$querySuccess = @\pg_send_query($this->getConnectedResource(), $query->getSql()); // intentionally @
+			$querySuccess = @\pg_send_query($this->getConnectedResource(), $pgQuery->sql); // intentionally @
 		} else {
-			$querySuccess = @\pg_send_query_params($this->getConnectedResource(), $query->getSql(), $query->getParams()); // intentionally @
+			$querySuccess = @\pg_send_query_params($this->getConnectedResource(), $pgQuery->sql, $pgQuery->params); // intentionally @
 		}
 
 		if ($querySuccess === FALSE) {
@@ -409,10 +409,10 @@ class Connection
 		}
 
 		if ($this->events->hasOnQuery()) {
-			$this->events->onQuery($query);
+			$this->events->onQuery($pgQuery);
 		}
 
-		return $this->asyncHelper->createAndSetAsyncQuery($query);
+		return $this->asyncHelper->createAndSetAsyncQuery($pgQuery);
 	}
 
 
@@ -428,7 +428,7 @@ class Connection
 		}
 
 		if ($this->events->hasOnQuery()) {
-			$this->events->onQuery(new Query($sql, []));
+			$this->events->onQuery(new PgQuery($sql, []));
 		}
 
 		$this->asyncHelper->setAsyncExecuteQuery($sql);
@@ -451,7 +451,7 @@ class Connection
 		while (($result = \pg_get_result($this->getConnectedResource())) !== FALSE) {
 			if (!$this->asyncHelper::checkAsyncQueryResult($result)) {
 				throw Exceptions\QueryException::asyncQueryFailed(
-					new Query($asyncExecuteQuery, []),
+					new PgQuery($asyncExecuteQuery, []),
 					(string) \pg_result_error($result),
 				);
 			}

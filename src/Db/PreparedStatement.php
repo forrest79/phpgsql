@@ -23,7 +23,7 @@ class PreparedStatement extends PreparedStatementHelper
 
 		$params = self::prepareParams($params);
 
-		$query = new Query($this->query, $params);
+		$query = new PgQuery($this->query, $params);
 
 		$resource = @\pg_execute($this->connection->getResource(), $statementName, $params); // intentionally @
 		if ($resource === FALSE) {
@@ -49,7 +49,7 @@ class PreparedStatement extends PreparedStatementHelper
 			if ($resource === FALSE) {
 				throw Exceptions\QueryException::preparedStatementQueryFailed(
 					$statementName,
-					new Query($this->query, []),
+					new PgQuery($this->query, []),
 					$this->connection->getLastError(),
 				);
 			}

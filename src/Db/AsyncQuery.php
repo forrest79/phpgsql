@@ -8,7 +8,7 @@ class AsyncQuery
 
 	private AsyncHelper $asyncHelper;
 
-	private Query $query;
+	private PgQuery $query;
 
 	private string|NULL $preparedStatementName;
 
@@ -16,7 +16,7 @@ class AsyncQuery
 	public function __construct(
 		Connection $connection,
 		AsyncHelper $asyncHelper,
-		Query $query,
+		PgQuery $query,
 		string|NULL $preparedStatementName = NULL,
 	)
 	{
@@ -27,7 +27,7 @@ class AsyncQuery
 	}
 
 
-	public function getQuery(): Query
+	public function getQuery(): PgQuery
 	{
 		return $this->query;
 	}
@@ -44,8 +44,8 @@ class AsyncQuery
 			throw Exceptions\ConnectionException::asyncNoQueryIsSent();
 		} else if (($actualAsyncQuery !== $this) || ($actualAsyncExecuteQuery !== NULL)) {
 			throw Exceptions\ConnectionException::anotherAsyncQueryIsRunning(
-				$this->getQuery()->getSql(),
-				$actualAsyncExecuteQuery ?? $actualAsyncQuery->getQuery()->getSql(),
+				$this->getQuery()->sql,
+				$actualAsyncExecuteQuery ?? $actualAsyncQuery->getQuery()->sql,
 			);
 		}
 

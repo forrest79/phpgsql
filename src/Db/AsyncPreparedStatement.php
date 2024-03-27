@@ -30,7 +30,7 @@ class AsyncPreparedStatement extends PreparedStatementHelper
 
 		$params = self::prepareParams($params);
 
-		$query = new Query($this->query, $params);
+		$query = new PgQuery($this->query, $params);
 
 		$success = @\pg_send_execute($this->connection->getResource(), $statementName, $params); // intentionally @
 		if ($success === FALSE) {
@@ -60,7 +60,7 @@ class AsyncPreparedStatement extends PreparedStatementHelper
 			if ($success === FALSE) {
 				throw Exceptions\QueryException::asyncPreparedStatementQueryFailed(
 					$statementName,
-					new Query($this->query, []),
+					new PgQuery($this->query, []),
 					$this->connection->getLastError(),
 				);
 			}
@@ -69,7 +69,7 @@ class AsyncPreparedStatement extends PreparedStatementHelper
 			if (($result === FALSE) || (!$this->asyncHelper::checkAsyncQueryResult($result))) {
 				throw Exceptions\QueryException::asyncPreparedStatementQueryFailed(
 					$statementName,
-					new Query($this->query, []),
+					new PgQuery($this->query, []),
 					($result !== FALSE) ? (string) \pg_result_error($result) : $this->connection->getLastError(),
 				);
 			}

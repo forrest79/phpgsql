@@ -367,7 +367,7 @@ You can get the query, that initiated a result with the `getQuery()` method:
 ```php
 $result = $connection->query('DELETE FROM users WHERE id IN (?)', [1, 2]);
 $query = $result->getQuery();
-assert($query instanceof Forrest79\PhPgSql\Db\Query);
+assert($query instanceof Forrest79\PhPgSql\Db\PgQuery);
 ```
 
 Or you can get resource, that can be used with native `pg_*` functions with the `getResource()` method:
@@ -449,7 +449,7 @@ Existing objects:
 - `Forrest79\PhPgSql\Db\Sql\Expression` - can have parameters
 - `Forrest79\PhPgSql\Db\Sql\Query` - this object implements logic, that convert SQL with `?` to `$1`, `$2` format (and some other stuff)
 
-> There is another similar `Query` object `Forrest79\PhPgSql\Db\Query` - this object can't be extended, can't be used with `?` parameter and is used only to carry the final prepared query in the format, that is passed to the `pg_*` functions.
+> There is another similar `Query` object `Forrest79\PhPgSql\Db\PgQuery` - this object can't be extended, can't be used with `?` parameter and is used only to carry the final prepared query in the format, that is passed to the `pg_*` functions.
 
 Literal example:
 
@@ -479,10 +479,10 @@ dump($cnt); // (integer) 7
 ```php
 $departmentsQuery = Forrest79\PhPgSql\Db\Sql\Query::createArgs('SELECT id FROM departments WHERE id = ?', [1]);
 
-$query = $departmentsQuery->createQuery();
+$query = $departmentsQuery->createPgQuery();
 
-dump($query->getSql()); // (string) 'SELECT id FROM departments WHERE id = $1'
-dump($query->getParams()); // (array) [1]
+dump($query->sql); // (string) 'SELECT id FROM departments WHERE id = $1'
+dump($query->params); // (array) [1]
 ```
 
 ## Rows and using a custom row factory
@@ -676,7 +676,7 @@ $asyncQuery = $connection->asyncQuery('SELECT * FROM users WHERE id = ?', 1);
 // or $asyncQuery = $connection->asyncQueryArgs('SELECT * FROM users WHERE id = ?', [1]);
 ```
 
-This returns the `AsyncQuery` object. On this object you can get results for all sent queries with the method `getNextResult()` and get the query asociated with this async query with the `getQuery()` method, that returns `Forrest79\PhPgSql\Db\Query`.
+This returns the `AsyncQuery` object. On this object you can get results for all sent queries with the method `getNextResult()` and get the query asociated with this async query with the `getQuery()` method, that returns `Forrest79\PhPgSql\Db\PgQuery`.
 
 You can run just one async query on connection (but you can run more queries separated with `;` at once in one function call - but only when you don't use parameters - this is `pgsql` extension limitations - with parameters, you can run just one query at once) at once. Before we can run a new async query, you need to complete the previous one. When you pass more queries in one method call, you must call the `getNextResult()` method for every query you pass. Results are getting in the same order as queries was passed to the DB. The method `getNextResult()` returns the same `Result` object as the standard `query()`/`queryArgs()` methods.
 
@@ -887,16 +887,16 @@ $connection->addOnClose(function (Forrest79\PhPgSql\Db\Connection $connection): 
 	// this is call right before connection is closed...
 });
 
-$connection->addOnQuery(function (Forrest79\PhPgSql\Db\Connection $connection, Forrest79\PhPgSql\Db\Query $query, float|NULL $timeNs, string|NULL $prepareStatementName): void {
+$connection->addOnQuery(function (Forrest79\PhPgSql\Db\Connection $connection, Forrest79\PhPgSql\Db\PgQuery $query, float|NULL $timeNs, string|NULL $prepareStatementName): void {
   // $time === NULL for async queries, $prepareStatementName !== NULL for prepared statements queries
-  dump($query->getSql()); // (string) 'SELECT nick FROM users WHERE id = $1'
-  dump($query->getParams()); // (array) [3]
+  dump($query->sql); // (string) 'SELECT nick FROM users WHERE id = $1'
+  dump($query->params); // (array) [3]
 });
 
 $connection->addOnResult(function (Forrest79\PhPgSql\Db\Connection $connection, Forrest79\PhPgSql\Db\Result $result): void {
   // this is call after result is created (only if query with result is call...)
-  dump($result->getQuery()->getSql()); // (string) 'SELECT nick FROM users WHERE id = $1'
-  dump($result->getQuery()->getParams()); // (array) [3]
+  dump($result->getQuery()->sql); // (string) 'SELECT nick FROM users WHERE id = $1'
+  dump($result->getQuery()->params); // (array) [3]
   dump($result->fetchSingle()); // (string) 'Steve'
 });
 

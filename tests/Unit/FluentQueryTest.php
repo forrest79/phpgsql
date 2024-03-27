@@ -28,10 +28,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->limit(10)
 			->offset(20)
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT DISTINCT column FROM table AS t WHERE (column = $1) AND (text IS NULL) GROUP BY column ORDER BY column LIMIT $2 OFFSET $3', $query->getSql());
-		Tester\Assert::same([100, 10, 20], $query->getParams());
+		Tester\Assert::same('SELECT DISTINCT column FROM table AS t WHERE (column = $1) AND (text IS NULL) GROUP BY column ORDER BY column LIMIT $2 OFFSET $3', $query->sql);
+		Tester\Assert::same([100, 10, 20], $query->params);
 	}
 
 
@@ -40,10 +40,10 @@ final class FluentQueryTest extends Tests\TestCase
 		$query = $this->query()
 			->select(['column' => $this->query()->select([1])])
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT (SELECT 1) AS "column"', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('SELECT (SELECT 1) AS "column"', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -52,10 +52,10 @@ final class FluentQueryTest extends Tests\TestCase
 		$query = $this->query()
 			->select(['column' => new Db\Sql\Query('SELECT 1')])
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT (SELECT 1) AS "column"', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('SELECT (SELECT 1) AS "column"', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -64,10 +64,10 @@ final class FluentQueryTest extends Tests\TestCase
 		$query = $this->query()
 			->select(['column' => 'another', 'next', 10 => 'column_with_integer_key', '1' => 'column_with_integer_in_string_key', 'a' => 'b'])
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT another AS "column", next, column_with_integer_key, column_with_integer_in_string_key, b AS "a"', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('SELECT another AS "column", next, column_with_integer_key, column_with_integer_in_string_key, b AS "a"', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -76,10 +76,10 @@ final class FluentQueryTest extends Tests\TestCase
 		$query = $this->query()
 			->select(['is_true' => TRUE, 'is_false' => FALSE, 'is_null' => NULL])
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT TRUE AS "is_true", FALSE AS "is_false", NULL AS "is_null"', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('SELECT TRUE AS "is_true", FALSE AS "is_false", NULL AS "is_null"', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -88,10 +88,10 @@ final class FluentQueryTest extends Tests\TestCase
 		$query = $this->query()
 			->select([Tests\TestEnum::One, 'column' => Tests\TestEnum::One])
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT 1, 1 AS "column"', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('SELECT 1, 1 AS "column"', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -101,10 +101,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->select(['x.column'])
 			->from($this->query()->select(['column' => 1]), 'x')
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT x.column FROM (SELECT 1 AS "column") AS x', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('SELECT x.column FROM (SELECT 1 AS "column") AS x', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -114,10 +114,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->select(['x.column'])
 			->from(new Db\Sql\Query('SELECT 1 AS column'), 'x')
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT x.column FROM (SELECT 1 AS column) AS x', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('SELECT x.column FROM (SELECT 1 AS column) AS x', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -127,10 +127,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->select(['gs'])
 			->from(Db\Sql\Expression::create('generate_series(?::integer, ?::integer, ?::integer)', 2, 1, -1), 'gs')
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT gs FROM generate_series($1::integer, $2::integer, $3::integer) AS gs', $query->getSql());
-		Tester\Assert::same([2, 1, -1], $query->getParams());
+		Tester\Assert::same('SELECT gs FROM generate_series($1::integer, $2::integer, $3::integer) AS gs', $query->sql);
+		Tester\Assert::same([2, 1, -1], $query->params);
 	}
 
 
@@ -141,10 +141,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->from('table1', 't1')
 			->from('table2', 't2')
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT column FROM table1 AS t1, table2 AS t2', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('SELECT column FROM table1 AS t1, table2 AS t2', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -155,10 +155,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->from('table', 't')
 			->where('x.column = t.id')
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT x.column FROM table AS t WHERE x.column = t.id', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('SELECT x.column FROM table AS t WHERE x.column = t.id', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -169,10 +169,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->from('table', 't')
 			->where('x.column', 1)
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT x.column FROM table AS t WHERE x.column = $1', $query->getSql());
-		Tester\Assert::same([1], $query->getParams());
+		Tester\Assert::same('SELECT x.column FROM table AS t WHERE x.column = $1', $query->sql);
+		Tester\Assert::same([1], $query->params);
 	}
 
 
@@ -187,10 +187,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->from('table', 't')
 			->where($condition)
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT x.column FROM table AS t WHERE (x.column = t.id) AND (x.id IN ($1, $2))', $query->getSql());
-		Tester\Assert::same([1, 2], $query->getParams());
+		Tester\Assert::same('SELECT x.column FROM table AS t WHERE (x.column = t.id) AND (x.id IN ($1, $2))', $query->sql);
+		Tester\Assert::same([1, 2], $query->params);
 	}
 
 
@@ -201,10 +201,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->from('table', 't')
 			->where(Db\Sql\Expression::create('x.id', [1, 2]))
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT x.column FROM table AS t WHERE x.id IN ($1, $2)', $query->getSql());
-		Tester\Assert::same([1, 2], $query->getParams());
+		Tester\Assert::same('SELECT x.column FROM table AS t WHERE x.id IN ($1, $2)', $query->sql);
+		Tester\Assert::same([1, 2], $query->params);
 	}
 
 
@@ -233,10 +233,10 @@ final class FluentQueryTest extends Tests\TestCase
 			])
 			->query()
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT x.column FROM table AS t WHERE (x.column = t.id) AND (x.column = $1) AND ((x.type = t.id) AND (x.test IN ($2, $3))) AND (x.id = $4)', $query->getSql());
-		Tester\Assert::same([1, 3, 5, 7], $query->getParams());
+		Tester\Assert::same('SELECT x.column FROM table AS t WHERE (x.column = t.id) AND (x.column = $1) AND ((x.type = t.id) AND (x.test IN ($2, $3))) AND (x.id = $4)', $query->sql);
+		Tester\Assert::same([1, 3, 5, 7], $query->params);
 	}
 
 
@@ -257,10 +257,10 @@ final class FluentQueryTest extends Tests\TestCase
 
 		$query = $sourceQuery
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT x.column FROM table AS t WHERE (x.column = t.id) AND (x.id = $1) AND ((x.type = t.id) AND (x.test IN ($2, $3))) AND (x.column = $4)', $query->getSql());
-		Tester\Assert::same([7, 3, 5, 1], $query->getParams());
+		Tester\Assert::same('SELECT x.column FROM table AS t WHERE (x.column = t.id) AND (x.id = $1) AND ((x.type = t.id) AND (x.test IN ($2, $3))) AND (x.column = $4)', $query->sql);
+		Tester\Assert::same([7, 3, 5, 1], $query->params);
 	}
 
 
@@ -281,10 +281,10 @@ final class FluentQueryTest extends Tests\TestCase
 			])
 			->query()
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT x.column FROM table AS t WHERE (x.column = t.id) OR (x.column = $1) OR ((x.type = t.id) AND (x.test IN ($2, $3))) OR (x.id = $4)', $query->getSql());
-		Tester\Assert::same([1, 3, 5, 7], $query->getParams());
+		Tester\Assert::same('SELECT x.column FROM table AS t WHERE (x.column = t.id) OR (x.column = $1) OR ((x.type = t.id) AND (x.test IN ($2, $3))) OR (x.id = $4)', $query->sql);
+		Tester\Assert::same([1, 3, 5, 7], $query->params);
 	}
 
 
@@ -295,10 +295,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->from('table', 't')
 			->having('x.column = t.id')
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT x.column FROM table AS t HAVING x.column = t.id', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('SELECT x.column FROM table AS t HAVING x.column = t.id', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -309,10 +309,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->from('table', 't')
 			->having('x.column', 1)
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT x.column FROM table AS t HAVING x.column = $1', $query->getSql());
-		Tester\Assert::same([1], $query->getParams());
+		Tester\Assert::same('SELECT x.column FROM table AS t HAVING x.column = $1', $query->sql);
+		Tester\Assert::same([1], $query->params);
 	}
 
 
@@ -327,10 +327,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->from('table', 't')
 			->having($condition)
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT x.column FROM table AS t HAVING (x.column = t.id) AND (x.id IN ($1, $2))', $query->getSql());
-		Tester\Assert::same([1, 2], $query->getParams());
+		Tester\Assert::same('SELECT x.column FROM table AS t HAVING (x.column = t.id) AND (x.id IN ($1, $2))', $query->sql);
+		Tester\Assert::same([1, 2], $query->params);
 	}
 
 
@@ -341,10 +341,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->from('table', 't')
 			->having(Db\Sql\Expression::create('x.id', [1, 2]))
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT x.column FROM table AS t HAVING x.id IN ($1, $2)', $query->getSql());
-		Tester\Assert::same([1, 2], $query->getParams());
+		Tester\Assert::same('SELECT x.column FROM table AS t HAVING x.id IN ($1, $2)', $query->sql);
+		Tester\Assert::same([1, 2], $query->params);
 	}
 
 
@@ -373,10 +373,10 @@ final class FluentQueryTest extends Tests\TestCase
 			])
 			->query()
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT x.column FROM table AS t HAVING (x.column = t.id) AND (x.column = $1) AND ((x.type = t.id) AND (x.test IN ($2, $3))) AND (x.id = $4)', $query->getSql());
-		Tester\Assert::same([1, 3, 5, 7], $query->getParams());
+		Tester\Assert::same('SELECT x.column FROM table AS t HAVING (x.column = t.id) AND (x.column = $1) AND ((x.type = t.id) AND (x.test IN ($2, $3))) AND (x.id = $4)', $query->sql);
+		Tester\Assert::same([1, 3, 5, 7], $query->params);
 	}
 
 
@@ -397,10 +397,10 @@ final class FluentQueryTest extends Tests\TestCase
 			])
 			->query()
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT x.column FROM table AS t HAVING (x.column = t.id) OR (x.column = $1) OR ((x.type = t.id) AND (x.test IN ($2, $3))) OR (x.id = $4)', $query->getSql());
-		Tester\Assert::same([1, 3, 5, 7], $query->getParams());
+		Tester\Assert::same('SELECT x.column FROM table AS t HAVING (x.column = t.id) OR (x.column = $1) OR ((x.type = t.id) AND (x.test IN ($2, $3))) OR (x.id = $4)', $query->sql);
+		Tester\Assert::same([1, 3, 5, 7], $query->params);
 	}
 
 
@@ -421,10 +421,10 @@ final class FluentQueryTest extends Tests\TestCase
 
 		$query = $sourceQuery
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT x.column FROM table AS t HAVING (x.column = t.id) OR (x.id = $1) OR ((x.type = t.id) AND (x.test IN ($2, $3))) OR (x.column = $4)', $query->getSql());
-		Tester\Assert::same([7, 3, 5, 1], $query->getParams());
+		Tester\Assert::same('SELECT x.column FROM table AS t HAVING (x.column = t.id) OR (x.id = $1) OR ((x.type = t.id) AND (x.test IN ($2, $3))) OR (x.column = $4)', $query->sql);
+		Tester\Assert::same([7, 3, 5, 1], $query->params);
 	}
 
 
@@ -435,10 +435,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->from('table', 't')
 			->join($this->query()->select(['column' => 1]), 'x', 'x.column = t.id')
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN (SELECT 1 AS "column") AS x ON x.column = t.id', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN (SELECT 1 AS "column") AS x ON x.column = t.id', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -449,10 +449,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->from('table', 't')
 			->join(new Db\Sql\Query('SELECT 1 AS column'), 'x', 'x.column = t.id')
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN (SELECT 1 AS column) AS x ON x.column = t.id', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN (SELECT 1 AS column) AS x ON x.column = t.id', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -463,10 +463,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->from('table', 't')
 			->join('another', 'x', 'x.column = t.id')
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another AS x ON x.column = t.id', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another AS x ON x.column = t.id', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -481,10 +481,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->from('table', 't')
 			->join('another', 'x', $conditionOn)
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another AS x ON (x.column = t.id) AND (x.id IN ($1, $2))', $query->getSql());
-		Tester\Assert::same([1, 2], $query->getParams());
+		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another AS x ON (x.column = t.id) AND (x.id IN ($1, $2))', $query->sql);
+		Tester\Assert::same([1, 2], $query->params);
 	}
 
 
@@ -495,10 +495,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->from('table', 't')
 			->join('another', 'x', Db\Sql\Expression::create('(x.column = t.id) AND (x.id = ?)', 2))
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another AS x ON (x.column = t.id) AND (x.id = $1)', $query->getSql());
-		Tester\Assert::same([2], $query->getParams());
+		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another AS x ON (x.column = t.id) AND (x.id = $1)', $query->sql);
+		Tester\Assert::same([2], $query->params);
 	}
 
 
@@ -517,10 +517,10 @@ final class FluentQueryTest extends Tests\TestCase
 				->on('x', Db\Sql\Expression::create('x.type_id = ?', 'test'))
 				->on('x', $conditionOn)
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another AS x ON (x.column = t.id) AND (x.id = 1) AND (x.id = $1) AND (x.type_id = $2) AND ((x.condition_id = t.id) OR (x.condition_id IN ($3, $4)))', $query->getSql());
-		Tester\Assert::same([2, 'test', 3, 4], $query->getParams());
+		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another AS x ON (x.column = t.id) AND (x.id = 1) AND (x.id = $1) AND (x.type_id = $2) AND ((x.condition_id = t.id) OR (x.condition_id IN ($3, $4)))', $query->sql);
+		Tester\Assert::same([2, 'test', 3, 4], $query->params);
 	}
 
 
@@ -552,10 +552,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->from($this->query()->select(['column2'])->from('table2'), 't2')
 			->lateral('t2')
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT t1.column1, t2.column2 FROM table1 AS t1, LATERAL (SELECT column2 FROM table2) AS t2', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('SELECT t1.column1, t2.column2 FROM table1 AS t1, LATERAL (SELECT column2 FROM table2) AS t2', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -567,10 +567,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->join(new Db\Sql\Query('SELECT column FROM table2'), 't2', 't2.column = t1.column')
 			->lateral('t2')
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT t1.column AS "column1", t2.column AS "column2" FROM table1 AS t1 INNER JOIN LATERAL (SELECT column FROM table2) AS t2 ON t2.column = t1.column', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('SELECT t1.column AS "column1", t2.column AS "column2" FROM table1 AS t1 INNER JOIN LATERAL (SELECT column FROM table2) AS t2 ON t2.column = t1.column', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -582,10 +582,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->join($this->query()->select(['column'])->from('table2'), 't2', 't2.column = t1.column')
 			->lateral('t2')
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT t1.column AS "column1", t2.column AS "column2" FROM table1 AS t1 INNER JOIN LATERAL (SELECT column FROM table2) AS t2 ON t2.column = t1.column', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('SELECT t1.column AS "column1", t2.column AS "column2" FROM table1 AS t1 INNER JOIN LATERAL (SELECT column FROM table2) AS t2 ON t2.column = t1.column', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -596,10 +596,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->select(['column'])
 			->union('SELECT column FROM table2 AS t2')
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('(SELECT column FROM table AS t) UNION (SELECT column FROM table2 AS t2)', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('(SELECT column FROM table AS t) UNION (SELECT column FROM table2 AS t2)', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -614,10 +614,10 @@ final class FluentQueryTest extends Tests\TestCase
 					->from('table2', 't2'),
 			)
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('(SELECT column FROM table AS t) UNION (SELECT column FROM table2 AS t2)', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('(SELECT column FROM table AS t) UNION (SELECT column FROM table2 AS t2)', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -628,10 +628,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->select(['column'])
 			->union(new Db\Sql\Query('SELECT column FROM table2 AS t2'))
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('(SELECT column FROM table AS t) UNION (SELECT column FROM table2 AS t2)', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('(SELECT column FROM table AS t) UNION (SELECT column FROM table2 AS t2)', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -652,10 +652,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->from('table', 't')
 			->orderBy($this->query()->select(['sort_by_value(column)']))
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT column FROM table AS t ORDER BY (SELECT sort_by_value(column))', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('SELECT column FROM table AS t ORDER BY (SELECT sort_by_value(column))', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -666,10 +666,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->from('table', 't')
 			->orderBy(Db\Sql\Query::create('sort_by_value(column)'))
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT column FROM table AS t ORDER BY (sort_by_value(column))', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('SELECT column FROM table AS t ORDER BY (sort_by_value(column))', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -685,10 +685,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->insert('table')
 			->returning(['column'])
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('INSERT INTO table (column, column_from, column_fluent_query, column_query) VALUES($1, 3, (SELECT \'test_fluent\' WHERE 4 = $2), (SELECT \'test\' WHERE 5 = $3)) RETURNING column', $query->getSql());
-		Tester\Assert::same([1, 4, 5], $query->getParams());
+		Tester\Assert::same('INSERT INTO table (column, column_from, column_fluent_query, column_query) VALUES($1, 3, (SELECT \'test_fluent\' WHERE 4 = $2), (SELECT \'test\' WHERE 5 = $3)) RETURNING column', $query->sql);
+		Tester\Assert::same([1, 4, 5], $query->params);
 	}
 
 
@@ -705,10 +705,10 @@ final class FluentQueryTest extends Tests\TestCase
 				'column3' => 1,
 			])
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('INSERT INTO table (column2, column3, column1) VALUES($1, $2, $3)', $query->getSql());
-		Tester\Assert::same([2, 1, 3], $query->getParams());
+		Tester\Assert::same('INSERT INTO table (column2, column3, column1) VALUES($1, $2, $3)', $query->sql);
+		Tester\Assert::same([2, 1, 3], $query->params);
 	}
 
 
@@ -726,10 +726,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->insert('table')
 			->returning(['column'])
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('INSERT INTO table (column) VALUES($1), ($2), ($3), (4), ((SELECT \'test_fluent\' WHERE 6 = $4)), ((SELECT \'test\' WHERE 7 = $5)) RETURNING column', $query->getSql());
-		Tester\Assert::same([1, 2, 3, 6, 7], $query->getParams());
+		Tester\Assert::same('INSERT INTO table (column) VALUES($1), ($2), ($3), (4), ((SELECT \'test_fluent\' WHERE 6 = $4)), ((SELECT \'test\' WHERE 7 = $5)) RETURNING column', $query->sql);
+		Tester\Assert::same([1, 2, 3, 6, 7], $query->params);
 	}
 
 
@@ -746,10 +746,10 @@ final class FluentQueryTest extends Tests\TestCase
 			])
 			->insert('table')
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('INSERT INTO table (column) VALUES($1), ($2), ($3), ($4)', $query->getSql());
-		Tester\Assert::same([1, 2, 3, 4], $query->getParams());
+		Tester\Assert::same('INSERT INTO table (column) VALUES($1), ($2), ($3), ($4)', $query->sql);
+		Tester\Assert::same([1, 2, 3, 4], $query->params);
 	}
 
 
@@ -761,10 +761,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->from('table2', 't2')
 			->returning(['name'])
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('INSERT INTO table (name) SELECT column FROM table2 AS t2 RETURNING name', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('INSERT INTO table (name) SELECT column FROM table2 AS t2 RETURNING name', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -776,10 +776,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->from('table2', 't2')
 			->returning(['column'])
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('INSERT INTO table (column, name) SELECT column, column2 AS "name" FROM table2 AS t2 RETURNING column', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('INSERT INTO table (column, name) SELECT column, column2 AS "name" FROM table2 AS t2 RETURNING column', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -790,10 +790,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->select(['*'])
 			->from('table2')
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('INSERT INTO table1 SELECT * FROM table2', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('INSERT INTO table1 SELECT * FROM table2', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -840,10 +840,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->onConflict(['name'])
 			->doUpdate(['info'])
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('INSERT INTO table (name, info) VALUES($1, $2) ON CONFLICT (name) DO UPDATE SET info = EXCLUDED.info', $query->getSql());
-		Tester\Assert::same(['Bob', 'Text'], $query->getParams());
+		Tester\Assert::same('INSERT INTO table (name, info) VALUES($1, $2) ON CONFLICT (name) DO UPDATE SET info = EXCLUDED.info', $query->sql);
+		Tester\Assert::same(['Bob', 'Text'], $query->params);
 	}
 
 
@@ -859,10 +859,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->onConflict(['name', 'age'], Fluent\Condition::createAnd()->add('age < ?', 30))
 			->doUpdate(['info'])
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('INSERT INTO table (name, age, info) VALUES($1, $2, $3) ON CONFLICT (name, age) WHERE age < $4 DO UPDATE SET info = EXCLUDED.info', $query->getSql());
-		Tester\Assert::same(['Bob', 20, 'Text', 30], $query->getParams());
+		Tester\Assert::same('INSERT INTO table (name, age, info) VALUES($1, $2, $3) ON CONFLICT (name, age) WHERE age < $4 DO UPDATE SET info = EXCLUDED.info', $query->sql);
+		Tester\Assert::same(['Bob', 20, 'Text', 30], $query->params);
 	}
 
 
@@ -878,10 +878,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->onConflict('name_ukey')
 			->doUpdate(['info'])
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('INSERT INTO table (name, age, info) VALUES($1, $2, $3) ON CONFLICT ON CONSTRAINT name_ukey DO UPDATE SET info = EXCLUDED.info', $query->getSql());
-		Tester\Assert::same(['Bob', 20, 'Text'], $query->getParams());
+		Tester\Assert::same('INSERT INTO table (name, age, info) VALUES($1, $2, $3) ON CONFLICT ON CONSTRAINT name_ukey DO UPDATE SET info = EXCLUDED.info', $query->sql);
+		Tester\Assert::same(['Bob', 20, 'Text'], $query->params);
 	}
 
 
@@ -913,10 +913,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->onConflict(['name'])
 			->doUpdate(['info', 'name' => 'EXCLUDED.name || t.age'])
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('INSERT INTO table AS t (name, info) VALUES($1, $2) ON CONFLICT (name) DO UPDATE SET info = EXCLUDED.info, name = EXCLUDED.name || t.age', $query->getSql());
-		Tester\Assert::same(['Bob', 'Text'], $query->getParams());
+		Tester\Assert::same('INSERT INTO table AS t (name, info) VALUES($1, $2) ON CONFLICT (name) DO UPDATE SET info = EXCLUDED.info, name = EXCLUDED.name || t.age', $query->sql);
+		Tester\Assert::same(['Bob', 'Text'], $query->params);
 	}
 
 
@@ -931,10 +931,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->onConflict(['name'])
 			->doUpdate(['info', 'name' => Db\Sql\Expression::create('EXCLUDED.name || ?', 'Jimmy')])
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('INSERT INTO table (name, info) VALUES($1, $2) ON CONFLICT (name) DO UPDATE SET info = EXCLUDED.info, name = EXCLUDED.name || $3', $query->getSql());
-		Tester\Assert::same(['Bob', 'Text', 'Jimmy'], $query->getParams());
+		Tester\Assert::same('INSERT INTO table (name, info) VALUES($1, $2) ON CONFLICT (name) DO UPDATE SET info = EXCLUDED.info, name = EXCLUDED.name || $3', $query->sql);
+		Tester\Assert::same(['Bob', 'Text', 'Jimmy'], $query->params);
 	}
 
 
@@ -950,10 +950,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->onConflict(['name', 'age'])
 			->doUpdate(['info'], Fluent\Condition::createAnd()->add('age < ?', 30))
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('INSERT INTO table (name, age, info) VALUES($1, $2, $3) ON CONFLICT (name, age) DO UPDATE SET info = EXCLUDED.info WHERE age < $4', $query->getSql());
-		Tester\Assert::same(['Bob', 20, 'Text', 30], $query->getParams());
+		Tester\Assert::same('INSERT INTO table (name, age, info) VALUES($1, $2, $3) ON CONFLICT (name, age) DO UPDATE SET info = EXCLUDED.info WHERE age < $4', $query->sql);
+		Tester\Assert::same(['Bob', 20, 'Text', 30], $query->params);
 	}
 
 
@@ -968,10 +968,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->onConflict()
 			->doNothing()
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('INSERT INTO table (name, info) VALUES($1, $2) ON CONFLICT DO NOTHING', $query->getSql());
-		Tester\Assert::same(['Bob', 'Text'], $query->getParams());
+		Tester\Assert::same('INSERT INTO table (name, info) VALUES($1, $2) ON CONFLICT DO NOTHING', $query->sql);
+		Tester\Assert::same(['Bob', 'Text'], $query->params);
 	}
 
 
@@ -987,10 +987,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->doUpdate(['info'])
 			->returning(['id'])
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('INSERT INTO table (name, info) VALUES($1, $2) ON CONFLICT (name) DO UPDATE SET info = EXCLUDED.info RETURNING id', $query->getSql());
-		Tester\Assert::same(['Bob', 'Text'], $query->getParams());
+		Tester\Assert::same('INSERT INTO table (name, info) VALUES($1, $2) ON CONFLICT (name) DO UPDATE SET info = EXCLUDED.info RETURNING id', $query->sql);
+		Tester\Assert::same(['Bob', 'Text'], $query->params);
 	}
 
 
@@ -1105,10 +1105,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->where('t2.column', 100)
 			->returning(['t.column'])
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('UPDATE table AS t SET column = $1, column_from = t2.id, column_fluent_query = (SELECT \'test_fluent\' WHERE 2 = $2), column_query = (SELECT \'test\' WHERE 3 = $3) FROM table2 AS t2 WHERE t2.column = $4 RETURNING t.column', $query->getSql());
-		Tester\Assert::same([1, 2, 3, 100], $query->getParams());
+		Tester\Assert::same('UPDATE table AS t SET column = $1, column_from = t2.id, column_fluent_query = (SELECT \'test_fluent\' WHERE 2 = $2), column_query = (SELECT \'test\' WHERE 3 = $3) FROM table2 AS t2 WHERE t2.column = $4 RETURNING t.column', $query->sql);
+		Tester\Assert::same([1, 2, 3, 100], $query->params);
 	}
 
 
@@ -1125,10 +1125,10 @@ final class FluentQueryTest extends Tests\TestCase
 				'column3' => 1,
 			])
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('UPDATE table AS t SET column2 = $1, column3 = $2, column1 = $3', $query->getSql());
-		Tester\Assert::same([2, 1, 3], $query->getParams());
+		Tester\Assert::same('UPDATE table AS t SET column2 = $1, column3 = $2, column1 = $3', $query->sql);
+		Tester\Assert::same([2, 1, 3], $query->params);
 	}
 
 
@@ -1173,10 +1173,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->where('column', 100)
 			->returning(['c' => 'column'])
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('DELETE FROM table AS t WHERE column = $1 RETURNING column AS "c"', $query->getSql());
-		Tester\Assert::same([100], $query->getParams());
+		Tester\Assert::same('DELETE FROM table AS t WHERE column = $1 RETURNING column AS "c"', $query->sql);
+		Tester\Assert::same([100], $query->params);
 	}
 
 
@@ -1187,10 +1187,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->where('column', 100)
 			->returning(['c' => $this->query()->select(['to_value(column)'])])
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('DELETE FROM table AS t WHERE column = $1 RETURNING (SELECT to_value(column)) AS "c"', $query->getSql());
-		Tester\Assert::same([100], $query->getParams());
+		Tester\Assert::same('DELETE FROM table AS t WHERE column = $1 RETURNING (SELECT to_value(column)) AS "c"', $query->sql);
+		Tester\Assert::same([100], $query->params);
 	}
 
 
@@ -1201,10 +1201,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->where('column', 100)
 			->returning(['c' => new Db\Sql\Query('to_value(column)')])
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('DELETE FROM table AS t WHERE column = $1 RETURNING (to_value(column)) AS "c"', $query->getSql());
-		Tester\Assert::same([100], $query->getParams());
+		Tester\Assert::same('DELETE FROM table AS t WHERE column = $1 RETURNING (to_value(column)) AS "c"', $query->sql);
+		Tester\Assert::same([100], $query->params);
 	}
 
 
@@ -1216,10 +1216,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->whenMatched('UPDATE SET balance = balance + transaction_value')
 			->whenNotMatched('INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)')
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('MERGE INTO customer_account AS ca USING recent_transactions AS t ON t.customer_id = ca.customer_id WHEN MATCHED THEN UPDATE SET balance = balance + transaction_value WHEN NOT MATCHED THEN INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('MERGE INTO customer_account AS ca USING recent_transactions AS t ON t.customer_id = ca.customer_id WHEN MATCHED THEN UPDATE SET balance = balance + transaction_value WHEN NOT MATCHED THEN INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -1231,10 +1231,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->whenMatched('UPDATE SET balance = balance + transaction_value')
 			->whenNotMatched('INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)')
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('MERGE INTO customer_account AS ca USING (SELECT customer_id, transaction_value FROM recent_transactions WHERE customer_id > $1) AS t ON t.customer_id = ca.customer_id WHEN MATCHED THEN UPDATE SET balance = balance + transaction_value WHEN NOT MATCHED THEN INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)', $query->getSql());
-		Tester\Assert::same([10], $query->getParams());
+		Tester\Assert::same('MERGE INTO customer_account AS ca USING (SELECT customer_id, transaction_value FROM recent_transactions WHERE customer_id > $1) AS t ON t.customer_id = ca.customer_id WHEN MATCHED THEN UPDATE SET balance = balance + transaction_value WHEN NOT MATCHED THEN INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)', $query->sql);
+		Tester\Assert::same([10], $query->params);
 	}
 
 
@@ -1246,10 +1246,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->whenMatched('UPDATE SET balance = balance + transaction_value')
 			->whenNotMatched('INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)')
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('MERGE INTO customer_account AS ca USING (SELECT customer_id, transaction_value FROM recent_transactions WHERE customer_id > $1) AS t ON t.customer_id = ca.customer_id WHEN MATCHED THEN UPDATE SET balance = balance + transaction_value WHEN NOT MATCHED THEN INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)', $query->getSql());
-		Tester\Assert::same([10], $query->getParams());
+		Tester\Assert::same('MERGE INTO customer_account AS ca USING (SELECT customer_id, transaction_value FROM recent_transactions WHERE customer_id > $1) AS t ON t.customer_id = ca.customer_id WHEN MATCHED THEN UPDATE SET balance = balance + transaction_value WHEN NOT MATCHED THEN INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)', $query->sql);
+		Tester\Assert::same([10], $query->params);
 	}
 
 
@@ -1261,10 +1261,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->whenMatched('UPDATE SET balance = balance + transaction_value')
 			->whenNotMatched('INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)')
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('MERGE INTO customer_account AS ca USING (SELECT customer_id, transaction_value FROM recent_transactions) AS t ON (t.customer_id = ca.customer_id) AND (t.customer_id > $1) WHEN MATCHED THEN UPDATE SET balance = balance + transaction_value WHEN NOT MATCHED THEN INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)', $query->getSql());
-		Tester\Assert::same([10], $query->getParams());
+		Tester\Assert::same('MERGE INTO customer_account AS ca USING (SELECT customer_id, transaction_value FROM recent_transactions) AS t ON (t.customer_id = ca.customer_id) AND (t.customer_id > $1) WHEN MATCHED THEN UPDATE SET balance = balance + transaction_value WHEN NOT MATCHED THEN INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)', $query->sql);
+		Tester\Assert::same([10], $query->params);
 	}
 
 
@@ -1278,10 +1278,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->whenMatched('UPDATE SET stock = w.stock - s.stock_delta', Db\Sql\Expression::create('w.stock + s.stock_delta < ?', 0))
 			->whenMatched('DELETE')
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('MERGE INTO wines AS w USING wine_stock_changes AS s ON s.winename = w.winename WHEN NOT MATCHED AND s.stock_delta > 0 THEN INSERT VALUES(s.winename, s.stock_delta) WHEN MATCHED AND w.stock + s.stock_delta > $1 THEN UPDATE SET stock = w.stock + s.stock_delta WHEN MATCHED AND w.stock + s.stock_delta < $2 THEN UPDATE SET stock = w.stock - s.stock_delta WHEN MATCHED THEN DELETE', $query->getSql());
-		Tester\Assert::same([0, 0], $query->getParams());
+		Tester\Assert::same('MERGE INTO wines AS w USING wine_stock_changes AS s ON s.winename = w.winename WHEN NOT MATCHED AND s.stock_delta > 0 THEN INSERT VALUES(s.winename, s.stock_delta) WHEN MATCHED AND w.stock + s.stock_delta > $1 THEN UPDATE SET stock = w.stock + s.stock_delta WHEN MATCHED AND w.stock + s.stock_delta < $2 THEN UPDATE SET stock = w.stock - s.stock_delta WHEN MATCHED THEN DELETE', $query->sql);
+		Tester\Assert::same([0, 0], $query->params);
 	}
 
 
@@ -1293,10 +1293,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->whenNotMatched('INSERT VALUES(s.winename, s.stock_delta)')
 			->whenMatched('DO NOTHING')
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('MERGE INTO wines AS w USING wine_stock_changes AS s ON s.winename = w.winename WHEN NOT MATCHED THEN INSERT VALUES(s.winename, s.stock_delta) WHEN MATCHED THEN DO NOTHING', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('MERGE INTO wines AS w USING wine_stock_changes AS s ON s.winename = w.winename WHEN NOT MATCHED THEN INSERT VALUES(s.winename, s.stock_delta) WHEN MATCHED THEN DO NOTHING', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -1308,10 +1308,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->whenNotMatched(Db\Sql\Expression::create('INSERT (winename, balance) VALUES($1, $2)', 'Red wine', 10))
 			->whenMatched('UPDATE SET balance = $2')
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('MERGE INTO wines AS w USING (SELECT 1) AS s ON w.winename = $1 WHEN NOT MATCHED THEN INSERT (winename, balance) VALUES($1, $2) WHEN MATCHED THEN UPDATE SET balance = $2', $query->getSql());
-		Tester\Assert::same(['Red wine', 10], $query->getParams());
+		Tester\Assert::same('MERGE INTO wines AS w USING (SELECT 1) AS s ON w.winename = $1 WHEN NOT MATCHED THEN INSERT (winename, balance) VALUES($1, $2) WHEN MATCHED THEN UPDATE SET balance = $2', $query->sql);
+		Tester\Assert::same(['Red wine', 10], $query->params);
 	}
 
 
@@ -1367,9 +1367,9 @@ final class FluentQueryTest extends Tests\TestCase
 
 	public function testTruncate(): void
 	{
-		$query = $this->query()->truncate('table')->createSqlQuery()->createQuery();
-		Tester\Assert::same('TRUNCATE table', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		$query = $this->query()->truncate('table')->createSqlQuery()->createPgQuery();
+		Tester\Assert::same('TRUNCATE table', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -1384,10 +1384,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->where('region != ?', 'Prague')
 			->groupBy('region', 'product')
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('WITH regional_sales AS (SELECT region, SUM(amount) AS total_sales FROM orders GROUP BY region), top_regions AS (SELECT region FROM regional_sales WHERE total_sales > (SELECT SUM(total_sales) / 10 FROM regional_sales) AND total_sales < $1) SELECT region, product, SUM(quantity) AS "product_units", SUM(amount) AS "product_sales" FROM orders WHERE (region IN (SELECT region FROM top_regions)) AND (region != $2) GROUP BY region, product', $query->getSql());
-		Tester\Assert::same([10000, 'Prague'], $query->getParams());
+		Tester\Assert::same('WITH regional_sales AS (SELECT region, SUM(amount) AS total_sales FROM orders GROUP BY region), top_regions AS (SELECT region FROM regional_sales WHERE total_sales > (SELECT SUM(total_sales) / 10 FROM regional_sales) AND total_sales < $1) SELECT region, product, SUM(quantity) AS "product_units", SUM(amount) AS "product_sales" FROM orders WHERE (region IN (SELECT region FROM top_regions)) AND (region != $2) GROUP BY region, product', $query->sql);
+		Tester\Assert::same([10000, 'Prague'], $query->params);
 	}
 
 
@@ -1399,10 +1399,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->select(['sum(n)'])
 			->from('t')
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('WITH RECURSIVE t(n) AS (VALUES (1) UNION ALL SELECT n + 1 FROM t WHERE n < 100) SELECT sum(n) FROM t', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('WITH RECURSIVE t(n) AS (VALUES (1) UNION ALL SELECT n + 1 FROM t WHERE n < 100) SELECT sum(n) FROM t', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -1427,10 +1427,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->from('search_tree')
 			->orderBy('ordercol')
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('WITH search_tree(id, link, data) AS ((SELECT t.id, t.link, t.data FROM tree AS t) UNION ALL (SELECT t.id, t.link, t.data FROM tree AS t, search_tree AS st WHERE t.id = st.link)) SEARCH BREADTH FIRST BY id SET ordercol SELECT * FROM search_tree ORDER BY ordercol', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('WITH search_tree(id, link, data) AS ((SELECT t.id, t.link, t.data FROM tree AS t) UNION ALL (SELECT t.id, t.link, t.data FROM tree AS t, search_tree AS st WHERE t.id = st.link)) SEARCH BREADTH FIRST BY id SET ordercol SELECT * FROM search_tree ORDER BY ordercol', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -1443,10 +1443,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->join('w', 'w2', 'w1.key = w2.ref')
 			->where('w2.key', 123)
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('WITH w AS NOT MATERIALIZED (SELECT * FROM big_table) SELECT * FROM w AS w1 INNER JOIN w AS w2 ON w1.key = w2.ref WHERE w2.key = $1', $query->getSql());
-		Tester\Assert::same([123], $query->getParams());
+		Tester\Assert::same('WITH w AS NOT MATERIALIZED (SELECT * FROM big_table) SELECT * FROM w AS w1 INNER JOIN w AS w2 ON w1.key = w2.ref WHERE w2.key = $1', $query->sql);
+		Tester\Assert::same([123], $query->params);
 	}
 
 
@@ -1465,10 +1465,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->select(['*'])
 			->from('moved_rows')
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('WITH moved_rows AS (DELETE FROM products WHERE (date >= $1) AND (date < $2) RETURNING *) INSERT INTO products_log SELECT * FROM moved_rows', $query->getSql());
-		Tester\Assert::same(['2010-10-01', '2010-11-01'], $query->getParams());
+		Tester\Assert::same('WITH moved_rows AS (DELETE FROM products WHERE (date >= $1) AND (date < $2) RETURNING *) INSERT INTO products_log SELECT * FROM moved_rows', $query->sql);
+		Tester\Assert::same(['2010-10-01', '2010-11-01'], $query->params);
 	}
 
 
@@ -1492,10 +1492,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->delete('parts')
 			->where('part', $this->query()->select(['part'])->from('included_parts'))
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('WITH included_parts(sub_part, part) AS ((SELECT sub_part, part FROM parts WHERE part = $1) UNION ALL (SELECT p.sub_part, p.part FROM included_parts AS pr, parts AS p WHERE p.part = pr.sub_part)) DELETE FROM parts WHERE part IN (SELECT part FROM included_parts)', $query->getSql());
-		Tester\Assert::same(['our_product'], $query->getParams());
+		Tester\Assert::same('WITH included_parts(sub_part, part) AS ((SELECT sub_part, part FROM parts WHERE part = $1) UNION ALL (SELECT p.sub_part, p.part FROM included_parts AS pr, parts AS p WHERE p.part = pr.sub_part)) DELETE FROM parts WHERE part IN (SELECT part FROM included_parts)', $query->sql);
+		Tester\Assert::same(['our_product'], $query->params);
 	}
 
 
@@ -1512,10 +1512,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->select(['*'])
 			->from('t')
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('WITH t AS (UPDATE products SET price = price * 1.05 RETURNING *) SELECT * FROM t', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('WITH t AS (UPDATE products SET price = price * 1.05 RETURNING *) SELECT * FROM t', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -1532,10 +1532,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->where('column', 100)
 			->prefix('WITH cte AS (?)', $withQuery)
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('WITH cte AS (SELECT columnWith FROM tableWith WHERE columnWith > $1) SELECT column FROM table WHERE column = $2', $query->getSql());
-		Tester\Assert::same([5, 100], $query->getParams());
+		Tester\Assert::same('WITH cte AS (SELECT columnWith FROM tableWith WHERE columnWith > $1) SELECT column FROM table WHERE column = $2', $query->sql);
+		Tester\Assert::same([5, 100], $query->params);
 	}
 
 
@@ -1547,19 +1547,19 @@ final class FluentQueryTest extends Tests\TestCase
 			->where('column', 100)
 			->suffix('FOR UPDATE')
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT column FROM table WHERE column = $1 FOR UPDATE', $query->getSql());
-		Tester\Assert::same([100], $query->getParams());
+		Tester\Assert::same('SELECT column FROM table WHERE column = $1 FOR UPDATE', $query->sql);
+		Tester\Assert::same([100], $query->params);
 
 		$query = $this->query()
 			->truncate('table')
 			->suffix('CASCADE')
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('TRUNCATE table CASCADE', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('TRUNCATE table CASCADE', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -1571,10 +1571,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->suffix('ON CONFLICT (column) DO NOTHING')
 			->returning(['column'])
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('INSERT INTO table (column) VALUES($1) ON CONFLICT (column) DO NOTHING RETURNING column', $query->getSql());
-		Tester\Assert::same(['value'], $query->getParams());
+		Tester\Assert::same('INSERT INTO table (column) VALUES($1) ON CONFLICT (column) DO NOTHING RETURNING column', $query->sql);
+		Tester\Assert::same(['value'], $query->params);
 
 		$query = $this->query()
 			->update('table')
@@ -1582,20 +1582,20 @@ final class FluentQueryTest extends Tests\TestCase
 			->suffix('WHERE CURRENT OF cursor_name')
 			->returning(['column'])
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('UPDATE table SET column = $1 WHERE CURRENT OF cursor_name RETURNING column', $query->getSql());
-		Tester\Assert::same(['value'], $query->getParams());
+		Tester\Assert::same('UPDATE table SET column = $1 WHERE CURRENT OF cursor_name RETURNING column', $query->sql);
+		Tester\Assert::same(['value'], $query->params);
 
 		$query = $this->query()
 			->delete('table')
 			->suffix('WHERE CURRENT OF cursor_name')
 			->returning(['column'])
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('DELETE FROM table WHERE CURRENT OF cursor_name RETURNING column', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('DELETE FROM table WHERE CURRENT OF cursor_name RETURNING column', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -1613,10 +1613,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->select(['*'])
 			->from('table')
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT * FROM table WHERE (column = $1) OR (column2 IN ($2, $3)) OR ((column IN (SELECT 1)) AND (column2 = ANY(SELECT 2))) OR (column3 IS NOT NULL)', $query->getSql());
-		Tester\Assert::same([1, 2, 3], $query->getParams());
+		Tester\Assert::same('SELECT * FROM table WHERE (column = $1) OR (column2 IN ($2, $3)) OR ((column IN (SELECT 1)) AND (column2 = ANY(SELECT 2))) OR (column3 IS NOT NULL)', $query->sql);
+		Tester\Assert::same([1, 2, 3], $query->params);
 	}
 
 
@@ -1635,10 +1635,10 @@ final class FluentQueryTest extends Tests\TestCase
 			->from('table')
 			->groupBy('column', 'column2')
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT * FROM table GROUP BY column, column2 HAVING (column = $1) OR (column2 IN ($2, $3)) OR ((column IN (SELECT 1)) AND (column2 = ANY(SELECT 2))) OR (column3 IS NOT NULL)', $query->getSql());
-		Tester\Assert::same([1, 2, 3], $query->getParams());
+		Tester\Assert::same('SELECT * FROM table GROUP BY column, column2 HAVING (column = $1) OR (column2 IN ($2, $3)) OR ((column IN (SELECT 1)) AND (column2 = ANY(SELECT 2))) OR (column3 IS NOT NULL)', $query->sql);
+		Tester\Assert::same([1, 2, 3], $query->params);
 	}
 
 
@@ -1651,7 +1651,7 @@ final class FluentQueryTest extends Tests\TestCase
 				->query()
 				->select(['*'])
 				->createSqlQuery()
-				->createQuery();
+				->createPgQuery();
 		}, Fluent\Exceptions\ConditionException::class, NULL, Fluent\Exceptions\ConditionException::BAD_PARAMS_COUNT);
 	}
 
@@ -1786,19 +1786,19 @@ final class FluentQueryTest extends Tests\TestCase
 		$query = $this->query()
 			->select([1]);
 
-		$sql = $query->createSqlQuery()->createQuery();
+		$sql = $query->createSqlQuery()->createPgQuery();
 
-		Tester\Assert::same('SELECT 1', $sql->getSql());
-		Tester\Assert::same([], $sql->getParams());
+		Tester\Assert::same('SELECT 1', $sql->sql);
+		Tester\Assert::same([], $sql->params);
 
 		$query2 = $query
 			->reset(Fluent\Query::PARAM_SELECT)
 			->select([2])
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT 2', $query2->getSql());
-		Tester\Assert::same([], $query2->getParams());
+		Tester\Assert::same('SELECT 2', $query2->sql);
+		Tester\Assert::same([], $query2->params);
 	}
 
 
@@ -1864,17 +1864,17 @@ final class FluentQueryTest extends Tests\TestCase
 
 		$testBaseQuery = $baseQuery
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another_table AS at ON (at.id = t.another_table_id) AND (at.type_id = $1) WHERE x.column = $2 HAVING count(*) > $3', $testBaseQuery->getSql());
-		Tester\Assert::same([2, 1, 10], $testBaseQuery->getParams());
+		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another_table AS at ON (at.id = t.another_table_id) AND (at.type_id = $1) WHERE x.column = $2 HAVING count(*) > $3', $testBaseQuery->sql);
+		Tester\Assert::same([2, 1, 10], $testBaseQuery->params);
 
 		$testClonedQuery = $clonedQuery
 			->createSqlQuery()
-			->createQuery();
+			->createPgQuery();
 
-		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another_table AS at ON (at.id = t.another_table_id) AND (at.type_id = $1) AND (at.another_type = $2) WHERE (x.column = $3) AND (x.another_column = $4) HAVING (count(*) > $5) AND (avg(column) = $6)', $testClonedQuery->getSql());
-		Tester\Assert::same([2, 3, 1, 4, 10, 1], $testClonedQuery->getParams());
+		Tester\Assert::same('SELECT x.column FROM table AS t INNER JOIN another_table AS at ON (at.id = t.another_table_id) AND (at.type_id = $1) AND (at.another_type = $2) WHERE (x.column = $3) AND (x.another_column = $4) HAVING (count(*) > $5) AND (avg(column) = $6)', $testClonedQuery->sql);
+		Tester\Assert::same([2, 3, 1, 4, 10, 1], $testClonedQuery->params);
 	}
 
 

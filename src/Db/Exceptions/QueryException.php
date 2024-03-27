@@ -14,13 +14,13 @@ class QueryException extends Exception
 	public const MISSING_PARAM = 6;
 	public const EXTRA_PARAM = 7;
 
-	private Db\Query|NULL $query;
+	private Db\PgQuery|NULL $query;
 
 
 	public function __construct(
 		string $message = '',
 		int $code = 0,
-		Db\Query|NULL $query = NULL,
+		Db\PgQuery|NULL $query = NULL,
 		\Throwable|NULL $previous = NULL,
 	)
 	{
@@ -29,41 +29,41 @@ class QueryException extends Exception
 	}
 
 
-	public function getQuery(): Db\Query|NULL
+	public function getQuery(): Db\PgQuery|NULL
 	{
 		return $this->query;
 	}
 
 
-	public static function queryFailed(Db\Query $query, string $error): self
+	public static function queryFailed(Db\PgQuery $query, string $error): self
 	{
-		return new self(\sprintf('Query failed [%s]: \'%s\'.', $error, $query->getSql()), self::QUERY_FAILED, $query);
+		return new self(\sprintf('Query failed [%s]: \'%s\'.', $error, $query->sql), self::QUERY_FAILED, $query);
 	}
 
 
-	public static function asyncQueryFailed(Db\Query $query, string $error): self
+	public static function asyncQueryFailed(Db\PgQuery $query, string $error): self
 	{
-		return new self(\sprintf('Async query failed [%s]: \'%s\'.', $error, $query->getSql()), self::ASYNC_QUERY_FAILED, $query);
+		return new self(\sprintf('Async query failed [%s]: \'%s\'.', $error, $query->sql), self::ASYNC_QUERY_FAILED, $query);
 	}
 
 
 	public static function preparedStatementQueryFailed(
 		string $preparedStatementName,
-		Db\Query $query,
+		Db\PgQuery $query,
 		string $error,
 	): self
 	{
-		return new self(\sprintf('Prepared statement failed [%s]: \'%s\', query: \'%s\'.', $error, $preparedStatementName, $query->getSql()), self::PREPARED_STATEMENT_QUERY_FAILED, $query);
+		return new self(\sprintf('Prepared statement failed [%s]: \'%s\', query: \'%s\'.', $error, $preparedStatementName, $query->sql), self::PREPARED_STATEMENT_QUERY_FAILED, $query);
 	}
 
 
 	public static function asyncPreparedStatementQueryFailed(
 		string $preparedStatementName,
-		Db\Query $query,
+		Db\PgQuery $query,
 		string $error,
 	): self
 	{
-		return new self(\sprintf('Async prepared statement failed [%s]: \'%s\', query \'%s\'.', $error, $preparedStatementName, $query->getSql()), self::ASYNC_PREPARED_STATEMENT_QUERY_FAILED, $query);
+		return new self(\sprintf('Async prepared statement failed [%s]: \'%s\', query \'%s\'.', $error, $preparedStatementName, $query->sql), self::ASYNC_PREPARED_STATEMENT_QUERY_FAILED, $query);
 	}
 
 

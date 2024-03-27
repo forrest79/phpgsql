@@ -11,7 +11,7 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 {
 	protected PgSql\Result $queryResource;
 
-	private Query $query;
+	private PgQuery $query;
 
 	private RowFactory $rowFactory;
 
@@ -34,7 +34,7 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 	 */
 	public function __construct(
 		PgSql\Result $queryResource,
-		Query $query,
+		PgQuery $query,
 		RowFactory $rowFactory,
 		DataTypeParser $dataTypeParser,
 		array|NULL $dataTypesCache,
@@ -310,7 +310,7 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 	}
 
 
-	public function getQuery(): Query
+	public function getQuery(): PgQuery
 	{
 		return $this->query;
 	}

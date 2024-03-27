@@ -11,7 +11,7 @@ class Query implements Db\Sql
 	/** @var list<mixed> */
 	private array $params;
 
-	private Db\Query|NULL $query = NULL;
+	private Db\PgQuery|NULL $query = NULL;
 
 
 	/**
@@ -42,10 +42,10 @@ class Query implements Db\Sql
 	/**
 	 * Create SQL query for pg_query_params function.
 	 */
-	public function createQuery(): Db\Query
+	public function createPgQuery(): Db\PgQuery
 	{
 		if ($this->query === NULL) {
-			$this->query = self::prepareQuery($this->sql, $this->params, 0);
+			$this->query = self::preparePgQuery($this->sql, $this->params, 0);
 		}
 
 		return $this->query;
@@ -55,7 +55,7 @@ class Query implements Db\Sql
 	/**
 	 * @param list<mixed> $params
 	 */
-	private static function prepareQuery(string $sql, array $params, int $paramIndex): Db\Query
+	private static function preparePgQuery(string $sql, array $params, int $paramIndex): Db\PgQuery
 	{
 		$origParamIndex = 0;
 		$parsedParams = [];
@@ -85,10 +85,10 @@ class Query implements Db\Sql
 				} else if (\is_bool($param)) {
 					return $param === TRUE ? 'TRUE' : 'FALSE';
 				} else if ($param instanceof Db\Sql) {
-					$subquerySql = self::prepareQuery($param->getSql(), $param->getParams(), $paramIndex);
-					$paramIndex += \count($subquerySql->getParams());
-					$parsedParams = \array_merge($parsedParams, $subquerySql->getParams());
-					return $subquerySql->getSql();
+					$subquerySql = self::preparePgQuery($param->getSql(), $param->getParams(), $paramIndex);
+					$paramIndex += \count($subquerySql->params);
+					$parsedParams = \array_merge($parsedParams, $subquerySql->params);
+					return $subquerySql->sql;
 				}
 
 				$parsedParams[] = ($param instanceof \BackedEnum) ? $param->value : $param;
@@ -108,7 +108,7 @@ class Query implements Db\Sql
 			$parsedParams = \array_values($params);
 		}
 
-		return new Db\Query($sql, $parsedParams);
+		return new Db\PgQuery($sql, $parsedParams);
 	}
 
 
