@@ -257,6 +257,28 @@ final class FluentConnectionTest extends Tests\TestCase
 	}
 
 
+	public function testWhereIf(): void
+	{
+		$queryWithTrueIfCondition = $this->fluentConnection
+			->whereIf(TRUE, 'TRUE')
+			->select([1])
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('SELECT 1 WHERE TRUE', $queryWithTrueIfCondition->getSql());
+		Tester\Assert::same([], $queryWithTrueIfCondition->getParams());
+
+		$queryWithFalseIfCondition = $this->fluentConnection
+			->whereIf(FALSE, 'TRUE')
+			->select([1])
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('SELECT 1', $queryWithFalseIfCondition->getSql());
+		Tester\Assert::same([], $queryWithFalseIfCondition->getParams());
+	}
+
+
 	public function testWhereAnd(): void
 	{
 		$query = $this->fluentConnection

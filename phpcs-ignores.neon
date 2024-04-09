@@ -613,6 +613,12 @@ ignoreErrors:
 
 	-
 		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "whereIf"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
 		message: Visibility must be declared on method "whereAnd"
 		count: 1
 		path: src/Fluent/Sql.php

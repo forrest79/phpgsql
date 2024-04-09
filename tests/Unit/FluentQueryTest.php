@@ -216,6 +216,30 @@ final class FluentQueryTest extends Tests\TestCase
 	}
 
 
+	public function testWhereIf(): void
+	{
+		$queryWithTrueIfCondition = $this->query()
+			->select(['x.column'])
+			->from('table', 't')
+			->whereIf(TRUE, 'x.column = t.id')
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('SELECT x.column FROM table AS t WHERE x.column = t.id', $queryWithTrueIfCondition->getSql());
+		Tester\Assert::same([], $queryWithTrueIfCondition->getParams());
+
+		$queryWithFalseIfCondition = $this->query()
+			->select(['x.column'])
+			->from('table', 't')
+			->whereIf(FALSE, 'x.column = t.id')
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('SELECT x.column FROM table AS t', $queryWithFalseIfCondition->getSql());
+		Tester\Assert::same([], $queryWithFalseIfCondition->getParams());
+	}
+
+
 	public function testWhereAnd(): void
 	{
 		$complex = Fluent\Complex::createAnd()

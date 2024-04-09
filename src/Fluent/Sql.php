@@ -90,6 +90,9 @@ interface Sql
 	function where(string|Complex|Db\Sql $condition, mixed ...$params): Query;
 
 
+	function whereIf(bool $ifCondition, string|Complex|Db\Sql $condition, mixed ...$params): Query;
+
+
 	/**
 	 * @param list<string|list<mixed>|Db\Sql|Complex> $conditions
 	 */

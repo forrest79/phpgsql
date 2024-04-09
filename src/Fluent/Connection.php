@@ -187,6 +187,15 @@ class Connection extends Db\Connection implements Sql
 
 
 	/**
+	 * @throws Exceptions\QueryException
+	 */
+	public function whereIf(bool $ifCondition, string|Complex|Db\Sql $condition, mixed ...$params): QueryExecute
+	{
+		return $this->createQuery()->whereIf($ifCondition, $condition, ...$params);
+	}
+
+
+	/**
 	 * @param list<string|list<mixed>|Db\Sql|Complex> $conditions
 	 * @throws Exceptions\QueryException
 	 */

@@ -90,6 +90,9 @@ Every query is `SELECT` at first, until you call `->insert(...)`, `->update(...)
 - `where($condition, ...$params)` (or `having(...)`) - defines `WHERE` or `HAVING` conditions. you can provide condition as a `string`. When `string` condition is used, you can add `$parameters`. When in the condition is no `?` and only one parameter is used, comparision is made between condition and parameter. If parameter is scalar, simple `=` is used, for an `array` is used `IN` operator, the same applies ale for `Query` (`Fluent\Query` or `Db\Sql`). And for `NULL` is used `IS` operator. This could be handy when you want to use more parameter types in one condition. For example, you can provide `int` and `=` will be use and if you provide `array<int>` - `IN` operator will be used and the query will be working for the both parameter types. More complex conditions can be written manually as a `string` with `?` for parameters. Or you can use `Complex` or `Db\Sql` as condition. In this case, `$params` must be blank. All `where()` or `having()` calls is connected with logic `AND`.
 
 
+- `whereIf(bool $ifCondition, $condition, ...$params)` - the same as classis `where` method, but this condition is ommitted when `$ifCondition` is `FALSE`.
+
+
 - `whereAnd(array $conditions = []): Complex` (or `whereOr(...)` / `havingAnd(...)` / `havingOr()`) - with these methods, you can generate condition groups. Ale provided conditions are connected with logic `AND` for `whereAnd()` and `havingAnd()` and with logic `OR` for `whereOr()` and `havingOr()`. All these methods return `Complex` object (more about this later). `$conditions` items can be simple `string`, another `array` (this is a little bit magic - this works as `where()`/`having()` method - first item in this `array` is conditions and next items are parameters), `Complex` or `Db\Sql`. 
 
 
@@ -285,6 +288,38 @@ $query = $connection->table('users')
   ->select(['*']);
 
 dump($query); // (Query) SELECT * FROM users WHERE (column = $1) OR (column2 IN ($2, $3)) OR ((column IN (SELECT 1)) AND (column2 = ANY(SELECT 2))) OR (column3 IS NOT NULL) [Params: (array) [1, 2, 3]]
+```
+
+To simplify a query definition, you can use a special version of `where()` method - the `whereIf()` method. This where is used in the query only if the first `bool` paramter is `TRUE`. For example, instead of this:
+
+```php
+$listItems = function (string|NULL $filterName) use ($connection): Forrest79\PhPgSql\Fluent\Query
+{
+  $query = $connection->table('users')
+    ->select(['*']);
+  
+  if ($filterName !== NULL) {
+    $query->where('name ILIKE ?', $filterName);
+  }
+  
+  return $query;
+};
+
+dump($listItems(NULL)); // (Query) SELECT * FROM users
+```
+
+You can write this:
+
+
+```php
+$listItems = function (string|NULL $filterName) use ($connection): Forrest79\PhPgSql\Fluent\Query
+{
+  return $connection->table('users')
+    ->select(['*'])
+    ->whereIf($filterName !== NULL, 'name ILIKE ?', $filterName);
+};
+
+dump($listItems('forrest79')); // (Query) SELECT * FROM users WHERE name ILIKE $1 [Params: (array) ['forrest79']]
 ```
 
 ### Insert

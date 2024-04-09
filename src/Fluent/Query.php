@@ -380,6 +380,19 @@ class Query implements Sql
 
 
 	/**
+	 * @throws Exceptions\QueryException
+	 */
+	public function whereIf(bool $ifCondition, string|Complex|Db\Sql $condition, mixed ...$params): static
+	{
+		if ($ifCondition) {
+			return $this->where($condition, ...$params);
+		}
+
+		return $this;
+	}
+
+
+	/**
 	 * @param list<string|list<mixed>|Db\Sql|Complex> $conditions
 	 * @throws Exceptions\QueryException
 	 */
