@@ -934,3 +934,7 @@ $connection->execute('DO $BODY$ BEGIN RAISE NOTICE \'Test notice\'; END; $BODY$ 
 $notices = $this->connection->getNotices();
 dump($notices); // (array) ['NOTICE:  Test notice']
 ```
+
+## Extending
+
+You can update every query and its parameters before it is sent to the database. Extends `Connection` and overwrites method `prepareQuery(string|Query $query): string|Query`. If `$query` parameter is a `string`, you must return `string` (for `execute()/asyncExecute()` and `prepareStatement()/asyncPrepareStatement()` methods, where a simple string query is used), if `$query` parameter is a `Query` object, you must return also a `Query` object (for `query()/asyncQuery()` methods).   

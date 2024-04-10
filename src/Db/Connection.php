@@ -300,10 +300,10 @@ class Connection
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
-	public function query(string|Sql\Query $sqlQuery, mixed ...$params): Result
+	public function query(string|Query|Sql\Query $sql, mixed ...$params): Result
 	{
 		\assert(\array_is_list($params));
-		return $this->queryArgs($sqlQuery, $params);
+		return $this->queryArgs($sql, $params);
 	}
 
 
@@ -312,9 +312,9 @@ class Connection
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
-	public function queryArgs(string|Sql\Query $sqlQuery, array $params): Result
+	public function queryArgs(string|Query|Sql\Query $sql, array $params): Result
 	{
-		$query = $this->normalizeSqlQuery($sqlQuery, $params)->createQuery();
+		$query = $this->prepareQuery($this->normalizeQuery($sql, $params));
 
 		$startTime = $this->events->hasOnQuery() ? \hrtime(TRUE) : NULL;
 
@@ -362,6 +362,8 @@ class Connection
 	 */
 	public function execute(string $sql): self
 	{
+		$sql = $this->prepareQuery($sql);
+
 		$startTime = $this->events->hasOnQuery() ? \hrtime(TRUE) : NULL;
 
 		$resource = @\pg_query($this->getConnectedResource(), $sql); // intentionally @
@@ -381,10 +383,10 @@ class Connection
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
-	public function asyncQuery(string|Sql\Query $sqlQuery, mixed ...$params): AsyncQuery
+	public function asyncQuery(string|Query|Sql\Query $sql, mixed ...$params): AsyncQuery
 	{
 		\assert(\array_is_list($params));
-		return $this->asyncQueryArgs($sqlQuery, $params);
+		return $this->asyncQueryArgs($sql, $params);
 	}
 
 
@@ -393,9 +395,9 @@ class Connection
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
-	public function asyncQueryArgs(string|Sql\Query $sqlQuery, array $params): AsyncQuery
+	public function asyncQueryArgs(string|Query|Sql\Query $sql, array $params): AsyncQuery
 	{
-		$query = $this->normalizeSqlQuery($sqlQuery, $params)->createQuery();
+		$query = $this->prepareQuery($this->normalizeQuery($sql, $params));
 
 		$queryParams = $query->getParams();
 		if ($queryParams === []) {
@@ -422,6 +424,8 @@ class Connection
 	 */
 	public function asyncExecute(string $sql): self
 	{
+		$sql = $this->prepareQuery($sql);
+
 		$querySuccess = @\pg_send_query($this->getConnectedResource(), $sql); // intentionally @
 		if ($querySuccess === FALSE) {
 			throw Exceptions\ConnectionException::asyncQuerySentFailed($this->getLastError());
@@ -478,15 +482,15 @@ class Connection
 	}
 
 
-	public function prepareStatement(string $query): PreparedStatement
+	public function prepareStatement(string $sql): PreparedStatement
 	{
-		return new PreparedStatement($this, $this->events, $query);
+		return new PreparedStatement($this, $this->events, $this->prepareQuery($sql));
 	}
 
 
-	public function asyncPrepareStatement(string $query): AsyncPreparedStatement
+	public function asyncPrepareStatement(string $sql): AsyncPreparedStatement
 	{
-		return new AsyncPreparedStatement($this, $this->asyncHelper, $this->events, $query);
+		return new AsyncPreparedStatement($this, $this->asyncHelper, $this->events, $this->prepareQuery($sql));
 	}
 
 
@@ -514,6 +518,7 @@ class Connection
 		if ($this->transaction === NULL) {
 			$this->transaction = new Transaction($this);
 		}
+
 		return $this->transaction;
 	}
 
@@ -549,16 +554,25 @@ class Connection
 	 * @param list<mixed> $params
 	 * @throws Exceptions\QueryException
 	 */
-	private function normalizeSqlQuery(string|Sql\Query $query, array $params): Sql\Query
+	private function normalizeQuery(string|Query|Sql\Query $sql, array $params): Query
 	{
-		if ($query instanceof Sql\Query) {
-			if ($params !== []) {
-				throw Exceptions\QueryException::cantPassParams();
-			}
-		} else {
-			$query = new Sql\Query($query, $params);
+		if (\is_string($sql)) {
+			$sql = new Sql\Query($sql, $params);
+		} else if ($params !== []) {
+			throw Exceptions\QueryException::cantPassParams();
 		}
 
+		return $sql instanceof Query ? $sql : $sql->createQuery();
+	}
+
+
+	/**
+	 * Extend this method to update query before execution.
+	 *
+	 * @return ($query is string ? string : Query)
+	 */
+	protected function prepareQuery(string|Query $query): string|Query
+	{
 		return $query;
 	}
 
