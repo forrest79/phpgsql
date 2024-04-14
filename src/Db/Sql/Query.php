@@ -86,9 +86,9 @@ class Query implements Db\Sql
 					return $param === TRUE ? 'TRUE' : 'FALSE';
 				} else if ($param instanceof Db\Sql) {
 					$subquerySql = self::prepareQuery($param->getSql(), $param->getParams(), $paramIndex);
-					$paramIndex += \count($subquerySql->getParams());
-					$parsedParams = \array_merge($parsedParams, $subquerySql->getParams());
-					return $subquerySql->getSql();
+					$paramIndex += \count($subquerySql->params);
+					$parsedParams = \array_merge($parsedParams, $subquerySql->params);
+					return $subquerySql->sql;
 				}
 
 				$parsedParams[] = ($param instanceof \BackedEnum) ? $param->value : $param;

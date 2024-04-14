@@ -145,8 +145,8 @@ final class DocsTest extends TestCase
 
 			return \sprintf('(%s) [%s]', $type, \implode(', ', $isList ? $list : $array));
 		} else if ($var instanceof Fluent\Query) {
-			$dbQuery = $var->createSqlQuery()->createQuery();
-			return '(Query) ' . $dbQuery->getSql() . ($dbQuery->getParams() === [] ? '' : \sprintf(' [Params: %s]', self::dump($dbQuery->getParams())));
+			$query = $var->createSqlQuery()->createQuery();
+			return '(Query) ' . $query->sql . ($query->params === [] ? '' : \sprintf(' [Params: %s]', self::dump($query->params)));
 		}
 
 		throw new \InvalidArgumentException(\sprintf('Unknown type: \'%s\'', (\gettype($var) === 'object') ? $var::class : \gettype($var)));

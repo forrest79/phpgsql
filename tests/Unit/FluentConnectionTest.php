@@ -33,8 +33,8 @@ final class FluentConnectionTest extends Tests\TestCase
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('SELECT column FROM table', $query->getSql());
-		Tester\Assert::same([], $query->getParams());
+		Tester\Assert::same('SELECT column FROM table', $query->sql);
+		Tester\Assert::same([], $query->params);
 	}
 
 
@@ -62,8 +62,8 @@ final class FluentConnectionTest extends Tests\TestCase
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('SELECT custom_column FROM $1', $query->getSql());
-		Tester\Assert::same(['custom_table'], $query->getParams());
+		Tester\Assert::same('SELECT custom_column FROM $1', $query->sql);
+		Tester\Assert::same(['custom_table'], $query->params);
 	}
 
 }

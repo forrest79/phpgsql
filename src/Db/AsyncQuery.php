@@ -44,8 +44,8 @@ class AsyncQuery
 			throw Exceptions\ConnectionException::asyncNoQueryIsSent();
 		} else if (($actualAsyncQuery !== $this) || ($actualAsyncExecuteQuery !== NULL)) {
 			throw Exceptions\ConnectionException::anotherAsyncQueryIsRunning(
-				$this->getQuery()->getSql(),
-				$actualAsyncExecuteQuery ?? $actualAsyncQuery->getQuery()->getSql(),
+				$this->getQuery()->sql,
+				$actualAsyncExecuteQuery ?? $actualAsyncQuery->getQuery()->sql,
 			);
 		}
 

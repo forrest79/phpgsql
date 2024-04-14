@@ -318,11 +318,11 @@ class Connection
 
 		$startTime = $this->events->hasOnQuery() ? \hrtime(TRUE) : NULL;
 
-		$queryParams = $query->getParams();
+		$queryParams = $query->params;
 		if ($queryParams === []) {
-			$resource = @\pg_query($this->getConnectedResource(), $query->getSql()); // intentionally @
+			$resource = @\pg_query($this->getConnectedResource(), $query->sql); // intentionally @
 		} else {
-			$resource = @\pg_query_params($this->getConnectedResource(), $query->getSql(), $queryParams); // intentionally @
+			$resource = @\pg_query_params($this->getConnectedResource(), $query->sql, $queryParams); // intentionally @
 		}
 
 		if ($resource === FALSE) {
@@ -399,11 +399,11 @@ class Connection
 	{
 		$query = $this->prepareQuery($this->normalizeQuery($sql, $params));
 
-		$queryParams = $query->getParams();
+		$queryParams = $query->params;
 		if ($queryParams === []) {
-			$querySuccess = @\pg_send_query($this->getConnectedResource(), $query->getSql()); // intentionally @
+			$querySuccess = @\pg_send_query($this->getConnectedResource(), $query->sql); // intentionally @
 		} else {
-			$querySuccess = @\pg_send_query_params($this->getConnectedResource(), $query->getSql(), $query->getParams()); // intentionally @
+			$querySuccess = @\pg_send_query_params($this->getConnectedResource(), $query->sql, $query->params); // intentionally @
 		}
 
 		if ($querySuccess === FALSE) {
