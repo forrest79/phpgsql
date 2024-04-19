@@ -28,7 +28,7 @@ parameters:
 			count: 47
 
 		-
-			message: '#^Parameter \#2 \$queryParams of method Forrest79\\PhPgSql\\Fluent\\QueryBuilder::createSqlQuery\(\) expects array\{.+\}, array\{.*\} given\.$#'
+			message: '#^Parameter \#2 \$queryParams of method Forrest79\\PhPgSql\\Fluent\\QueryBuilder::createSql\(\) expects array\{.+\}, array\{.*\} given\.$#'
 			path: %rootDir%/../../../tests/Unit/FluentQueryTest.php
 			count: 1
 

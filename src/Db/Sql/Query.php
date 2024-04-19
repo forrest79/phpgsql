@@ -11,7 +11,7 @@ class Query implements Db\Sql
 	/** @var list<mixed> */
 	private array $params;
 
-	private Db\Query|NULL $query = NULL;
+	private Db\Query|NULL $dbQuery = NULL;
 
 
 	/**
@@ -42,73 +42,13 @@ class Query implements Db\Sql
 	/**
 	 * Create SQL query for pg_query_params function.
 	 */
-	public function createQuery(): Db\Query
+	public function toDbQuery(): Db\Query
 	{
-		if ($this->query === NULL) {
-			$this->query = self::prepareQuery($this->sql, $this->params, 0);
+		if ($this->dbQuery === NULL) {
+			$this->dbQuery = Db\Query::from($this->sql, $this->params);
 		}
 
-		return $this->query;
-	}
-
-
-	/**
-	 * @param list<mixed> $params
-	 */
-	private static function prepareQuery(string $sql, array $params, int $paramIndex): Db\Query
-	{
-		$origParamIndex = 0;
-		$parsedParams = [];
-
-		$sql = \preg_replace_callback(
-			'/([\\\\]?)\?/',
-			static function ($matches) use (&$params, &$parsedParams, &$origParamIndex, &$paramIndex): string {
-				if ($matches[1] === '\\') {
-					return '?';
-				}
-
-				if (!\array_key_exists($origParamIndex, $params)) {
-					throw Db\Exceptions\QueryException::missingParam($origParamIndex);
-				}
-
-				$param = $params[$origParamIndex];
-				unset($params[$origParamIndex]);
-				$origParamIndex++;
-
-				if (\is_array($param)) {
-					$keys = [];
-					foreach ($param as $value) {
-						$keys[] = '$' . ++$paramIndex;
-						$parsedParams[] = ($value instanceof \BackedEnum) ? $value->value : $value;
-					}
-					return \implode(', ', $keys);
-				} else if (\is_bool($param)) {
-					return $param === TRUE ? 'TRUE' : 'FALSE';
-				} else if ($param instanceof Db\Sql) {
-					$subquerySql = self::prepareQuery($param->getSql(), $param->getParams(), $paramIndex);
-					$paramIndex += \count($subquerySql->params);
-					$parsedParams = \array_merge($parsedParams, $subquerySql->params);
-					return $subquerySql->sql;
-				}
-
-				$parsedParams[] = ($param instanceof \BackedEnum) ? $param->value : $param;
-
-				return '$' . ++$paramIndex;
-			},
-			$sql,
-		);
-
-		\assert(\is_string($sql));
-
-		if (($origParamIndex > 0) && ($params !== [])) {
-			throw Db\Exceptions\QueryException::extraParam(\array_values($params));
-		}
-
-		if ($parsedParams === []) {
-			$parsedParams = \array_values($params);
-		}
-
-		return new Db\Query($sql, $parsedParams);
+		return $this->dbQuery;
 	}
 
 

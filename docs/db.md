@@ -485,7 +485,7 @@ dump($cnt); // (integer) 7
 ```php
 $departmentsQuery = Forrest79\PhPgSql\Db\Sql\Query::createArgs('SELECT id FROM departments WHERE id = ?', [1]);
 
-$query = $departmentsQuery->createQuery();
+$query = $departmentsQuery->toDbQuery();
 
 dump($query->sql); // (string) 'SELECT id FROM departments WHERE id = $1'
 dump($query->params); // (array) [1]

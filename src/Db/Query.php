@@ -16,7 +16,7 @@ final class Query
 	/**
 	 * @param list<mixed> $params
 	 */
-	public static function from(string|self|Sql $query, array $params): self
+	public static function from(string|self|Sql $query, array $params = []): self
 	{
 		if (is_string($query)) {
 			$query = new Sql\Expression($query, $params);
@@ -24,11 +24,7 @@ final class Query
 			throw Exceptions\QueryException::cantPassParams();
 		}
 
-		if ($query instanceof Sql) {
-			$query = self::prepareQuery($query->getSql(), $query->getParams(), 0);
-		}
-
-		return $query;
+		return $query instanceof Sql ? self::prepareQuery($query->getSql(), $query->getParams(), 0) : $query;
 	}
 
 

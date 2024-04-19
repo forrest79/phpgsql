@@ -23,8 +23,7 @@ $query = $fluent
   ->select(['*'])
   ->from('users')
   ->where('id', 1)
-  ->createSqlQuery()
-  ->createQuery();
+  ->toDbQuery();
 
 dump($query->sql); // (string) 'SELECT * FROM users WHERE id = $1'
 dump($query->params); // (array) [1]

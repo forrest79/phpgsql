@@ -214,7 +214,7 @@ final class BasicTest extends TestCase
 	public function testPassParamToQuery(): void
 	{
 		Tester\Assert::exception(function (): void {
-			$query = Db\Sql\Query::create('SELECT 1');
+			$query = Db\Sql\Expression::create('SELECT 1');
 			$this->connection->query($query, 1);
 		}, Db\Exceptions\QueryException::class, NULL, Db\Exceptions\QueryException::CANT_PASS_PARAMS);
 	}

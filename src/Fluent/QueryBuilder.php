@@ -41,7 +41,7 @@ class QueryBuilder
 	 * @throws Exceptions\QueryBuilderException
 	 * @phpstan-param QueryParams $queryParams
 	 */
-	public function createSqlQuery(string $queryType, array $queryParams): Db\Sql\Query
+	public function createSql(string $queryType, array $queryParams): Db\Sql\Expression
 	{
 		$params = [];
 
@@ -67,16 +67,16 @@ class QueryBuilder
 			throw Exceptions\QueryBuilderException::badQueryType($queryType);
 		}
 
-		return $this->prepareSqlQuery($sql, $params);
+		return $this->prepareSql($sql, $params);
 	}
 
 
 	/**
 	 * @param list<mixed> $params
 	 */
-	protected function prepareSqlQuery(string $sql, array $params): Db\Sql\Query
+	protected function prepareSql(string $sql, array $params): Db\Sql\Expression
 	{
-		return new Db\Sql\Query($sql, $params);
+		return new Db\Sql\Expression($sql, $params);
 	}
 
 
@@ -804,7 +804,7 @@ class QueryBuilder
 
 	private static function areParenthesisNeeded(Db\Sql $sql): bool
 	{
-		return $sql instanceof Db\Sql\Query || $sql instanceof Query;
+		return $sql instanceof Query;
 	}
 
 }

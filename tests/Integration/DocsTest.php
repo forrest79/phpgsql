@@ -145,7 +145,7 @@ final class DocsTest extends TestCase
 
 			return \sprintf('(%s) [%s]', $type, \implode(', ', $isList ? $list : $array));
 		} else if ($var instanceof Fluent\Query) {
-			$query = $var->createSqlQuery()->createQuery();
+			$query = $var->toDbQuery();
 			return '(Query) ' . $query->sql . ($query->params === [] ? '' : \sprintf(' [Params: %s]', self::dump($query->params)));
 		}
 

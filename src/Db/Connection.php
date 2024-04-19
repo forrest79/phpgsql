@@ -300,7 +300,7 @@ class Connection
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
-	public function query(string|Query|Sql\Query $sql, mixed ...$params): Result
+	public function query(string|Query|Sql $sql, mixed ...$params): Result
 	{
 		\assert(\array_is_list($params));
 		return $this->queryArgs($sql, $params);
@@ -312,9 +312,9 @@ class Connection
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
-	public function queryArgs(string|Query|Sql\Query $sql, array $params): Result
+	public function queryArgs(string|Query|Sql $sql, array $params): Result
 	{
-		$query = $this->prepareQuery($this->normalizeQuery($sql, $params));
+		$query = $this->prepareQuery(Query::from($sql, $params));
 
 		$startTime = $this->events->hasOnQuery() ? \hrtime(TRUE) : NULL;
 
@@ -383,7 +383,7 @@ class Connection
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
-	public function asyncQuery(string|Query|Sql\Query $sql, mixed ...$params): AsyncQuery
+	public function asyncQuery(string|Query|Sql $sql, mixed ...$params): AsyncQuery
 	{
 		\assert(\array_is_list($params));
 		return $this->asyncQueryArgs($sql, $params);
@@ -395,9 +395,9 @@ class Connection
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
-	public function asyncQueryArgs(string|Query|Sql\Query $sql, array $params): AsyncQuery
+	public function asyncQueryArgs(string|Query|Sql $sql, array $params): AsyncQuery
 	{
-		$query = $this->prepareQuery($this->normalizeQuery($sql, $params));
+		$query = $this->prepareQuery(Query::from($sql, $params));
 
 		$queryParams = $query->params;
 		if ($queryParams === []) {
@@ -547,22 +547,6 @@ class Connection
 	public function getResource(): PgSql\Connection
 	{
 		return $this->getConnectedResource();
-	}
-
-
-	/**
-	 * @param list<mixed> $params
-	 * @throws Exceptions\QueryException
-	 */
-	private function normalizeQuery(string|Query|Sql\Query $sql, array $params): Query
-	{
-		if (\is_string($sql)) {
-			$sql = new Sql\Query($sql, $params);
-		} else if ($params !== []) {
-			throw Exceptions\QueryException::cantPassParams();
-		}
-
-		return $sql instanceof Query ? $sql : $sql->createQuery();
 	}
 
 
