@@ -20,6 +20,8 @@ class Connection
 
 	private Events $events;
 
+	private ResultFactory|NULL $resultFactory = NULL;
+
 	private RowFactory|NULL $defaultRowFactory = NULL;
 
 	private DataTypeParser|NULL $dataTypeParser = NULL;
@@ -239,7 +241,25 @@ class Connection
 	}
 
 
-	public function setDefaultRowFactory(RowFactory $rowFactory): static
+	public function setResultFactory(ResultFactory $resultFactory): static
+	{
+		$this->resultFactory = $resultFactory;
+
+		return $this;
+	}
+
+
+	private function getResultFactory(): ResultFactory
+	{
+		if ($this->resultFactory === NULL) {
+			$this->resultFactory = new ResultFactories\Basic($this, $this->events);
+		}
+
+		return $this->resultFactory;
+	}
+
+
+	public function setDefaultRowFactory(RowFactory $rowFactory): self
 	{
 		$this->defaultRowFactory = $rowFactory;
 
@@ -247,7 +267,7 @@ class Connection
 	}
 
 
-	private function getDefaultRowFactory(): RowFactory
+	public function getDefaultRowFactory(): RowFactory
 	{
 		if ($this->defaultRowFactory === NULL) {
 			$this->defaultRowFactory = new RowFactories\Basic();
@@ -265,7 +285,7 @@ class Connection
 	}
 
 
-	private function getDataTypeParser(): DataTypeParser
+	public function getDataTypeParser(): DataTypeParser
 	{
 		if ($this->dataTypeParser === NULL) {
 			$this->dataTypeParser = new DataTypeParsers\Basic();
@@ -286,7 +306,7 @@ class Connection
 	/**
 	 * @return array<int, string>|NULL
 	 */
-	private function getDataTypesCache(): array|NULL
+	public function getDataTypesCache(): array|NULL
 	{
 		return $this->dataTypeCache?->load($this) ?? NULL;
 	}
@@ -329,26 +349,7 @@ class Connection
 			$this->events->onQuery($query, \hrtime(TRUE) - $startTime);
 		}
 
-		return $this->createResult($resource, $query);
-	}
-
-
-	/**
-	 * @internal
-	 */
-	public function createResult(PgSql\Result $resource, Query $query): Result
-	{
-		$result = new Result(
-			$resource,
-			$query,
-			$this->getDefaultRowFactory(),
-			$this->getDataTypeParser(),
-			$this->getDataTypesCache(),
-		);
-
-		$this->events->onResult($result);
-
-		return $result;
+		return $this->getResultFactory()->createResult($resource, $query);
 	}
 
 
@@ -410,7 +411,7 @@ class Connection
 			$this->events->onQuery($query);
 		}
 
-		return $this->asyncHelper->createAndSetAsyncQuery($query);
+		return $this->asyncHelper->createAndSetAsyncQuery($this->getResultFactory(), $query);
 	}
 
 
@@ -480,13 +481,13 @@ class Connection
 
 	public function prepareStatement(string $sql): PreparedStatement
 	{
-		return new PreparedStatement($this, $this->events, $this->prepareQuery($sql));
+		return new PreparedStatement($this, $this->getResultFactory(), $this->events, $this->prepareQuery($sql));
 	}
 
 
 	public function asyncPrepareStatement(string $sql): AsyncPreparedStatement
 	{
-		return new AsyncPreparedStatement($this, $this->asyncHelper, $this->events, $this->prepareQuery($sql));
+		return new AsyncPreparedStatement($this->asyncHelper, $this, $this->getResultFactory(), $this->events, $this->prepareQuery($sql));
 	}
 
 

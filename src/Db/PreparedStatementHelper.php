@@ -8,6 +8,8 @@ abstract class PreparedStatementHelper
 
 	protected Connection $connection;
 
+	protected ResultFactory $resultFactory;
+
 	protected Events $events;
 
 	protected string $query;
@@ -15,9 +17,10 @@ abstract class PreparedStatementHelper
 	protected string|NULL $statementName = NULL;
 
 
-	public function __construct(Connection $connection, Events $events, string $query)
+	public function __construct(Connection $connection, ResultFactory $resultFactory, Events $events, string $query)
 	{
 		$this->connection = $connection;
+		$this->resultFactory = $resultFactory;
 		$this->events = $events;
 		$this->query = $query;
 	}
