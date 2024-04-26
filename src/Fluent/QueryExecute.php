@@ -13,11 +13,47 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 
 	private Db\Result|NULL $result = NULL;
 
+	/** @var \Closure(Db\Row): void|NULL */
+	private \Closure|NULL $rowFetchMutator = NULL;
+
+	/** @var array<string, callable> */
+	private array $columnsFetchMutator = [];
+
 
 	public function __construct(QueryBuilder $queryBuilder, Db\Connection $connection)
 	{
 		$this->connection = $connection;
 		parent::__construct($queryBuilder);
+	}
+
+
+	/**
+	 * @param \Closure(Db\Row): void $rowFetchMutator
+	 */
+	public function setRowFetchMutator(\Closure $rowFetchMutator): self
+	{
+		$this->rowFetchMutator = $rowFetchMutator;
+
+		if ($this->result !== NULL) {
+			$this->result->setRowFetchMutator($rowFetchMutator);
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * @param non-empty-array<string, callable> $columnsFetchMutator
+	 */
+	public function setColumnsFetchMutator(array $columnsFetchMutator): self
+	{
+		$this->columnsFetchMutator = $columnsFetchMutator;
+
+		if ($this->result !== NULL) {
+			$this->result->setColumnsFetchMutator($columnsFetchMutator);
+		}
+
+		return $this;
 	}
 
 
@@ -44,6 +80,14 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 	{
 		if ($this->result === NULL) {
 			$this->result = $this->connection->query($this->createSqlQuery());
+
+			if ($this->rowFetchMutator !== NULL) {
+				$this->result->setRowFetchMutator($this->rowFetchMutator);
+			}
+
+			if ($this->columnsFetchMutator !== []) {
+				$this->result->setColumnsFetchMutator($this->columnsFetchMutator);
+			}
 		}
 
 		return $this->result;

@@ -11,9 +11,11 @@ class ResultException extends Exception
 	public const FETCH_ASSOC_BAD_DESCRIPTOR = 3;
 	public const FETCH_ASSOC_NO_COLUMN = 4;
 	public const FETCH_ASSOC_ONLY_SCALAR_AS_KEY = 5;
-	public const FETCH_PAIRS_FAILED = 6;
-	public const NO_OTHER_ASYNC_RESULT = 7;
-	public const NO_OID_IN_DATA_TYPE_CACHE = 8;
+	public const FETCH_PAIRS_BAD_COLUMNS = 6;
+	public const FETCH_PAIRS_ONLY_SCALAR_AS_KEY = 7;
+	public const FETCH_MUTATOR_BAR_RETURN_TYPE = 8;
+	public const NO_OTHER_ASYNC_RESULT = 9;
+	public const NO_OID_IN_DATA_TYPE_CACHE = 10;
 
 
 	public static function noColumn(string $column): self
@@ -48,7 +50,19 @@ class ResultException extends Exception
 
 	public static function fetchPairsBadColumns(): self
 	{
-		return new self('None or both columns or just value column must be specified.', self::FETCH_PAIRS_FAILED);
+		return new self('None or both columns or just value column must be specified.', self::FETCH_PAIRS_BAD_COLUMNS);
+	}
+
+
+	public static function fetchPairsOnlyScalarAsKey(string $column, mixed $value): self
+	{
+		return new self(\sprintf('You can use only scalar type as a key. Column \'%s\' was parsed as \'%s\'.', $column, \gettype($value)), self::FETCH_PAIRS_ONLY_SCALAR_AS_KEY);
+	}
+
+
+	public static function fetchMutatorBadReturnType(string $column, mixed $value): self
+	{
+		return new self(\sprintf('You can use only scalar type as a key. Column \'%s\' was mutated as \'%s\'.', $column, \gettype($value)), self::FETCH_MUTATOR_BAR_RETURN_TYPE);
 	}
 
 

@@ -20,6 +20,12 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 	/** @var array<int, string>|NULL */
 	private array|NULL $dataTypesCache;
 
+	/** @var \Closure(Row): void|NULL */
+	private \Closure|NULL $rowFetchMutator = NULL;
+
+	/** @var array<string, callable> */
+	private array $columnsFetchMutator = [];
+
 	private int|NULL $affectedRows = NULL;
 
 	/** @var array<string, string>|NULL */
@@ -51,6 +57,28 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 	public function setRowFactory(RowFactory $rowFactory): static
 	{
 		$this->rowFactory = $rowFactory;
+
+		return $this;
+	}
+
+
+	/**
+	 * @param \Closure(Row): void $rowFetchMutator
+	 */
+	public function setRowFetchMutator(\Closure $rowFetchMutator): self
+	{
+		$this->rowFetchMutator = $rowFetchMutator;
+
+		return $this;
+	}
+
+
+	/**
+	 * @param non-empty-array<string, callable> $columnsFetchMutator
+	 */
+	public function setColumnsFetchMutator(array $columnsFetchMutator): self
+	{
+		$this->columnsFetchMutator = $columnsFetchMutator;
 
 		return $this;
 	}
@@ -111,7 +139,13 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 		}
 
 		$this->detectColumnDataTypes();
-		return $this->rowFactory->createRow($this, $data);
+		$row = $this->rowFactory->createRow($this, $data);
+
+		if ($this->rowFetchMutator !== NULL) {
+			call_user_func($this->rowFetchMutator, $row);
+		}
+
+		return $row;
 	}
 
 
@@ -126,8 +160,13 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 		if ($row === NULL) {
 			return NULL;
 		}
+
 		$columns = $this->getColumns();
-		return $row[\reset($columns)];
+		$firstColumn = $columns[0];
+
+		return isset($this->columnsFetchMutator[$firstColumn])
+			? call_user_func($this->columnsFetchMutator[$firstColumn], $row[$firstColumn])
+			: $row[$firstColumn];
 	}
 
 
@@ -151,6 +190,11 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 				break;
 			}
 			$limit--;
+
+			if ($this->rowFetchMutator !== NULL) {
+				call_user_func($this->rowFetchMutator, $row);
+			}
+
 			$data[] = $row;
 
 			$row = $this->fetch();
@@ -213,14 +257,22 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 					if ($parts[$i + 1] === '[]') { // get Row as array
 						$x = $row->toArray();
 					} else { // get concrete Row column
-						$x = $row->{$parts[$i + 1]};
+						$key = $parts[$i + 1];
+						$x = isset($this->columnsFetchMutator[$key]) ? call_user_func($this->columnsFetchMutator[$key], $row->$key) : $row->$key;
 					}
 
 					continue 2;
 				} else if ($part !== '|') { // associative-array node
-					$val = $row->$part;
-					if (($val !== NULL) && !\is_scalar($val)) {
-						throw Exceptions\ResultException::fetchAssocOnlyScalarAsKey($assocDesc, $part, $val);
+					if (isset($this->columnsFetchMutator[$part])) {
+						$val = call_user_func($this->columnsFetchMutator[$part], $row->$part);
+						if (($val !== NULL) && !\is_scalar($val)) {
+							throw Exceptions\ResultException::fetchMutatorBadReturnType($part, $val);
+						}
+					} else {
+						$val = $row->$part;
+						if (($val !== NULL) && !\is_scalar($val)) {
+							throw Exceptions\ResultException::fetchAssocOnlyScalarAsKey($assocDesc, $part, $val);
+						}
 					}
 
 					$x = &$x[(string) $val];
@@ -263,8 +315,9 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 			$tmp = \array_keys($row->toArray());
 			$key = $tmp[0];
 			if (\count($row) < 2) { // indexed-array
+				$fetchMutator = $this->columnsFetchMutator[$key] ?? NULL;
 				do {
-					$data[] = $row[$key];
+					$data[] = $fetchMutator !== NULL ? call_user_func($fetchMutator, $row[$key]) : $row[$key];
 					$row = $this->fetch();
 				} while ($row !== NULL);
 
@@ -278,8 +331,9 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 			}
 
 			if ($key === NULL) { // indexed-array
+				$fetchMutator = $this->columnsFetchMutator[$value] ?? NULL;
 				do {
-					$data[] = $row[$value];
+					$data[] = $fetchMutator !== NULL ? call_user_func($fetchMutator, $row[$value]) : $row[$value];
 					$row = $this->fetch();
 				} while ($row !== NULL);
 
@@ -291,9 +345,24 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 			}
 		}
 
+		$fetchMutatorKey = $this->columnsFetchMutator[$key] ?? NULL;
+		$fetchMutatorValue = $this->columnsFetchMutator[$value] ?? NULL;
+
 		do {
-			\assert(\is_scalar($row[$key]));
-			$data[(string) $row[$key]] = $row[$value];
+			if ($fetchMutatorKey !== NULL) {
+				$keyValue = call_user_func($fetchMutatorKey, $row[$key]);
+				if (($keyValue !== NULL) && !\is_scalar($keyValue)) {
+					throw Exceptions\ResultException::fetchMutatorBadReturnType($key, $keyValue);
+				}
+			} else {
+				$keyValue = $row[$key];
+				if (($keyValue !== NULL) && !\is_scalar($keyValue)) {
+					throw Exceptions\ResultException::fetchPairsOnlyScalarAsKey($key, $keyValue);
+				}
+			}
+
+			$data[$keyValue] = $fetchMutatorValue !== NULL ? call_user_func($fetchMutatorValue, $row[$value]) : $row[$value];
+
 			$row = $this->fetch();
 		} while ($row !== NULL);
 

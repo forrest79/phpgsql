@@ -863,6 +863,11 @@ $userNick = $result->fetchSingle();
 dump($userNick); // (string) 'Bob'
 ```
 
+### Fetch mutators
+
+You can set fetch mutators for the `Result` object right on the `QueryExecute`. There are the same two methods: `QueryExecute::setRowFetchMutator(callable)` and `QueryExecute::setColumnsFetchMutator(array<string, callable>)`.
+Already set fetch mutators are keep also for re-execution the query.  
+
 ## Extending
 
 You can extend generating SQL queries with your own logic (for example, you can replace some placeholder with a value from your application service). Extends `QueryBuilder` and overwrites method `prepareSqlQuery(...)` that get generated string SQL and all params, so you can update this string or parameters before the `Db\Sql\Query` is returned.

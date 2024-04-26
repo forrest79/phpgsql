@@ -399,7 +399,7 @@ final class FetchTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($result): void {
 			$result->fetchPairs('name');
-		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::FETCH_PAIRS_FAILED);
+		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::FETCH_PAIRS_BAD_COLUMNS);
 
 		$result->free();
 	}
@@ -425,6 +425,54 @@ final class FetchTest extends TestCase
 		$rows = $result->fetchPairs(NULL, 'type');
 
 		Tester\Assert::same([3, 2, 1], $rows);
+
+		$result->free();
+	}
+
+
+	public function testFetchPairsObjectAsKey(): void
+	{
+		$this->connection->query('
+			CREATE TABLE test(
+				id serial,
+				test_date date
+			);
+		');
+
+		$this->connection->query('INSERT INTO test(test_date) VALUES(CURRENT_DATE)');
+
+		$result = $this->connection->query('SELECT id, test_date FROM test');
+
+		Tester\Assert::exception(static function () use ($result): void {
+			$result->fetchPairs('test_date', 'id');
+		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::FETCH_PAIRS_ONLY_SCALAR_AS_KEY);
+
+		$result->free();
+	}
+
+
+	public function testFetchPairsBadKeyOrValue(): void
+	{
+		$this->connection->query('
+			CREATE TABLE test(
+				id serial,
+				name character varying
+			);
+		');
+
+		$this->connection->query('INSERT INTO test(name) SELECT \'name\' || generate_series FROM generate_series(3, 1, -1)');
+
+		$result = $this->connection->query('SELECT id, name FROM test ORDER BY id');
+
+		// Bad key
+		Tester\Assert::exception(static function () use ($result): void {
+			$result->fetchPairs('type', 'name');
+		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::NO_COLUMN);
+
+		// Bad value
+		Tester\Assert::exception(static function () use ($result): void {
+			$result->fetchPairs('id', 'type');
+		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::NO_COLUMN);
 
 		$result->free();
 	}
@@ -469,33 +517,6 @@ final class FetchTest extends TestCase
 		Tester\Assert::exception(static function () use ($row): void {
 			unset($row[1]);
 		}, Db\Exceptions\RowException::class, NULL, Db\Exceptions\RowException::NOT_STRING_KEY);
-
-		$result->free();
-	}
-
-
-	public function testFetchPairsBadKeyOrValue(): void
-	{
-		$this->connection->query('
-			CREATE TABLE test(
-				id serial,
-				name character varying
-			);
-		');
-
-		$this->connection->query('INSERT INTO test(name) SELECT \'name\' || generate_series FROM generate_series(3, 1, -1)');
-
-		$result = $this->connection->query('SELECT id, name FROM test ORDER BY id');
-
-		// Bad key
-		Tester\Assert::exception(static function () use ($result): void {
-			$result->fetchPairs('type', 'name');
-		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::NO_COLUMN);
-
-		// Bad value
-		Tester\Assert::exception(static function () use ($result): void {
-			$result->fetchPairs('id', 'type');
-		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::NO_COLUMN);
 
 		$result->free();
 	}

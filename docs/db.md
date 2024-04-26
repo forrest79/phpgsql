@@ -211,6 +211,12 @@ When you call the `query()` or `queryArgs()` method, the query is executed in DB
    - `col1|col2=[]` builds array `[$column1_value][$column2_value] => Row::toArray()`
 - `Result::fetchIterator()` returns an `iterator` and with this you can get all rows on the first resulted rows iteration (`fetchAll`, `fetchPairs` and `fetchAssoc` do internal iteration on all records to prepare returned `array`).
 
+> The performance note about fetch methods:
+> - `fetch()`, `fetchSingle()` and `fetchIterator()` (mostly used with the `foreach`) are returning rows right from the database result - no preparation is needed
+> - `fetchAll()`, `fetchPairs()` and `fetchAssoc()` internally iterate over the whole result to prepare a structure you need
+> Keep this in your mind, when you iterate rows from the database - there can be two iterations, one in the library and one in your application.
+> With only a few rows, this shouldn't be a problem. With many rows, this can be a potential performance degradation. 
+
 Some examples to make it clear:
 
 ```php
@@ -602,7 +608,7 @@ This library automatically converts PostgreSQL types to the PHP types. Basic typ
 **Important!** To determine PG types from the PG result is by default used function `pg_field_type()`. This function has one undocumented behavior. It's sending SQL query `select oid,typname from pg_type` (`https://github.com/php/php-src/blob/master/ext/pgsql/pgsql.c`) in every request to get proper type names. This `SELECT` is relatively fast and parsing works out of the box with this. But this `SELECT` can be slower for bigger databases and in common, there is no need to run it for all requests. We can cache this data and then use function `pg_field_type_oid()`. Cache is needed to be flushed only if database structure is changed. You can use simple cache for this and this is the recommended way. One option is to prepare your own cache with `DataTypesCache` interface or use one already prepared. This saves cache to the PHP file (it's really fast especially with opcache). More about caching is in the chapter **How to use cache** later.
 
 ```php
-$rows = $connection->query('SELECT * FROM users')->fetchAll();
+$rows = $connection->query('SELECT * FROM users ORDER BY id')->fetchAll();
 
 table($rows);
 /**
@@ -666,6 +672,67 @@ $phpFileCache->clean($connection);
 The `clean()` method can be used to refresh cache.
 
 If you want to use your own caching mechanisms, just implement interface `Forrest79\PhPgSql\Db\DataTypeCache`. There is only one public method `load(Connection $connection): array`, that get DB connection and return an `array` with the pairs of `oid->type_name`, where `type_name` is passed to `DataTypeParser`. Or you can use abstract `Forrest79\PhPgSql\Db\DataTypeCaches\DbLoader`, that has predefined function `loadFromDb(Db\Connection $connection)` and this function already loads types from a DB and return a correct `array`, that you can cache wherever you want. Predefined `PhpFile` uses also this `DbLoader`.
+
+## Updating data while fetching - fetch mutators
+
+Calling `fetch...()` methods returns data gathered right from the database. Fetch mutators allow you to update data before it is returns from fetch method.
+
+There are two fetch mutators types:
+
+- first is row fetch mutator - sets with method `Result::setRowFetchMutator(callable)`. As the name suggests, this mutator can update return `Row` object. `callable` parameter is some function with one parameter - original `Row` and no return is excepted. You can update the `Row` object in callback. This mutator can be used for all fetch methods - in `fetch()`, `fetchAll()` and in some cases also in `fetchAssoc()` methods, the updated `Row` is returned. In `fetchSingle()`, `fetchPairs()` and `fetchAssoc()` methods, the mutator is called and the updated `Row` is used as method input. So you can update columns data, that are return from these methods.
+
+- second are columns fetch mutator - sets with method `Result::setColumnsFetchMutator(array<string, callable>)`. These mutators can update only one concrete column. The parameter is an array, where key is a `column` name and value is some function with one parameter - the column value (if there is also set row fetch mutator, then this is the updated value) and return can be `string` or `int` if column is used as an array key (for `fetchPairs()` or `fetchAssoc()`) or `mixed` if columns is used as an array value (for `fetchPairs()`, `fetchAssoc()` and `fetchSingle()`).  
+
+Examples:
+
+
+```php
+$rowsFetchAll = $connection
+  ->query('SELECT nick, inserted_datetime, height_cm FROM users ORDER BY id')
+  ->setRowFetchMutator(function (Forrest79\PhPgSql\Db\Row $row): void {
+    $row->height_inch = $row->height_cm / 2.54;
+    $row->height_cm = (int) $row->height_cm;
+    $row->date = $row->inserted_datetime->format('Y-m-d');
+  })
+  ->fetchAll();
+
+table($rowsFetchAll);
+/**
+----------------------------------------------------------------------------------------------------------------------
+| nick               | inserted_datetime          | height_cm     | height_inch              | date                  |
+|====================================================================================================================|
+| (string) 'Bob'     | (Date) 2020-01-01 09:00:00 | (integer) 178 | (double) 70.07874015748  | (string) '2020-01-01' |
+| (string) 'Brandon' | (Date) 2020-01-02 12:05:00 | (integer) 180 | (double) 70.866141732283 | (string) '2020-01-02' |
+| (string) 'Steve'   | (Date) 2020-01-02 12:05:00 | (integer) 168 | (double) 66.141732283465 | (string) '2020-01-02' |
+| (string) 'Monica'  | (Date) 2020-01-03 13:10:00 | (integer) 175 | (double) 68.897637795276 | (string) '2020-01-03' |
+| (string) 'Ingrid'  | (Date) 2020-01-04 14:15:00 | (integer) 168 | (double) 66.141732283465 | (string) '2020-01-04' |
+----------------------------------------------------------------------------------------------------------------------
+*/
+
+$rowsFetchAssoc = $connection
+  ->query('SELECT nick, inserted_datetime, height_cm FROM users ORDER BY id')
+  ->setRowFetchMutator(function (Forrest79\PhPgSql\Db\Row $row): void {
+    $row->height_inch = $row->height_cm / 2.54;
+  })
+  ->setColumnsFetchMutator([
+    'inserted_datetime' => function (\DateTimeImmutable $datetime): string {
+      return $datetime->format('Y-m-d_H:i:s');
+    },
+  ])
+  ->fetchAssoc('inserted_datetime[]=height_inch');
+
+dump($rowsFetchAssoc); // (array) ['2020-01-01_09:00:00' => [70.157480314961], '2020-01-02_12:05:00' => [71.023622047244, 66.141732283465], '2020-01-03_13:10:00' => [69.173228346457], '2020-01-04_14:15:00' => [66.220472440945]]
+```
+
+### Microoptimalization
+
+The frequent flow in your app is:
+- get rows from the database
+- iterate the rows and do some app logic on every row (update the row)
+- iterate the rows again to show the result to the user
+
+This could be potentially three iterations over the same rows. With the row fetch mutator and `fetchIterator()` method you can shrink this to only one iteration.
+Set the fetch row mutator callback with a function that will do app logic on the row and when you will use the `fetchIterator()` method, the row is get from the database, update with the fetch mutator callback and return to your app at once, so you will have just one iteration.
 
 ## Asynchronous functionality
 
