@@ -13,7 +13,7 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 
 	private Db\Result|NULL $result = NULL;
 
-	/** @var \Closure(Db\Row): void|NULL */
+	/** @template T of Db\Row @var \Closure(T): void|NULL */
 	private \Closure|NULL $rowFetchMutator = NULL;
 
 	/** @var array<string, callable> */
@@ -28,7 +28,8 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 
 
 	/**
-	 * @param \Closure(Db\Row): void $rowFetchMutator
+	 * @template T of Db\Row
+	 * @param \Closure(T): void $rowFetchMutator
 	 */
 	public function setRowFetchMutator(\Closure $rowFetchMutator): self
 	{

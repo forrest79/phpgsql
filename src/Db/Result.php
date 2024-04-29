@@ -20,7 +20,7 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 	/** @var array<int, string>|NULL */
 	private array|NULL $dataTypesCache;
 
-	/** @var \Closure(Row): void|NULL */
+	/** @template T of Row @var \Closure(Row): void|NULL */
 	private \Closure|NULL $rowFetchMutator = NULL;
 
 	/** @var array<string, callable> */
@@ -63,7 +63,8 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 
 
 	/**
-	 * @param \Closure(Row): void $rowFetchMutator
+	 * @template T of Row
+	 * @param \Closure(T): void $rowFetchMutator
 	 */
 	public function setRowFetchMutator(\Closure $rowFetchMutator): self
 	{
