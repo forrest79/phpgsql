@@ -488,9 +488,10 @@ class Connection extends Db\Connection implements Sql
 	}
 
 
-	public function setQueryBuilder(QueryBuilder $queryBuilder): self
+	public function setQueryBuilder(QueryBuilder $queryBuilder): static
 	{
 		$this->queryBuilder = $queryBuilder;
+
 		return $this;
 	}
 

@@ -25,7 +25,7 @@ class Events
 	}
 
 
-	public function addOnConnect(callable $callback): self
+	public function addOnConnect(callable $callback): static
 	{
 		$this->onConnect[] = $callback;
 
@@ -33,7 +33,7 @@ class Events
 	}
 
 
-	public function addOnClose(callable $callback): self
+	public function addOnClose(callable $callback): static
 	{
 		$this->onClose[] = $callback;
 
@@ -41,7 +41,7 @@ class Events
 	}
 
 
-	public function addOnQuery(callable $callback): self
+	public function addOnQuery(callable $callback): static
 	{
 		$this->onQuery[] = $callback;
 
@@ -49,7 +49,7 @@ class Events
 	}
 
 
-	public function addOnResult(callable $callback): self
+	public function addOnResult(callable $callback): static
 	{
 		$this->onResult[] = $callback;
 

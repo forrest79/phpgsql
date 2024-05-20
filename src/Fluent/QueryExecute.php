@@ -31,7 +31,7 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 	 * @template T of Db\Row
 	 * @param \Closure(T): void $rowFetchMutator
 	 */
-	public function setRowFetchMutator(\Closure $rowFetchMutator): self
+	public function setRowFetchMutator(\Closure $rowFetchMutator): static
 	{
 		$this->rowFetchMutator = $rowFetchMutator;
 
@@ -46,7 +46,7 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 	/**
 	 * @param non-empty-array<string, callable> $columnsFetchMutator
 	 */
-	public function setColumnsFetchMutator(array $columnsFetchMutator): self
+	public function setColumnsFetchMutator(array $columnsFetchMutator): static
 	{
 		$this->columnsFetchMutator = $columnsFetchMutator;
 

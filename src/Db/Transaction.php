@@ -17,7 +17,7 @@ class Transaction
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
-	public function begin(string|NULL $mode = NULL): self
+	public function begin(string|NULL $mode = NULL): static
 	{
 		$this->connection->query('BEGIN' . ($mode === NULL ? '' : (' ' . $mode)));
 
@@ -29,7 +29,7 @@ class Transaction
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
-	public function commit(): self
+	public function commit(): static
 	{
 		$this->connection->query('COMMIT');
 
@@ -41,7 +41,7 @@ class Transaction
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
-	public function rollback(): self
+	public function rollback(): static
 	{
 		$this->connection->query('ROLLBACK');
 
@@ -53,7 +53,7 @@ class Transaction
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
-	public function savepoint(string $name): self
+	public function savepoint(string $name): static
 	{
 		$this->connection->query('SAVEPOINT ' . $name);
 
@@ -65,7 +65,7 @@ class Transaction
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
-	public function releaseSavepoint(string $name): self
+	public function releaseSavepoint(string $name): static
 	{
 		$this->connection->query('RELEASE SAVEPOINT ' . $name);
 
@@ -77,7 +77,7 @@ class Transaction
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
-	public function rollbackToSavepoint(string $name): self
+	public function rollbackToSavepoint(string $name): static
 	{
 		$this->connection->query('ROLLBACK TO SAVEPOINT ' . $name);
 

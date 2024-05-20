@@ -223,9 +223,8 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 
 	/**
 	 * @param array<string, mixed> $values
-	 * @return static
 	 */
-	public static function from(array $values): self
+	public static function from(array $values): static
 	{
 		return new static(new DummyColumnValueParser(), $values);
 	}

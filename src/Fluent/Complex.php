@@ -37,7 +37,7 @@ class Complex implements \ArrayAccess
 	/**
 	 * @throws Exceptions\ComplexException
 	 */
-	public function add(self|string|Db\Sql $condition, mixed ...$params): self
+	public function add(self|string|Db\Sql $condition, mixed ...$params): static
 	{
 		if ((($condition instanceof self) || ($condition instanceof Db\Sql)) && $params !== []) {
 			throw Exceptions\ComplexException::onlyStringConditionCanHaveParams();

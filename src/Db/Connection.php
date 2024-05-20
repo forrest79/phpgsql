@@ -60,7 +60,7 @@ class Connection
 	/**
 	 * @throws Exceptions\ConnectionException
 	 */
-	public function connect(): self
+	public function connect(): static
 	{
 		if ($this->connectionConfig === '') {
 			throw Exceptions\ConnectionException::noConfig();
@@ -122,7 +122,7 @@ class Connection
 	}
 
 
-	public function setConnectionConfig(string $config): self
+	public function setConnectionConfig(string $config): static
 	{
 		if ($this->isConnected()) {
 			throw Exceptions\ConnectionException::cantChangeWhenConnected('config');
@@ -140,7 +140,7 @@ class Connection
 	}
 
 
-	public function setConnectForceNew(bool $forceNew = TRUE): self
+	public function setConnectForceNew(bool $forceNew = TRUE): static
 	{
 		if ($this->isConnected()) {
 			throw Exceptions\ConnectionException::cantChangeWhenConnected('forceNew');
@@ -152,7 +152,7 @@ class Connection
 	}
 
 
-	public function setConnectAsync(bool $async = TRUE): self
+	public function setConnectAsync(bool $async = TRUE): static
 	{
 		if ($this->isConnected()) {
 			throw Exceptions\ConnectionException::cantChangeWhenConnected('async');
@@ -164,7 +164,7 @@ class Connection
 	}
 
 
-	public function setConnectAsyncWaitSeconds(int $seconds): self
+	public function setConnectAsyncWaitSeconds(int $seconds): static
 	{
 		if ($this->isConnected()) {
 			throw Exceptions\ConnectionException::cantChangeWhenConnected('asyncWaitSeconds');
@@ -176,7 +176,7 @@ class Connection
 	}
 
 
-	public function setErrorVerbosity(int $errorVerbosity): self
+	public function setErrorVerbosity(int $errorVerbosity): static
 	{
 		if ($this->errorVerbosity !== $errorVerbosity) {
 			$this->errorVerbosity = $errorVerbosity;
@@ -190,7 +190,7 @@ class Connection
 	}
 
 
-	public function addOnConnect(callable $callback): self
+	public function addOnConnect(callable $callback): static
 	{
 		$this->events->addOnConnect($callback);
 
@@ -198,7 +198,7 @@ class Connection
 	}
 
 
-	public function addOnClose(callable $callback): self
+	public function addOnClose(callable $callback): static
 	{
 		$this->events->addOnClose($callback);
 
@@ -206,7 +206,7 @@ class Connection
 	}
 
 
-	public function addOnQuery(callable $callback): self
+	public function addOnQuery(callable $callback): static
 	{
 		$this->events->addOnQuery($callback);
 
@@ -214,7 +214,7 @@ class Connection
 	}
 
 
-	public function addOnResult(callable $callback): self
+	public function addOnResult(callable $callback): static
 	{
 		$this->events->addOnResult($callback);
 
@@ -222,7 +222,7 @@ class Connection
 	}
 
 
-	public function close(): self
+	public function close(): static
 	{
 		if ($this->isConnected()) {
 			$this->events->onClose();
@@ -239,7 +239,7 @@ class Connection
 	}
 
 
-	public function setDefaultRowFactory(RowFactory $rowFactory): self
+	public function setDefaultRowFactory(RowFactory $rowFactory): static
 	{
 		$this->defaultRowFactory = $rowFactory;
 
@@ -257,7 +257,7 @@ class Connection
 	}
 
 
-	public function setDataTypeParser(DataTypeParser $dataTypeParser): self
+	public function setDataTypeParser(DataTypeParser $dataTypeParser): static
 	{
 		$this->dataTypeParser = $dataTypeParser;
 
@@ -275,7 +275,7 @@ class Connection
 	}
 
 
-	public function setDataTypeCache(DataTypeCache $dataTypeCache): self
+	public function setDataTypeCache(DataTypeCache $dataTypeCache): static
 	{
 		$this->dataTypeCache = $dataTypeCache;
 
@@ -356,7 +356,7 @@ class Connection
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
-	public function execute(string $sql): self
+	public function execute(string $sql): static
 	{
 		$sql = $this->prepareQuery($sql);
 
@@ -418,7 +418,7 @@ class Connection
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
-	public function asyncExecute(string $sql): self
+	public function asyncExecute(string $sql): static
 	{
 		$sql = $this->prepareQuery($sql);
 
@@ -441,7 +441,7 @@ class Connection
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
-	public function completeAsyncExecute(): self
+	public function completeAsyncExecute(): static
 	{
 		$asyncExecuteQuery = $this->asyncHelper->getAsyncExecuteQuery();
 		if ($asyncExecuteQuery === NULL) {
@@ -466,7 +466,7 @@ class Connection
 	/**
 	 * @throws Exceptions\ConnectionException
 	 */
-	public function cancelAsyncQuery(): self
+	public function cancelAsyncQuery(): static
 	{
 		if (!\pg_cancel_query($this->getConnectedResource())) {
 			throw Exceptions\ConnectionException::asyncCancelFailed();
