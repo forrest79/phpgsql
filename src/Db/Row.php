@@ -185,7 +185,7 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 	 */
 	public function __unserialize(array $values): void
 	{
-		$this->resultColumns = new DummyColumnValueParser();
+		$this->columnValueParser = new DummyColumnValueParser();
 		$this->rawValues = [];
 		$this->values = $values;
 	}
