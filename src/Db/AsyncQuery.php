@@ -49,25 +49,25 @@ class AsyncQuery
 			);
 		}
 
-		$result = \pg_get_result($this->connection->getResource());
-		if ($result === FALSE) {
+		$resource = \pg_get_result($this->connection->getResource());
+		if ($resource === FALSE) {
 			$this->asyncHelper->clearQuery();
 			throw Exceptions\ResultException::noOtherAsyncResult($this->getQuery());
 		}
 
-		if (!$this->asyncHelper::checkAsyncQueryResult($result)) {
+		if (!$this->asyncHelper::checkAsyncQueryResult($resource)) {
 			if ($this->preparedStatementName === NULL) {
-				throw Exceptions\QueryException::asyncQueryFailed($this->getQuery(), (string) \pg_result_error($result));
+				throw Exceptions\QueryException::asyncQueryFailed($this->getQuery(), (string) \pg_result_error($resource));
 			} else {
 				throw Exceptions\QueryException::asyncPreparedStatementQueryFailed(
 					$this->preparedStatementName,
 					$this->getQuery(),
-					(string) \pg_result_error($result),
+					(string) \pg_result_error($resource),
 				);
 			}
 		}
 
-		return $this->connection->createResult($result, $this->getQuery());
+		return $this->connection->createResult($resource, $this->getQuery());
 	}
 
 }

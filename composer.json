@@ -19,8 +19,8 @@
 		"forrest79/phpcs-ignores": "^0.5",
 		"forrest79/phpgsql-phpstan": "^1.7",
 		"nette/tester": "^2.5",
-		"phpstan/phpstan": "^1.10",
-		"phpstan/phpstan-strict-rules": "^1.5"
+		"phpstan/phpstan": "^1.11",
+		"phpstan/phpstan-strict-rules": "^1.6"
 	},
 	"suggest": {
 		"ext-json": "Needed to support parse JSON types from PostgreSQL"

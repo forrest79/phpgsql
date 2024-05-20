@@ -38,6 +38,11 @@ parameters:
 			count: 1
 
 		-
+			message: '#^Call to method Forrest79\\PhPgSql\\Db\\Query::getSql\(\) on a separate line has no effect\.$#'
+			path: %rootDir%/../../../tests/Unit/QueryTest.php
+			count: 2
+
+		-
 			message: '#^Expression ".+" on a separate line does not do anything\.$#'
 			path: %rootDir%/../../../tests/Integration/FetchTest.php
 			count: 8
@@ -103,7 +108,12 @@ parameters:
 			count: 1
 
 		-
-			message: '#^Unused result of ternary operator\.$#'
+			message: '#^Unused result of "\|\|" operator\.$#'
+			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
+			count: 8
+
+		-
+			message: '#^Call to new Forrest79\\PhPgSql\\Db\\Sql\\Literal\(\) on a separate line has no effect\.$#'
 			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
 			count: 1
 
@@ -153,6 +163,11 @@ parameters:
 
 		-
 			message: '#^Unreachable statement - code above always terminates\.$#'
+			path: %rootDir%/../../../src/Fluent/QueryBuilder.php
+			count: 1
+
+		-
+			message: "#^Offset 'prefix'\\|'suffix' on array\\{select\\: array\\<int\\|string, BackedEnum\\|Forrest79\\\\PhPgSql\\\\Db\\\\Sql\\|Forrest79\\\\PhPgSql\\\\Fluent\\\\Query\\|int\\|string\\>, distinct\\: bool, tables\\: array\\<string, array\\{string, string\\}\\>, table\\-types\\: array\\{main\\: string\\|null, from\\: list\\<string\\>, joins\\: list\\<string\\>, using\\: string\\|null\\}, on\\-conditions\\: array\\<string, Forrest79\\\\PhPgSql\\\\Fluent\\\\Complex\\>, lateral\\-tables\\: array\\<string, string\\>, where\\: Forrest79\\\\PhPgSql\\\\Fluent\\\\Complex\\|null, groupBy\\: array\\<string\\>, \\.\\.\\.\\} on left side of \\?\\? always exists and is not nullable\\.$#"
 			path: %rootDir%/../../../src/Fluent/QueryBuilder.php
 			count: 1
 

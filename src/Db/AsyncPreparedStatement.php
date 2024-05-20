@@ -65,12 +65,12 @@ class AsyncPreparedStatement extends PreparedStatementHelper
 				);
 			}
 
-			$result = \pg_get_result($this->connection->getResource());
-			if (($result === FALSE) || (!$this->asyncHelper::checkAsyncQueryResult($result))) {
+			$resource = \pg_get_result($this->connection->getResource());
+			if (($resource === FALSE) || (!$this->asyncHelper::checkAsyncQueryResult($resource))) {
 				throw Exceptions\QueryException::asyncPreparedStatementQueryFailed(
 					$statementName,
 					new Query($this->query, []),
-					($result !== FALSE) ? (string) \pg_result_error($result) : $this->connection->getLastError(),
+					($resource !== FALSE) ? (string) \pg_result_error($resource) : $this->connection->getLastError(),
 				);
 			}
 

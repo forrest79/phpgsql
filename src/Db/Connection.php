@@ -288,11 +288,7 @@ class Connection
 	 */
 	private function getDataTypesCache(): array|NULL
 	{
-		if ($this->dataTypeCache !== NULL) {
-			return $this->dataTypeCache->load($this);
-		}
-
-		return NULL;
+		return $this->dataTypeCache?->load($this) ?? NULL;
 	}
 
 
@@ -452,11 +448,11 @@ class Connection
 			throw Exceptions\ConnectionException::asyncNoExecuteIsSent();
 		}
 
-		while (($result = \pg_get_result($this->getConnectedResource())) !== FALSE) {
-			if (!$this->asyncHelper::checkAsyncQueryResult($result)) {
+		while (($resource = \pg_get_result($this->getConnectedResource())) !== FALSE) {
+			if (!$this->asyncHelper::checkAsyncQueryResult($resource)) {
 				throw Exceptions\QueryException::asyncQueryFailed(
 					new Query($asyncExecuteQuery, []),
-					(string) \pg_result_error($result),
+					(string) \pg_result_error($resource),
 				);
 			}
 		}
