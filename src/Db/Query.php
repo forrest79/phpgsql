@@ -2,7 +2,7 @@
 
 namespace Forrest79\PhPgSql\Db;
 
-final class Query
+class Query
 {
 	private string $sql;
 
