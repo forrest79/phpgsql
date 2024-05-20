@@ -4,11 +4,9 @@ namespace Forrest79\PhPgSql\Db;
 
 class AsyncQuery
 {
-	private Connection $connection;
-
-	private ResultFactory $resultFactory;
-
 	private AsyncHelper $asyncHelper;
+
+	private Internals $internals;
 
 	private Query $query;
 
@@ -16,16 +14,14 @@ class AsyncQuery
 
 
 	public function __construct(
-		Connection $connection,
-		ResultFactory $resultFactory,
 		AsyncHelper $asyncHelper,
+		Internals $internal,
 		Query $query,
 		string|NULL $preparedStatementName = NULL,
 	)
 	{
-		$this->connection = $connection;
-		$this->resultFactory = $resultFactory;
 		$this->asyncHelper = $asyncHelper;
+		$this->internals = $internal;
 		$this->query = $query;
 		$this->preparedStatementName = $preparedStatementName;
 	}
@@ -53,7 +49,7 @@ class AsyncQuery
 			);
 		}
 
-		$resource = \pg_get_result($this->connection->getResource());
+		$resource = \pg_get_result($this->internals->getConnectedResource());
 		if ($resource === FALSE) {
 			$this->asyncHelper->clearQuery();
 			throw Exceptions\ResultException::noOtherAsyncResult($this->getQuery());
@@ -71,7 +67,7 @@ class AsyncQuery
 			}
 		}
 
-		return $this->resultFactory->createResult($resource, $this->getQuery());
+		return $this->internals->createResult($resource, $this->getQuery());
 	}
 
 }

@@ -7,15 +7,9 @@ class AsyncPreparedStatement extends PreparedStatementHelper
 	private AsyncHelper $asyncHelper;
 
 
-	public function __construct(
-		AsyncHelper $asyncHelper,
-		Connection $connection,
-		ResultFactory $resultFactory,
-		Events $events,
-		string $query,
-	)
+	public function __construct(AsyncHelper $asyncHelper, Internals $internal, string $query)
 	{
-		parent::__construct($connection, $resultFactory, $events, $query);
+		parent::__construct($internal, $query);
 		$this->asyncHelper = $asyncHelper;
 	}
 
@@ -38,20 +32,20 @@ class AsyncPreparedStatement extends PreparedStatementHelper
 
 		$query = new Query($this->query, $params);
 
-		$success = @\pg_send_execute($this->connection->getResource(), $statementName, $params); // intentionally @
+		$success = @\pg_send_execute($this->internals->getConnectedResource(), $statementName, $params); // intentionally @
 		if ($success === FALSE) {
 			throw Exceptions\QueryException::asyncPreparedStatementQueryFailed(
 				$statementName,
 				$query,
-				$this->connection->getLastError(),
+				$this->internals->getLastError(),
 			);
 		}
 
-		if ($this->events->hasOnQuery()) {
-			$this->events->onQuery($query, NULL, $statementName);
+		if ($this->internals->hasOnQuery()) {
+			$this->internals->onQuery($query, NULL, $statementName);
 		}
 
-		return $this->asyncHelper->createAndSetAsyncQuery($this->resultFactory, $query, $statementName);
+		return $this->asyncHelper->createAndSetAsyncQuery($query, $statementName);
 	}
 
 
@@ -62,21 +56,21 @@ class AsyncPreparedStatement extends PreparedStatementHelper
 
 			$this->query = self::prepareQuery($this->query);
 
-			$success = @\pg_send_prepare($this->connection->getResource(), $statementName, $this->query); // intentionally @
+			$success = @\pg_send_prepare($this->internals->getConnectedResource(), $statementName, $this->query); // intentionally @
 			if ($success === FALSE) {
 				throw Exceptions\QueryException::asyncPreparedStatementQueryFailed(
 					$statementName,
 					new Query($this->query, []),
-					$this->connection->getLastError(),
+					$this->internals->getLastError(),
 				);
 			}
 
-			$resource = \pg_get_result($this->connection->getResource());
+			$resource = \pg_get_result($this->internals->getConnectedResource());
 			if (($resource === FALSE) || (!$this->asyncHelper::checkAsyncQueryResult($resource))) {
 				throw Exceptions\QueryException::asyncPreparedStatementQueryFailed(
 					$statementName,
 					new Query($this->query, []),
-					($resource !== FALSE) ? (string) \pg_result_error($resource) : $this->connection->getLastError(),
+					($resource !== FALSE) ? (string) \pg_result_error($resource) : $this->internals->getLastError(),
 				);
 			}
 

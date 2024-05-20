@@ -7,31 +7,24 @@ use PgSql;
 
 class Basic implements Db\ResultFactory
 {
-	private Db\Connection $connection;
-
-	private Db\Events $events;
+	private Db\Internals $internal;
 
 
-	public function __construct(Db\Connection $connection, Db\Events $events)
+	public function __construct(Db\Internals $internal)
 	{
-		$this->connection = $connection;
-		$this->events = $events;
+		$this->internal = $internal;
 	}
 
 
 	public function createResult(PgSql\Result $resource, Db\Query $query): Db\Result
 	{
-		$result = new Db\Result(
+		return new Db\Result(
 			$resource,
 			$query,
-			$this->connection->getDefaultRowFactory(),
-			$this->connection->getDataTypeParser(),
-			$this->connection->getDataTypesCache(),
+			$this->internal->getDefaultRowFactory(),
+			$this->internal->getDataTypeParser(),
+			$this->internal->getDataTypesCache(),
 		);
-
-		$this->events->onResult($result);
-
-		return $result;
 	}
 
 }

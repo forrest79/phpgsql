@@ -6,22 +6,16 @@ abstract class PreparedStatementHelper
 {
 	private static int $id = 1;
 
-	protected Connection $connection;
-
-	protected ResultFactory $resultFactory;
-
-	protected Events $events;
+	protected Internals $internals;
 
 	protected string $query;
 
 	protected string|NULL $statementName = NULL;
 
 
-	public function __construct(Connection $connection, ResultFactory $resultFactory, Events $events, string $query)
+	public function __construct(Internals $internal, string $query)
 	{
-		$this->connection = $connection;
-		$this->resultFactory = $resultFactory;
-		$this->events = $events;
+		$this->internals = $internal;
 		$this->query = $query;
 	}
 

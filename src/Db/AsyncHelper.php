@@ -6,26 +6,22 @@ use PgSql;
 
 class AsyncHelper
 {
-	private Connection $connection;
+	private Internals $internals;
 
 	private AsyncQuery|NULL $asyncQuery = NULL;
 
 	private string|NULL $asyncExecuteQuery = NULL;
 
 
-	public function __construct(Connection $connection)
+	public function __construct(Internals $internal)
 	{
-		$this->connection = $connection;
+		$this->internals = $internal;
 	}
 
 
-	public function createAndSetAsyncQuery(
-		ResultFactory $resultFactory,
-		Query $query,
-		string|NULL $preparedStatementName = NULL,
-	): AsyncQuery
+	public function createAndSetAsyncQuery(Query $query, string|NULL $preparedStatementName = NULL): AsyncQuery
 	{
-		$this->asyncQuery = new AsyncQuery($this->connection, $resultFactory, $this, $query, $preparedStatementName);
+		$this->asyncQuery = new AsyncQuery($this, $this->internals, $query, $preparedStatementName);
 		$this->asyncExecuteQuery = NULL;
 
 		return $this->asyncQuery;

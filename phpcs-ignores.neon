@@ -153,12 +153,6 @@ ignoreErrors:
 		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
 		message: All classes should be declared using either the "abstract" or "final" keyword.
 		count: 1
-		path: src/Db/Events.php
-
-	-
-		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
-		message: All classes should be declared using either the "abstract" or "final" keyword.
-		count: 1
 		path: src/Db/Exceptions/ConnectionException.php
 
 	-
@@ -196,6 +190,12 @@ ignoreErrors:
 		message: All classes should be declared using either the "abstract" or "final" keyword.
 		count: 1
 		path: src/Db/Helper.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Db/Internals.php
 
 	-
 		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal

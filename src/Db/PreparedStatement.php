@@ -19,22 +19,22 @@ class PreparedStatement extends PreparedStatementHelper
 	{
 		$statementName = $this->prepareStatement();
 
-		$startTime = $this->events->hasOnQuery() ? \hrtime(TRUE) : NULL;
+		$startTime = $this->internals->hasOnQuery() ? \hrtime(TRUE) : NULL;
 
 		$params = self::prepareParams($params);
 
 		$query = new Query($this->query, $params);
 
-		$resource = @\pg_execute($this->connection->getResource(), $statementName, $params); // intentionally @
+		$resource = @\pg_execute($this->internals->getConnectedResource(), $statementName, $params); // intentionally @
 		if ($resource === FALSE) {
-			throw Exceptions\QueryException::preparedStatementQueryFailed($statementName, $query, $this->connection->getLastError());
+			throw Exceptions\QueryException::preparedStatementQueryFailed($statementName, $query, $this->internals->getLastError());
 		}
 
 		if ($startTime !== NULL) {
-			$this->events->onQuery($query, \hrtime(TRUE) - $startTime, $statementName);
+			$this->internals->onQuery($query, \hrtime(TRUE) - $startTime, $statementName);
 		}
 
-		return $this->resultFactory->createResult($resource, $query);
+		return $this->internals->createResult($resource, $query);
 	}
 
 
@@ -45,12 +45,12 @@ class PreparedStatement extends PreparedStatementHelper
 
 			$this->query = self::prepareQuery($this->query);
 
-			$resource = @\pg_prepare($this->connection->getResource(), $statementName, $this->query); // intentionally @
+			$resource = @\pg_prepare($this->internals->getConnectedResource(), $statementName, $this->query); // intentionally @
 			if ($resource === FALSE) {
 				throw Exceptions\QueryException::preparedStatementQueryFailed(
 					$statementName,
 					new Query($this->query, []),
-					$this->connection->getLastError(),
+					$this->internals->getLastError(),
 				);
 			}
 
