@@ -7,12 +7,12 @@ use PgSql;
 
 class Basic implements Db\ResultFactory
 {
-	private Db\Internals $internal;
+	private Db\Connection $connection;
 
 
-	public function __construct(Db\Internals $internal)
+	public function __construct(Db\Connection $connection)
 	{
-		$this->internal = $internal;
+		$this->connection = $connection;
 	}
 
 
@@ -21,9 +21,9 @@ class Basic implements Db\ResultFactory
 		return new Db\Result(
 			$resource,
 			$query,
-			$this->internal->getDefaultRowFactory(),
-			$this->internal->getDataTypeParser(),
-			$this->internal->getDataTypesCache(),
+			$this->connection->getDefaultRowFactory(),
+			$this->connection->getDataTypeParser(),
+			$this->connection->getDataTypesCache(),
 		);
 	}
 

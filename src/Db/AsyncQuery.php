@@ -49,7 +49,7 @@ class AsyncQuery
 			);
 		}
 
-		$resource = \pg_get_result($this->internals->getConnectedResource());
+		$resource = \pg_get_result($this->internals->getResource());
 		if ($resource === FALSE) {
 			$this->asyncHelper->clearQuery();
 			throw Exceptions\ResultException::noOtherAsyncResult($this->getQuery());

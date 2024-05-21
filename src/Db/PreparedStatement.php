@@ -25,7 +25,7 @@ class PreparedStatement extends PreparedStatementHelper
 
 		$query = new Query($this->query, $params);
 
-		$resource = @\pg_execute($this->internals->getConnectedResource(), $statementName, $params); // intentionally @
+		$resource = @\pg_execute($this->internals->getResource(), $statementName, $params); // intentionally @
 		if ($resource === FALSE) {
 			throw Exceptions\QueryException::preparedStatementQueryFailed($statementName, $query, $this->internals->getLastError());
 		}
@@ -45,7 +45,7 @@ class PreparedStatement extends PreparedStatementHelper
 
 			$this->query = self::prepareQuery($this->query);
 
-			$resource = @\pg_prepare($this->internals->getConnectedResource(), $statementName, $this->query); // intentionally @
+			$resource = @\pg_prepare($this->internals->getResource(), $statementName, $this->query); // intentionally @
 			if ($resource === FALSE) {
 				throw Exceptions\QueryException::preparedStatementQueryFailed(
 					$statementName,
