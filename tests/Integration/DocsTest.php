@@ -133,6 +133,9 @@ final class DocsTest extends TestCase
 				} else if ($value === NULL) {
 					$value = '(NULL)';
 				}
+
+				assert(\is_scalar($value));
+
 				$list[] = $value;
 				$array[] = (\is_string($key) ? ('\'' . $key . '\'') : $key) . ' => ' . $value;
 
