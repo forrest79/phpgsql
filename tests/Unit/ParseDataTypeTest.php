@@ -77,6 +77,36 @@ final class ParseDataTypeTest extends Tests\TestCase
 	}
 
 
+	public function testParseArraysWithNull(): void
+	{
+		$basicDataTypeParser = $this->createBasicDataTypeParser();
+
+		Tester\Assert::same([1, NULL, 2], $basicDataTypeParser->parse('_int2', '{1,NULL,2}'));
+		Tester\Assert::same([2, NULL, 3], $basicDataTypeParser->parse('_int4', '{2,NULL,3}'));
+		Tester\Assert::same([3, NULL, 4], $basicDataTypeParser->parse('_int8', '{3,NULL,4}'));
+		Tester\Assert::same([4, NULL, 5], $basicDataTypeParser->parse('_oid', '{4,NULL,5}'));
+		Tester\Assert::same([1.1, NULL, 2.2], $basicDataTypeParser->parse('_float4', '{1.1,NULL,2.2}'));
+		Tester\Assert::same([2.2, NULL, 3.3], $basicDataTypeParser->parse('_float8', '{2.2,NULL,3.3}'));
+		Tester\Assert::same([3.3, NULL, 4.4], $basicDataTypeParser->parse('_numeric', '{3.3,NULL,4.4}'));
+		Tester\Assert::same([TRUE, NULL, FALSE], $basicDataTypeParser->parse('_bool', '{t,NULL,f}'));
+
+		$date = $basicDataTypeParser->parse('_date', '{NULL,2018-01-01}');
+		Tester\Assert::null($date[0]);
+		Tester\Assert::same('2018-01-01', $date[1]->format('Y-m-d'));
+
+		$timestamp = $basicDataTypeParser->parse('_timestamp', '{NULL,2018-01-01 20:30:00}');
+		Tester\Assert::null($timestamp[0]);
+		Tester\Assert::same('2018-01-01 20:30:00', $timestamp[1]->format('Y-m-d H:i:s'));
+
+		$timestampTz = $basicDataTypeParser->parse('_timestamptz', '{NULL,2018-01-01 20:30:00+02}');
+		Tester\Assert::null($timestampTz[0]);
+		Tester\Assert::same('2018-01-01 20:30:00 +0200', $timestampTz[1]->format('Y-m-d H:i:s O'));
+
+		Tester\Assert::same([NULL, '20:30:00'], $basicDataTypeParser->parse('_time', '{NULL,20:30:00}'));
+		Tester\Assert::same([NULL, '20:30:00+02'], $basicDataTypeParser->parse('_timetz', '{NULL,20:30:00+02}'));
+	}
+
+
 	public function testParseBlankArrays(): void
 	{
 		Tester\Assert::same([], $this->createBasicDataTypeParser()->parse('_int4', '{}'));

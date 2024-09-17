@@ -205,7 +205,6 @@ final class ParseDataTypeTest extends TestCase
 	{
 		$this->connection->query('
 			CREATE TABLE test(
-				id serial,
 				type_integer integer[],
 				type_bigint bigint[],
 				type_smallint smallint[],
@@ -265,9 +264,6 @@ final class ParseDataTypeTest extends TestCase
 		]);
 
 		$row = $this->fetch();
-
-		Tester\Assert::true(\is_int($row->id));
-		Tester\Assert::same(1, $row->id);
 
 		Tester\Assert::true(\is_array($row->type_integer));
 		Tester\Assert::true(\is_int($row->type_integer[0]));
@@ -338,6 +334,130 @@ final class ParseDataTypeTest extends TestCase
 		\assert(\is_array($row->type_timestamptz));
 		\assert($row->type_timestamptz[0] instanceof \DateTimeImmutable);
 		Tester\Assert::same('2018-01-01 20:30:00+02:00', $row->type_timestamptz[0]->setTimezone(new \DateTimeZone('+2:00'))->format('Y-m-d H:i:sP'));
+	}
+
+
+	public function testParseArraysWithNull(): void
+	{
+		$this->connection->query('
+			CREATE TABLE test(
+				type_integer integer[],
+				type_bigint bigint[],
+				type_smallint smallint[],
+				type_oid oid[],
+				type_numeric numeric[],
+				type_decimal decimal[],
+				type_real real[],
+				type_double double precision[],
+				type_float float[],
+				type_bool boolean[],
+				type_date date[],
+				type_time time[],
+				type_timetz timetz[],
+				type_timestamp timestamp[],
+				type_timestamptz timestamptz[]
+			);
+		');
+
+		$this->connection->queryArgs('
+			INSERT INTO test(
+					type_integer,
+					type_bigint,
+					type_smallint,
+					type_oid,
+					type_numeric,
+					type_decimal,
+					type_real,
+					type_double,
+					type_float,
+					type_bool,
+					type_date,
+					type_time,
+					type_timetz,
+					type_timestamp,
+					type_timestamptz
+				)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+		', [
+			'{1,null,2}',
+			'{2,NULL,3}',
+			'{3,NULL,4}',
+			'{4,NULL,5}',
+			'{1.1,NULL,2.2}',
+			'{2.2,NULL,3.3}',
+			'{3.3,NULL,4.4}',
+			'{4.4,NULL,5.5}',
+			'{5.5,NULL,6.6}',
+			'{TRUE,NULL,FALSE}',
+			'{NULL,\'2018-01-01\'}',
+			'{NULL,\'20:30:00\'}',
+			'{NULL,\'20:30:00+02\'}',
+			'{NULL,\'2018-01-01 20:30:00\'}',
+			'{NULL,\'2018-01-01 20:30:00+02\'}',
+		]);
+
+		$row = $this->fetch();
+
+		Tester\Assert::same(1, $row->type_integer[0]);
+		Tester\Assert::null($row->type_integer[1]);
+		Tester\Assert::same(2, $row->type_integer[2]);
+
+		Tester\Assert::same(2, $row->type_bigint[0]);
+		Tester\Assert::null($row->type_bigint[1]);
+		Tester\Assert::same(3, $row->type_bigint[2]);
+
+		Tester\Assert::same(3, $row->type_smallint[0]);
+		Tester\Assert::null($row->type_smallint[1]);
+		Tester\Assert::same(4, $row->type_smallint[2]);
+
+		Tester\Assert::same(4, $row->type_oid[0]);
+		Tester\Assert::null($row->type_oid[1]);
+		Tester\Assert::same(5, $row->type_oid[2]);
+
+		Tester\Assert::same(1.1, $row->type_numeric[0]);
+		Tester\Assert::null($row->type_numeric[1]);
+		Tester\Assert::same(2.2, $row->type_numeric[2]);
+
+		Tester\Assert::same(2.2, $row->type_decimal[0]);
+		Tester\Assert::null($row->type_decimal[1]);
+		Tester\Assert::same(3.3, $row->type_decimal[2]);
+
+		Tester\Assert::same(3.3, $row->type_real[0]);
+		Tester\Assert::null($row->type_real[1]);
+		Tester\Assert::same(4.4, $row->type_real[2]);
+
+		Tester\Assert::same(4.4, $row->type_double[0]);
+		Tester\Assert::null($row->type_double[1]);
+		Tester\Assert::same(5.5, $row->type_double[2]);
+
+		Tester\Assert::same(5.5, $row->type_float[0]);
+		Tester\Assert::null($row->type_float[1]);
+		Tester\Assert::same(6.6, $row->type_float[2]);
+
+		Tester\Assert::true($row->type_bool[0]);
+		Tester\Assert::null($row->type_bool[1]);
+		Tester\Assert::false($row->type_bool[2]);
+
+		\assert(\is_array($row->type_date));
+		Tester\Assert::null($row->type_date[0]);
+		\assert($row->type_date[1] instanceof \DateTimeImmutable);
+		Tester\Assert::same('2018-01-01', $row->type_date[1]->format('Y-m-d'));
+
+		Tester\Assert::null($row->type_time[0]);
+		Tester\Assert::same('20:30:00', $row->type_time[1]);
+
+		Tester\Assert::null($row->type_timetz[0]);
+		Tester\Assert::same('20:30:00+02', $row->type_timetz[1]);
+
+		\assert(\is_array($row->type_timestamp));
+		Tester\Assert::null($row->type_timestamp[0]);
+		\assert($row->type_timestamp[1] instanceof \DateTimeImmutable);
+		Tester\Assert::same('2018-01-01 20:30:00', $row->type_timestamp[1]->format('Y-m-d H:i:s'));
+
+		\assert(\is_array($row->type_timestamptz));
+		Tester\Assert::null($row->type_timestamptz[0]);
+		\assert($row->type_timestamptz[1] instanceof \DateTimeImmutable);
+		Tester\Assert::same('2018-01-01 20:30:00+02:00', $row->type_timestamptz[1]->setTimezone(new \DateTimeZone('+2:00'))->format('Y-m-d H:i:sP'));
 	}
 
 

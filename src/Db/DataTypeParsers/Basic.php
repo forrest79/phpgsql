@@ -108,11 +108,15 @@ class Basic implements Db\DataTypeParser
 		}
 
 		$array = \explode(',', $value);
-
-		if ($typeFnc !== NULL) {
-			$array = \array_map($typeFnc, $array);
+		foreach ($array as $i => $item) {
+			if ($item === 'NULL') {
+				$array[$i] = NULL;
+			} else if ($typeFnc !== NULL) {
+				$array[$i] = $typeFnc($item);
+			}
 		}
 
+		/** @phpstan-var list<mixed> */
 		return $array;
 	}
 

@@ -740,7 +740,7 @@ ignoreErrors:
 	-
 		sniff: Generic.Arrays.ArrayIndent.OpenBraceIncorrect
 		message: Array open brace not indented correctly; expected at least 8 spaces but found 0
-		count: 2
+		count: 3
 		path: tests/Integration/ParseDataTypeTest.php
 
 	-
