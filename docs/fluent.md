@@ -594,7 +594,7 @@ dump($deleteRows); // (integer) 1
 
 ### Merge
 
-Oficial docs: https://www.postgresql.org/docs/current/sql-merge.html
+Official docs: https://www.postgresql.org/docs/current/sql-merge.html
 
 `MERGE` command was added in the PostgreSQL v15. You can use it to conditionally insert, update, or delete rows of a table.
 
@@ -636,11 +636,34 @@ $query = $connection
 dump($query); // (Query) MERGE INTO wines AS w USING wine_stock_changes AS s ON s.winename = w.winename WHEN NOT MATCHED AND s.stock_delta > 0 THEN INSERT VALUES(s.winename, s.stock_delta) WHEN MATCHED AND w.stock + s.stock_delta > $1 THEN UPDATE SET stock = w.stock + s.stock_delta WHEN MATCHED THEN DELETE [Params: (array) [0]]
 ```
 
-@todo DO NOTHING
+Also `DO NOTHING` clause can be used:
+
+```php
+$query = $connection
+  ->merge('wines', 'w')
+  ->using('wine_stock_changes', 's', 's.winename = w.winename')
+  ->whenNotMatched('INSERT VALUES(s.winename, s.stock_delta)')
+  ->whenMatched('DO NOTHING');
+
+dump($query); // (Query) MERGE INTO wines AS w USING wine_stock_changes AS s ON s.winename = w.winename WHEN NOT MATCHED THEN INSERT VALUES(s.winename, s.stock_delta) WHEN MATCHED THEN DO NOTHING
+```
+
+And since PostgreSQL v17 there is also possibility to use `RETURNING`:
+
+```php
+$query = $connection
+  ->merge('customer_account', 'ca')
+  ->using('recent_transactions', 't', 't.customer_id = ca.customer_id')
+  ->whenMatched('UPDATE SET balance = balance + transaction_value')
+  ->whenNotMatched('INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)')
+  ->returning(['merge_action()', 'ca.*']);
+
+dump($query); // (Query) MERGE INTO customer_account AS ca USING recent_transactions AS t ON t.customer_id = ca.customer_id WHEN MATCHED THEN UPDATE SET balance = balance + transaction_value WHEN NOT MATCHED THEN INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value) RETURNING merge_action(), ca.*
+```
 
 #### Upsert
 
-The `MERGE` command can be used for simply upsert (perform UPDATE and if recond not exists yet perform INSERT). The query could look like this:
+The `MERGE` command can be used for simply upsert (perform UPDATE and if record not exists yet perform INSERT). The query could look like this:
 
 ```sql
 MERGE INTO users AS u

@@ -383,7 +383,7 @@ class QueryBuilder
 			$merge .= ' THEN ' . $then;
 		}
 
-		return $merge;
+		return $merge . $this->getReturning($queryParams, $params);
 	}
 
 
