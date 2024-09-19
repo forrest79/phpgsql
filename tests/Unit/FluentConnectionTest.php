@@ -62,6 +62,19 @@ final class FluentConnectionTest extends Tests\TestCase
 	}
 
 
+	public function testDistinctOn(): void
+	{
+		$query = $this->fluentConnection
+			->distinctOn('table')
+			->select(['table'])
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('SELECT DISTINCT ON (table) table', $query->getSql());
+		Tester\Assert::same([], $query->getParams());
+	}
+
+
 	public function testFrom(): void
 	{
 		$query = $this->fluentConnection

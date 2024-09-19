@@ -40,6 +40,15 @@ class Connection extends Db\Connection implements Sql
 	/**
 	 * @throws Exceptions\QueryException
 	 */
+	public function distinctOn(string ...$on): QueryExecute
+	{
+		return $this->createQuery()->distinctOn(...$on);
+	}
+
+
+	/**
+	 * @throws Exceptions\QueryException
+	 */
 	public function from(string|Query|Db\Sql $from, string|NULL $alias = NULL): QueryExecute
 	{
 		return $this->createQuery()->from($from, $alias);

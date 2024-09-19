@@ -35,6 +35,33 @@ final class FluentQueryTest extends Tests\TestCase
 	}
 
 
+	public function testSelectDistinctOn(): void
+	{
+		$query = $this->query()
+			->select(['t.column'])
+			->distinctOn('t.column')
+			->from('table', 't')
+			->where('t.column', 100)
+			->createSqlQuery()
+			->createQuery();
+
+		Tester\Assert::same('SELECT DISTINCT ON (t.column) t.column FROM table AS t WHERE t.column = $1', $query->getSql());
+		Tester\Assert::same([100], $query->getParams());
+	}
+
+
+	public function testSelectCombineDistinctAndDistinctOn(): void
+	{
+		Tester\Assert::exception(function (): void {
+			$this->query()
+				->select(['t.column'])
+				->distinct()
+				->distinctOn('t.column')
+				->createSqlQuery();
+		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::CANT_COMBINE_DISTINCT_AND_DISTINCT_ON);
+	}
+
+
 	public function testSelectWithFluentQuery(): void
 	{
 		$query = $this->query()
@@ -1721,6 +1748,7 @@ final class FluentQueryTest extends Tests\TestCase
 
 		Tester\Assert::false($query->has($query::PARAM_SELECT));
 		Tester\Assert::false($query->has($query::PARAM_DISTINCT));
+		Tester\Assert::false($query->has($query::PARAM_DISTINCTON));
 		Tester\Assert::false($query->has($query::PARAM_TABLES));
 		Tester\Assert::false($query->has($query::PARAM_TABLE_TYPES));
 		Tester\Assert::false($query->has($query::PARAM_ON_CONDITIONS));
@@ -1756,6 +1784,7 @@ final class FluentQueryTest extends Tests\TestCase
 
 		Tester\Assert::true($query->has($query::PARAM_SELECT));
 		Tester\Assert::true($query->has($query::PARAM_DISTINCT));
+		Tester\Assert::false($query->has($query::PARAM_DISTINCTON));
 		Tester\Assert::true($query->has($query::PARAM_TABLES));
 		Tester\Assert::true($query->has($query::PARAM_TABLE_TYPES));
 		Tester\Assert::true($query->has($query::PARAM_ON_CONDITIONS));
@@ -1768,6 +1797,11 @@ final class FluentQueryTest extends Tests\TestCase
 		Tester\Assert::true($query->has($query::PARAM_COMBINE_QUERIES));
 		Tester\Assert::true($query->has($query::PARAM_PREFIX));
 		Tester\Assert::true($query->has($query::PARAM_SUFFIX));
+
+		$query = $this->query()->select(['column'])->distinctOn('column');
+
+		Tester\Assert::false($query->has($query::PARAM_DISTINCT));
+		Tester\Assert::true($query->has($query::PARAM_DISTINCTON));
 
 		$query = $this->query()->insert('table', columns: ['column'])->select(['1'])->returning(['column']);
 

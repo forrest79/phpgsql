@@ -72,6 +72,9 @@ Every query is `SELECT` at first, until you call `->insert(...)`, `->update(...)
 - `distinct(): Query` - creates `SELECT DISCTINCT`
 
 
+- `distinctOn(array $on): Query` - creates `SELECT DISCTINCT ON(...)`. `$on` is a list of strings.
+
+
 - `from($from, ?string $alias = NULL)` - defines table for `SELECT` query. `$from` can be simple `string` or other `Query` or `Db\Sql`.
 
 

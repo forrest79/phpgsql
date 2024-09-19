@@ -20,6 +20,7 @@ class QueryBuilderException extends Exception
 	public const ON_CONFLICT_DO_WITHOUT_DEFINITION = 14;
 	public const ON_CONFLICT_DO_UPDATE_SET_SINGLE_COLUMN_CAN_BE_ONLY_STRING = 15;
 	public const MISSING_COLUMN_ALIAS = 16;
+	public const CANT_COMBINE_DISTINCT_AND_DISTINCT_ON = 17;
 
 
 	public static function badQueryType(string $type): self
@@ -118,6 +119,12 @@ class QueryBuilderException extends Exception
 	public static function missingColumnAlias(): self
 	{
 		return new self('Non-string columns for INSERT-SELECT must have an alias.', self::MISSING_COLUMN_ALIAS);
+	}
+
+
+	public static function cantCombineDistinctAndDistinctOn(): self
+	{
+		return new self('Can\'t combine DISTINCT and DISTINCT ON in one query.', self::CANT_COMBINE_DISTINCT_AND_DISTINCT_ON);
 	}
 
 }

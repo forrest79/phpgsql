@@ -367,6 +367,12 @@ ignoreErrors:
 
 	-
 		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "distinctOn"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
 		message: Visibility must be declared on method "except"
 		count: 1
 		path: src/Fluent/Sql.php

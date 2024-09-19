@@ -18,6 +18,7 @@ class Query implements Sql
 
 	public const PARAM_SELECT = 'select';
 	public const PARAM_DISTINCT = 'distinct';
+	public const PARAM_DISTINCTON = 'distinctOn';
 	public const PARAM_TABLES = 'tables';
 	public const PARAM_TABLE_TYPES = 'table-types';
 	public const PARAM_ON_CONDITIONS = 'on-conditions';
@@ -71,6 +72,7 @@ class Query implements Sql
 	private const DEFAULT_PARAMS = [
 		self::PARAM_SELECT => [],
 		self::PARAM_DISTINCT => FALSE,
+		self::PARAM_DISTINCTON => [],
 		self::PARAM_TABLES => [],
 		self::PARAM_TABLE_TYPES => [
 			self::TABLE_TYPE_MAIN => NULL,
@@ -175,6 +177,19 @@ class Query implements Sql
 		$this->resetQuery();
 
 		$this->params[self::PARAM_DISTINCT] = TRUE;
+
+		return $this;
+	}
+
+
+	/**
+	 * @throws Exceptions\QueryException
+	 */
+	public function distinctOn(string ...$on): static
+	{
+		$this->resetQuery();
+
+		$this->params[self::PARAM_DISTINCTON] = \array_merge($this->params[self::PARAM_DISTINCTON], $on);
 
 		return $this;
 	}

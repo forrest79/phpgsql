@@ -8,6 +8,7 @@ use Forrest79\PhPgSql\Db;
  * @phpstan-type QueryParams array{
  *   select: array<int|string, string|int|\BackedEnum|Query|Db\Sql>,
  *   distinct: bool,
+ *   distinctOn: list<string>,
  *   tables: array<string, array{0: string, 1: string}>,
  *   table-types: array{main: string|NULL, from: list<string>, joins: list<string>, using: string|NULL},
  *   on-conditions: array<string, Complex>,
@@ -432,7 +433,17 @@ class QueryBuilder
 	 */
 	private function getSelectDistinct(array $queryParams): string
 	{
-		return $queryParams[Query::PARAM_DISTINCT] === TRUE ? 'DISTINCT ' : '';
+		if (($queryParams[Query::PARAM_DISTINCT] === TRUE) && ($queryParams[Query::PARAM_DISTINCTON] !== [])) {
+			throw Exceptions\QueryBuilderException::cantCombineDistinctAndDistinctOn();
+		}
+
+		if ($queryParams[Query::PARAM_DISTINCT] === TRUE) {
+			return 'DISTINCT ';
+		} else if ($queryParams[Query::PARAM_DISTINCTON] !== []) {
+			return 'DISTINCT ON (' . implode(', ', $queryParams[Query::PARAM_DISTINCTON]) . ') ';
+		}
+
+		return '';
 	}
 
 
