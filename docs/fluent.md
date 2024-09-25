@@ -1,6 +1,6 @@
 # PhPgSql\Fluent
 
-PhPgSql\Fluent implements a small part of PostreSQL SQL [commands](https://www.postgresql.org/docs/current/reference.html) via fluent object syntax.
+PhPgSql\Fluent implements a small part of PostgreSQL SQL [commands](https://www.postgresql.org/docs/current/reference.html) via fluent object syntax.
 
 ## Common use
 
@@ -61,7 +61,7 @@ This is the list of all methods you can use to generate a query. This covers mos
 
 You can start a query with whatever method you want. Methods only set query properties, and from these properties are generated the final SQL query.
 
-Every query is `SELECT` at first, until you call `->insert(...)`, `->update(...)`, `->delete(...)` or `->truncate(...)`, which change query type to apropriate SQL command (you can set type more than once in one query, the last is used - except `INSERT` - `SELECT`). So you can prepare you query in a common way and at the end, you can decide if you want to `SELECT` or `DELETE` data or whatsoever. If you call some method more than once, data is merged, for example, this `->select(['column1'])->select(['column2'])` is the same as `->select(['column1', 'column2'])`. Conditions are connected with the logic `AND`.
+Every query is `SELECT` at first, until you call `->insert(...)`, `->update(...)`, `->delete(...)` or `->truncate(...)`, which change query type to appropriate SQL command (you can set type more than once in one query, the last is used - except `INSERT` - `SELECT`). So you can prepare you query in a common way and at the end, you can decide if you want to `SELECT` or `DELETE` data or whatsoever. If you call some method more than once, data is merged, for example, this `->select(['column1'])->select(['column2'])` is the same as `->select(['column1', 'column2'])`. Conditions are connected with the logic `AND`.
 
 - `table($table, ?string $alias = NULL)` - creates `Query` object with defined main table - this table can be used for selects, updates, inserts, deletes or truncate - you don't need to use concrete method to define table. `$table` can be simple `string` or other `Query` or `Db\Sql`.
 
@@ -87,10 +87,10 @@ Every query is `SELECT` at first, until you call `->insert(...)`, `->update(...)
 - `lateral(string $alias)` - make subquery lateral.
 
 
-- `where($condition, ...$params)` (or `having(...)`) - defines `WHERE` or `HAVING` conditions. you can provide condition as a `string`. When `string` condition is used, you can add `$parameters`. When in the condition is no `?` and only one parameter is used, comparision is made between condition and parameter. If parameter is scalar, simple `=` is used, for an `array` is used `IN` operator, the same applies ale for `Query` (`Fluent\Query` or `Db\Sql`). And for `NULL` is used `IS` operator. This could be handy when you want to use more parameter types in one condition. For example, you can provide `int` and `=` will be use and if you provide `array<int>` - `IN` operator will be used and the query will be working for the both parameter types. More complex conditions can be written manually as a `string` with `?` for parameters. Or you can use `Complex` or `Db\Sql` as condition. In this case, `$params` must be blank. All `where()` or `having()` calls is connected with logic `AND`.
+- `where($condition, ...$params)` (or `having(...)`) - defines `WHERE` or `HAVING` conditions. you can provide condition as a `string`. When `string` condition is used, you can add `$parameters`. When in the condition is no `?` and only one parameter is used, comparison is made between condition and parameter. If parameter is scalar, simple `=` is used, for an `array` is used `IN` operator, the same applies ale for `Query` (`Fluent\Query` or `Db\Sql`). And for `NULL` is used `IS` operator. This could be handy when you want to use more parameter types in one condition. For example, you can provide `int` and `=` will be use and if you provide `array<int>` - `IN` operator will be used and the query will be working for the both parameter types. More complex conditions can be written manually as a `string` with `?` for parameters. Or you can use `Complex` or `Db\Sql` as condition. In this case, `$params` must be blank. All `where()` or `having()` calls is connected with logic `AND`.
 
 
-- `whereIf(bool $ifCondition, $condition, ...$params)` - the same as classis `where` method, but this condition is ommitted when `$ifCondition` is `FALSE`.
+- `whereIf(bool $ifCondition, $condition, ...$params)` - the same as classic `where` method, but this condition is omitted when `$ifCondition` is `FALSE`.
 
 
 - `whereAnd(array $conditions = []): Complex` (or `whereOr(...)` / `havingAnd(...)` / `havingOr()`) - with these methods, you can generate condition groups. Ale provided conditions are connected with logic `AND` for `whereAnd()` and `havingAnd()` and with logic `OR` for `whereOr()` and `havingOr()`. All these methods return `Complex` object (more about this later). `$conditions` items can be simple `string`, another `array` (this is a little bit magic - this works as `where()`/`having()` method - first item in this `array` is conditions and next items are parameters), `Complex` or `Db\Sql`. 
@@ -120,7 +120,7 @@ Every query is `SELECT` at first, until you call `->insert(...)`, `->update(...)
 - `rows(array $rows)` - this method can be used to insert multiple rows in one query. `$rows` is an `array` of arrays. Each array is one row (the same as for the `values()` method). All rows must have the same columns. Method can be called multiple and all rows are merged.
 
 
-- `onConflict($columnsOrConstraint = NULL, $where = NULL)` - this method can start `ON CONFLICT` statement for `INSERT`. When `array` is used as the `$columnsOrConstraint`, the list of columns is used, when `string` is used, constraint is used. This parameter can be completely ommited. Where condition `$where` can be defined only for the list of colums and can be simple `string` or other `Complex` or `Db\Sql`. `Db\Sql` can be used for some complex expression, where you need to use `?` and parameters.
+- `onConflict($columnsOrConstraint = NULL, $where = NULL)` - this method can start `ON CONFLICT` statement for `INSERT`. When `array` is used as the `$columnsOrConstraint`, the list of columns is used, when `string` is used, constraint is used. This parameter can be completely omitted. Where condition `$where` can be defined only for the list of columns and can be simple `string` or other `Complex` or `Db\Sql`. `Db\Sql` can be used for some complex expression, where you need to use `?` and parameters.
 
 
 - `doUpdate(array $set, $where = NULL)` - if conflict is detected, `UPDATE` is made instead of `INSERT`. Items od array `$set` can be defined in three ways. When only a `string` value is used (or key is an integer), this value is interpreted as `UPDATE SET value = EXCLUDED.value`. Only strings can be used without a key. When the array item has a `string` key, then `string` or `Db\Sql` value can be used, and now you must define a concrete statement to set (i.e., `['column' => 'EXCLUDED.column || source_table.column2']` is interpreted as `UPDATE SET column = EXCLUDED.column || source_table.column2`). `Db\Sql` can be used if you need to use parameters.
@@ -156,7 +156,7 @@ Every query is `SELECT` at first, until you call `->insert(...)`, `->update(...)
 - `truncate(?string $table = NULL)` - truncates table. If the main table is not set, you must provide/rewrite it with the `$table` parameter.
 
 
-- `prefix(string $queryPrefix/$querySuffix, ...$params)` (or `suffix(...)`) - with this, you can define univerzal query prefix or suffix. This is useful for actually not supported fluent syntax. With prefix, you can create CTE (Common Table Expression) queries. With suffix, you can create `SELECT ... FOR UPDATE` for example. Definition can be simple `string` or you can use `?` and parameters.
+- `prefix(string $queryPrefix/$querySuffix, ...$params)` (or `suffix(...)`) - with this, you can define universal query prefix or suffix. This is useful for actually not supported fluent syntax. With prefix, you can create CTE (Common Table Expression) queries. With suffix, you can create `SELECT ... FOR UPDATE` for example. Definition can be simple `string` or you can use `?` and parameters.
 
 
 - `with(string $as, $query, ?string $suffix = NULL, bool $notMaterialized = FALSE)` - prepare CTE (Common Table Expression) query. `$as` is query alias/name, `$query` can be simple string, `Db\Sql\Query` or `Fluent\Query`, `$suffix` is optional definition like `SEARCH BREADTH FIRST BY ...` and `$notMaterialized` can set `WITH` branch as not materialized (materialized is default). `with()` can be called multiple times. When you use it, the query will always start with `WITH ...`.   
@@ -183,7 +183,7 @@ $query->reset($query::PARAM_WHERE);
 dump($query->has($query::PARAM_WHERE)); // (bool) FALSE
 ```
 
-Every table definition command (like `->table(...)`, `->from(...)`, joins, update table, ...) has table alias definition - it's optional, but for some places, you must define alias (also for joins, if you want to use another `on()` method, you must target `ON` conditon to the concrete table with the table alias).
+Every table definition command (like `->table(...)`, `->from(...)`, joins, update table, ...) has table alias definition - it's optional, but for some places, you must define alias (also for joins, if you want to use another `on()` method, you must target `ON` condition to the concrete table with the table alias).
 
 If you want to create an alias for a column in `SELECT`, use `string` key in `array` definition (the same for `returning()`):
 
@@ -238,7 +238,7 @@ dump($queryE); // (Query) (SELECT column1, column2) UNION (SELECT column FROM ta
 
 Every condition (`WHERE`/`HAVING`/`ON`) are internally handled as the `Complex` object. With this, you can define really complex conditions connected with a logic `AND` or `OR`. One condition can be simple `string`, can have one argument with `=`/`IN`/`NULL`/`bool` detection or can have many arguments using `?` and parameters.
 
-Complex is a list of conditions that're all connected with `AND` or `OR`. The magic is, that condition can be also another complex with different type (`AND` or `OR`).
+Complex is a list of conditions that are all connected with `AND` or `OR`. The magic is, that condition can be also another complex with different type (`AND` or `OR`).
 
 Complex can be created with the static factory methods `Complex::createAnd(...)` or `Complex::createOr(...)`. The first argument can be an `array` with the condition list. New condition can be inserted with the `add(...)` method.
 
@@ -272,7 +272,7 @@ $complex->addComplexOr([
 
 This defined complex can be used in `where($complex)` method, `having($complex)` method or as `on($complex)`/`join(..., $complex)` condition.
 
-To create complex condition in a simplier way, there are methods `whereAnd()`/`whereOr()`/`havingAnd()`/`havingOr()` on the `Query` that return a new `Complex` connected to a query.
+To create complex condition in a simpler way, there are methods `whereAnd()`/`whereOr()`/`havingAnd()`/`havingOr()` on the `Query` that return a new `Complex` connected to a query.
 
 ```php
 $query = $connection->table('users')
@@ -290,7 +290,7 @@ $query = $connection->table('users')
 dump($query); // (Query) SELECT * FROM users WHERE (column = $1) OR (column2 IN ($2, $3)) OR ((column IN (SELECT 1)) AND (column2 = ANY(SELECT 2))) OR (column3 IS NOT NULL) [Params: (array) [1, 2, 3]]
 ```
 
-To simplify a query definition, you can use a special version of `where()` method - the `whereIf()` method. This where is used in the query only if the first `bool` paramter is `TRUE`. For example, instead of this:
+To simplify a query definition, you can use a special version of `where()` method - the `whereIf()` method. This where is used in the query only if the first `bool` parameter is `TRUE`. For example, instead of this:
 
 ```php
 $listItems = function (string|NULL $filterName) use ($connection): Forrest79\PhPgSql\Fluent\Query
@@ -386,7 +386,7 @@ $insertedRows = $query->getAffectedRows();
 dump($insertedRows); // (integer) 3
 ```
 
-Here are column names detected from the first row. You can also pass the columns as a second parametr in `insert()` method:
+Here are column names detected from the first row. You can also pass the columns as a second parameter in `insert()` method:
 
 ```php
 $insertedRows = $connection
@@ -515,7 +515,7 @@ $insertedOrUpdatedWithConstraintRows = $connection
 dump($insertedOrUpdatedWithConstraintRows); // (integer) 1
 ```
 
-And the last to use manully `SET` with string (here we can use alias for `INTO` table) or also with parameters:
+And the last to use manually `SET` with string (here we can use alias for `INTO` table) or also with parameters:
 
 ```php
 $insertedOrUpdatedRows = $connection
@@ -773,7 +773,7 @@ $query->execute();
 
 ### With (Common Table Expression queries)
 
-Oficial docs: https://www.postgresql.org/docs/current/queries-with.html
+Official docs: https://www.postgresql.org/docs/current/queries-with.html
 
 You can use `WITH` with a simple string query, or defined it with `Db\Sql\Query` or `Fluen\Query` queries:
 
@@ -840,7 +840,7 @@ Query after `WITH` can be `SELECT`, `INSERT`, `UPDATE` or `DELETE`.
 
 On `QueryExecute`, you can use all fetch functions as on the `Db\Result`. All `fetch*()` methods call `execute()` that run query in DB and returns the `Db\Result` object. The `execute()` method can be used everytime, but it's handy mostly for queries returning no data.
 
-> You can pass a query object to `foreach` without calling `execute()` or another fetch function. This is good, because just one rows iteration is made (`fetchAll()`, `fetchPairs()` and `fetchAssoc()` iterate all rows in backgroud before return an array). If you want to iterate rows just once and run query in DB earlyier than in `foreach`, just call `execute()` whenever you want and pass query object or returned result object to `foreach`.
+> You can pass a query object to `foreach` without calling `execute()` or another fetch function. This is good, because just one rows iteration is made (`fetchAll()`, `fetchPairs()` and `fetchAssoc()` iterate all rows in background before return an array). If you want to iterate rows just once and run query in DB earlier than in `foreach`, just call `execute()` whenever you want and pass query object or returned result object to `foreach`.
 > We can get the same behavior using `fetchIterator`.
 
 You can update your query till `execute()` is call, after that, no updates on query is available, you can only execute this query again by calling `reexecute()`:
@@ -866,7 +866,7 @@ $updatedUserNick = $query->reexecute()->fetchSingle();
 dump($updatedUserNick); // (string) 'Thomas'
 ```
 
-If you clone an already executed query, copy is cloned with the reseted result, so you can still update the query and then execute it.
+If you clone an already executed query, copy is cloned with the reset result, so you can still update the query and then execute it.
 
 You can also run the async query with the `asyncExecute()` method.
 
