@@ -151,7 +151,7 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	public function getIterator(): Db\ResultIterator
+	public function getIterator(): Db\RowIterator
 	{
 		\trigger_error('Use fetchIterator() method.', \E_USER_DEPRECATED);
 		return $this->execute()->getIterator();
@@ -235,15 +235,15 @@ class QueryExecute extends Query implements \Countable, \IteratorAggregate
 
 
 	/**
-	 * @return Db\ResultIterator<int, Db\Row>
+	 * @return Db\RowIterator<int, Db\Row>
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
 	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	public function fetchIterator(): Db\ResultIterator
+	public function fetchIterator(): Db\RowIterator
 	{
-		/**	@phpstan-var Db\ResultIterator<int, Db\Row> */
+		/**	@phpstan-var Db\RowIterator<int, Db\Row> */
 		return $this->execute()->fetchIterator();
 	}
 

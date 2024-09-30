@@ -6,6 +6,8 @@ class AsyncQuery
 {
 	private Connection $connection;
 
+	private ResultBuilder $resultBuilder;
+
 	private AsyncHelper $asyncHelper;
 
 	private Query $query;
@@ -15,12 +17,14 @@ class AsyncQuery
 
 	public function __construct(
 		Connection $connection,
+		ResultBuilder $resultBuilder,
 		AsyncHelper $asyncHelper,
 		Query $query,
 		string|NULL $preparedStatementName = NULL,
 	)
 	{
 		$this->connection = $connection;
+		$this->resultBuilder = $resultBuilder;
 		$this->asyncHelper = $asyncHelper;
 		$this->query = $query;
 		$this->preparedStatementName = $preparedStatementName;
@@ -67,7 +71,7 @@ class AsyncQuery
 			}
 		}
 
-		return $this->connection->createResult($resource, $this->getQuery());
+		return $this->resultBuilder->buildResult($resource, $this->getQuery());
 	}
 
 }

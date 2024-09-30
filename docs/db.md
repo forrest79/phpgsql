@@ -491,6 +491,43 @@ dump($query->getSql()); // (string) 'SELECT id FROM departments WHERE id = $1'
 dump($query->getParams()); // (array) [1]
 ```
 
+#### Use custom result factory
+
+You can use your own result object. Your result object must `extends` existing `Result` object, and you must implement your own `ResultFactory` to create your own results. Then you can set your factory on the `Connection` and it will be used for all new query results.
+
+```php
+class MyOwnResult extends Forrest79\PhPgSql\Db\Result
+{
+  public function fetchOrException(): Forrest79\PhPgSql\Db\Row
+  {
+    return $this->fetch() ?? throw new \LogicException('There is no row.');
+  }
+}
+
+class MyOwnResultFactory implements Forrest79\PhPgSql\Db\ResultFactory
+{
+  public function createResult(PgSql\Result $queryResource, Forrest79\PhPgSql\Db\Query $query, Forrest79\PhPgSql\Db\RowFactory $rowFactory, Forrest79\PhPgSql\Db\DataTypeParser $dataTypeParser, array|NULL $dataTypesCache): Forrest79\PhPgSql\Db\Result
+  {
+    return new MyOwnResult($queryResource, $query, $rowFactory, $dataTypeParser, $dataTypesCache);
+  }
+}
+
+$connection->setResultFactory(new MyOwnResultFactory());
+$result = $connection->query('SELECT age FROM users WHERE id = 1');
+$row = $result->fetchOrException();
+dump($row->age); // (integer) 45
+
+try {
+  $row = $connection->query('SELECT age FROM users WHERE id = -1')->fetchOrException();
+} catch (LogicException) {
+  $row = FALSE;
+}
+
+dump($row); // (bool) FALSE
+```
+
+> By default, is used `Forrest79\PhPgSql\Db\ResultFactories\Basic` result factory that produces default `Result` objects.
+
 ## Rows and using a custom row factory
 
 All data from DB are automatically converted to PHP types (more about this later). This is done lazy on the `Row` object. Lazy because converting some types can be slow and expensive, and when you don't need some column, it's unnecessary to convert it.
@@ -594,7 +631,7 @@ $result->setRowFactory(new MyOwnRowFactory());
 $row = $result->fetch();
 dump($row->age()); // (string) '45 years'
 
-$connection->setDefaultRowFactory(new MyOwnRowFactory());
+$connection->setRowFactory(new MyOwnRowFactory());
 $row = $connection->query('SELECT age FROM users WHERE id = 2')->fetch();
 dump($row->age()); // (string) '24 years'
 ```

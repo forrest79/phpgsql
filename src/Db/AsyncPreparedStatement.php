@@ -7,9 +7,15 @@ class AsyncPreparedStatement extends PreparedStatementHelper
 	private AsyncHelper $asyncHelper;
 
 
-	public function __construct(Connection $connection, AsyncHelper $asyncHelper, Events $events, string $query)
+	public function __construct(
+		AsyncHelper $asyncHelper,
+		Connection $connection,
+		ResultBuilder $resultBuilder,
+		Events $events,
+		string $query,
+	)
 	{
-		parent::__construct($connection, $events, $query);
+		parent::__construct($connection, $resultBuilder, $events, $query);
 		$this->asyncHelper = $asyncHelper;
 	}
 
@@ -45,7 +51,7 @@ class AsyncPreparedStatement extends PreparedStatementHelper
 			$this->events->onQuery($query, NULL, $statementName);
 		}
 
-		return $this->asyncHelper->createAndSetAsyncQuery($query, $statementName);
+		return $this->asyncHelper->createAndSetAsyncQuery($this->resultBuilder, $query, $statementName);
 	}
 
 

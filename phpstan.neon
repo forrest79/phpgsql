@@ -38,6 +38,11 @@ parameters:
 			count: 1
 
 		-
+			message: '#^Call to an undefined method Forrest79\\PhPgSql\\Db\\Result::fetchOrException\(\)\.$#'
+			path: %rootDir%/../../../tests/Integration/CustomResultTest.php
+			count: 2
+
+		-
 			message: '#^Binary operation ".=?" between .+ results in an error\.$#'
 			path: %rootDir%/../../../tests/Integration/FetchMutatorTest.php
 			count: 25
@@ -184,14 +189,14 @@ parameters:
 			count: 1
 
 		-
-			message: '#^Method Forrest79\\PhPgSql\\Db\\ResultIterator::current\(\) should return Forrest79\\PhPgSql\\Db\\Row but returns Forrest79\\PhPgSql\\Db\\Row\|null\.$#'
-			path: %rootDir%/../../../src/Db/ResultIterator.php
-			count: 1
-
-		-
 			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
 			path: %rootDir%/../../../src/Db/Row.php
 			count: 3
+
+		-
+			message: '#^Method Forrest79\\PhPgSql\\Db\\RowIterator::current\(\) should return Forrest79\\PhPgSql\\Db\\Row but returns Forrest79\\PhPgSql\\Db\\Row\|null\.$#'
+			path: %rootDir%/../../../src/Db/RowIterator.php
+			count: 1
 
 		-
 			message: '#^Parameter \#2 \$expected of static method Forrest79\\PhPgSql\\Fluent\\Exceptions\\QueryBuilderException::badParamsCount\(\) expects int, int(\<0, max\>)?\|false(\|null)? given\.$#' # (|null)? is for forward PHP 8 compatibility
@@ -208,6 +213,6 @@ parameters:
 		# === Fix PhPgSql-PHPStan rules ===
 
 		-
-			message: '#^Method Forrest79\\PhPgSql\\Fluent\\QueryExecute::getIterator\(\) should return Forrest79\\PhPgSql\\Db\\ResultIterator but returns iterable<int, Forrest79\\PhPgSql\\Db\\Row>\.$#'
+			message: '#^Method Forrest79\\PhPgSql\\Fluent\\QueryExecute::getIterator\(\) should return Forrest79\\PhPgSql\\Db\\RowIterator but returns iterable<int, Forrest79\\PhPgSql\\Db\\Row>\.$#'
 			path: %rootDir%/../../../src/Fluent/QueryExecute.php
 			count: 1

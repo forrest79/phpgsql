@@ -225,7 +225,19 @@ ignoreErrors:
 		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
 		message: All classes should be declared using either the "abstract" or "final" keyword.
 		count: 1
-		path: src/Db/ResultIterator.php
+		path: src/Db/ResultBuilder.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Db/ResultFactories/Basic.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "createResult"
+		count: 1
+		path: src/Db/ResultFactory.php
 
 	-
 		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
@@ -250,6 +262,12 @@ ignoreErrors:
 		message: Visibility must be declared on method "createRow"
 		count: 1
 		path: src/Db/RowFactory.php
+
+	-
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
+		count: 1
+		path: src/Db/RowIterator.php
 
 	-
 		sniff: Squiz.Scope.MethodScope.Missing
@@ -368,6 +386,18 @@ ignoreErrors:
 	-
 		sniff: Squiz.Scope.MethodScope.Missing
 		message: Visibility must be declared on method "distinctOn"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "doNothing"
+		count: 1
+		path: src/Fluent/Sql.php
+
+	-
+		sniff: Squiz.Scope.MethodScope.Missing
+		message: Visibility must be declared on method "doUpdate"
 		count: 1
 		path: src/Fluent/Sql.php
 
@@ -493,18 +523,6 @@ ignoreErrors:
 
 	-
 		sniff: Squiz.Scope.MethodScope.Missing
-		message: Visibility must be declared on method "doUpdate"
-		count: 1
-		path: src/Fluent/Sql.php
-
-	-
-		sniff: Squiz.Scope.MethodScope.Missing
-		message: Visibility must be declared on method "doNothing"
-		count: 1
-		path: src/Fluent/Sql.php
-
-	-
-		sniff: Squiz.Scope.MethodScope.Missing
 		message: Visibility must be declared on method "orderBy"
 		count: 1
 		path: src/Fluent/Sql.php
@@ -625,13 +643,13 @@ ignoreErrors:
 
 	-
 		sniff: Squiz.Scope.MethodScope.Missing
-		message: Visibility must be declared on method "whereIf"
+		message: Visibility must be declared on method "whereAnd"
 		count: 1
 		path: src/Fluent/Sql.php
 
 	-
 		sniff: Squiz.Scope.MethodScope.Missing
-		message: Visibility must be declared on method "whereAnd"
+		message: Visibility must be declared on method "whereIf"
 		count: 1
 		path: src/Fluent/Sql.php
 
@@ -684,6 +702,12 @@ ignoreErrors:
 		path: tests/Integration/CollectingResultsTest.php
 
 	-
+		sniff: SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
+		message: Unused parameter $connection.
+		count: 1
+		path: tests/Integration/CollectingResultsTest.php
+
+	-
 		sniff: PSR1.Files.SideEffects.FoundWithSymbols
 		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 15 and the first side effect is on line 9.'
 		count: 1
@@ -696,10 +720,10 @@ ignoreErrors:
 		path: tests/Integration/CustomPrepareQueryTest.php
 
 	-
-		sniff: SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
-		message: Unused parameter $connection.
+		sniff: PSR1.Files.SideEffects.FoundWithSymbols
+		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 14 and the first side effect is on line 9.'
 		count: 1
-		path: tests/Integration/CollectingResultsTest.php
+		path: tests/Integration/CustomResultTest.php
 
 	-
 		sniff: PSR1.Files.SideEffects.FoundWithSymbols

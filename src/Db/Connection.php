@@ -20,11 +20,7 @@ class Connection
 
 	private Events $events;
 
-	private RowFactory|NULL $defaultRowFactory = NULL;
-
-	private DataTypeParser|NULL $dataTypeParser = NULL;
-
-	private DataTypeCache|NULL $dataTypeCache = NULL;
+	private ResultBuilder $resultBuilder;
 
 	private Transaction|NULL $transaction = NULL;
 
@@ -54,6 +50,7 @@ class Connection
 
 		$this->asyncHelper = new AsyncHelper($this);
 		$this->events = new Events($this);
+		$this->resultBuilder = new ResultBuilder($this, $this->events);
 	}
 
 
@@ -239,56 +236,45 @@ class Connection
 	}
 
 
-	public function setDefaultRowFactory(RowFactory $rowFactory): static
+	public function setResultFactory(ResultFactory $resultFactory): static
 	{
-		$this->defaultRowFactory = $rowFactory;
+		$this->resultBuilder->setResultFactory($resultFactory);
 
 		return $this;
 	}
 
 
-	private function getDefaultRowFactory(): RowFactory
+	public function setRowFactory(RowFactory $rowFactory): static
 	{
-		if ($this->defaultRowFactory === NULL) {
-			$this->defaultRowFactory = new RowFactories\Basic();
-		}
-
-		return $this->defaultRowFactory;
-	}
-
-
-	public function setDataTypeParser(DataTypeParser $dataTypeParser): static
-	{
-		$this->dataTypeParser = $dataTypeParser;
-
-		return $this;
-	}
-
-
-	private function getDataTypeParser(): DataTypeParser
-	{
-		if ($this->dataTypeParser === NULL) {
-			$this->dataTypeParser = new DataTypeParsers\Basic();
-		}
-
-		return $this->dataTypeParser;
-	}
-
-
-	public function setDataTypeCache(DataTypeCache $dataTypeCache): static
-	{
-		$this->dataTypeCache = $dataTypeCache;
+		$this->resultBuilder->setRowFactory($rowFactory);
 
 		return $this;
 	}
 
 
 	/**
-	 * @return array<int, string>|NULL
+	 * @deprecated Use setRowFactory() method.
 	 */
-	private function getDataTypesCache(): array|NULL
+	public function setDefaultRowFactory(RowFactory $rowFactory): static
 	{
-		return $this->dataTypeCache?->load($this) ?? NULL;
+		\trigger_error('Use setRowFactory() method.', \E_USER_DEPRECATED);
+		return $this->setRowFactory($rowFactory);
+	}
+
+
+	public function setDataTypeParser(DataTypeParser $dataTypeParser): static
+	{
+		$this->resultBuilder->setDataTypeParser($dataTypeParser);
+
+		return $this;
+	}
+
+
+	public function setDataTypeCache(DataTypeCache $dataTypeCache): static
+	{
+		$this->resultBuilder->setDataTypeCache($dataTypeCache);
+
+		return $this;
 	}
 
 
@@ -329,26 +315,7 @@ class Connection
 			$this->events->onQuery($query, \hrtime(TRUE) - $startTime);
 		}
 
-		return $this->createResult($resource, $query);
-	}
-
-
-	/**
-	 * @internal
-	 */
-	public function createResult(PgSql\Result $resource, Query $query): Result
-	{
-		$result = new Result(
-			$resource,
-			$query,
-			$this->getDefaultRowFactory(),
-			$this->getDataTypeParser(),
-			$this->getDataTypesCache(),
-		);
-
-		$this->events->onResult($result);
-
-		return $result;
+		return $this->resultBuilder->buildResult($resource, $query);
 	}
 
 
@@ -410,7 +377,7 @@ class Connection
 			$this->events->onQuery($query);
 		}
 
-		return $this->asyncHelper->createAndSetAsyncQuery($query);
+		return $this->asyncHelper->createAndSetAsyncQuery($this->resultBuilder, $query);
 	}
 
 
@@ -480,13 +447,13 @@ class Connection
 
 	public function prepareStatement(string $sql): PreparedStatement
 	{
-		return new PreparedStatement($this, $this->events, $this->prepareQuery($sql));
+		return new PreparedStatement($this, $this->resultBuilder, $this->events, $this->prepareQuery($sql));
 	}
 
 
 	public function asyncPrepareStatement(string $sql): AsyncPreparedStatement
 	{
-		return new AsyncPreparedStatement($this, $this->asyncHelper, $this->events, $this->prepareQuery($sql));
+		return new AsyncPreparedStatement($this->asyncHelper, $this, $this->resultBuilder, $this->events, $this->prepareQuery($sql));
 	}
 
 

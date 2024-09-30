@@ -5,7 +5,7 @@ namespace Forrest79\PhPgSql\Db;
 /**
  * @implements \Iterator<int, Row>
  */
-class ResultIterator implements \Iterator
+class RowIterator implements \Iterator
 {
 	private Result $result;
 

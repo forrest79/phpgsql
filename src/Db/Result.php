@@ -88,10 +88,10 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 	/**
 	 * @deprecated Use fetchIterator() method.
 	 */
-	public function getIterator(): ResultIterator
+	public function getIterator(): RowIterator
 	{
 		\trigger_error('Use fetchIterator() method.', \E_USER_DEPRECATED);
-		return new ResultIterator($this);
+		return new RowIterator($this);
 	}
 
 
@@ -372,11 +372,11 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 
 
 	/**
-	 * @return ResultIterator<int, Row>
+	 * @return RowIterator<int, Row>
 	 */
-	public function fetchIterator(): ResultIterator
+	public function fetchIterator(): RowIterator
 	{
-		return new ResultIterator($this);
+		return new RowIterator($this);
 	}
 
 

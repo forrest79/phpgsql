@@ -695,7 +695,7 @@ final class FetchTest extends TestCase
 
 	public function testCustomRowFactoryOnConnection(): void
 	{
-		$this->connection->setDefaultRowFactory($this->createCustomRowFactory());
+		$this->connection->setRowFactory($this->createCustomRowFactory());
 
 		$this->connection->query('
 			CREATE TABLE test(
