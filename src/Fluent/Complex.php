@@ -177,7 +177,7 @@ class Complex implements \ArrayAccess
 			$this->conditions[] = $value;
 		} else {
 			if (!isset($this->conditions[$offset])) {
-				throw new \RuntimeException('Can\'t set non-existing offset.');
+				throw new \InvalidArgumentException(sprintf('Can\'t set non-existing offset \'%s\'.', $offset));
 			}
 
 			$this->conditions[$offset] = $value;
