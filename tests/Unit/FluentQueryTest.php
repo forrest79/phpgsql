@@ -561,6 +561,50 @@ final class FluentQueryTest extends Tests\TestCase
 	}
 
 
+	public function testJoinNonExistingOn(): void
+	{
+		Tester\Assert::exception(function (): void {
+			$this->query()
+				->select(['x.column'])
+				->from('table', 't')
+				->join('another', 'x')
+					->on('y', 'y.id = t.id')
+				->toDbQuery();
+		}, Fluent\Exceptions\QueryBuilderException::class, null, Fluent\Exceptions\QueryBuilderException::NO_CORRESPONDING_TABLE);
+	}
+
+
+	public function testOtherJoins(): void
+	{
+		$queryRightJoin = $this->query()
+			->select(['t1.column1', 't2.column2'])
+			->from('table1', 't1')
+			->rightJoin('table2', 't2', 't2.id = t1.id')
+			->toDbQuery();
+
+		Tester\Assert::same('SELECT t1.column1, t2.column2 FROM table1 AS t1 RIGHT OUTER JOIN table2 AS t2 ON t2.id = t1.id', $queryRightJoin->sql);
+		Tester\Assert::same([], $queryRightJoin->params);
+
+		$queryFullJoin = $this->query()
+			->select(['t1.column1', 't2.column2'])
+			->from('table1', 't1')
+			->fullJoin('table2', 't2', 't2.id = t1.id')
+			->toDbQuery();
+
+		Tester\Assert::same('SELECT t1.column1, t2.column2 FROM table1 AS t1 FULL OUTER JOIN table2 AS t2 ON t2.id = t1.id', $queryFullJoin->sql);
+		Tester\Assert::same([], $queryFullJoin->params);
+
+		$queryCrossJoin = $this->query()
+			->select(['t1.column1', 't2.column2'])
+			->from('table1', 't1')
+			->crossJoin('table2', 't2')
+			->toDbQuery();
+
+		Tester\Assert::same('SELECT t1.column1, t2.column2 FROM table1 AS t1 CROSS JOIN table2 AS t2', $queryCrossJoin->sql);
+		Tester\Assert::same([], $queryCrossJoin->params);
+	}
+
+
 	public function testLateralFrom(): void
 	{
 		$query = $this->query()
@@ -603,7 +647,7 @@ final class FluentQueryTest extends Tests\TestCase
 	}
 
 
-	public function testSelectCombine(): void
+	public function testSelectUnion(): void
 	{
 		$query = $this->query()
 			->from('table', 't')
@@ -616,7 +660,7 @@ final class FluentQueryTest extends Tests\TestCase
 	}
 
 
-	public function testSelectCombineFluent(): void
+	public function testSelectUnionFluent(): void
 	{
 		$query = $this->query()
 			->from('table', 't')
@@ -633,7 +677,7 @@ final class FluentQueryTest extends Tests\TestCase
 	}
 
 
-	public function testSelectCombineQuery(): void
+	public function testSelectUnionQuery(): void
 	{
 		$query = $this->query()
 			->from('table', 't')
@@ -642,6 +686,45 @@ final class FluentQueryTest extends Tests\TestCase
 			->toDbQuery();
 
 		Tester\Assert::same('(SELECT column FROM table AS t) UNION (SELECT column FROM table2 AS t2)', $query->sql);
+		Tester\Assert::same([], $query->params);
+	}
+
+
+	public function testSelectUnionAll(): void
+	{
+		$query = $this->query()
+			->from('table', 't')
+			->select(['column'])
+			->unionAll('SELECT column FROM table2 AS t2')
+			->toDbQuery();
+
+		Tester\Assert::same('(SELECT column FROM table AS t) UNION ALL (SELECT column FROM table2 AS t2)', $query->sql);
+		Tester\Assert::same([], $query->params);
+	}
+
+
+	public function testSelectIntersect(): void
+	{
+		$query = $this->query()
+			->from('table', 't')
+			->select(['column'])
+			->intersect('SELECT column FROM table2 AS t2')
+			->toDbQuery();
+
+		Tester\Assert::same('(SELECT column FROM table AS t) INTERSECT (SELECT column FROM table2 AS t2)', $query->sql);
+		Tester\Assert::same([], $query->params);
+	}
+
+
+	public function testSelectExcept(): void
+	{
+		$query = $this->query()
+			->from('table', 't')
+			->select(['column'])
+			->except('SELECT column FROM table2 AS t2')
+			->toDbQuery();
+
+		Tester\Assert::same('(SELECT column FROM table AS t) EXCEPT (SELECT column FROM table2 AS t2)', $query->sql);
 		Tester\Assert::same([], $query->params);
 	}
 

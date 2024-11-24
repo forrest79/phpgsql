@@ -74,7 +74,7 @@ final class FluentConditionTest extends Tests\TestCase
 	}
 
 
-	public function testArrayAcces(): void
+	public function testArrayAccess(): void
 	{
 		$condition = Fluent\Condition::createOr();
 
@@ -108,6 +108,15 @@ final class FluentConditionTest extends Tests\TestCase
 
 		Tester\Assert::same(1, \count($conditions));
 		Tester\Assert::same([['column = ?', 1]], $conditions);
+	}
+
+
+	public function testArrayAccessBadOffset(): void
+	{
+		Tester\Assert::exception(static function (): void {
+			$condition = Fluent\Condition::createOr();
+			$condition[0] = ['column = ?', 1];
+		}, \InvalidArgumentException::class, 'Can\'t set non-existing offset \'0\'.');
 	}
 
 }
