@@ -45,7 +45,7 @@ parameters:
 		-
 			message: '#^Binary operation ".=?" between .+ results in an error\.$#'
 			path: %rootDir%/../../../tests/Integration/FetchMutatorTest.php
-			count: 25
+			count: 28
 
 		-
 			message: '#^Expression ".+" on a separate line does not do anything\.$#'

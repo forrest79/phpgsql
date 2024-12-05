@@ -192,10 +192,6 @@ class Result implements ColumnValueParser, \Countable, \IteratorAggregate
 			}
 			$limit--;
 
-			if ($this->rowFetchMutator !== NULL) {
-				call_user_func($this->rowFetchMutator, $row);
-			}
-
 			$data[] = $row;
 
 			$row = $this->fetch();

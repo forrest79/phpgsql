@@ -59,22 +59,23 @@ final class FetchMutatorTest extends TestCase
 			->query('SELECT id, name FROM test ORDER BY id')
 			->setRowFetchMutator(static function (Db\Row $row): void {
 				$row->new_column = $row->id . '-' . $row->name;
+				$row->repeat = ($row->repeat ?? 0) + 1;
 			});
 
 		$rows = $result->fetchAll();
 
-		Tester\Assert::same(['id' => 1, 'name' => 'name3', 'new_column' => '1-name3'], $rows[0]->toArray());
-		Tester\Assert::same(['id' => 2, 'name' => 'name2', 'new_column' => '2-name2'], $rows[1]->toArray());
-		Tester\Assert::same(['id' => 3, 'name' => 'name1', 'new_column' => '3-name1'], $rows[2]->toArray());
+		Tester\Assert::same(['id' => 1, 'name' => 'name3', 'new_column' => '1-name3', 'repeat' => 1], $rows[0]->toArray());
+		Tester\Assert::same(['id' => 2, 'name' => 'name2', 'new_column' => '2-name2', 'repeat' => 1], $rows[1]->toArray());
+		Tester\Assert::same(['id' => 3, 'name' => 'name1', 'new_column' => '3-name1', 'repeat' => 1], $rows[2]->toArray());
 
 		$rows = $result->fetchAll(1);
 
-		Tester\Assert::same(['id' => 2, 'name' => 'name2', 'new_column' => '2-name2'], $rows[0]->toArray());
-		Tester\Assert::same(['id' => 3, 'name' => 'name1', 'new_column' => '3-name1'], $rows[1]->toArray());
+		Tester\Assert::same(['id' => 2, 'name' => 'name2', 'new_column' => '2-name2', 'repeat' => 1], $rows[0]->toArray());
+		Tester\Assert::same(['id' => 3, 'name' => 'name1', 'new_column' => '3-name1', 'repeat' => 1], $rows[1]->toArray());
 
 		$rows = $result->fetchAll(1, 1);
 
-		Tester\Assert::same(['id' => 2, 'name' => 'name2', 'new_column' => '2-name2'], $rows[0]->toArray());
+		Tester\Assert::same(['id' => 2, 'name' => 'name2', 'new_column' => '2-name2', 'repeat' => 1], $rows[0]->toArray());
 
 		$result->free();
 	}
@@ -234,12 +235,13 @@ final class FetchMutatorTest extends TestCase
 		$rows1 = $result1
 			->setRowFetchMutator(static function (Db\Row $row): void {
 				$row->new_column = $row->id . '-' . $row->name;
+				$row->repeat = ($row->repeat ?? 0) + 1;
 			})
 			->fetchAssoc('type');
 
-		Tester\Assert::same(['id' => 1, 'type' => 3, 'name' => 'name3', 'new_column' => '1-name3'], $rows1[3]->toArray());
-		Tester\Assert::same(['id' => 2, 'type' => 2, 'name' => 'name2', 'new_column' => '2-name2'], $rows1[2]->toArray());
-		Tester\Assert::same(['id' => 3, 'type' => 1, 'name' => 'name1', 'new_column' => '3-name1'], $rows1[1]->toArray());
+		Tester\Assert::same(['id' => 1, 'type' => 3, 'name' => 'name3', 'new_column' => '1-name3', 'repeat' => 1], $rows1[3]->toArray());
+		Tester\Assert::same(['id' => 2, 'type' => 2, 'name' => 'name2', 'new_column' => '2-name2', 'repeat' => 1], $rows1[2]->toArray());
+		Tester\Assert::same(['id' => 3, 'type' => 1, 'name' => 'name1', 'new_column' => '3-name1', 'repeat' => 1], $rows1[1]->toArray());
 
 		$result1->free();
 
@@ -250,12 +252,13 @@ final class FetchMutatorTest extends TestCase
 		$rows2 = $result2
 			->setRowFetchMutator(static function (Db\Row $row): void {
 				$row->new_column = $row->id . '-' . $row->name;
+				$row->repeat = ($row->repeat ?? 0) + 1;
 			})
 			->fetchAssoc('type=[]');
 
-		Tester\Assert::same(['id' => 1, 'type' => 3, 'name' => 'name3', 'new_column' => '1-name3'], $rows2[3]);
-		Tester\Assert::same(['id' => 2, 'type' => 2, 'name' => 'name2', 'new_column' => '2-name2'], $rows2[2]);
-		Tester\Assert::same(['id' => 3, 'type' => 1, 'name' => 'name1', 'new_column' => '3-name1'], $rows2[1]);
+		Tester\Assert::same(['id' => 1, 'type' => 3, 'name' => 'name3', 'new_column' => '1-name3', 'repeat' => 1], $rows2[3]);
+		Tester\Assert::same(['id' => 2, 'type' => 2, 'name' => 'name2', 'new_column' => '2-name2', 'repeat' => 1], $rows2[2]);
+		Tester\Assert::same(['id' => 3, 'type' => 1, 'name' => 'name1', 'new_column' => '3-name1', 'repeat' => 1], $rows2[1]);
 
 		$result2->free();
 	}
