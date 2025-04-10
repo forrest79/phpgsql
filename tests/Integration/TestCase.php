@@ -35,6 +35,7 @@ abstract class TestCase extends Tests\TestCase
 	{
 		$this->connection->close();
 		$this->adminConnection->query('DROP DATABASE ?', Db\Sql\Literal::create($this->dbname));
+		$this->adminConnection->close();
 	}
 
 

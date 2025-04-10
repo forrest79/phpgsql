@@ -8,8 +8,6 @@ class Connection
 {
 	private string $connectionConfig;
 
-	private bool $connectForceNew;
-
 	private int $errorVerbosity;
 
 	private AsyncHelper $asyncHelper;
@@ -28,10 +26,9 @@ class Connection
 	/**
 	 * @throws Exceptions\ConnectionException
 	 */
-	public function __construct(string $connectionConfig = '', bool $connectForceNew = FALSE)
+	public function __construct(string $connectionConfig = '')
 	{
 		$this->connectionConfig = $connectionConfig;
-		$this->connectForceNew = $connectForceNew;
 
 		$this->errorVerbosity = \PGSQL_ERRORS_DEFAULT;
 
@@ -50,12 +47,7 @@ class Connection
 			throw Exceptions\ConnectionException::noConfig();
 		}
 
-		$connectType = 0;
-		if ($this->connectForceNew === TRUE) {
-			$connectType |= \PGSQL_CONNECT_FORCE_NEW;
-		}
-
-		$resource = @\pg_connect($this->connectionConfig, $connectType); // intentionally @
+		$resource = @\pg_connect($this->connectionConfig, \PGSQL_CONNECT_FORCE_NEW); // intentionally @
 		if ($resource === FALSE) {
 			throw Exceptions\ConnectionException::connectionFailed();
 		} elseif (\pg_connection_status($resource) === \PGSQL_CONNECTION_BAD) {
@@ -97,7 +89,7 @@ class Connection
 	public function setConnectionConfig(string $config): static
 	{
 		if ($this->isConnected()) {
-			throw Exceptions\ConnectionException::cantChangeWhenConnected('config');
+			throw Exceptions\ConnectionException::cantChangeConnectionConfigWhenConnected();
 		}
 
 		$this->connectionConfig = $config;
@@ -109,18 +101,6 @@ class Connection
 	public function getConnectionConfig(): string
 	{
 		return $this->connectionConfig;
-	}
-
-
-	public function setConnectForceNew(bool $forceNew = TRUE): static
-	{
-		if ($this->isConnected()) {
-			throw Exceptions\ConnectionException::cantChangeWhenConnected('forceNew');
-		}
-
-		$this->connectForceNew = $forceNew;
-
-		return $this;
 	}
 
 

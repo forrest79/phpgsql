@@ -18,12 +18,11 @@ Pass `TRUE` as the second parameter to force new connection (otherwise, existing
 
 > Personal note: I'm thinking about removing this in the next big release.
 
-You can create a blank `Connection` object and set connection parameters on this object with functions `setConnectionConfig()` and `setConnectForceNew()`. You must set it before `connect()` is executed.
+You can create a blank `Connection` object and set connection parameters on this object with function `setConnectionConfig()` later. You must set it before `connect()` is executed.
 
 ```php
 $connection = new Forrest79\PhPgSql\Db\Connection();
 $connection->setConnectionConfig('host=localhost port=5432 dbname=test user=user1 password=xyz111 connect_timeout=5');
-$connection->setConnectForceNew(TRUE);
 ```
 
 Once you have a connection, you can manually connect it:

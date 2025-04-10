@@ -207,7 +207,7 @@ final class AsyncTest extends TestCase
 
 	protected function createConnection(): Db\Connection
 	{
-		return new Db\Connection($this->getTestConnectionConfig(), FALSE);
+		return new Db\Connection($this->getTestConnectionConfig());
 	}
 
 }
