@@ -90,7 +90,7 @@ Every query is `SELECT` at first, until you call `->insert(...)`, `->update(...)
 - `lateral(string $alias)` - make subquery lateral.
 
 
-- `where($condition, ...$params)` (or `having(...)`) - defines `WHERE` or `HAVING` conditions. you can provide condition as a `string`. When `string` condition is used, you can add `$parameters`. When in the condition is no `?` and only one parameter is used, comparison is made between condition and parameter. If parameter is scalar, simple `=` is used, for an `array` is used `IN` operator, the same applies ale for `Query` (`Fluent\Query` or `Db\Sql`). And for `NULL` is used `IS` operator. This could be handy when you want to use more parameter types in one condition. For example, you can provide `int` and `=` will be use and if you provide `array<int>` - `IN` operator will be used and the query will be working for the both parameter types. More complex conditions can be written manually as a `string` with `?` for parameters. Or you can use `Complex` or `Db\Sql` as condition. In this case, `$params` must be blank. All `where()` or `having()` calls is connected with logic `AND`.
+- `where($condition, ...$params)` (or `having(...)`) - defines `WHERE` or `HAVING` conditions. All `where()` or `having()` conditions are connected with logic `AND`. If you want to create complex conditions use `whereAnd/Or()` and `havingAnd/Or()` methods returning `Complex` object. You can provide condition as a `string`. When `string` condition is used, you can add `$parameters`. When in the condition is no `?` and only one parameter is used, comparison is made between condition and parameter. If parameter is scalar, simple `=` is used, for an `array` is used `IN` operator, the same applies ale for `Query` (`Fluent\Query` or `Db\Sql`). And for `NULL` is used `IS` operator. This could be handy when you want to use more parameter types in one condition. For example, you can provide `int` and `=` will be use and if you provide `array<int>` - `IN` operator will be used and the query will be working for the both parameter types. More complex conditions can be written manually as a `string` with `?` for parameters. Or you can use `Complex` or `Db\Sql` as condition. In this case, `$params` must be blank.
 
 
 - `whereIf(bool $ifCondition, $condition, ...$params)` - the same as classic `where` method, but this condition is omitted when `$ifCondition` is `FALSE`.
@@ -843,8 +843,8 @@ Query after `WITH` can be `SELECT`, `INSERT`, `UPDATE` or `DELETE`.
 
 On `QueryExecute`, you can use all fetch functions as on the `Db\Result`. All `fetch*()` methods call `execute()` that run query in DB and returns the `Db\Result` object. The `execute()` method can be used everytime, but it's handy mostly for queries returning no data.
 
-> You can pass a query object to `foreach` without calling `execute()` or another fetch function. This is good, because just one rows iteration is made (`fetchAll()`, `fetchPairs()` and `fetchAssoc()` iterate all rows in background before return an array). If you want to iterate rows just once and run query in DB earlier than in `foreach`, just call `execute()` whenever you want and pass query object or returned result object to `foreach`.
-> We can get the same behavior using `fetchIterator`.
+> Methods `fetchAll()`, `fetchPairs()` and `fetchAssoc()` iterate all rows in the background before returns an array. To avoid this use `fetchIterator` method when you want to iterate the query result in the `foreach`. 
+> If you want to iterate rows just once and run query in DB earlier than in `foreach`, just call `execute()` method whenever you want to run a query and pass `fetchIterator` method from the result object or right from the query object to the `foreach`.
 
 You can update your query till `execute()` is call, after that, no updates on query is available, you can only execute this query again by calling `reexecute()`:
 
