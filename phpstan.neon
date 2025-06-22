@@ -1,10 +1,25 @@
 includes:
 	- %rootDir%/conf/bleedingEdge.neon
 	- %rootDir%/../phpstan-strict-rules/rules.neon
+	- %rootDir%/../../../vendor/shipmonk/phpstan-rules/rules.neon
 	- %rootDir%/../../forrest79/phpgsql-phpstan/extension.neon
 
 parameters:
 	level: max
+
+	shipmonkRules:
+		forbidCheckedExceptionInCallable:
+			enabled: false
+		forbidCheckedExceptionInYieldingMethod:
+			enabled: false
+		forbidUnsafeArrayKey:
+			enabled: false
+		forbidUnsetClassField:
+			enabled: false
+		forbidVariableTypeOverwriting:
+			enabled: false
+		uselessPrivatePropertyNullability:
+			enabled: false
 
 	ignoreErrors:
 		# === This is OK ===
@@ -46,6 +61,11 @@ parameters:
 			message: '#^Binary operation ".=?" between .+ results in an error\.$#'
 			path: %rootDir%/../../../tests/Integration/FetchMutatorTest.php
 			count: 28
+
+		-
+			message: '#^Using \+ over non-number \(mixed \+ int\)$#'
+			path: %rootDir%/../../../tests/Integration/FetchMutatorTest.php
+			count: 3
 
 		-
 			message: '#^Expression ".+" on a separate line does not do anything\.$#'

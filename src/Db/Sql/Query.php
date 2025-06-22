@@ -62,7 +62,7 @@ class Query implements Db\Sql
 
 		$sql = \preg_replace_callback(
 			'/([\\\\]?)\?/',
-			static function ($matches) use (&$params, &$parsedParams, &$origParamIndex, &$paramIndex): string {
+			static function (array $matches) use (&$params, &$parsedParams, &$origParamIndex, &$paramIndex): string {
 				if ($matches[1] === '\\') {
 					return '?';
 				}

@@ -38,7 +38,7 @@ abstract class PreparedStatementHelper
 
 		return (string) \preg_replace_callback(
 			'/([\\\\]?)\?/',
-			static function ($matches) use (&$paramIndex): string {
+			static function (array $matches) use (&$paramIndex): string {
 				if ($matches[1] === '\\') {
 					return '?';
 				}
@@ -56,7 +56,7 @@ abstract class PreparedStatementHelper
 	 */
 	protected static function prepareParams(array $params): array
 	{
-		return \array_map(static function ($value) {
+		return \array_map(static function (mixed $value): mixed {
 			if (\is_bool($value)) {
 				return $value ? 'TRUE' : 'FALSE';
 			}

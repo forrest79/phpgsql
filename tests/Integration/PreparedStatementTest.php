@@ -88,7 +88,7 @@ final class PreparedStatementTest extends TestCase
 		$preparedStatement = $this->connection->prepareStatement('SELECT pg_sleep(1)');
 		$preparedStatement->execute();
 
-		Tester\Assert::true($queryDuration > 0);
+		Tester\Assert::true(($queryDuration ?? 0) > 0);
 		Tester\Assert::same('phpgsql1', $queryPrapareStatementName);
 	}
 

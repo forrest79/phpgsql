@@ -33,11 +33,11 @@ class Basic implements Db\DataTypeParser
 				case '_date':
 					return $this->parseArray($value, [$this, 'parseDate']);
 				case '_timestamp':
-					return $this->parseArray($value, function ($value): \DateTimeImmutable {
+					return $this->parseArray($value, function (string $value): \DateTimeImmutable {
 						return $this->parseTimestamp(\trim($value, '"'));
 					});
 				case '_timestamptz':
-					return $this->parseArray($value, function ($value): \DateTimeImmutable {
+					return $this->parseArray($value, function (string $value): \DateTimeImmutable {
 						return $this->parseTimestampTz(\trim($value, '"'));
 					});
 				case '_time':

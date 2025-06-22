@@ -3,6 +3,9 @@
 
 namespace Forrest79\PhPgSql\Benchmarks;
 
-foreach ((array) \glob(__DIR__ . '/*Benchmark.php') as $benchmarkFile) {
+$benchmarkFiles = \glob(__DIR__ . '/*Benchmark.php');
+assert(is_array($benchmarkFiles));
+
+foreach ($benchmarkFiles as $benchmarkFile) {
 	require $benchmarkFile;
 }

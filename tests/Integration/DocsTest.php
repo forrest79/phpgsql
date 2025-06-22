@@ -62,6 +62,8 @@ final class DocsTest extends TestCase
 				$source,
 			);
 
+			assert(is_string($source));
+
 			\file_put_contents($tempFile, '<?php declare(strict_types=1);' . \PHP_EOL . \PHP_EOL . $source);
 
 			echo 'Source file: ' . $tempFile . \PHP_EOL;
