@@ -16,11 +16,11 @@ class Connection
 
 	private ResultBuilder $resultBuilder;
 
-	private Transaction|NULL $transaction = NULL;
+	private Transaction|null $transaction = null;
 
-	private PgSql\Connection|NULL $resource = NULL;
+	private PgSql\Connection|null $resource = null;
 
-	private bool $connected = FALSE;
+	private bool $connected = false;
 
 
 	/**
@@ -48,7 +48,7 @@ class Connection
 		}
 
 		$resource = @\pg_connect($this->connectionConfig, \PGSQL_CONNECT_FORCE_NEW); // intentionally @
-		if ($resource === FALSE) {
+		if ($resource === false) {
 			throw Exceptions\ConnectionException::connectionFailed();
 		} elseif (\pg_connection_status($resource) === \PGSQL_CONNECTION_BAD) {
 			throw Exceptions\ConnectionException::badConnection();
@@ -60,7 +60,7 @@ class Connection
 			\pg_set_error_verbosity($this->resource, $this->errorVerbosity);
 		}
 
-		$this->connected = TRUE;
+		$this->connected = true;
 
 		$this->events->onConnect();
 
@@ -156,12 +156,12 @@ class Connection
 			$this->events->onClose();
 		}
 
-		if ($this->resource !== NULL) {
+		if ($this->resource !== null) {
 			\pg_close($this->resource);
 		}
 
-		$this->resource = NULL;
-		$this->connected = FALSE;
+		$this->resource = null;
+		$this->connected = false;
 
 		return $this;
 	}
@@ -219,7 +219,7 @@ class Connection
 	{
 		$query = $this->prepareQuery(Query::from($sql, $params));
 
-		$startTime = $this->events->hasOnQuery() ? \hrtime(TRUE) : NULL;
+		$startTime = $this->events->hasOnQuery() ? \hrtime(true) : null;
 
 		$queryParams = $query->params;
 		if ($queryParams === []) {
@@ -228,12 +228,12 @@ class Connection
 			$resource = @\pg_query_params($this->getConnectedResource(), $query->sql, $queryParams); // intentionally @
 		}
 
-		if ($resource === FALSE) {
+		if ($resource === false) {
 			throw Exceptions\QueryException::queryFailed($query, $this->getLastError());
 		}
 
-		if ($startTime !== NULL) {
-			$this->events->onQuery($query, \hrtime(TRUE) - $startTime);
+		if ($startTime !== null) {
+			$this->events->onQuery($query, \hrtime(true) - $startTime);
 		}
 
 		return $this->resultBuilder->build($resource, $query);
@@ -248,15 +248,15 @@ class Connection
 	{
 		$sql = $this->prepareQuery($sql);
 
-		$startTime = $this->events->hasOnQuery() ? \hrtime(TRUE) : NULL;
+		$startTime = $this->events->hasOnQuery() ? \hrtime(true) : null;
 
 		$resource = @\pg_query($this->getConnectedResource(), $sql); // intentionally @
-		if ($resource === FALSE) {
+		if ($resource === false) {
 			throw Exceptions\QueryException::queryFailed(new Query($sql, []), $this->getLastError());
 		}
 
-		if ($startTime !== NULL) {
-			$this->events->onQuery(new Query($sql, []), \hrtime(TRUE) - $startTime);
+		if ($startTime !== null) {
+			$this->events->onQuery(new Query($sql, []), \hrtime(true) - $startTime);
 		}
 
 		return $this;
@@ -290,7 +290,7 @@ class Connection
 			$querySuccess = @\pg_send_query_params($this->getConnectedResource(), $query->sql, $query->params); // intentionally @
 		}
 
-		if ($querySuccess === FALSE) {
+		if ($querySuccess === false) {
 			throw Exceptions\ConnectionException::asyncQuerySentFailed($this->getLastError());
 		}
 
@@ -311,7 +311,7 @@ class Connection
 		$sql = $this->prepareQuery($sql);
 
 		$querySuccess = @\pg_send_query($this->getConnectedResource(), $sql); // intentionally @
-		if ($querySuccess === FALSE) {
+		if ($querySuccess === false) {
 			throw Exceptions\ConnectionException::asyncQuerySentFailed($this->getLastError());
 		}
 
@@ -332,11 +332,11 @@ class Connection
 	public function completeAsyncExecute(): static
 	{
 		$asyncExecuteQuery = $this->asyncHelper->getAsyncExecuteQuery();
-		if ($asyncExecuteQuery === NULL) {
+		if ($asyncExecuteQuery === null) {
 			throw Exceptions\ConnectionException::asyncNoExecuteIsSent();
 		}
 
-		while (($resource = \pg_get_result($this->getConnectedResource())) !== FALSE) {
+		while (($resource = \pg_get_result($this->getConnectedResource())) !== false) {
 			if (!$this->asyncHelper::checkAsyncQueryResult($resource)) {
 				throw Exceptions\QueryException::asyncQueryFailed(
 					new Query($asyncExecuteQuery, []),
@@ -381,10 +381,10 @@ class Connection
 	/**
 	 * @return list<string>
 	 */
-	public function getNotices(bool $clearAfterRead = TRUE): array
+	public function getNotices(bool $clearAfterRead = true): array
 	{
 		$notices = \pg_last_notice($this->getConnectedResource(), \PGSQL_NOTICE_ALL);
-		if ($notices === FALSE) {
+		if ($notices === false) {
 			throw Exceptions\ConnectionException::cantGetNotices();
 		}
 
@@ -399,7 +399,7 @@ class Connection
 
 	public function transaction(): Transaction
 	{
-		if ($this->transaction === NULL) {
+		if ($this->transaction === null) {
 			$this->transaction = new Transaction($this);
 		}
 
@@ -421,7 +421,7 @@ class Connection
 	 */
 	public function isInTransaction(): bool
 	{
-		return !\in_array(\pg_transaction_status($this->getConnectedResource()), [\PGSQL_TRANSACTION_UNKNOWN, \PGSQL_TRANSACTION_IDLE], TRUE);
+		return !\in_array(\pg_transaction_status($this->getConnectedResource()), [\PGSQL_TRANSACTION_UNKNOWN, \PGSQL_TRANSACTION_IDLE], true);
 	}
 
 
@@ -447,7 +447,7 @@ class Connection
 
 	public function getLastError(): string
 	{
-		return ($this->resource !== NULL)
+		return ($this->resource !== null)
 			? \pg_last_error($this->resource)
 			: 'unknown error';
 	}
@@ -458,11 +458,11 @@ class Connection
 	 */
 	private function getConnectedResource(): PgSql\Connection
 	{
-		if ($this->resource === NULL) {
+		if ($this->resource === null) {
 			$this->connect();
 		}
 
-		\assert($this->resource !== NULL);
+		\assert($this->resource !== null);
 
 		return $this->resource;
 	}

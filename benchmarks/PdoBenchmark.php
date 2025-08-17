@@ -26,7 +26,7 @@ final class PdoBenchmark extends BenchmarkCase
 		parent::setUp();
 
 		$connection = \pg_connect(\PHPGSQL_CONNECTION_CONFIG);
-		if ($connection === FALSE) {
+		if ($connection === false) {
 			throw new \RuntimeException('pg_connect failed');
 		}
 		$this->connection = $connection;
@@ -37,13 +37,13 @@ final class PdoBenchmark extends BenchmarkCase
 
 		$this->pdoEmulate = new \PDO(
 			$pdoConfig,
-			NULL,
-			NULL,
-			[\PDO::ATTR_EMULATE_PREPARES => TRUE],
+			null,
+			null,
+			[\PDO::ATTR_EMULATE_PREPARES => true],
 		);
 
 		$prepareResult = \pg_prepare($connection, 'test', 'SELECT ' . \rand(0, 1000) . ' WHERE 1 = $1');
-		if ($prepareResult === FALSE) {
+		if ($prepareResult === false) {
 			throw new \RuntimeException('pg_prepare failed');
 		}
 
@@ -65,7 +65,7 @@ final class PdoBenchmark extends BenchmarkCase
 	public function benchmarkSimplePgQuery(): void
 	{
 		$queryResource = \pg_query($this->connection, 'SELECT ' . \rand(0, 1000));
-		if ($queryResource === FALSE) {
+		if ($queryResource === false) {
 			throw new \RuntimeException('pg_query failed');
 		}
 	}
@@ -77,7 +77,7 @@ final class PdoBenchmark extends BenchmarkCase
 	public function benchmarkSimplePdoQuery(): void
 	{
 		$queryResource = $this->pdo->query('SELECT ' . \rand(0, 1000));
-		if ($queryResource === FALSE) {
+		if ($queryResource === false) {
 			throw new \RuntimeException('PDO::query failed');
 		}
 	}
@@ -98,7 +98,7 @@ final class PdoBenchmark extends BenchmarkCase
 	public function benchmarkParamsPgQueryParams(): void
 	{
 		$queryResource = \pg_query_params($this->connection, 'SELECT ' . \rand(0, 1000) . ' WHERE 1 = $1', [1]);
-		if ($queryResource === FALSE) {
+		if ($queryResource === false) {
 			throw new \RuntimeException('pg_query_params failed');
 		}
 
@@ -113,7 +113,7 @@ final class PdoBenchmark extends BenchmarkCase
 	{
 		$queryResource = $this->pdo->prepare('SELECT ' . \rand(0, 1000) . ' WHERE 1 = ?');
 		$result = $queryResource->execute([1]);
-		if ($result === FALSE) {
+		if ($result === false) {
 			throw new \RuntimeException('PDO::execute failed');
 		}
 
@@ -128,7 +128,7 @@ final class PdoBenchmark extends BenchmarkCase
 	{
 		$queryResource = $this->pdoEmulate->prepare('SELECT ' . \rand(0, 1000) . ' WHERE 1 = ?');
 		$result = $queryResource->execute([1]);
-		if ($result === FALSE) {
+		if ($result === false) {
 			throw new \RuntimeException('PDO::execute failed');
 		}
 
@@ -142,7 +142,7 @@ final class PdoBenchmark extends BenchmarkCase
 	public function benchmarkRepeatStatementPgPrepare(): void
 	{
 		$queryResource = \pg_execute($this->connection, 'test', [1]);
-		if ($queryResource === FALSE) {
+		if ($queryResource === false) {
 			throw new \RuntimeException('pg_execute failed');
 		}
 
@@ -157,7 +157,7 @@ final class PdoBenchmark extends BenchmarkCase
 	{
 		$result = $this->pdoPrepareStatement->execute([1]);
 		$this->pdoPrepareStatement->fetchAll();
-		if ($result === FALSE) {
+		if ($result === false) {
 			throw new \RuntimeException('PDO::execute failed');
 		}
 	}
@@ -170,7 +170,7 @@ final class PdoBenchmark extends BenchmarkCase
 	{
 		$result = $this->pdoEmulatePrepareStatement->execute([1]);
 		$this->pdoEmulatePrepareStatement->fetchAll();
-		if ($result === FALSE) {
+		if ($result === false) {
 			throw new \RuntimeException('PDO::execute failed');
 		}
 	}

@@ -28,7 +28,7 @@ final class PreparedStatementTest extends TestCase
 		$result1 = $preparedStatement->execute(1);
 
 		$row1 = $result1->fetch();
-		if ($row1 === NULL) {
+		if ($row1 === null) {
 			throw new \RuntimeException('No data from database were returned');
 		}
 
@@ -37,7 +37,7 @@ final class PreparedStatementTest extends TestCase
 		$result2 = $preparedStatement->execute(2);
 
 		$row2 = $result2->fetch();
-		if ($row2 === NULL) {
+		if ($row2 === null) {
 			throw new \RuntimeException('No data from database were returned');
 		}
 
@@ -51,8 +51,8 @@ final class PreparedStatementTest extends TestCase
 	public function testParameters(): void
 	{
 		$preparedStatement = $this->connection->prepareStatement('SELECT 1 AS clm1 WHERE 1 = $1 AND TRUE = $2 AND NULL::integer IS NOT DISTINCT FROM $3::integer');
-		$row = $preparedStatement->execute(1, TRUE, NULL)->fetch();
-		if ($row === NULL) {
+		$row = $preparedStatement->execute(1, true, null)->fetch();
+		if ($row === null) {
 			throw new \RuntimeException('No data from database were returned');
 		}
 
@@ -66,21 +66,21 @@ final class PreparedStatementTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($preparedStatement1): void {
 			$preparedStatement1->execute();
-		}, Db\Exceptions\QueryException::class, NULL, Db\Exceptions\QueryException::PREPARED_STATEMENT_QUERY_FAILED);
+		}, Db\Exceptions\QueryException::class, null, Db\Exceptions\QueryException::PREPARED_STATEMENT_QUERY_FAILED);
 
 		$preparedStatement2 = $this->connection->prepareStatement('SELECT 1 AS clm1 WHERE 1 = $1');
 
 		Tester\Assert::exception(static function () use ($preparedStatement2): void {
 			$preparedStatement2->execute(0, 1);
-		}, Db\Exceptions\QueryException::class, NULL, Db\Exceptions\QueryException::PREPARED_STATEMENT_QUERY_FAILED);
+		}, Db\Exceptions\QueryException::class, null, Db\Exceptions\QueryException::PREPARED_STATEMENT_QUERY_FAILED);
 	}
 
 
 	public function testQueryEvent(): void
 	{
 		$queryDuration = 0;
-		$queryPrapareStatementName = NULL;
-		$this->connection->addOnQuery(static function (Db\Connection $connection, Db\Query $query, float|NULL $timeNs, string|NULL $prepareStatementName) use (&$queryDuration, &$queryPrapareStatementName): void {
+		$queryPrapareStatementName = null;
+		$this->connection->addOnQuery(static function (Db\Connection $connection, Db\Query $query, float|null $timeNs, string|null $prepareStatementName) use (&$queryDuration, &$queryPrapareStatementName): void {
 			$queryDuration = $timeNs;
 			$queryPrapareStatementName = $prepareStatementName;
 		});
@@ -109,7 +109,7 @@ final class PreparedStatementTest extends TestCase
 		$result1 = $preparedStatement->execute(1)->getNextResult();
 
 		$row1 = $result1->fetch();
-		if ($row1 === NULL) {
+		if ($row1 === null) {
 			throw new \RuntimeException('No data from database were returned');
 		}
 
@@ -118,7 +118,7 @@ final class PreparedStatementTest extends TestCase
 		$result2 = $preparedStatement->execute(2)->getNextResult();
 
 		$row2 = $result2->fetch();
-		if ($row2 === NULL) {
+		if ($row2 === null) {
 			throw new \RuntimeException('No data from database were returned');
 		}
 
@@ -135,26 +135,26 @@ final class PreparedStatementTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($preparedStatement1): void {
 			$preparedStatement1->execute();
-		}, Db\Exceptions\QueryException::class, NULL, Db\Exceptions\QueryException::ASYNC_PREPARED_STATEMENT_QUERY_FAILED);
+		}, Db\Exceptions\QueryException::class, null, Db\Exceptions\QueryException::ASYNC_PREPARED_STATEMENT_QUERY_FAILED);
 
 		$preparedStatement2 = $this->connection->asyncPrepareStatement('SELECT 1 AS clm1 WHERE 1 = $1');
 
 		Tester\Assert::exception(static function () use ($preparedStatement2): void {
 			$preparedStatement2->execute(0, 1)->getNextResult();
-		}, Db\Exceptions\QueryException::class, NULL, Db\Exceptions\QueryException::ASYNC_PREPARED_STATEMENT_QUERY_FAILED);
+		}, Db\Exceptions\QueryException::class, null, Db\Exceptions\QueryException::ASYNC_PREPARED_STATEMENT_QUERY_FAILED);
 
 		$preparedStatement2->execute(2);
 		Tester\Assert::exception(static function () use ($preparedStatement2): void {
 			$preparedStatement2->execute(3)->getNextResult();
-		}, Db\Exceptions\QueryException::class, NULL, Db\Exceptions\QueryException::ASYNC_PREPARED_STATEMENT_QUERY_FAILED);
+		}, Db\Exceptions\QueryException::class, null, Db\Exceptions\QueryException::ASYNC_PREPARED_STATEMENT_QUERY_FAILED);
 	}
 
 
 	public function testAsyncQueryEvent(): void
 	{
-		$queryDuration = NULL;
-		$queryPrapareStatementName = NULL;
-		$this->connection->addOnQuery(static function (Db\Connection $connection, Db\Query $query, float|NULL $timeNs, string|NULL $prepareStatementName) use (&$queryDuration, &$queryPrapareStatementName): void {
+		$queryDuration = null;
+		$queryPrapareStatementName = null;
+		$this->connection->addOnQuery(static function (Db\Connection $connection, Db\Query $query, float|null $timeNs, string|null $prepareStatementName) use (&$queryDuration, &$queryPrapareStatementName): void {
 			$queryDuration = $timeNs;
 			$queryPrapareStatementName = $prepareStatementName;
 		});

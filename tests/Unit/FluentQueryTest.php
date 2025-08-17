@@ -22,7 +22,7 @@ final class FluentQueryTest extends Tests\TestCase
 			->distinct()
 			->from('table', 't')
 			->where('column', 100)
-			->where('text', NULL)
+			->where('text', null)
 			->groupBy('column')
 			->orderBy('column')
 			->limit(10)
@@ -56,7 +56,7 @@ final class FluentQueryTest extends Tests\TestCase
 				->distinct()
 				->distinctOn('t.column')
 				->toDbQuery();
-		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::CANT_COMBINE_DISTINCT_AND_DISTINCT_ON);
+		}, Fluent\Exceptions\QueryBuilderException::class, null, Fluent\Exceptions\QueryBuilderException::CANT_COMBINE_DISTINCT_AND_DISTINCT_ON);
 	}
 
 
@@ -96,7 +96,7 @@ final class FluentQueryTest extends Tests\TestCase
 	public function testSelectBoolNull(): void
 	{
 		$query = $this->query()
-			->select(['is_true' => TRUE, 'is_false' => FALSE, 'is_null' => NULL])
+			->select(['is_true' => true, 'is_false' => false, 'is_null' => null])
 			->toDbQuery();
 
 		Tester\Assert::same('SELECT TRUE AS "is_true", FALSE AS "is_false", NULL AS "is_null"', $query->sql);
@@ -224,7 +224,7 @@ final class FluentQueryTest extends Tests\TestCase
 	{
 		Tester\Assert::exception(function (): void {
 			$this->query()->where(Db\Sql\Expression::create('x.column = ?'), 1);
-		}, Fluent\Exceptions\ConditionException::class, NULL, Fluent\Exceptions\ConditionException::ONLY_STRING_CONDITION_CAN_HAVE_PARAMS);
+		}, Fluent\Exceptions\ConditionException::class, null, Fluent\Exceptions\ConditionException::ONLY_STRING_CONDITION_CAN_HAVE_PARAMS);
 	}
 
 
@@ -233,7 +233,7 @@ final class FluentQueryTest extends Tests\TestCase
 		$queryWithTrueIfCondition = $this->query()
 			->select(['x.column'])
 			->from('table', 't')
-			->whereIf(TRUE, 'x.column = t.id')
+			->whereIf(true, 'x.column = t.id')
 			->toDbQuery();
 
 		Tester\Assert::same('SELECT x.column FROM table AS t WHERE x.column = t.id', $queryWithTrueIfCondition->sql);
@@ -242,7 +242,7 @@ final class FluentQueryTest extends Tests\TestCase
 		$queryWithFalseIfCondition = $this->query()
 			->select(['x.column'])
 			->from('table', 't')
-			->whereIf(FALSE, 'x.column = t.id')
+			->whereIf(false, 'x.column = t.id')
 			->toDbQuery();
 
 		Tester\Assert::same('SELECT x.column FROM table AS t', $queryWithFalseIfCondition->sql);
@@ -378,7 +378,7 @@ final class FluentQueryTest extends Tests\TestCase
 	{
 		Tester\Assert::exception(function (): void {
 			$this->query()->having(Db\Sql\Expression::create('x.column = ?'), 1);
-		}, Fluent\Exceptions\ConditionException::class, NULL, Fluent\Exceptions\ConditionException::ONLY_STRING_CONDITION_CAN_HAVE_PARAMS);
+		}, Fluent\Exceptions\ConditionException::class, null, Fluent\Exceptions\ConditionException::ONLY_STRING_CONDITION_CAN_HAVE_PARAMS);
 	}
 
 
@@ -545,7 +545,7 @@ final class FluentQueryTest extends Tests\TestCase
 	{
 		Tester\Assert::exception(function (): void {
 			$this->query()->on('x', Db\Sql\Expression::create('x.column = ?'), 1);
-		}, Fluent\Exceptions\ConditionException::class, NULL, Fluent\Exceptions\ConditionException::ONLY_STRING_CONDITION_CAN_HAVE_PARAMS);
+		}, Fluent\Exceptions\ConditionException::class, null, Fluent\Exceptions\ConditionException::ONLY_STRING_CONDITION_CAN_HAVE_PARAMS);
 	}
 
 
@@ -557,7 +557,7 @@ final class FluentQueryTest extends Tests\TestCase
 				->from('table', 't')
 				->join('another', 'x')
 				->toDbQuery();
-		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::NO_ON_CONDITION);
+		}, Fluent\Exceptions\QueryBuilderException::class, null, Fluent\Exceptions\QueryBuilderException::NO_ON_CONDITION);
 	}
 
 
@@ -652,7 +652,7 @@ final class FluentQueryTest extends Tests\TestCase
 			$this->query()
 				->from('table')
 				->toDbQuery();
-		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::NO_COLUMNS_TO_SELECT);
+		}, Fluent\Exceptions\QueryBuilderException::class, null, Fluent\Exceptions\QueryBuilderException::NO_COLUMNS_TO_SELECT);
 	}
 
 
@@ -807,7 +807,7 @@ final class FluentQueryTest extends Tests\TestCase
 				->select([])
 				->from('table2')
 				->toDbQuery();
-		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::NO_DATA_TO_INSERT);
+		}, Fluent\Exceptions\QueryBuilderException::class, null, Fluent\Exceptions\QueryBuilderException::NO_DATA_TO_INSERT);
 	}
 
 
@@ -819,7 +819,7 @@ final class FluentQueryTest extends Tests\TestCase
 				->select([1])
 				->from('table2')
 				->toDbQuery();
-		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::MISSING_COLUMN_ALIAS);
+		}, Fluent\Exceptions\QueryBuilderException::class, null, Fluent\Exceptions\QueryBuilderException::MISSING_COLUMN_ALIAS);
 
 		Tester\Assert::exception(function (): void {
 			$this->query()
@@ -827,7 +827,7 @@ final class FluentQueryTest extends Tests\TestCase
 				->select([Tests\TestEnum::One])
 				->from('table2')
 				->toDbQuery();
-		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::MISSING_COLUMN_ALIAS);
+		}, Fluent\Exceptions\QueryBuilderException::class, null, Fluent\Exceptions\QueryBuilderException::MISSING_COLUMN_ALIAS);
 	}
 
 
@@ -897,7 +897,7 @@ final class FluentQueryTest extends Tests\TestCase
 				->onConflict('name_ukey', Fluent\Condition::createAnd()->add('age < ?', 30))
 				->doUpdate(['info'])
 				->toDbQuery();
-		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::ON_CONFLICT_WHERE_NOT_FOR_CONSTRAINT);
+		}, Fluent\Exceptions\QueryException::class, null, Fluent\Exceptions\QueryException::ON_CONFLICT_WHERE_NOT_FOR_CONSTRAINT);
 	}
 
 
@@ -1000,7 +1000,7 @@ final class FluentQueryTest extends Tests\TestCase
 				])
 				->doUpdate(['info'])
 				->toDbQuery();
-		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::ON_CONFLICT_DO_WITHOUT_DEFINITION);
+		}, Fluent\Exceptions\QueryBuilderException::class, null, Fluent\Exceptions\QueryBuilderException::ON_CONFLICT_DO_WITHOUT_DEFINITION);
 	}
 
 
@@ -1016,7 +1016,7 @@ final class FluentQueryTest extends Tests\TestCase
 				])
 				->onConflict(['name'])
 				->toDbQuery();
-		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::ON_CONFLICT_NO_DO);
+		}, Fluent\Exceptions\QueryBuilderException::class, null, Fluent\Exceptions\QueryBuilderException::ON_CONFLICT_NO_DO);
 	}
 
 
@@ -1033,7 +1033,7 @@ final class FluentQueryTest extends Tests\TestCase
 				->onConflict(['name'])
 				->doUpdate([Db\Sql\Expression::create('EXCLUDED.name || ?', 'Jimmy')])
 				->toDbQuery();
-		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::ON_CONFLICT_DO_UPDATE_SET_SINGLE_COLUMN_CAN_BE_ONLY_STRING);
+		}, Fluent\Exceptions\QueryBuilderException::class, null, Fluent\Exceptions\QueryBuilderException::ON_CONFLICT_DO_UPDATE_SET_SINGLE_COLUMN_CAN_BE_ONLY_STRING);
 	}
 
 
@@ -1045,7 +1045,7 @@ final class FluentQueryTest extends Tests\TestCase
 				->select(['*', 'id'])
 				->from('table2')
 				->toDbQuery();
-		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::SELECT_ALL_COLUMNS_CANT_BE_COMBINED_WITH_CONCRETE_COLUMN_FOR_INSERT_SELECT_WITH_COLUMN_DETECTION);
+		}, Fluent\Exceptions\QueryBuilderException::class, null, Fluent\Exceptions\QueryBuilderException::SELECT_ALL_COLUMNS_CANT_BE_COMBINED_WITH_CONCRETE_COLUMN_FOR_INSERT_SELECT_WITH_COLUMN_DETECTION);
 	}
 
 
@@ -1058,7 +1058,7 @@ final class FluentQueryTest extends Tests\TestCase
 					'column' => [1, 2],
 				])
 				->toDbQuery();
-		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::DATA_CANT_CONTAIN_ARRAY);
+		}, Fluent\Exceptions\QueryBuilderException::class, null, Fluent\Exceptions\QueryBuilderException::DATA_CANT_CONTAIN_ARRAY);
 	}
 
 
@@ -1071,7 +1071,7 @@ final class FluentQueryTest extends Tests\TestCase
 					['column' => [1, 2]],
 				])
 				->toDbQuery();
-		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::DATA_CANT_CONTAIN_ARRAY);
+		}, Fluent\Exceptions\QueryBuilderException::class, null, Fluent\Exceptions\QueryBuilderException::DATA_CANT_CONTAIN_ARRAY);
 	}
 
 
@@ -1081,7 +1081,7 @@ final class FluentQueryTest extends Tests\TestCase
 			$this->query()
 				->insert('table')
 				->toDbQuery();
-		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::NO_DATA_TO_INSERT);
+		}, Fluent\Exceptions\QueryBuilderException::class, null, Fluent\Exceptions\QueryBuilderException::NO_DATA_TO_INSERT);
 	}
 
 
@@ -1133,7 +1133,7 @@ final class FluentQueryTest extends Tests\TestCase
 					'column1' => [1, 2],
 				])
 				->toDbQuery();
-		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::DATA_CANT_CONTAIN_ARRAY);
+		}, Fluent\Exceptions\QueryBuilderException::class, null, Fluent\Exceptions\QueryBuilderException::DATA_CANT_CONTAIN_ARRAY);
 	}
 
 
@@ -1143,7 +1143,7 @@ final class FluentQueryTest extends Tests\TestCase
 			$this->query()
 				->update('table')
 				->toDbQuery();
-		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::NO_DATA_TO_UPDATE);
+		}, Fluent\Exceptions\QueryBuilderException::class, null, Fluent\Exceptions\QueryBuilderException::NO_DATA_TO_UPDATE);
 	}
 
 
@@ -1154,7 +1154,7 @@ final class FluentQueryTest extends Tests\TestCase
 				->update()
 				->set(['column' => 1])
 				->toDbQuery();
-		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::NO_MAIN_TABLE);
+		}, Fluent\Exceptions\QueryBuilderException::class, null, Fluent\Exceptions\QueryBuilderException::NO_MAIN_TABLE);
 	}
 
 
@@ -1305,7 +1305,7 @@ final class FluentQueryTest extends Tests\TestCase
 				->whenMatched('UPDATE SET balance = balance + transaction_value')
 				->whenNotMatched('INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)')
 				->toDbQuery();
-		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::MERGE_NO_USING);
+		}, Fluent\Exceptions\QueryBuilderException::class, null, Fluent\Exceptions\QueryBuilderException::MERGE_NO_USING);
 	}
 
 
@@ -1319,7 +1319,7 @@ final class FluentQueryTest extends Tests\TestCase
 				->whenMatched('UPDATE SET balance = balance + transaction_value')
 				->whenNotMatched('INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)')
 				->toDbQuery();
-		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::MERGE_ONLY_ONE_USING);
+		}, Fluent\Exceptions\QueryException::class, null, Fluent\Exceptions\QueryException::MERGE_ONLY_ONE_USING);
 	}
 
 
@@ -1332,7 +1332,7 @@ final class FluentQueryTest extends Tests\TestCase
 				->whenMatched('UPDATE SET balance = balance + transaction_value')
 				->whenNotMatched('INSERT (customer_id, balance) VALUES (t.customer_id, t.transaction_value)')
 				->toDbQuery();
-		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::NO_ON_CONDITION);
+		}, Fluent\Exceptions\QueryBuilderException::class, null, Fluent\Exceptions\QueryBuilderException::NO_ON_CONDITION);
 	}
 
 
@@ -1343,7 +1343,7 @@ final class FluentQueryTest extends Tests\TestCase
 				->merge('customer_account', 'ca')
 				->using('recent_transactions', 't', 't.customer_id = ca.customer_id')
 				->toDbQuery();
-		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::MERGE_NO_WHEN);
+		}, Fluent\Exceptions\QueryBuilderException::class, null, Fluent\Exceptions\QueryBuilderException::MERGE_NO_WHEN);
 	}
 
 
@@ -1431,7 +1431,7 @@ final class FluentQueryTest extends Tests\TestCase
 	public function testWithNotMaterialized(): void
 	{
 		$query = $this->query()
-			->with('w', 'SELECT * FROM big_table', notMaterialized: TRUE)
+			->with('w', 'SELECT * FROM big_table', notMaterialized: true)
 			->select(['*'])
 			->from('w', 'w1')
 			->join('w', 'w2', 'w1.key = w2.ref')
@@ -1633,7 +1633,7 @@ final class FluentQueryTest extends Tests\TestCase
 				->query()
 				->select(['*'])
 				->toDbQuery();
-		}, Fluent\Exceptions\ConditionException::class, NULL, Fluent\Exceptions\ConditionException::BAD_PARAMS_COUNT);
+		}, Fluent\Exceptions\ConditionException::class, null, Fluent\Exceptions\ConditionException::BAD_PARAMS_COUNT);
 	}
 
 
@@ -1643,7 +1643,7 @@ final class FluentQueryTest extends Tests\TestCase
 
 		Tester\Assert::exception(static function () use ($query): void {
 			$query->table('another');
-		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::ONLY_ONE_MAIN_TABLE);
+		}, Fluent\Exceptions\QueryException::class, null, Fluent\Exceptions\QueryException::ONLY_ONE_MAIN_TABLE);
 	}
 
 
@@ -1653,7 +1653,7 @@ final class FluentQueryTest extends Tests\TestCase
 
 		Tester\Assert::exception(static function () use ($query): void {
 			$query->from('another', 't');
-		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::TABLE_ALIAS_ALREADY_EXISTS);
+		}, Fluent\Exceptions\QueryException::class, null, Fluent\Exceptions\QueryException::TABLE_ALIAS_ALREADY_EXISTS);
 	}
 
 
@@ -1687,7 +1687,7 @@ final class FluentQueryTest extends Tests\TestCase
 			->from('table', 't')
 			->leftJoin('join_table', 'j', 'j.id = t.join_id')
 			->where('t.column', 100)
-			->where('t.text', NULL)
+			->where('t.text', null)
 			->groupBy('t.column')
 			->having('COUNT(*) > 1')
 			->orderBy('t.column')
@@ -1741,7 +1741,7 @@ final class FluentQueryTest extends Tests\TestCase
 			$this->query()
 				->select([1])
 				->has('non-existing-param');
-		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::NON_EXISTING_QUERY_PARAM);
+		}, Fluent\Exceptions\QueryException::class, null, Fluent\Exceptions\QueryException::NON_EXISTING_QUERY_PARAM);
 	}
 
 
@@ -1765,7 +1765,7 @@ final class FluentQueryTest extends Tests\TestCase
 
 		Tester\Assert::exception(static function () use ($query): void {
 			$query->testGet('non-existing-param');
-		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::NON_EXISTING_QUERY_PARAM);
+		}, Fluent\Exceptions\QueryException::class, null, Fluent\Exceptions\QueryException::NON_EXISTING_QUERY_PARAM);
 	}
 
 
@@ -1795,7 +1795,7 @@ final class FluentQueryTest extends Tests\TestCase
 			$this->query()
 				->select([1])
 				->reset('table');
-		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::NON_EXISTING_QUERY_PARAM);
+		}, Fluent\Exceptions\QueryException::class, null, Fluent\Exceptions\QueryException::NON_EXISTING_QUERY_PARAM);
 	}
 
 
@@ -1804,7 +1804,7 @@ final class FluentQueryTest extends Tests\TestCase
 		Tester\Assert::exception(function (): void {
 			$this->query()
 				->table($this->query()->select([1]));
-		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::SQL_MUST_HAVE_ALIAS);
+		}, Fluent\Exceptions\QueryException::class, null, Fluent\Exceptions\QueryException::SQL_MUST_HAVE_ALIAS);
 	}
 
 
@@ -1813,7 +1813,7 @@ final class FluentQueryTest extends Tests\TestCase
 		Tester\Assert::exception(function (): void {
 			$this->query()
 				->select([$this->query()->select([1])]);
-		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::SQL_MUST_HAVE_ALIAS);
+		}, Fluent\Exceptions\QueryException::class, null, Fluent\Exceptions\QueryException::SQL_MUST_HAVE_ALIAS);
 	}
 
 
@@ -1821,7 +1821,7 @@ final class FluentQueryTest extends Tests\TestCase
 	{
 		Tester\Assert::exception(function (): void {
 			$this->query()->select(['t' => ['table']]);
-		}, Fluent\Exceptions\QueryException::class, NULL, Fluent\Exceptions\QueryException::PARAM_MUST_BE_SCALAR_OR_ENUM_OR_EXPRESSION);
+		}, Fluent\Exceptions\QueryException::class, null, Fluent\Exceptions\QueryException::PARAM_MUST_BE_SCALAR_OR_ENUM_OR_EXPRESSION);
 	}
 
 
@@ -1829,7 +1829,7 @@ final class FluentQueryTest extends Tests\TestCase
 	{
 		Tester\Assert::exception(static function (): void {
 			(new Fluent\QueryBuilder())->createSqlDefinition('table', [Fluent\Query::PARAM_WITH => [Fluent\Query::WITH_QUERIES => []]]);
-		}, Fluent\Exceptions\QueryBuilderException::class, NULL, Fluent\Exceptions\QueryBuilderException::BAD_QUERY_TYPE);
+		}, Fluent\Exceptions\QueryBuilderException::class, null, Fluent\Exceptions\QueryBuilderException::BAD_QUERY_TYPE);
 	}
 
 

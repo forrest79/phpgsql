@@ -10,22 +10,22 @@ use Forrest79\PhPgSql\Db;
  *   distinct: bool,
  *   distinctOn: list<string|Query|Db\Sql>,
  *   tables: array<string, array{0: string, 1: string}>,
- *   table-types: array{main: string|NULL, from: list<string>, joins: list<string>, using: string|NULL},
+ *   table-types: array{main: string|null, from: list<string>, joins: list<string>, using: string|null},
  *   on-conditions: array<string, Condition>,
  *   lateral-tables: array<string, string>,
- *   where: Condition|NULL,
+ *   where: Condition|null,
  *   groupBy: list<string>,
- *   having: Condition|NULL,
+ *   having: Condition|null,
  *   orderBy: list<string|Db\Sql|Query>,
- *   limit: int|NULL,
- *   offset: int|NULL,
+ *   limit: int|null,
+ *   offset: int|null,
  *   combine-queries: list<array{0: string|Query|Db\Sql, 1: string}>,
  *   insert-columns: list<string>,
- *   insert-onconflict: array{columns-or-constraint: string|list<string>|FALSE|NULL, where: Condition|NULL, do: array<int|string, string|Db\Sql>|FALSE|NULL, do-where: Condition|NULL},
+ *   insert-onconflict: array{columns-or-constraint: string|list<string>|false|null, where: Condition|null, do: array<int|string, string|Db\Sql>|false|null, do-where: Condition|null},
  *   returning: array<int|string, string|int|Query|Db\Sql>,
  *   data: array<string, mixed>,
  *   rows: array<int, array<string, mixed>>,
- *   merge: list<array{0: string, 1: string|Db\Sql, 2: Condition|NULL}>,
+ *   merge: list<array{0: string, 1: string|Db\Sql, 2: Condition|null}>,
  *   with: array{queries: array<string, string|Query|Db\Sql>, queries-suffix: array<string, string>, queries-not-materialized: array<string, string>, recursive: bool},
  *   prefix: list<array<mixed>>,
  *   suffix: list<array<mixed>>
@@ -84,20 +84,20 @@ class QueryBuilder
 	/**
 	 * @param array<string, mixed> $queryParams
 	 * @param list<mixed> $params
-	 * @param list<string>|NULL $insertSelectColumnNames
+	 * @param list<string>|null $insertSelectColumnNames
 	 * @throws Exceptions\QueryBuilderException
 	 * @phpstan-param QueryParams $queryParams
 	 */
 	private function createSelect(
 		array $queryParams,
 		array &$params,
-		array|NULL &$insertSelectColumnNames = NULL,
+		array|null &$insertSelectColumnNames = null,
 	): string
 	{
 		$selectSql = 'SELECT ' .
 			$this->getSelectDistinct($queryParams, $params) .
 			$this->getSelectColumns($queryParams, $params, $insertSelectColumnNames) .
-			$this->getFrom($queryParams, $params, $insertSelectColumnNames === NULL) .
+			$this->getFrom($queryParams, $params, $insertSelectColumnNames === null) .
 			$this->getJoins($queryParams, $params) .
 			$this->getWhere($queryParams, $params) .
 			$this->getGroupBy($queryParams) .
@@ -123,7 +123,7 @@ class QueryBuilder
 		$insert = 'INSERT INTO ' . $this->processTable(
 			$mainTable,
 			$mainTableAlias,
-			FALSE,
+			false,
 			$params,
 		);
 
@@ -159,9 +159,9 @@ class QueryBuilder
 			$selectColumns = [];
 			$data = ' ' . $this->createSelect($queryParams, $params, $selectColumns);
 			if ($columns === []) {
-				\assert($selectColumns !== NULL);
+				\assert($selectColumns !== null);
 
-				if ((\count($selectColumns) > 1) && \in_array('*', $selectColumns, TRUE)) {
+				if ((\count($selectColumns) > 1) && \in_array('*', $selectColumns, true)) {
 					throw Exceptions\QueryBuilderException::selectAllColumnsCantBeCombinedWithConcreteColumnForInsertSelectWithColumnDetection();
 				}
 
@@ -175,27 +175,27 @@ class QueryBuilder
 		$onConflictColumnsOrConstraint = $queryParams[Query::PARAM_INSERT_ONCONFLICT][Query::INSERT_ONCONFLICT_COLUMNS_OR_CONSTRAINT];
 		$onConflictDo = $queryParams[Query::PARAM_INSERT_ONCONFLICT][Query::INSERT_ONCONFLICT_DO];
 
-		if (($onConflictColumnsOrConstraint !== NULL) && ($onConflictDo === NULL)) {
+		if (($onConflictColumnsOrConstraint !== null) && ($onConflictDo === null)) {
 			throw Exceptions\QueryBuilderException::onConflictNoDo();
-		} else if (($onConflictColumnsOrConstraint === NULL) && ($onConflictDo !== NULL)) {
+		} else if (($onConflictColumnsOrConstraint === null) && ($onConflictDo !== null)) {
 			throw Exceptions\QueryBuilderException::onConflictDoWithoutDefinition();
-		} else if (($onConflictColumnsOrConstraint !== NULL) && ($onConflictDo !== NULL)) {
+		} else if (($onConflictColumnsOrConstraint !== null) && ($onConflictDo !== null)) {
 			$onConflict = ' ON CONFLICT';
 
 			if (\is_array($onConflictColumnsOrConstraint)) {
 				$onConflict .= ' (' . \implode(', ', $onConflictColumnsOrConstraint) . ')';
-			} else if ($onConflictColumnsOrConstraint !== FALSE) {
+			} else if ($onConflictColumnsOrConstraint !== false) {
 				$onConflict .= ' ON CONSTRAINT ' . $onConflictColumnsOrConstraint;
 			}
 
 			$onConflictWhere = $queryParams[Query::PARAM_INSERT_ONCONFLICT][Query::INSERT_ONCONFLICT_WHERE];
-			if ($onConflictWhere !== NULL) {
+			if ($onConflictWhere !== null) {
 				$onConflict .= ' WHERE ' . $this->processCondition($onConflictWhere, $params);
 			}
 
 			$onConflict .= ' DO ';
 
-			if ($onConflictDo === FALSE) {
+			if ($onConflictDo === false) {
 				$onConflict .= 'NOTHING';
 			} else {
 				$onConflict .= 'UPDATE SET ';
@@ -219,7 +219,7 @@ class QueryBuilder
 				$onConflict .= \implode(', ', $set);
 
 				$onConflictDoWhere = $queryParams[Query::PARAM_INSERT_ONCONFLICT][Query::INSERT_ONCONFLICT_DO_WHERE];
-				if ($onConflictDoWhere !== NULL) {
+				if ($onConflictDoWhere !== null) {
 					$onConflict .= ' WHERE ' . $this->processCondition($onConflictDoWhere, $params);
 				}
 			}
@@ -282,10 +282,10 @@ class QueryBuilder
 		return 'UPDATE ' . $this->processTable(
 			$mainTable,
 			$mainTableAlias,
-			FALSE,
+			false,
 			$params,
 		) . ' SET ' . \implode(', ', $set) .
-			$this->getFrom($queryParams, $params, FALSE) .
+			$this->getFrom($queryParams, $params, false) .
 			$this->getJoins($queryParams, $params) .
 			$this->getWhere($queryParams, $params) .
 			$this->getPrefixSuffix($queryParams, Query::PARAM_SUFFIX, $params) .
@@ -306,7 +306,7 @@ class QueryBuilder
 		return 'DELETE FROM ' . $this->processTable(
 			$mainTable,
 			$mainTableAlias,
-			FALSE,
+			false,
 			$params,
 		) .
 			$this->getWhere($queryParams, $params) .
@@ -326,7 +326,7 @@ class QueryBuilder
 		['table' => $mainTable, 'alias' => $mainTableAlias] = $this->getMainTableMetadata($queryParams);
 
 		$usingAlias = $queryParams[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_USING];
-		if ($usingAlias === NULL) {
+		if ($usingAlias === null) {
 			throw Exceptions\QueryBuilderException::mergeNoUsing();
 		}
 
@@ -341,12 +341,12 @@ class QueryBuilder
 		$merge = 'MERGE INTO ' . $this->processTable(
 			$mainTable,
 			$mainTableAlias,
-			FALSE,
+			false,
 			$params,
 		) . ' USING ' . $this->processTable(
 			$queryParams[Query::PARAM_TABLES][$usingAlias][self::TABLE_NAME],
 			$usingAlias,
-			FALSE,
+			false,
 			$params,
 		) . ' ON ' . $this->processCondition(
 			$queryParams[Query::PARAM_ON_CONDITIONS][$usingAlias],
@@ -366,7 +366,7 @@ class QueryBuilder
 
 			$merge .= ' MATCHED';
 
-			if ($condition !== NULL) {
+			if ($condition !== null) {
 				$merge .= ' AND ' . $this->processCondition($condition, $params);
 			}
 
@@ -425,11 +425,11 @@ class QueryBuilder
 	 */
 	private function getSelectDistinct(array $queryParams, array &$params): string
 	{
-		if (($queryParams[Query::PARAM_DISTINCT] === TRUE) && ($queryParams[Query::PARAM_DISTINCTON] !== [])) {
+		if (($queryParams[Query::PARAM_DISTINCT] === true) && ($queryParams[Query::PARAM_DISTINCTON] !== [])) {
 			throw Exceptions\QueryBuilderException::cantCombineDistinctAndDistinctOn();
 		}
 
-		if ($queryParams[Query::PARAM_DISTINCT] === TRUE) {
+		if ($queryParams[Query::PARAM_DISTINCT] === true) {
 			return 'DISTINCT ';
 		} else if ($queryParams[Query::PARAM_DISTINCTON] !== []) {
 			$columns = [];
@@ -451,11 +451,11 @@ class QueryBuilder
 	/**
 	 * @param array<string, mixed> $queryParams
 	 * @param list<mixed> $params
-	 * @param list<string>|NULL $columnNames
+	 * @param list<string>|null $columnNames
 	 * @throws Exceptions\QueryBuilderException
 	 * @phpstan-param QueryParams $queryParams
 	 */
-	private function getSelectColumns(array $queryParams, array &$params, array|NULL &$columnNames = NULL): string
+	private function getSelectColumns(array $queryParams, array &$params, array|null &$columnNames = null): string
 	{
 		if ($queryParams[Query::PARAM_SELECT] === []) {
 			throw Exceptions\QueryBuilderException::noColumnsToSelect();
@@ -463,7 +463,7 @@ class QueryBuilder
 
 		$columns = [];
 		foreach ($queryParams[Query::PARAM_SELECT] as $key => $value) {
-			if ($columnNames !== NULL) {
+			if ($columnNames !== null) {
 				if (\is_int($key) && !\is_string($value)) {
 					throw Exceptions\QueryBuilderException::missingColumnAlias();
 				}
@@ -491,13 +491,13 @@ class QueryBuilder
 	 * @throws Exceptions\QueryBuilderException
 	 * @phpstan-param QueryParams $queryParams
 	 */
-	private function getFrom(array $queryParams, array &$params, bool $useMainTable = TRUE): string
+	private function getFrom(array $queryParams, array &$params, bool $useMainTable = true): string
 	{
 		$from = [];
 
-		if ($useMainTable === TRUE) {
+		if ($useMainTable === true) {
 			$mainTableAlias = $queryParams[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_MAIN];
-			if ($mainTableAlias !== NULL) {
+			if ($mainTableAlias !== null) {
 				$from[] = $this->processTable(
 					$queryParams[Query::PARAM_TABLES][$mainTableAlias][self::TABLE_NAME],
 					$mainTableAlias,
@@ -577,7 +577,7 @@ class QueryBuilder
 	{
 		$where = $queryParams[Query::PARAM_WHERE];
 
-		if ($where === NULL) {
+		if ($where === null) {
 			return '';
 		}
 
@@ -607,7 +607,7 @@ class QueryBuilder
 	{
 		$having = $queryParams[Query::PARAM_HAVING];
 
-		if ($having === NULL) {
+		if ($having === null) {
 			return '';
 		}
 
@@ -651,7 +651,7 @@ class QueryBuilder
 	{
 		$limit = $queryParams[Query::PARAM_LIMIT];
 
-		if ($limit === NULL) {
+		if ($limit === null) {
 			return '';
 		}
 
@@ -670,7 +670,7 @@ class QueryBuilder
 	{
 		$offset = $queryParams[Query::PARAM_OFFSET];
 
-		if ($offset === NULL) {
+		if ($offset === null) {
 			return '';
 		}
 
@@ -780,7 +780,7 @@ class QueryBuilder
 	 */
 	final protected function getMainTableMetadata(array $queryParams): array
 	{
-		if ($queryParams[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_MAIN] === NULL) {
+		if ($queryParams[Query::PARAM_TABLE_TYPES][Query::TABLE_TYPE_MAIN] === null) {
 			throw Exceptions\QueryBuilderException::noMainTable();
 		}
 

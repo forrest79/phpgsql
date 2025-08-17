@@ -32,7 +32,7 @@ class ConnectionException extends Exception
 	{
 		$message = '.';
 		$lastPhpError = \error_get_last();
-		if ($lastPhpError !== NULL && $lastPhpError['type'] === \E_WARNING) {
+		if ($lastPhpError !== null && $lastPhpError['type'] === \E_WARNING) {
 			$message = ': ' . $lastPhpError['message'];
 		}
 

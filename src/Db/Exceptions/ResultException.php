@@ -72,9 +72,9 @@ class ResultException extends Exception
 	}
 
 
-	public static function noOidInDataTypeCache(int|string|FALSE $oid): self
+	public static function noOidInDataTypeCache(int|string|false $oid): self
 	{
-		return new self(\sprintf('There is no oid \'%s\' in data type cache. Try clear your data type cache.', $oid === FALSE ? 'FALSE' : $oid), self::NO_OID_IN_DATA_TYPE_CACHE);
+		return new self(\sprintf('There is no oid \'%s\' in data type cache. Try clear your data type cache.', $oid === false ? 'false' : $oid), self::NO_OID_IN_DATA_TYPE_CACHE);
 	}
 
 }

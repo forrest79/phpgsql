@@ -14,7 +14,7 @@ $connection = new Forrest79\PhPgSql\Db\Connection('host=localhost port=5432 dbna
 
 > Good habit is to use the `connect_timeout` parameter because default value is infinite.
 
-Pass `TRUE` as the second parameter to force new connection (otherwise, existing connection with the same parameters will be reused).
+Pass `true` as the second parameter to force new connection (otherwise, existing connection with the same parameters will be reused).
 
 > Personal note: I'm thinking about removing this in the next big release.
 
@@ -91,7 +91,7 @@ dump($firstErrorLine); // (string) 'ERROR:  column \"bad_column\" does not exist
 IF you need real connection resource that can be used in original `pg_*` functions get it with the `getResource()` method.
 
 ```php
-dump(pg_ping($connection->getResource())); // (bool) TRUE
+dump(pg_ping($connection->getResource())); // (bool) true
 ```
 
 Note about serialization: `Connection` object can't be serialized and deserialized.
@@ -125,7 +125,7 @@ $connection->queryArgs('DELETE FROM user_departments WHERE id = ?', [2]);
 
 The difference between `query()` and `queryArgs()` is, that `query()` accepts many parameters and `queryArgs()` accept parameters in one `array`.
 
-Passed variable can be scalar, `array` (is rewritten to many `?`, `?`, `?`, ... - this is useful for example for `column IN (?)`), `Enum` (from PHP 8.1 - enum value is passed as a scalar value), literal (is passed to SQL as string, never pass with this user input, possible SQL-injection), `bool`, `NULL` or another query (object implementing `Db\Sql` interface - there are some already prepared).
+Passed variable can be scalar, `array` (is rewritten to many `?`, `?`, `?`, ... - this is useful for example for `column IN (?)`), `Enum` (from PHP 8.1 - enum value is passed as a scalar value), literal (is passed to SQL as string, never pass with this user input, possible SQL-injection), `bool`, `null` or another query (object implementing `Db\Sql` interface - there are some already prepared).
 
 > If you have an array with a many items, consider using `ANY` with just one parameter as PostgreSQL array instead of `IN` with many params:
 
@@ -193,7 +193,7 @@ table($rows);
 
 When you call the `query()` or `queryArgs()` method, the query is executed in DB and a `Result` object is returned. When you don't need the query result, you don't have to use this. But mostly, you want data from your query, or you want to know how many rows were affected by your query. This and more can be fetched from the result.
 
-- `Result::fetch()` returns next row from the result (you can call it in a cycle, `NULL` is returned, when there is no next row).
+- `Result::fetch()` returns next row from the result (you can call it in a cycle, `null` is returned, when there is no next row).
 - `Result::fetchSingle()` returns single value from row (first value/column from the first row)
 - `Result::fetchAll()` returns an `array` of all rows. You can pass `offset` and `limit` (IMPORTANT: this will not affect SQL query definition, the offset and limit are just used for returned rows from DB).
 - `Result::fetchPairs()` returns associative array `key->value`, first parameter is a column for the `key` and second is for the `value`. Columns are detected when you omit both arguments. First column in a query is used as a `key` a second as a `value`. You can omit key column and pass value column, in this case, you will get an array list of values.
@@ -214,11 +214,11 @@ Some examples to make it clear:
 ```php
 $row = $connection->query('SELECT * FROM users WHERE id = ?', 1)->fetch();
 
-dump($row); // (Row) ['id' => 1, 'nick' => 'Bob', 'inserted_datetime' => '2020-01-01 09:00:00', 'active' => TRUE, 'age' => 45, 'height_cm' => 178.2, 'phones' => [200300, 487412]]
+dump($row); // (Row) ['id' => 1, 'nick' => 'Bob', 'inserted_datetime' => '2020-01-01 09:00:00', 'active' => true, 'age' => 45, 'height_cm' => 178.2, 'phones' => [200300, 487412]]
 
 $row = $connection->query('SELECT * FROM users WHERE id = ?', -1)->fetch();
 
-dump($row); // (NULL)
+dump($row); // (null)
 
 $nick = $connection->query('SELECT nick FROM users WHERE id = ?', 1)->fetchSingle();
 
@@ -231,11 +231,11 @@ table($rows);
 ---------------------------------------------------
 | id          | nick               | active       |
 |=================================================|
-| (integer) 1 | (string) 'Bob'     | (bool) TRUE  |
-| (integer) 2 | (string) 'Brandon' | (bool) TRUE  |
-| (integer) 5 | (string) 'Ingrid'  | (bool) TRUE  |
-| (integer) 4 | (string) 'Monica'  | (bool) TRUE  |
-| (integer) 3 | (string) 'Steve'   | (bool) FALSE |
+| (integer) 1 | (string) 'Bob'     | (bool) true  |
+| (integer) 2 | (string) 'Brandon' | (bool) true  |
+| (integer) 5 | (string) 'Ingrid'  | (bool) true  |
+| (integer) 4 | (string) 'Monica'  | (bool) true  |
+| (integer) 3 | (string) 'Steve'   | (bool) false |
 ---------------------------------------------------
 */
 
@@ -243,11 +243,11 @@ $result = $connection->query('SELECT id, nick, active FROM users ORDER BY nick')
 
 // special syntax for creating structure from data
 
-$rows = $result->fetchAssoc('active[]id'); // $rows[TRUE/FALSE (active)][index][(id)] = Db\Row
+$rows = $result->fetchAssoc('active[]id'); // $rows[true/false (active)][index][(id)] = Db\Row
 
-$rows = $result->fetchAssoc('active|id=nick'); // $rows[TRUE/FALSE (active)][(id)] = (nick)
+$rows = $result->fetchAssoc('active|id=nick'); // $rows[true/false (active)][(id)] = (nick)
 
-$rows = $result->fetchAssoc('active|id=[]'); // $rows[TRUE/FALSE (active)][(id)] = Db\Row::toArray()
+$rows = $result->fetchAssoc('active|id=[]'); // $rows[true/false (active)][(id)] = Db\Row::toArray()
 
 // get indexed array, key is first column, value is second column or you can choose columns manually
 
@@ -259,7 +259,7 @@ dump($rows); // (array) [1 => 'Bob', 2 => 'Brandon', 5 => 'Ingrid', 4 => 'Monica
 $rows = $result->fetchPairs('id', 'nick');
 dump($rows); // (array) [1 => 'Bob', 2 => 'Brandon', 5 => 'Ingrid', 4 => 'Monica', 3 => 'Steve']
 
-$rows = $result->fetchPairs(NULL, 'nick');
+$rows = $result->fetchPairs(null, 'nick');
 dump($rows); // (array) ['Bob', 'Brandon', 'Ingrid', 'Monica', 'Steve']
 
 // get row count
@@ -274,13 +274,13 @@ There is also a possibility to seek in the result - so you can skip some rows or
 $result = $connection->query('SELECT id, nick, active FROM users ORDER BY nick');
 
 $success = $result->seek(2);
-dump($success); // (bool) TRUE
+dump($success); // (bool) true
 
 $row = $result->fetch();
 dump($row->id); // (integer) 5
 
 $success = $result->seek(0);
-dump($success); // (bool) TRUE
+dump($success); // (bool) true
 
 $row = $result->fetch();
 dump($row->id); // (integer) 1
@@ -336,14 +336,14 @@ dump($row2->id); // (integer) 2
 dump($row2->nick); // (string) 'Brandon'
 
 $parsedColumns = $result->getParsedColumns();
-dump($parsedColumns); // (array) ['id' => TRUE, 'nick' => TRUE, 'active' => FALSE]
+dump($parsedColumns); // (array) ['id' => true, 'nick' => true, 'active' => false]
 
 $result = $connection->query('SELECT id, nick, active FROM users ORDER BY id');
 $parsedColumns = $result->getParsedColumns();
-dump($parsedColumns); // (NULL)
+dump($parsedColumns); // (null)
 ```
 
-We get an `array` with the column names as a key and `TRUE`/`FALSE` as a value. The `TRUE` means, that these columns were accessed in the application. When `NULL` is returned, it means that no column was accessed. This could be for example for `INSERT` queries or even for `SELECT` queries if no column was accessed.
+We get an `array` with the column names as a key and `true`/`false` as a value. The `true` means, that these columns were accessed in the application. When `null` is returned, it means that no column was accessed. This could be for example for `INSERT` queries or even for `SELECT` queries if no column was accessed.
 
 And for `INSERT`/`UPDATE`/`DELETE` results we can get number of affected rows with the `getAffectedRows()` method:
 
@@ -373,7 +373,7 @@ Or you can get resource, that can be used with native `pg_*` functions with the 
 ```php
 $result = $connection->query('DELETE FROM users WHERE id IN (?)', [1, 2]);
 $resource = $result->getResource();
-assert($resource !== FALSE);
+assert($resource !== false);
 ```
 
 #### Safely passing parameters
@@ -466,7 +466,7 @@ $connection->query('INSERT INTO users (nick) VALUES(?)', Forrest79\PhPgSql\Db\Sq
 Query example:
 
 ```php
-$activeDepartmentsQuery = Forrest79\PhPgSql\Db\Sql\Query::create('SELECT id FROM departments WHERE active = ?', TRUE);
+$activeDepartmentsQuery = Forrest79\PhPgSql\Db\Sql\Query::create('SELECT id FROM departments WHERE active = ?', true);
 
 $cnt = $connection->query('SELECT COUNT(*) FROM user_departments WHERE department_id IN (?)', $activeDepartmentsQuery)->fetchSingle();
 dump($cnt); // (integer) 7
@@ -498,7 +498,7 @@ class MyOwnResult extends Forrest79\PhPgSql\Db\Result
 
 class MyOwnResultFactory implements Forrest79\PhPgSql\Db\ResultFactory
 {
-  public function create(PgSql\Result $queryResource, Forrest79\PhPgSql\Db\Query $query, Forrest79\PhPgSql\Db\RowFactory $rowFactory, Forrest79\PhPgSql\Db\DataTypeParser $dataTypeParser, array|NULL $dataTypesCache): Forrest79\PhPgSql\Db\Result
+  public function create(PgSql\Result $queryResource, Forrest79\PhPgSql\Db\Query $query, Forrest79\PhPgSql\Db\RowFactory $rowFactory, Forrest79\PhPgSql\Db\DataTypeParser $dataTypeParser, array|null $dataTypesCache): Forrest79\PhPgSql\Db\Result
   {
     return new MyOwnResult($queryResource, $query, $rowFactory, $dataTypeParser, $dataTypesCache);
   }
@@ -512,10 +512,10 @@ dump($row->age); // (integer) 45
 try {
   $row = $connection->query('SELECT age FROM users WHERE id = -1')->fetchOrException();
 } catch (LogicException) {
-  $row = FALSE;
+  $row = false;
 }
 
-dump($row); // (bool) FALSE
+dump($row); // (bool) false
 ```
 
 > By default, is used `Forrest79\PhPgSql\Db\ResultFactories\Basic` result factory that produces default `Result` objects.
@@ -541,16 +541,16 @@ $row->new_value = 'Test';
 $row['new_value2'] = 123;
 ```
 
-You can also use classic `isset()` (and it works in the PHP way - column with the `NULL` value returns `FALSE` - use `hasColumn()` method to check if column exists in a row). Delete some column with the `unset()` function.
+You can also use classic `isset()` (and it works in the PHP way - column with the `null` value returns `false` - use `hasColumn()` method to check if column exists in a row). Delete some column with the `unset()` function.
 
 ```php
-$row = Forrest79\PhPgSql\Db\Row::from(['existing_column' => 1, 'null_column' => NULL]);
-dump(isset($row->existing_column)); // (bool) TRUE
-dump(isset($row->null_column)); // (bool) FALSE
-dump($row->hasColumn('existing_column')); // (bool) TRUE
-dump($row->hasColumn('null_column')); // (bool) TRUE
+$row = Forrest79\PhPgSql\Db\Row::from(['existing_column' => 1, 'null_column' => null]);
+dump(isset($row->existing_column)); // (bool) true
+dump(isset($row->null_column)); // (bool) false
+dump($row->hasColumn('existing_column')); // (bool) true
+dump($row->hasColumn('null_column')); // (bool) true
 unset($row['existing_column']);
-dump($row->hasColumn('existing_column')); // (bool) FALSE
+dump($row->hasColumn('existing_column')); // (bool) false
 ```
 
 You can simply convert `Row` to an `array`:
@@ -644,11 +644,11 @@ table($rows);
 -------------------------------------------------------------------------------------------------------------------------------------------
 | id          | nick               | inserted_datetime          | active       | age          | height_cm      | phones                   |
 |=========================================================================================================================================|
-| (integer) 1 | (string) 'Bob'     | (Date) 2020-01-01 09:00:00 | (bool) TRUE  | (integer) 45 | (double) 178.2 | (array) [200300, 487412] |
-| (integer) 2 | (string) 'Brandon' | (Date) 2020-01-02 12:05:00 | (bool) TRUE  | (integer) 24 | (double) 180.4 | (NULL)                   |
-| (integer) 3 | (string) 'Steve'   | (Date) 2020-01-02 12:05:00 | (bool) FALSE | (integer) 41 | (double) 168   | (NULL)                   |
-| (integer) 4 | (string) 'Monica'  | (Date) 2020-01-03 13:10:00 | (bool) TRUE  | (integer) 36 | (double) 175.7 | (NULL)                   |
-| (integer) 5 | (string) 'Ingrid'  | (Date) 2020-01-04 14:15:00 | (bool) TRUE  | (integer) 18 | (double) 168.2 | (array) [805305]         |
+| (integer) 1 | (string) 'Bob'     | (Date) 2020-01-01 09:00:00 | (bool) true  | (integer) 45 | (double) 178.2 | (array) [200300, 487412] |
+| (integer) 2 | (string) 'Brandon' | (Date) 2020-01-02 12:05:00 | (bool) true  | (integer) 24 | (double) 180.4 | (null)                   |
+| (integer) 3 | (string) 'Steve'   | (Date) 2020-01-02 12:05:00 | (bool) false | (integer) 41 | (double) 168   | (null)                   |
+| (integer) 4 | (string) 'Monica'  | (Date) 2020-01-03 13:10:00 | (bool) true  | (integer) 36 | (double) 175.7 | (null)                   |
+| (integer) 5 | (string) 'Ingrid'  | (Date) 2020-01-04 14:15:00 | (bool) true  | (integer) 18 | (double) 168.2 | (array) [805305]         |
 -------------------------------------------------------------------------------------------------------------------------------------------
 */
 ```
@@ -659,7 +659,7 @@ table($rows);
 
 ### How to extend default data type parsing
 
-If you need to parse some special DB type, you have two options. You can create your own data type parser implementing interface `Forrest79\PhPgSql\Db\DataTypeParser` with the only one public function `parse(string $type, string|NULL $value): mixed`, that get DB type and value as `string` (or `NULL`) and return PHP value. The second option is preferable - you can extend existing `Forrest79\PhPgSql\Db\DataTypeParsers\Basic` and only add new/update existing types.
+If you need to parse some special DB type, you have two options. You can create your own data type parser implementing interface `Forrest79\PhPgSql\Db\DataTypeParser` with the only one public function `parse(string $type, string|null $value): mixed`, that get DB type and value as `string` (or `null`) and return PHP value. The second option is preferable - you can extend existing `Forrest79\PhPgSql\Db\DataTypeParsers\Basic` and only add new/update existing types.
 
 To use your own data type parser, set it on connection with the method `setDataTypeParser()`.
 
@@ -668,9 +668,9 @@ Let's say, we want to parse `point` data type:
 ```php
 class PointDataTypeParser extends Forrest79\PhPgSql\Db\DataTypeParsers\Basic
 {
-  public function parse(string $type, string|NULL $value): mixed
+  public function parse(string $type, string|null $value): mixed
   {
-    if (($type === 'point') && ($value !== NULL)) {
+    if (($type === 'point') && ($value !== null)) {
       return \array_map('intval', \explode(',', \substr($value, 1, -1), 2));
     }
     return parent::parse($type, $value);
@@ -819,11 +819,11 @@ You can detect, if some async query is running on the connection with the `isBus
 ```php
 $asyncQuery = $connection->asyncQuery('SELECT nick FROM users WHERE id = ?', 1);
 
-dump($connection->isBusy()); // (bool) TRUE
+dump($connection->isBusy()); // (bool) true
 
 $asyncQuery->getNextResult();
 
-dump($connection->isBusy()); // (bool) FALSE
+dump($connection->isBusy()); // (bool) false
 ```
 
 And example with the query cancellation:
@@ -831,11 +831,11 @@ And example with the query cancellation:
 ```php
 $asyncQuery = $connection->asyncQuery('SELECT nick FROM users WHERE id = ?', 1);
 
-dump($connection->isBusy()); // (bool) TRUE
+dump($connection->isBusy()); // (bool) true
 
 $connection->cancelAsyncQuery();
 
-dump($connection->isBusy()); // (bool) FALSE
+dump($connection->isBusy()); // (bool) false
 ```
 
 ## Prepared statements
@@ -958,11 +958,11 @@ $transaction = $connection->transaction();
 
 $transaction->begin();
 
-dump($transaction->isInTransaction()); // (bool) TRUE
+dump($transaction->isInTransaction()); // (bool) true
 
 $transaction->commit();
 
-dump($connection->isInTransaction()); // (bool) FALSE
+dump($connection->isInTransaction()); // (bool) false
 ```
 
 ## Listen to events
@@ -983,8 +983,8 @@ $connection->addOnClose(function (Forrest79\PhPgSql\Db\Connection $connection): 
 	// this is call right before connection is closed...
 });
 
-$connection->addOnQuery(function (Forrest79\PhPgSql\Db\Connection $connection, Forrest79\PhPgSql\Db\Query $query, float|NULL $timeNs, string|NULL $prepareStatementName): void {
-  // $time === NULL for async queries, $prepareStatementName !== NULL for prepared statements queries
+$connection->addOnQuery(function (Forrest79\PhPgSql\Db\Connection $connection, Forrest79\PhPgSql\Db\Query $query, float|null $timeNs, string|null $prepareStatementName): void {
+  // $time === null for async queries, $prepareStatementName !== null for prepared statements queries
   dump($query->sql); // (string) 'SELECT nick FROM users WHERE id = $1'
   dump($query->params); // (array) [3]
 });
@@ -1030,7 +1030,7 @@ dump($connectionString); // (string) 'host='localhost' port='5432' dbname='phpgs
 
 ## Getting notices
 
-In PostgreSQL a notice can be raised. This is very handy for development purposes (debugging). Notices can be read with the `getNotices(bool $clearAfterRead = TRUE)` method. You can call this function after the query or at the end of the PHP script. If you pass `FALSE` as a parameter, notices won't be cleared after read.
+In PostgreSQL a notice can be raised. This is very handy for development purposes (debugging). Notices can be read with the `getNotices(bool $clearAfterRead = true)` method. You can call this function after the query or at the end of the PHP script. If you pass `false` as a parameter, notices won't be cleared after read.
 
 ```php
 $connection->execute('DO $BODY$ BEGIN RAISE NOTICE \'Test notice\'; END; $BODY$ LANGUAGE plpgsql;');

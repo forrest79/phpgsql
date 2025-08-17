@@ -34,14 +34,14 @@ final class GetFieldTypesBenchmark extends BenchmarkCase
 		parent::setUp();
 
 		$connection = \pg_connect(\PHPGSQL_CONNECTION_CONFIG);
-		if ($connection === FALSE) {
+		if ($connection === false) {
 			throw new \RuntimeException('pg_connect failed');
 		}
 
 		$this->connection = $connection;
 
 		$queryResult = \pg_query($connection, 'SELECT 1 AS col1, \'a\' AS col2, TRUE AS col3, now() AS col4');
-		if ($queryResult === FALSE) {
+		if ($queryResult === false) {
 			throw new \RuntimeException('pg_query failed');
 		}
 
@@ -62,11 +62,11 @@ final class GetFieldTypesBenchmark extends BenchmarkCase
 	 */
 	public function benchmarkPgFieldType(): void
 	{
-		$type = NULL;
+		$type = null;
 		$types = [];
 		$fieldsCnt = \pg_num_fields($this->queryResult);
 		for ($i = 0; $i < $fieldsCnt; $i++) {
-			if ($this->cache !== NULL) { // just to simulate condition in real code in Result
+			if ($this->cache !== null) { // just to simulate condition in real code in Result
 				$type = \pg_field_type($this->queryResult, $i);
 			}
 
@@ -80,11 +80,11 @@ final class GetFieldTypesBenchmark extends BenchmarkCase
 	 */
 	public function benchmarkPgFieldTypeOid(): void
 	{
-		$type = NULL;
+		$type = null;
 		$types = [];
 		$fieldsCnt = \pg_num_fields($this->queryResult);
 		for ($i = 0; $i < $fieldsCnt; $i++) {
-			if ($this->cache !== NULL) { // just to simulate condition in real code in Result
+			if ($this->cache !== null) { // just to simulate condition in real code in Result
 				$type = $this->cache[\pg_field_type_oid($this->queryResult, $i)];
 			}
 
@@ -98,11 +98,11 @@ final class GetFieldTypesBenchmark extends BenchmarkCase
 	 */
 	public function benchmarkPgFieldTypeOidName(): void
 	{
-		$type = NULL;
+		$type = null;
 		$types = [];
 		$columns = \array_keys(self::COLUMNS);
 		foreach ($columns as $column) {
-			if ($this->cache !== NULL) { // just to simulate condition in real code in Result
+			if ($this->cache !== null) { // just to simulate condition in real code in Result
 				$type = $this->cache[\pg_field_type_oid($this->queryResult, \pg_field_num($this->queryResult, $column))];
 			}
 

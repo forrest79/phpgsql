@@ -17,17 +17,17 @@ class Condition implements Db\Sql, \ArrayAccess
 	/** @var list<self|list<mixed>> */
 	private array $conditions;
 
-	private self|NULL $parent;
+	private self|null $parent;
 
-	private Query|NULL $query;
+	private Query|null $query;
 
-	private Db\SqlDefinition|NULL $sqlDefinition = NULL;
+	private Db\SqlDefinition|null $sqlDefinition = null;
 
 
 	/**
 	 * @param list<string|list<mixed>|Db\Sql> $conditions
 	 */
-	public function __construct(string $type, array $conditions, self|NULL $parent = NULL, Query|NULL $query = NULL)
+	public function __construct(string $type, array $conditions, self|null $parent = null, Query|null $query = null)
 	{
 		$this->type = $type;
 		$this->conditions = self::normalizeConditions($conditions);
@@ -113,7 +113,7 @@ class Condition implements Db\Sql, \ArrayAccess
 	 */
 	public function parent(): self
 	{
-		if ($this->parent === NULL) {
+		if ($this->parent === null) {
 			throw Exceptions\ConditionException::noParent();
 		}
 
@@ -126,7 +126,7 @@ class Condition implements Db\Sql, \ArrayAccess
 	 */
 	public function query(): Query
 	{
-		if ($this->query === NULL) {
+		if ($this->query === null) {
 			throw Exceptions\ConditionException::noQuery();
 		}
 
@@ -137,7 +137,7 @@ class Condition implements Db\Sql, \ArrayAccess
 	/**
 	 * @param list<string|list<mixed>|Db\Sql> $conditions
 	 */
-	public static function createAnd(array $conditions = [], self|NULL $parent = NULL, Query|NULL $query = NULL): static
+	public static function createAnd(array $conditions = [], self|null $parent = null, Query|null $query = null): static
 	{
 		return new static(self::TYPE_AND, $conditions, $parent, $query);
 	}
@@ -146,7 +146,7 @@ class Condition implements Db\Sql, \ArrayAccess
 	/**
 	 * @param list<string|list<mixed>|Db\Sql> $conditions
 	 */
-	public static function createOr(array $conditions = [], self|NULL $parent = NULL, Query|NULL $query = NULL): static
+	public static function createOr(array $conditions = [], self|null $parent = null, Query|null $query = null): static
 	{
 		return new static(self::TYPE_OR, $conditions, $parent, $query);
 	}
@@ -163,17 +163,17 @@ class Condition implements Db\Sql, \ArrayAccess
 
 	/**
 	 * @param int $offset
-	 * @return string|list<mixed>|Db\Sql|NULL
+	 * @return string|list<mixed>|Db\Sql|null
 	 */
 	#[\ReturnTypeWillChange]
-	public function offsetGet(mixed $offset): string|array|Db\Sql|NULL
+	public function offsetGet(mixed $offset): string|array|Db\Sql|null
 	{
-		return $this->conditions[$offset] ?? NULL;
+		return $this->conditions[$offset] ?? null;
 	}
 
 
 	/**
-	 * @param int|NULL $offset
+	 * @param int|null $offset
 	 * @param string|list<mixed>|Db\Sql $value
 	 */
 	public function offsetSet(mixed $offset, mixed $value): void
@@ -182,7 +182,7 @@ class Condition implements Db\Sql, \ArrayAccess
 			$value = [$value];
 		}
 
-		if ($offset === NULL) {
+		if ($offset === null) {
 			$this->conditions[] = $value;
 		} else {
 			if (!isset($this->conditions[$offset])) {
@@ -233,7 +233,7 @@ class Condition implements Db\Sql, \ArrayAccess
 
 	public function getSqlDefinition(): Db\SqlDefinition
 	{
-		if ($this->sqlDefinition === NULL) {
+		if ($this->sqlDefinition === null) {
 			$params = [];
 			$this->sqlDefinition = new Db\SqlDefinition(self::process($this, $params), $params);
 		}
@@ -244,7 +244,7 @@ class Condition implements Db\Sql, \ArrayAccess
 
 	private function reset(): void
 	{
-		$this->sqlDefinition = NULL;
+		$this->sqlDefinition = null;
 	}
 
 
@@ -259,7 +259,7 @@ class Condition implements Db\Sql, \ArrayAccess
 		$processedConditions = [];
 		foreach ($conditions as $conditionParams) {
 			if ($conditionParams instanceof self) {
-				$conditionExpression = \sprintf($withoutParentheses === TRUE ? '%s' : '(%s)', self::process($conditionParams, $params));
+				$conditionExpression = \sprintf($withoutParentheses === true ? '%s' : '(%s)', self::process($conditionParams, $params));
 			} else {
 				$conditionExpression = \array_shift($conditionParams);
 				\assert(\is_string($conditionExpression)); // first array item is SQL, next are mixed params
@@ -269,7 +269,7 @@ class Condition implements Db\Sql, \ArrayAccess
 					$param = \reset($conditionParams);
 					if (\is_array($param) || ($param instanceof Db\Sql)) {
 						$conditionExpression .= ' IN (?)';
-					} else if ($param === NULL) {
+					} else if ($param === null) {
 						$conditionExpression .= ' IS NULL';
 						\array_shift($conditionParams);
 					} else {
@@ -282,7 +282,7 @@ class Condition implements Db\Sql, \ArrayAccess
 					throw Exceptions\ConditionException::badParamsCount($conditionExpression, $cnt, $cntParams);
 				}
 
-				if ($withoutParentheses === FALSE) {
+				if ($withoutParentheses === false) {
 					$conditionExpression = '(' . $conditionExpression . ')';
 				}
 

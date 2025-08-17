@@ -88,7 +88,7 @@ final class DocsTest extends TestCase
 			$docSource = \file_get_contents($filename);
 			\assert(\is_string($docSource));
 
-			if ((bool) \preg_match_all('#```php(?<php>.*?)```#s', $docSource, $sources) === FALSE) {
+			if ((bool) \preg_match_all('#```php(?<php>.*?)```#s', $docSource, $sources) === false) {
 				continue;
 			}
 
@@ -101,12 +101,12 @@ final class DocsTest extends TestCase
 
 	public static function dump(mixed $var): string
 	{
-		if ($var === NULL) {
-			return '(NULL)';
+		if ($var === null) {
+			return '(null)';
 		} else if (\is_string($var)) {
 			return \sprintf('(string) \'%s\'', str_replace(\PHP_EOL, ' ', $var));
 		} else if (\is_bool($var)) {
-			return \sprintf('(bool) %s', $var ? 'TRUE' : 'FALSE');
+			return \sprintf('(bool) %s', $var ? 'true' : 'false');
 		} else if (\is_numeric($var)) {
 			return \sprintf('(%s) %s', \gettype($var), $var);
 		} if ($var instanceof \DateTimeImmutable) {
@@ -122,18 +122,18 @@ final class DocsTest extends TestCase
 			$array = [];
 
 			$i = 0;
-			$isList = TRUE;
+			$isList = true;
 			foreach ($var as $key => $value) {
 				if ($value instanceof \DateTimeImmutable) {
 					$value = \sprintf('\'%s\'', $value->format('Y-m-d H:i:s'));
 				} else if (\is_string($value)) {
 					$value = '\'' . $value . '\'';
 				} else if (\is_bool($value)) {
-					$value = $value ? 'TRUE' : 'FALSE';
+					$value = $value ? 'true' : 'false';
 				} else if (\is_array($value)) {
 					$value = '[' . \implode(', ', $value) . ']';
-				} else if ($value === NULL) {
-					$value = '(NULL)';
+				} else if ($value === null) {
+					$value = '(null)';
 				}
 
 				assert(\is_scalar($value));
@@ -142,7 +142,7 @@ final class DocsTest extends TestCase
 				$array[] = (\is_string($key) ? ('\'' . $key . '\'') : $key) . ' => ' . $value;
 
 				if ($isList && ($key !== $i)) {
-					$isList = FALSE;
+					$isList = false;
 				}
 
 				$i++;

@@ -6,11 +6,11 @@
 
 	<rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
 		<properties>
-			<property name="rootNamespaces" type="array" value="
-				src=>Forrest79\PhPgSql,
-				tests=>Forrest79\PhPgSql\Tests,
-				benchmarks=>Forrest79\PhPgSql\Benchmarks,
-			"/>
+			<property name="rootNamespaces" type="array">
+				<element key="src" value="Forrest79\PhPgSql"/>
+				<element key="tests" value="Forrest79\PhPgSql\Tests"/>
+				<element key="benchmarks" value="Forrest79\PhPgSql\Benchmarks"/>
+			</property>
 		</properties>
 	</rule>
 </ruleset>

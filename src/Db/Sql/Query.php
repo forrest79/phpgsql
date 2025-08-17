@@ -6,12 +6,12 @@ use Forrest79\PhPgSql\Db;
 
 class Query extends Expression
 {
-	private Db\Query|NULL $dbQuery = NULL;
+	private Db\Query|null $dbQuery = null;
 
 
 	public function toDbQuery(): Db\Query
 	{
-		if ($this->dbQuery === NULL) {
+		if ($this->dbQuery === null) {
 			$this->dbQuery = Db\SqlDefinition::createQuery($this->getSqlDefinition());
 		}
 

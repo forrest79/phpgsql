@@ -17,14 +17,14 @@ final class BasicTest extends Tests\TestCase
 	public function testCreateArray(): void
 	{
 		Tester\Assert::same('{1,2,3}', Db\Helper::createPgArray([1, 2, 3]));
-		Tester\Assert::same('{NULL,2,NULL,4}', Db\Helper::createPgArray([NULL, 2, NULL, 4]));
-		Tester\Assert::same('{NULL,2,NULL,1}', Db\Helper::createPgArray([NULL, 2, NULL, Tests\TestEnum::One]));
+		Tester\Assert::same('{NULL,2,NULL,4}', Db\Helper::createPgArray([null, 2, null, 4]));
+		Tester\Assert::same('{NULL,2,NULL,1}', Db\Helper::createPgArray([null, 2, null, Tests\TestEnum::One]));
 		Tester\Assert::same('{"A","B","C"}', Db\Helper::createStringPgArray(['A', 'B', 'C']));
 		Tester\Assert::same('{"A, B","C","D"}', Db\Helper::createStringPgArray(['A, B', 'C', 'D']));
 		Tester\Assert::same('{"A","\"B\"","C"}', Db\Helper::createStringPgArray(['A', '"B"', 'C']));
 		Tester\Assert::same('{"1","2","3"}', Db\Helper::createStringPgArray([1, 2, 3]));
 		Tester\Assert::same('{"1","2","3"}', Db\Helper::createStringPgArray([1, Tests\TestEnum::Two, 3]));
-		Tester\Assert::same('{"1",NULL,"3",NULL}', Db\Helper::createStringPgArray([1, NULL, 3, NULL]));
+		Tester\Assert::same('{"1",NULL,"3",NULL}', Db\Helper::createStringPgArray([1, null, 3, null]));
 	}
 
 
@@ -73,7 +73,7 @@ final class BasicTest extends Tests\TestCase
 
 	public function testPrepareConnectionConfigHelper(): void
 	{
-		Tester\Assert::same('dbname=\'test_db\' port=\'5432\' connection_timeout=\'1.5\'', Db\Helper::prepareConnectionConfig(['dbname' => 'test_db', 'port' => 5432, 'connection_timeout' => 1.5, 'password' => NULL]));
+		Tester\Assert::same('dbname=\'test_db\' port=\'5432\' connection_timeout=\'1.5\'', Db\Helper::prepareConnectionConfig(['dbname' => 'test_db', 'port' => 5432, 'connection_timeout' => 1.5, 'password' => null]));
 	}
 
 }

@@ -8,9 +8,9 @@ class AsyncHelper
 {
 	private Connection $connection;
 
-	private AsyncQuery|NULL $asyncQuery = NULL;
+	private AsyncQuery|null $asyncQuery = null;
 
-	private string|NULL $asyncExecuteQuery = NULL;
+	private string|null $asyncExecuteQuery = null;
 
 
 	public function __construct(Connection $connection)
@@ -22,17 +22,17 @@ class AsyncHelper
 	public function createAndSetAsyncQuery(
 		ResultBuilder $resultBuilder,
 		Query $query,
-		string|NULL $preparedStatementName = NULL,
+		string|null $preparedStatementName = null,
 	): AsyncQuery
 	{
 		$this->asyncQuery = new AsyncQuery($this->connection, $resultBuilder, $this, $query, $preparedStatementName);
-		$this->asyncExecuteQuery = NULL;
+		$this->asyncExecuteQuery = null;
 
 		return $this->asyncQuery;
 	}
 
 
-	public function getAsyncQuery(): AsyncQuery|NULL
+	public function getAsyncQuery(): AsyncQuery|null
 	{
 		return $this->asyncQuery;
 	}
@@ -40,12 +40,12 @@ class AsyncHelper
 
 	public function setAsyncExecuteQuery(string $asyncExecuteQuery): void
 	{
-		$this->asyncQuery = NULL;
+		$this->asyncQuery = null;
 		$this->asyncExecuteQuery = $asyncExecuteQuery;
 	}
 
 
-	public function getAsyncExecuteQuery(): string|NULL
+	public function getAsyncExecuteQuery(): string|null
 	{
 		return $this->asyncExecuteQuery;
 	}
@@ -53,14 +53,14 @@ class AsyncHelper
 
 	public function clearQuery(): void
 	{
-		$this->asyncQuery = NULL;
-		$this->asyncExecuteQuery = NULL;
+		$this->asyncQuery = null;
+		$this->asyncExecuteQuery = null;
 	}
 
 
 	public static function checkAsyncQueryResult(PgSql\Result $result): bool
 	{
-		return !\in_array(\pg_result_status($result), [\PGSQL_BAD_RESPONSE, \PGSQL_NONFATAL_ERROR, \PGSQL_FATAL_ERROR], TRUE);
+		return !\in_array(\pg_result_status($result), [\PGSQL_BAD_RESPONSE, \PGSQL_NONFATAL_ERROR, \PGSQL_FATAL_ERROR], true);
 	}
 
 }

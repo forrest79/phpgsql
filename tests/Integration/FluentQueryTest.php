@@ -17,10 +17,10 @@ final class FluentQueryTest extends TestCase
 
 	public function testSelectBoolNull(): void
 	{
-		$query = $this->connection->createQuery()->select(['is_true' => TRUE, 'is_false' => FALSE, 'is_null' => NULL]);
+		$query = $this->connection->createQuery()->select(['is_true' => true, 'is_false' => false, 'is_null' => null]);
 
 		$row = $query->fetch();
-		if ($row === NULL) {
+		if ($row === null) {
 			throw new \RuntimeException('No data from database were returned');
 		}
 

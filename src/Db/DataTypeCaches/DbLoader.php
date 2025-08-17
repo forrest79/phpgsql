@@ -16,12 +16,12 @@ abstract class DbLoader implements Db\DataTypeCache
 	{
 		$resource = $connection->getResource();
 		$query = @\pg_query($resource, self::LOAD_QUERY); // intentionally @
-		if ($query === FALSE) {
+		if ($query === false) {
 			throw Db\Exceptions\DataTypeCacheException::cantLoadTypes($connection->getLastError());
 		}
 
 		$types = [];
-		while (($data = \pg_fetch_assoc($query)) !== FALSE) {
+		while (($data = \pg_fetch_assoc($query)) !== false) {
 			$types[(int) $data['oid']] = (string) $data['typname'];
 		}
 

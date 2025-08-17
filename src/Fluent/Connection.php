@@ -6,7 +6,7 @@ use Forrest79\PhPgSql\Db;
 
 class Connection extends Db\Connection
 {
-	private QueryBuilder|NULL $queryBuilder = NULL;
+	private QueryBuilder|null $queryBuilder = null;
 
 
 	public function setQueryBuilder(QueryBuilder $queryBuilder): self
@@ -19,7 +19,7 @@ class Connection extends Db\Connection
 
 	protected function getQueryBuilder(): QueryBuilder
 	{
-		if ($this->queryBuilder === NULL) {
+		if ($this->queryBuilder === null) {
 			$this->queryBuilder = new QueryBuilder();
 		}
 

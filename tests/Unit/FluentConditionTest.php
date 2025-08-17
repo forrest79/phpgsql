@@ -26,14 +26,14 @@ final class FluentConditionTest extends Tests\TestCase
 	{
 		Tester\Assert::exception(static function (): void {
 			Fluent\Condition::createAnd()->parent();
-		}, Fluent\Exceptions\ConditionException::class, NULL, Fluent\Exceptions\ConditionException::NO_PARENT);
+		}, Fluent\Exceptions\ConditionException::class, null, Fluent\Exceptions\ConditionException::NO_PARENT);
 	}
 
 
 	public function testFluent(): void
 	{
 		$query = new Fluent\Query(new Fluent\QueryBuilder());
-		$parentCondition = Fluent\Condition::createAnd([], NULL, $query);
+		$parentCondition = Fluent\Condition::createAnd([], null, $query);
 
 		Tester\Assert::same($query, $parentCondition->addOrBranch()->query());
 	}
@@ -43,7 +43,7 @@ final class FluentConditionTest extends Tests\TestCase
 	{
 		Tester\Assert::exception(static function (): void {
 			Fluent\Condition::createAnd()->query();
-		}, Fluent\Exceptions\ConditionException::class, NULL, Fluent\Exceptions\ConditionException::NO_QUERY);
+		}, Fluent\Exceptions\ConditionException::class, null, Fluent\Exceptions\ConditionException::NO_QUERY);
 	}
 
 
@@ -51,7 +51,7 @@ final class FluentConditionTest extends Tests\TestCase
 	{
 		Tester\Assert::exception(static function (): void {
 			Fluent\Condition::createAnd()->add(Fluent\Condition::createAnd(), 'param1');
-		}, Fluent\Exceptions\ConditionException::class, NULL, Fluent\Exceptions\ConditionException::ONLY_STRING_CONDITION_CAN_HAVE_PARAMS);
+		}, Fluent\Exceptions\ConditionException::class, null, Fluent\Exceptions\ConditionException::ONLY_STRING_CONDITION_CAN_HAVE_PARAMS);
 	}
 
 

@@ -9,7 +9,7 @@ class RowIterator implements \Iterator
 {
 	private Result $result;
 
-	private Row|NULL $row = NULL;
+	private Row|null $row = null;
 
 	private int $pointer;
 
@@ -49,7 +49,7 @@ class RowIterator implements \Iterator
 
 	public function valid(): bool
 	{
-		return $this->row !== NULL;
+		return $this->row !== null;
 	}
 
 }

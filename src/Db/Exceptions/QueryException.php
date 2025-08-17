@@ -14,14 +14,14 @@ class QueryException extends Exception
 	public const MISSING_PARAM = 6;
 	public const EXTRA_PARAM = 7;
 
-	private Db\Query|NULL $query;
+	private Db\Query|null $query;
 
 
 	public function __construct(
 		string $message = '',
 		int $code = 0,
-		Db\Query|NULL $query = NULL,
-		\Throwable|NULL $previous = NULL,
+		Db\Query|null $query = null,
+		\Throwable|null $previous = null,
 	)
 	{
 		parent::__construct($message, $code, $previous);
@@ -29,7 +29,7 @@ class QueryException extends Exception
 	}
 
 
-	public function getQuery(): Db\Query|NULL
+	public function getQuery(): Db\Query|null
 	{
 		return $this->query;
 	}

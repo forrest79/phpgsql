@@ -15,7 +15,7 @@
 		"ext-pgsql": "^8.1"
 	},
 	"require-dev": {
-		"forrest79/phpcs": "^1.7",
+		"forrest79/phpcs": "^2.0",
 		"forrest79/phpcs-ignores": "^0.5",
 		"forrest79/phpgsql-phpstan": "^1.7",
 		"nette/tester": "^2.5",

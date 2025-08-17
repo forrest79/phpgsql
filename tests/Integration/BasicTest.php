@@ -74,7 +74,7 @@ final class BasicTest extends TestCase
 
 	public function testConnectedResource(): void
 	{
-		Tester\Assert::notEqual(NULL, $this->connection->getResource());
+		Tester\Assert::notEqual(null, $this->connection->getResource());
 	}
 
 
@@ -84,7 +84,7 @@ final class BasicTest extends TestCase
 
 		Tester\Assert::exception(function (): void {
 			$this->connection->connect();
-		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::NO_CONFIG);
+		}, Db\Exceptions\ConnectionException::class, null, Db\Exceptions\ConnectionException::NO_CONFIG);
 	}
 
 
@@ -94,7 +94,7 @@ final class BasicTest extends TestCase
 
 		Tester\Assert::exception(function (): void {
 			$this->connection->ping();
-		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::CONNECTION_FAILED);
+		}, Db\Exceptions\ConnectionException::class, null, Db\Exceptions\ConnectionException::CONNECTION_FAILED);
 	}
 
 
@@ -104,7 +104,7 @@ final class BasicTest extends TestCase
 
 		Tester\Assert::exception(function (): void {
 			$this->connection->setConnectionConfig('');
-		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::CANT_CHANGE_CONNECTION_CONFIG_WHEN_CONNECTED);
+		}, Db\Exceptions\ConnectionException::class, null, Db\Exceptions\ConnectionException::CANT_CHANGE_CONNECTION_CONFIG_WHEN_CONNECTED);
 
 		$this->connection->close();
 
@@ -114,12 +114,12 @@ final class BasicTest extends TestCase
 
 	public function testConnectionEvents(): void
 	{
-		$hasConnect = FALSE;
-		$hasClose = FALSE;
-		$hasQuery = FALSE;
-		$hasExecute = FALSE;
-		$hasQueryResult = FALSE;
-		$hasExecuteResult = FALSE;
+		$hasConnect = false;
+		$hasClose = false;
+		$hasQuery = false;
+		$hasExecute = false;
+		$hasQueryResult = false;
+		$hasExecuteResult = false;
 		$queryDuration = 0;
 
 		$this->connection->addOnConnect(static function (Db\Connection $connection) use (&$hasConnect): void {
@@ -136,9 +136,9 @@ final class BasicTest extends TestCase
 			&$queryDuration,
 		): void {
 			if ($query->sql === 'SELECT 1') {
-				$hasQuery = TRUE;
+				$hasQuery = true;
 			} else if ($query->sql === 'SELECT 2') {
-				$hasExecute = TRUE;
+				$hasExecute = true;
 			}
 
 			$queryDuration = $duration;
@@ -152,14 +152,14 @@ final class BasicTest extends TestCase
 			&$hasExecuteResult,
 		): void {
 			if ($result->getQuery()->sql === 'SELECT 1') {
-				$hasQueryResult = TRUE;
+				$hasQueryResult = true;
 			} else if ($result->getQuery()->sql === 'SELECT 2') {
-				$hasExecuteResult = TRUE;
+				$hasExecuteResult = true;
 			}
 		});
 
 		$this->connection->addOnClose(static function () use (&$hasClose): void {
-			$hasClose = TRUE;
+			$hasClose = true;
 		});
 
 		Tester\Assert::same(1, $this->connection->query('SELECT 1')->fetchSingle());
@@ -187,7 +187,7 @@ final class BasicTest extends TestCase
 				Tester\Assert::true($e->getQuery() instanceof Db\Query);
 				throw $e;
 			}
-		}, Db\Exceptions\QueryException::class, NULL, Db\Exceptions\QueryException::QUERY_FAILED);
+		}, Db\Exceptions\QueryException::class, null, Db\Exceptions\QueryException::QUERY_FAILED);
 	}
 
 
@@ -196,7 +196,7 @@ final class BasicTest extends TestCase
 		Tester\Assert::exception(function (): void {
 			$query = Db\Sql\Query::create('SELECT 1');
 			$this->connection->query($query, 1);
-		}, Db\Exceptions\QueryException::class, NULL, Db\Exceptions\QueryException::CANT_PASS_PARAMS);
+		}, Db\Exceptions\QueryException::class, null, Db\Exceptions\QueryException::CANT_PASS_PARAMS);
 	}
 
 
@@ -243,7 +243,7 @@ final class BasicTest extends TestCase
 	{
 		Tester\Assert::exception(function (): void {
 			$this->connection->execute('SELECT bad_column');
-		}, Db\Exceptions\QueryException::class, NULL, Db\Exceptions\QueryException::QUERY_FAILED);
+		}, Db\Exceptions\QueryException::class, null, Db\Exceptions\QueryException::QUERY_FAILED);
 	}
 
 
@@ -268,12 +268,12 @@ final class BasicTest extends TestCase
 
 	public function testRowFrom(): void
 	{
-		$row = Db\Row::from(['column1' => 1, 'column2' => 'text', 'column3' => TRUE, 'column4' => NULL]);
+		$row = Db\Row::from(['column1' => 1, 'column2' => 'text', 'column3' => true, 'column4' => null]);
 
 		Tester\Assert::same(1, $row->column1);
 		Tester\Assert::same('text', $row->column2);
-		Tester\Assert::same(TRUE, $row->column3);
-		Tester\Assert::same(NULL, $row->column4);
+		Tester\Assert::same(true, $row->column3);
+		Tester\Assert::same(null, $row->column4);
 
 		Tester\Assert::true(isset($row->column3));
 		Tester\Assert::false(isset($row->column4));
@@ -296,7 +296,7 @@ final class BasicTest extends TestCase
 		$this->connection->query('INSERT INTO test(name) VALUES(?)', 'phpgsql');
 
 		$row = $this->connection->query('SELECT id, name FROM test')->fetch();
-		\assert($row !== NULL);
+		\assert($row !== null);
 
 		Tester\Assert::same(1, $row->id);
 		Tester\Assert::same('phpgsql', $row->name);
@@ -318,7 +318,7 @@ final class BasicTest extends TestCase
 	public function testGetNotificationsWithouClearing(): void
 	{
 		$this->connection->execute('DO $BODY$ BEGIN RAISE NOTICE \'Test notice\'; END; $BODY$ LANGUAGE plpgsql;');
-		Tester\Assert::same(['NOTICE:  Test notice'], $this->connection->getNotices(FALSE));
+		Tester\Assert::same(['NOTICE:  Test notice'], $this->connection->getNotices(false));
 		Tester\Assert::same(['NOTICE:  Test notice'], $this->connection->getNotices());
 	}
 

@@ -10,7 +10,7 @@ class Helper
 	 */
 	public static function createStringPgArray(array $array): string
 	{
-		return self::doCreatePgArray($array, TRUE);
+		return self::doCreatePgArray($array, true);
 	}
 
 
@@ -19,7 +19,7 @@ class Helper
 	 */
 	public static function createPgArray(array $array): string
 	{
-		return self::doCreatePgArray($array, FALSE);
+		return self::doCreatePgArray($array, false);
 	}
 
 
@@ -33,7 +33,7 @@ class Helper
 		}
 
 		foreach ($array as $i => $value) {
-			if ($value === NULL) {
+			if ($value === null) {
 				$array[$i] = 'NULL';
 			} else if ($string) {
 				if ($value instanceof \BackedEnum) {
@@ -52,13 +52,13 @@ class Helper
 
 
 	/**
-	 * @param array<string, string|int|float|NULL> $config
+	 * @param array<string, string|int|float|null> $config
 	 */
 	public static function prepareConnectionConfig(array $config): string
 	{
 		$configItems = [];
 		foreach ($config as $key => $value) {
-			if ($value !== NULL) {
+			if ($value !== null) {
 				$configItems[] = $key . '=\'' . $value . '\'';
 			}
 		}

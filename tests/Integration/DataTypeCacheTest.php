@@ -59,7 +59,7 @@ final class DataTypeCacheTest extends TestCase
 
 		$cacheDb = $dataTypeCache->load($this->connection); // load from DB
 		Tester\Assert::true(\count($cacheDb) > 0); // there must be some types
-		Tester\Assert::false(\array_search($type, $cacheDb, TRUE)); // but no $type
+		Tester\Assert::false(\array_search($type, $cacheDb, true)); // but no $type
 
 		\file_put_contents(
 			$this->getDataTypeCacheFile($this->connection),
@@ -108,7 +108,7 @@ final class DataTypeCacheTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($result2): void {
 			Tester\Assert::same('hstore', $result2->getColumnType('data'));
-		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::NO_OID_IN_DATA_TYPE_CACHE);
+		}, Db\Exceptions\ResultException::class, null, Db\Exceptions\ResultException::NO_OID_IN_DATA_TYPE_CACHE);
 
 		$result2->free();
 	}

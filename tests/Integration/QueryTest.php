@@ -21,10 +21,10 @@ final class QueryTest extends TestCase
 			);
 		');
 
-		$this->connection->query('INSERT INTO test(id, bool_column) VALUES(?, ?)', 1, TRUE);
-		$this->connection->query('INSERT INTO test(id, bool_column) VALUES(?, ?)', 2, FALSE);
+		$this->connection->query('INSERT INTO test(id, bool_column) VALUES(?, ?)', 1, true);
+		$this->connection->query('INSERT INTO test(id, bool_column) VALUES(?, ?)', 2, false);
 
-		$resultTrue = $this->connection->query('SELECT id, bool_column FROM test WHERE bool_column = ?', TRUE);
+		$resultTrue = $this->connection->query('SELECT id, bool_column FROM test WHERE bool_column = ?', true);
 
 		$rowTrue = $resultTrue->fetch() ?? throw new \RuntimeException('No data from database were returned');
 
@@ -35,7 +35,7 @@ final class QueryTest extends TestCase
 
 		// ---
 
-		$resultFalse = $this->connection->query('SELECT id, bool_column FROM test WHERE bool_column = ?', FALSE);
+		$resultFalse = $this->connection->query('SELECT id, bool_column FROM test WHERE bool_column = ?', false);
 
 		$rowFalse = $resultFalse->fetch() ?? throw new \RuntimeException('No data from database were returned');
 

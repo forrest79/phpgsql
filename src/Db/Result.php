@@ -14,33 +14,33 @@ class Result implements ColumnValueParser, \Countable
 
 	private DataTypeParser $dataTypeParser;
 
-	/** @var array<int, string>|NULL */
-	private array|NULL $dataTypesCache;
+	/** @var array<int, string>|null */
+	private array|null $dataTypesCache;
 
-	/** @template T of Row @var \Closure(Row): void|NULL */
-	private \Closure|NULL $rowFetchMutator = NULL;
+	/** @template T of Row @var \Closure(Row): void|null */
+	private \Closure|null $rowFetchMutator = null;
 
 	/** @var array<string, callable> */
 	private array $columnsFetchMutator = [];
 
-	private int|NULL $affectedRows = NULL;
+	private int|null $affectedRows = null;
 
-	/** @var array<string, string>|NULL */
-	private array|NULL $columnsDataTypes = NULL;
+	/** @var array<string, string>|null */
+	private array|null $columnsDataTypes = null;
 
 	/** @var array<string, bool> */
 	private array $parsedColumns = [];
 
 
 	/**
-	 * @param array<int, string>|NULL $dataTypesCache
+	 * @param array<int, string>|null $dataTypesCache
 	 */
 	public function __construct(
 		PgSql\Result $queryResource,
 		Query $query,
 		RowFactory $rowFactory,
 		DataTypeParser $dataTypeParser,
-		array|NULL $dataTypesCache,
+		array|null $dataTypesCache,
 	)
 	{
 		$this->queryResource = $queryResource;
@@ -119,17 +119,17 @@ class Result implements ColumnValueParser, \Countable
 	}
 
 
-	public function fetch(): Row|NULL
+	public function fetch(): Row|null
 	{
 		$data = \pg_fetch_assoc($this->queryResource);
-		if ($data === FALSE) {
-			return NULL;
+		if ($data === false) {
+			return null;
 		}
 
 		$this->detectColumnDataTypes();
 		$row = $this->rowFactory->create($this, $data);
 
-		if ($this->rowFetchMutator !== NULL) {
+		if ($this->rowFetchMutator !== null) {
 			call_user_func($this->rowFetchMutator, $row);
 		}
 
@@ -140,13 +140,13 @@ class Result implements ColumnValueParser, \Countable
 	/**
 	 * Like fetch(), but returns only first field.
 	 *
-	 * @return mixed value on success, NULL if no next record
+	 * @return mixed value on success, null if no next record
 	 */
 	public function fetchSingle(): mixed
 	{
 		$row = $this->fetch();
-		if ($row === NULL) {
-			return NULL;
+		if ($row === null) {
+			return null;
 		}
 
 		$columns = $this->getColumns();
@@ -163,12 +163,12 @@ class Result implements ColumnValueParser, \Countable
 	 *
 	 * @return list<Row>
 	 */
-	public function fetchAll(int|NULL $offset = NULL, int|NULL $limit = NULL): array
+	public function fetchAll(int|null $offset = null, int|null $limit = null): array
 	{
 		$limit = $limit ?? -1;
 		$this->seek($offset ?? 0);
 		$row = $this->fetch();
-		if ($row === NULL) {
+		if ($row === null) {
 			return []; // empty result set
 		}
 
@@ -182,7 +182,7 @@ class Result implements ColumnValueParser, \Countable
 			$data[] = $row;
 
 			$row = $this->fetch();
-		} while ($row !== NULL);
+		} while ($row !== null);
 
 		return $data;
 	}
@@ -205,7 +205,7 @@ class Result implements ColumnValueParser, \Countable
 	public function fetchAssoc(string $assocDesc): array
 	{
 		$parts = \preg_split('#(\[\]|=|\|)#', $assocDesc, -1, \PREG_SPLIT_DELIM_CAPTURE | \PREG_SPLIT_NO_EMPTY);
-		if (($parts === FALSE) || ($parts === [])) {
+		if (($parts === false) || ($parts === [])) {
 			throw Exceptions\ResultException::fetchAssocBadDescriptor($assocDesc);
 		}
 
@@ -218,17 +218,17 @@ class Result implements ColumnValueParser, \Countable
 		$this->seek(0);
 
 		$data = [];
-		$columnsChecked = FALSE;
+		$columnsChecked = false;
 
 		// make associative tree
-		while (($row = $this->fetch()) !== NULL) {
+		while (($row = $this->fetch()) !== null) {
 			if (!$columnsChecked) {
 				foreach ($parts as $checkPart) {
 					if (($checkPart !== '[]') && ($checkPart !== '=') && ($checkPart !== '|') && !$row->hasColumn($checkPart)) {
 						throw Exceptions\ResultException::fetchAssocNoColumn($checkPart, $assocDesc);
 					}
 				}
-				$columnsChecked = TRUE;
+				$columnsChecked = true;
 			}
 
 			$x = &$data;
@@ -249,12 +249,12 @@ class Result implements ColumnValueParser, \Countable
 				} else if ($part !== '|') { // associative-array node
 					if (isset($this->columnsFetchMutator[$part])) {
 						$val = call_user_func($this->columnsFetchMutator[$part], $row->$part);
-						if (($val !== NULL) && !\is_scalar($val)) {
+						if (($val !== null) && !\is_scalar($val)) {
 							throw Exceptions\ResultException::fetchMutatorBadReturnType($part, $val);
 						}
 					} else {
 						$val = $row->$part;
-						if (($val !== NULL) && !\is_scalar($val)) {
+						if (($val !== null) && !\is_scalar($val)) {
 							throw Exceptions\ResultException::fetchAssocOnlyScalarAsKey($assocDesc, $part, $val);
 						}
 					}
@@ -263,7 +263,7 @@ class Result implements ColumnValueParser, \Countable
 				}
 			}
 
-			if ($x === NULL) { // build leaf
+			if ($x === null) { // build leaf
 				$x = $row;
 			}
 		}
@@ -280,18 +280,18 @@ class Result implements ColumnValueParser, \Countable
 	 * @throws Exceptions\ResultException
 	 * @credit dibi (https://dibiphp.com/) | David Grudl
 	 */
-	public function fetchPairs(string|NULL $key = NULL, string|NULL $value = NULL): array
+	public function fetchPairs(string|null $key = null, string|null $value = null): array
 	{
 		$this->seek(0);
 		$row = $this->fetch();
-		if ($row === NULL) {
+		if ($row === null) {
 			return []; // empty result set
 		}
 
 		$data = [];
 
-		if ($value === NULL) {
-			if ($key !== NULL) {
+		if ($value === null) {
+			if ($key !== null) {
 				throw Exceptions\ResultException::fetchPairsBadColumns();
 			}
 
@@ -299,56 +299,56 @@ class Result implements ColumnValueParser, \Countable
 			$tmp = \array_keys($row->toArray());
 			$key = $tmp[0];
 			if (\count($row) < 2) { // indexed-array
-				$fetchMutator = $this->columnsFetchMutator[$key] ?? NULL;
+				$fetchMutator = $this->columnsFetchMutator[$key] ?? null;
 				do {
-					$data[] = $fetchMutator !== NULL ? call_user_func($fetchMutator, $row[$key]) : $row[$key];
+					$data[] = $fetchMutator !== null ? call_user_func($fetchMutator, $row[$key]) : $row[$key];
 					$row = $this->fetch();
-				} while ($row !== NULL);
+				} while ($row !== null);
 
 				return $data;
 			}
 
 			$value = $tmp[1];
 		} else {
-			if ($row->hasColumn($value) === FALSE) {
+			if ($row->hasColumn($value) === false) {
 				throw Exceptions\ResultException::noColumn($value);
 			}
 
-			if ($key === NULL) { // indexed-array
-				$fetchMutator = $this->columnsFetchMutator[$value] ?? NULL;
+			if ($key === null) { // indexed-array
+				$fetchMutator = $this->columnsFetchMutator[$value] ?? null;
 				do {
-					$data[] = $fetchMutator !== NULL ? call_user_func($fetchMutator, $row[$value]) : $row[$value];
+					$data[] = $fetchMutator !== null ? call_user_func($fetchMutator, $row[$value]) : $row[$value];
 					$row = $this->fetch();
-				} while ($row !== NULL);
+				} while ($row !== null);
 
 				return $data;
 			}
 
-			if ($row->hasColumn($key) === FALSE) {
+			if ($row->hasColumn($key) === false) {
 				throw Exceptions\ResultException::noColumn($key);
 			}
 		}
 
-		$fetchMutatorKey = $this->columnsFetchMutator[$key] ?? NULL;
-		$fetchMutatorValue = $this->columnsFetchMutator[$value] ?? NULL;
+		$fetchMutatorKey = $this->columnsFetchMutator[$key] ?? null;
+		$fetchMutatorValue = $this->columnsFetchMutator[$value] ?? null;
 
 		do {
-			if ($fetchMutatorKey !== NULL) {
+			if ($fetchMutatorKey !== null) {
 				$keyValue = call_user_func($fetchMutatorKey, $row[$key]);
-				if (($keyValue !== NULL) && !\is_scalar($keyValue)) {
+				if (($keyValue !== null) && !\is_scalar($keyValue)) {
 					throw Exceptions\ResultException::fetchMutatorBadReturnType($key, $keyValue);
 				}
 			} else {
 				$keyValue = $row[$key];
-				if (($keyValue !== NULL) && !\is_scalar($keyValue)) {
+				if (($keyValue !== null) && !\is_scalar($keyValue)) {
 					throw Exceptions\ResultException::fetchPairsOnlyScalarAsKey($key, $keyValue);
 				}
 			}
 
-			$data[$keyValue] = $fetchMutatorValue !== NULL ? call_user_func($fetchMutatorValue, $row[$value]) : $row[$value];
+			$data[$keyValue] = $fetchMutatorValue !== null ? call_user_func($fetchMutatorValue, $row[$value]) : $row[$value];
 
 			$row = $this->fetch();
-		} while ($row !== NULL);
+		} while ($row !== null);
 
 		return $data;
 	}
@@ -371,7 +371,7 @@ class Result implements ColumnValueParser, \Countable
 
 	public function getAffectedRows(): int
 	{
-		if ($this->affectedRows === NULL) {
+		if ($this->affectedRows === null) {
 			$this->affectedRows = \pg_affected_rows($this->queryResource);
 		}
 
@@ -390,8 +390,8 @@ class Result implements ColumnValueParser, \Countable
 	 */
 	public function getColumnType(string $column): string
 	{
-		$type = $this->getColumnsDataTypes()[$column] ?? NULL;
-		if ($type === NULL) {
+		$type = $this->getColumnsDataTypes()[$column] ?? null;
+		if ($type === null) {
 			throw Exceptions\ResultException::noColumn($column);
 		}
 
@@ -410,10 +410,10 @@ class Result implements ColumnValueParser, \Countable
 
 	public function parseColumnValue(string $column, mixed $rawValue): mixed
 	{
-		\assert(($rawValue === NULL) || \is_string($rawValue)); // database result all values as string or NULL
+		\assert(($rawValue === null) || \is_string($rawValue)); // database result all values as string or null
 		$value = $this->dataTypeParser->parse($this->getColumnType($column), $rawValue);
 
-		$this->parsedColumns[$column] = TRUE;
+		$this->parsedColumns[$column] = true;
 
 		return $value;
 	}
@@ -425,7 +425,7 @@ class Result implements ColumnValueParser, \Countable
 	private function getColumnsDataTypes(): array
 	{
 		$this->detectColumnDataTypes();
-		\assert($this->columnsDataTypes !== NULL);
+		\assert($this->columnsDataTypes !== null);
 
 		return $this->columnsDataTypes;
 	}
@@ -433,7 +433,7 @@ class Result implements ColumnValueParser, \Countable
 
 	private function detectColumnDataTypes(): void
 	{
-		if ($this->columnsDataTypes === NULL) {
+		if ($this->columnsDataTypes === null) {
 			$this->columnsDataTypes = [];
 			$fieldsCnt = \pg_num_fields($this->queryResource);
 			for ($i = 0; $i < $fieldsCnt; $i++) {
@@ -443,7 +443,7 @@ class Result implements ColumnValueParser, \Countable
 					throw Exceptions\ResultException::columnNameIsAlreadyInUse($name);
 				}
 
-				if ($this->dataTypesCache === NULL) {
+				if ($this->dataTypesCache === null) {
 					$type = \pg_field_type($this->queryResource, $i);
 				} else {
 					$typeOid = \pg_field_type_oid($this->queryResource, $i);
@@ -461,13 +461,13 @@ class Result implements ColumnValueParser, \Countable
 
 
 	/**
-	 * @return array<string, bool>|NULL NULL = no column was used
+	 * @return array<string, bool>|null null = no column was used
 	 */
-	public function getParsedColumns(): array|NULL
+	public function getParsedColumns(): array|null
 	{
 		return $this->parsedColumns === []
-			? NULL
-			: $this->parsedColumns + \array_fill_keys($this->getColumns(), FALSE);
+			? null
+			: $this->parsedColumns + \array_fill_keys($this->getColumns(), false);
 	}
 
 }

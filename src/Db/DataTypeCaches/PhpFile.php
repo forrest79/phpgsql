@@ -29,12 +29,12 @@ class PhpFile extends DbLoader
 			$cacheFile = $this->getCacheFile($connectionConfig);
 			if (!\is_file($cacheFile)) {
 				if (!\is_dir($this->cacheDirectory)) {
-					@\mkdir($this->cacheDirectory, 0777, TRUE); // @ - dir may already exist
+					@\mkdir($this->cacheDirectory, 0777, true); // @ - dir may already exist
 				}
 
 				$lockFile = $cacheFile . '.lock';
 				$handle = \fopen($lockFile, 'c+');
-				if (($handle === FALSE) || !\flock($handle, \LOCK_EX)) {
+				if (($handle === false) || !\flock($handle, \LOCK_EX)) {
 					throw new \RuntimeException(\sprintf('Unable to create or acquire exclusive lock on file \'%s\'.', $lockFile));
 				}
 
@@ -48,7 +48,7 @@ class PhpFile extends DbLoader
 					\rename($tempFile, $cacheFile); // atomic replace (in Linux)
 
 					if (\function_exists('opcache_invalidate')) {
-						\opcache_invalidate($cacheFile, TRUE);
+						\opcache_invalidate($cacheFile, true);
 					}
 				}
 
@@ -71,7 +71,7 @@ class PhpFile extends DbLoader
 		@\unlink($cacheFile); // intentionally @ - file may not exists
 
 		if (\function_exists('opcache_invalidate')) {
-			\opcache_invalidate($cacheFile, TRUE);
+			\opcache_invalidate($cacheFile, true);
 		}
 
 		unset($this->cache[$connectionConfig]);

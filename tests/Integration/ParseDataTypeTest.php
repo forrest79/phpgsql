@@ -24,7 +24,7 @@ final class ParseDataTypeTest extends TestCase
 		$this->connection->queryArgs('
 			INSERT INTO test(type_integer)
 			VALUES (?)
-		', [NULL]);
+		', [null]);
 
 		Tester\Assert::null($this->connection->query('SELECT type_integer FROM test')->fetchSingle());
 	}
@@ -102,8 +102,8 @@ final class ParseDataTypeTest extends TestCase
 			3.3,
 			4.4,
 			5.5,
-			TRUE,
-			FALSE,
+			true,
+			false,
 			'2018-01-01',
 			'20:30:00',
 			'20:30:00+02',
@@ -483,7 +483,7 @@ final class ParseDataTypeTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($row): void {
 			$row->type_hstore;
-		}, Db\Exceptions\DataTypeParserException::class, NULL, Db\Exceptions\DataTypeParserException::TRY_USE_CONVERT_TO_JSON);
+		}, Db\Exceptions\DataTypeParserException::class, null, Db\Exceptions\DataTypeParserException::TRY_USE_CONVERT_TO_JSON);
 	}
 
 
@@ -501,7 +501,7 @@ final class ParseDataTypeTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($row): void {
 			$row->type_point;
-		}, Db\Exceptions\DataTypeParserException::class, NULL, Db\Exceptions\DataTypeParserException::CANT_PARSE_TYPE);
+		}, Db\Exceptions\DataTypeParserException::class, null, Db\Exceptions\DataTypeParserException::CANT_PARSE_TYPE);
 	}
 
 
@@ -519,7 +519,7 @@ final class ParseDataTypeTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($row): void {
 			$row->type_tsvector;
-		}, Db\Exceptions\DataTypeParserException::class, NULL, Db\Exceptions\DataTypeParserException::TRY_USE_CONVERT_TO_JSON);
+		}, Db\Exceptions\DataTypeParserException::class, null, Db\Exceptions\DataTypeParserException::TRY_USE_CONVERT_TO_JSON);
 	}
 
 
@@ -537,7 +537,7 @@ final class ParseDataTypeTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($row): void {
 			$row->type_money;
-		}, Db\Exceptions\DataTypeParserException::class, NULL, Db\Exceptions\DataTypeParserException::CANT_PARSE_TYPE);
+		}, Db\Exceptions\DataTypeParserException::class, null, Db\Exceptions\DataTypeParserException::CANT_PARSE_TYPE);
 	}
 
 
@@ -545,9 +545,9 @@ final class ParseDataTypeTest extends TestCase
 	{
 		$this->connection->setDataTypeParser(new class implements Db\DataTypeParser {
 
-			public function parse(string $type, string|NULL $value): mixed
+			public function parse(string $type, string|null $value): mixed
 			{
-				if (($type === 'point') && ($value !== NULL)) {
+				if (($type === 'point') && ($value !== null)) {
 					return \array_map('intval', \explode(',', \substr($value, 1, -1), 2));
 				}
 				return $value;
@@ -572,7 +572,7 @@ final class ParseDataTypeTest extends TestCase
 	private function fetch(): Db\Row
 	{
 		$row = $this->connection->query('SELECT * FROM test')->fetch();
-		if ($row === NULL) {
+		if ($row === null) {
 			throw new \RuntimeException('No data from database were returned');
 		}
 		return $row;

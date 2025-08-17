@@ -16,7 +16,7 @@ final class PgQueryBenchmark extends BenchmarkCase
 		parent::setUp();
 
 		$connection = \pg_connect(\PHPGSQL_CONNECTION_CONFIG);
-		if ($connection === FALSE) {
+		if ($connection === false) {
 			throw new \RuntimeException('pg_connect failed');
 		}
 
@@ -36,7 +36,7 @@ final class PgQueryBenchmark extends BenchmarkCase
 	public function benchmarkPgQuery(): void
 	{
 		$queryResource = \pg_query($this->connection, 'SELECT ' . \rand(0, 1000));
-		if ($queryResource === FALSE) {
+		if ($queryResource === false) {
 			throw new \RuntimeException('pg_query failed');
 		}
 	}
@@ -48,7 +48,7 @@ final class PgQueryBenchmark extends BenchmarkCase
 	public function benchmarkPgQueryParams(): void
 	{
 		$queryResource = \pg_query_params($this->connection, 'SELECT ' . \rand(0, 1000), []);
-		if ($queryResource === FALSE) {
+		if ($queryResource === false) {
 			throw new \RuntimeException('pg_query_params failed');
 		}
 	}
@@ -60,7 +60,7 @@ final class PgQueryBenchmark extends BenchmarkCase
 	public function benchmarkPgQueryWithParameters(): void
 	{
 		$queryResource = \pg_query($this->connection, 'SELECT 1 WHERE 1 = 1 AND 2 = 2 AND 3 = 3 AND 4 = 4 AND 5 = 5');
-		if ($queryResource === FALSE) {
+		if ($queryResource === false) {
 			throw new \RuntimeException('pg_query failed');
 		}
 	}
@@ -72,7 +72,7 @@ final class PgQueryBenchmark extends BenchmarkCase
 	public function benchmarkPgQueryParamsWithParameters(): void
 	{
 		$queryResource = \pg_query_params($this->connection, 'SELECT 1 WHERE 1 = $1 AND 2 = $2 AND 3 = $3 AND 4 = $4 AND 5 = $5', [1, 2, 3, 4, 5]);
-		if ($queryResource === FALSE) {
+		if ($queryResource === false) {
 			throw new \RuntimeException('pg_query_params failed');
 		}
 	}

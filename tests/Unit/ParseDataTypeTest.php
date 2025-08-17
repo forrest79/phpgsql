@@ -16,7 +16,7 @@ final class ParseDataTypeTest extends Tests\TestCase
 
 	public function testParseNull(): void
 	{
-		Tester\Assert::null($this->createBasicDataTypeParser()->parse('int2', NULL));
+		Tester\Assert::null($this->createBasicDataTypeParser()->parse('int2', null));
 	}
 
 
@@ -31,8 +31,8 @@ final class ParseDataTypeTest extends Tests\TestCase
 		Tester\Assert::same(1.1, $basicDataTypeParser->parse('float4', '1.1'));
 		Tester\Assert::same(2.2, $basicDataTypeParser->parse('float8', '2.2'));
 		Tester\Assert::same(3.3, $basicDataTypeParser->parse('numeric', '3.3'));
-		Tester\Assert::same(TRUE, $basicDataTypeParser->parse('bool', 't'));
-		Tester\Assert::same(FALSE, $basicDataTypeParser->parse('bool', 'f'));
+		Tester\Assert::same(true, $basicDataTypeParser->parse('bool', 't'));
+		Tester\Assert::same(false, $basicDataTypeParser->parse('bool', 'f'));
 		Tester\Assert::same('2018-01-01', $basicDataTypeParser->parse('date', '2018-01-01')->format('Y-m-d'));
 		Tester\Assert::same('2018-01-01 20:30:00', $basicDataTypeParser->parse('timestamp', '2018-01-01 20:30:00')->format('Y-m-d H:i:s'));
 		Tester\Assert::same('2018-01-01 20:30:00.123000', $basicDataTypeParser->parse('timestamp', '2018-01-01 20:30:00.123')->format('Y-m-d H:i:s.u'));
@@ -66,7 +66,7 @@ final class ParseDataTypeTest extends Tests\TestCase
 		Tester\Assert::same([1.1], $basicDataTypeParser->parse('_float4', '{1.1}'));
 		Tester\Assert::same([2.2], $basicDataTypeParser->parse('_float8', '{2.2}'));
 		Tester\Assert::same([3.3], $basicDataTypeParser->parse('_numeric', '{3.3}'));
-		Tester\Assert::same([TRUE, FALSE], $basicDataTypeParser->parse('_bool', '{t,f}'));
+		Tester\Assert::same([true, false], $basicDataTypeParser->parse('_bool', '{t,f}'));
 		Tester\Assert::same('2018-01-01', $basicDataTypeParser->parse('_date', '{2018-01-01}')[0]->format('Y-m-d'));
 		Tester\Assert::same('2018-01-01 20:30:00', $basicDataTypeParser->parse('_timestamp', '{2018-01-01 20:30:00}')[0]->format('Y-m-d H:i:s'));
 		Tester\Assert::same('2018-01-01 20:30:00.123000', $basicDataTypeParser->parse('_timestamp', '{2018-01-01 20:30:00.123}')[0]->format('Y-m-d H:i:s.u'));
@@ -81,14 +81,14 @@ final class ParseDataTypeTest extends Tests\TestCase
 	{
 		$basicDataTypeParser = $this->createBasicDataTypeParser();
 
-		Tester\Assert::same([1, NULL, 2], $basicDataTypeParser->parse('_int2', '{1,NULL,2}'));
-		Tester\Assert::same([2, NULL, 3], $basicDataTypeParser->parse('_int4', '{2,NULL,3}'));
-		Tester\Assert::same([3, NULL, 4], $basicDataTypeParser->parse('_int8', '{3,NULL,4}'));
-		Tester\Assert::same([4, NULL, 5], $basicDataTypeParser->parse('_oid', '{4,NULL,5}'));
-		Tester\Assert::same([1.1, NULL, 2.2], $basicDataTypeParser->parse('_float4', '{1.1,NULL,2.2}'));
-		Tester\Assert::same([2.2, NULL, 3.3], $basicDataTypeParser->parse('_float8', '{2.2,NULL,3.3}'));
-		Tester\Assert::same([3.3, NULL, 4.4], $basicDataTypeParser->parse('_numeric', '{3.3,NULL,4.4}'));
-		Tester\Assert::same([TRUE, NULL, FALSE], $basicDataTypeParser->parse('_bool', '{t,NULL,f}'));
+		Tester\Assert::same([1, null, 2], $basicDataTypeParser->parse('_int2', '{1,NULL,2}'));
+		Tester\Assert::same([2, null, 3], $basicDataTypeParser->parse('_int4', '{2,NULL,3}'));
+		Tester\Assert::same([3, null, 4], $basicDataTypeParser->parse('_int8', '{3,NULL,4}'));
+		Tester\Assert::same([4, null, 5], $basicDataTypeParser->parse('_oid', '{4,NULL,5}'));
+		Tester\Assert::same([1.1, null, 2.2], $basicDataTypeParser->parse('_float4', '{1.1,NULL,2.2}'));
+		Tester\Assert::same([2.2, null, 3.3], $basicDataTypeParser->parse('_float8', '{2.2,NULL,3.3}'));
+		Tester\Assert::same([3.3, null, 4.4], $basicDataTypeParser->parse('_numeric', '{3.3,NULL,4.4}'));
+		Tester\Assert::same([true, null, false], $basicDataTypeParser->parse('_bool', '{t,NULL,f}'));
 
 		$date = $basicDataTypeParser->parse('_date', '{NULL,2018-01-01}');
 		Tester\Assert::null($date[0]);
@@ -102,8 +102,8 @@ final class ParseDataTypeTest extends Tests\TestCase
 		Tester\Assert::null($timestampTz[0]);
 		Tester\Assert::same('2018-01-01 20:30:00 +0200', $timestampTz[1]->format('Y-m-d H:i:s O'));
 
-		Tester\Assert::same([NULL, '20:30:00'], $basicDataTypeParser->parse('_time', '{NULL,20:30:00}'));
-		Tester\Assert::same([NULL, '20:30:00+02'], $basicDataTypeParser->parse('_timetz', '{NULL,20:30:00+02}'));
+		Tester\Assert::same([null, '20:30:00'], $basicDataTypeParser->parse('_time', '{NULL,20:30:00}'));
+		Tester\Assert::same([null, '20:30:00+02'], $basicDataTypeParser->parse('_timetz', '{NULL,20:30:00+02}'));
 	}
 
 
@@ -117,7 +117,7 @@ final class ParseDataTypeTest extends Tests\TestCase
 	{
 		Tester\Assert::exception(function (): void {
 			$this->createBasicDataTypeParser()->parse('hstore', 'a=>1');
-		}, Db\Exceptions\DataTypeParserException::class, NULL, Db\Exceptions\DataTypeParserException::TRY_USE_CONVERT_TO_JSON);
+		}, Db\Exceptions\DataTypeParserException::class, null, Db\Exceptions\DataTypeParserException::TRY_USE_CONVERT_TO_JSON);
 	}
 
 
@@ -125,7 +125,7 @@ final class ParseDataTypeTest extends Tests\TestCase
 	{
 		Tester\Assert::exception(function (): void {
 			$this->createBasicDataTypeParser()->parse('point', '(1,2)');
-		}, Db\Exceptions\DataTypeParserException::class, NULL, Db\Exceptions\DataTypeParserException::CANT_PARSE_TYPE);
+		}, Db\Exceptions\DataTypeParserException::class, null, Db\Exceptions\DataTypeParserException::CANT_PARSE_TYPE);
 	}
 
 
@@ -133,7 +133,7 @@ final class ParseDataTypeTest extends Tests\TestCase
 	{
 		Tester\Assert::exception(function (): void {
 			$this->createBasicDataTypeParser()->parse('_tsvector', '{\'text\'}');
-		}, Db\Exceptions\DataTypeParserException::class, NULL, Db\Exceptions\DataTypeParserException::TRY_USE_CONVERT_TO_JSON);
+		}, Db\Exceptions\DataTypeParserException::class, null, Db\Exceptions\DataTypeParserException::TRY_USE_CONVERT_TO_JSON);
 	}
 
 
@@ -141,7 +141,7 @@ final class ParseDataTypeTest extends Tests\TestCase
 	{
 		Tester\Assert::exception(function (): void {
 			$this->createBasicDataTypeParser()->parse('_money', '{1)}');
-		}, Db\Exceptions\DataTypeParserException::class, NULL, Db\Exceptions\DataTypeParserException::CANT_PARSE_TYPE);
+		}, Db\Exceptions\DataTypeParserException::class, null, Db\Exceptions\DataTypeParserException::CANT_PARSE_TYPE);
 	}
 
 
@@ -149,9 +149,9 @@ final class ParseDataTypeTest extends Tests\TestCase
 	{
 		$dataTypeParser = new class implements Db\DataTypeParser {
 
-			public function parse(string $type, string|NULL $value): mixed
+			public function parse(string $type, string|null $value): mixed
 			{
-				if (($type === 'point') && ($value !== NULL)) {
+				if (($type === 'point') && ($value !== null)) {
 					return \array_map('intval', \explode(',', \substr($value, 1, -1), 2));
 				}
 
@@ -168,7 +168,7 @@ final class ParseDataTypeTest extends Tests\TestCase
 	{
 		Tester\Assert::exception(function (): void {
 			$this->createBasicDataTypeParser()->parse('_int2', '123');
-		}, Db\Exceptions\DataTypeParserException::class, NULL, Db\Exceptions\DataTypeParserException::VALUE_IS_NOT_ARRAY);
+		}, Db\Exceptions\DataTypeParserException::class, null, Db\Exceptions\DataTypeParserException::VALUE_IS_NOT_ARRAY);
 	}
 
 
@@ -176,15 +176,15 @@ final class ParseDataTypeTest extends Tests\TestCase
 	{
 		Tester\Assert::exception(function (): void {
 			$this->createBasicDataTypeParser()->parse('date', '20201-02-31');
-		}, Db\Exceptions\DataTypeParserException::class, NULL, Db\Exceptions\DataTypeParserException::CANT_CONVERT_DATETIME);
+		}, Db\Exceptions\DataTypeParserException::class, null, Db\Exceptions\DataTypeParserException::CANT_CONVERT_DATETIME);
 
 		Tester\Assert::exception(function (): void {
 			$this->createBasicDataTypeParser()->parse('timestamp', '20201-02-31 12:30:00');
-		}, Db\Exceptions\DataTypeParserException::class, NULL, Db\Exceptions\DataTypeParserException::CANT_CONVERT_DATETIME);
+		}, Db\Exceptions\DataTypeParserException::class, null, Db\Exceptions\DataTypeParserException::CANT_CONVERT_DATETIME);
 
 		Tester\Assert::exception(function (): void {
 			$this->createBasicDataTypeParser()->parse('timestamptz', '20201-02-31 12:30:00+02');
-		}, Db\Exceptions\DataTypeParserException::class, NULL, Db\Exceptions\DataTypeParserException::CANT_CONVERT_DATETIME);
+		}, Db\Exceptions\DataTypeParserException::class, null, Db\Exceptions\DataTypeParserException::CANT_CONVERT_DATETIME);
 	}
 
 

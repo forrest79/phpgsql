@@ -39,7 +39,7 @@ class AsyncPreparedStatement extends PreparedStatementHelper
 		$query = new Query($this->query, $params);
 
 		$success = @\pg_send_execute($this->connection->getResource(), $statementName, $params); // intentionally @
-		if ($success === FALSE) {
+		if ($success === false) {
 			throw Exceptions\QueryException::asyncPreparedStatementQueryFailed(
 				$statementName,
 				$query,
@@ -48,7 +48,7 @@ class AsyncPreparedStatement extends PreparedStatementHelper
 		}
 
 		if ($this->events->hasOnQuery()) {
-			$this->events->onQuery($query, NULL, $statementName);
+			$this->events->onQuery($query, null, $statementName);
 		}
 
 		return $this->asyncHelper->createAndSetAsyncQuery($this->resultBuilder, $query, $statementName);
@@ -57,13 +57,13 @@ class AsyncPreparedStatement extends PreparedStatementHelper
 
 	private function prepareStatement(): string
 	{
-		if ($this->statementName === NULL) {
+		if ($this->statementName === null) {
 			$statementName = self::getNextStatementName();
 
 			$this->query = self::prepareQuery($this->query);
 
 			$success = @\pg_send_prepare($this->connection->getResource(), $statementName, $this->query); // intentionally @
-			if ($success === FALSE) {
+			if ($success === false) {
 				throw Exceptions\QueryException::asyncPreparedStatementQueryFailed(
 					$statementName,
 					new Query($this->query, []),
@@ -72,11 +72,11 @@ class AsyncPreparedStatement extends PreparedStatementHelper
 			}
 
 			$resource = \pg_get_result($this->connection->getResource());
-			if (($resource === FALSE) || (!$this->asyncHelper::checkAsyncQueryResult($resource))) {
+			if (($resource === false) || (!$this->asyncHelper::checkAsyncQueryResult($resource))) {
 				throw Exceptions\QueryException::asyncPreparedStatementQueryFailed(
 					$statementName,
 					new Query($this->query, []),
-					($resource !== FALSE) ? (string) \pg_result_error($resource) : $this->connection->getLastError(),
+					($resource !== false) ? (string) \pg_result_error($resource) : $this->connection->getLastError(),
 				);
 			}
 

@@ -12,7 +12,7 @@ class AsyncQuery
 
 	private Query $query;
 
-	private string|NULL $preparedStatementName;
+	private string|null $preparedStatementName;
 
 
 	public function __construct(
@@ -20,7 +20,7 @@ class AsyncQuery
 		ResultBuilder $resultBuilder,
 		AsyncHelper $asyncHelper,
 		Query $query,
-		string|NULL $preparedStatementName = NULL,
+		string|null $preparedStatementName = null,
 	)
 	{
 		$this->connection = $connection;
@@ -44,9 +44,9 @@ class AsyncQuery
 	{
 		$actualAsyncQuery = $this->asyncHelper->getAsyncQuery();
 		$actualAsyncExecuteQuery = $this->asyncHelper->getAsyncExecuteQuery();
-		if (($actualAsyncQuery === NULL) && ($actualAsyncExecuteQuery === NULL)) {
+		if (($actualAsyncQuery === null) && ($actualAsyncExecuteQuery === null)) {
 			throw Exceptions\ConnectionException::asyncNoQueryIsSent();
-		} else if (($actualAsyncQuery !== $this) || ($actualAsyncExecuteQuery !== NULL)) {
+		} else if (($actualAsyncQuery !== $this) || ($actualAsyncExecuteQuery !== null)) {
 			throw Exceptions\ConnectionException::anotherAsyncQueryIsRunning(
 				$this->getQuery()->sql,
 				$actualAsyncExecuteQuery ?? $actualAsyncQuery->getQuery()->sql,
@@ -54,13 +54,13 @@ class AsyncQuery
 		}
 
 		$resource = \pg_get_result($this->connection->getResource());
-		if ($resource === FALSE) {
+		if ($resource === false) {
 			$this->asyncHelper->clearQuery();
 			throw Exceptions\ResultException::noOtherAsyncResult($this->getQuery());
 		}
 
 		if (!$this->asyncHelper::checkAsyncQueryResult($resource)) {
-			if ($this->preparedStatementName === NULL) {
+			if ($this->preparedStatementName === null) {
 				throw Exceptions\QueryException::asyncQueryFailed($this->getQuery(), (string) \pg_result_error($resource));
 			} else {
 				throw Exceptions\QueryException::asyncPreparedStatementQueryFailed(

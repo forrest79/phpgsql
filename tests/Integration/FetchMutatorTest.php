@@ -32,7 +32,7 @@ final class FetchMutatorTest extends TestCase
 			});
 
 		$row = $result->fetch();
-		if ($row === NULL) {
+		if ($row === null) {
 			throw new \RuntimeException('No data from database were returned');
 		}
 
@@ -212,7 +212,7 @@ final class FetchMutatorTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($result): void {
 			$result->fetchAssoc('test_date=id');
-		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::FETCH_MUTATOR_BAR_RETURN_TYPE);
+		}, Db\Exceptions\ResultException::class, null, Db\Exceptions\ResultException::FETCH_MUTATOR_BAR_RETURN_TYPE);
 
 		$result->free();
 	}
@@ -415,7 +415,7 @@ final class FetchMutatorTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($result): void {
 			$result->fetchPairs();
-		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::FETCH_MUTATOR_BAR_RETURN_TYPE);
+		}, Db\Exceptions\ResultException::class, null, Db\Exceptions\ResultException::FETCH_MUTATOR_BAR_RETURN_TYPE);
 
 		$result->free();
 	}
@@ -478,7 +478,7 @@ final class FetchMutatorTest extends TestCase
 
 		Tester\Assert::same(['type3', 'type2', 'type1'], $rows1);
 
-		$rows2 = $result->fetchPairs(NULL, 'type');
+		$rows2 = $result->fetchPairs(null, 'type');
 
 		Tester\Assert::same(['type3', 'type2', 'type1'], $rows2);
 

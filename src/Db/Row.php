@@ -10,7 +10,7 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 {
 	private ColumnValueParser $columnValueParser;
 
-	/** @var array<string, string|NULL> */
+	/** @var array<string, string|null> */
 	private array $rawValues;
 
 	/** @var array<string, mixed> */
@@ -18,14 +18,14 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 
 
 	/**
-	 * @param array<string, string|NULL> $rawValues
+	 * @param array<string, string|null> $rawValues
 	 */
 	public function __construct(ColumnValueParser $columnValueParser, array $rawValues)
 	{
 		$this->columnValueParser = $columnValueParser;
 		$this->rawValues = $rawValues;
 
-		$this->values = \array_fill_keys(\array_keys($rawValues), NULL);
+		$this->values = \array_fill_keys(\array_keys($rawValues), null);
 	}
 
 
@@ -46,7 +46,7 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 
 	public function __isset(string $column): bool
 	{
-		return $this->hasColumn($column) && ($this->getValue($column) !== NULL);
+		return $this->hasColumn($column) && ($this->getValue($column) !== null);
 	}
 
 
@@ -101,7 +101,7 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 
 
 	/**
-	 * @param string|NULL $column
+	 * @param string|null $column
 	 */
 	public function offsetSet(mixed $column, mixed $value): void
 	{
@@ -122,7 +122,7 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 			throw Exceptions\RowException::notStringKey();
 		}
 
-		return $this->hasColumn($column) && ($this->getValue($column) !== NULL);
+		return $this->hasColumn($column) && ($this->getValue($column) !== null);
 	}
 
 

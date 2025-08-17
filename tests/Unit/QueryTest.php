@@ -46,7 +46,7 @@ final class QueryTest extends Tests\TestCase
 	{
 		Tester\Assert::exception(static function (): void {
 			Db\Sql\Query::create('SELECT * FROM table WHERE column = ? AND column2 = ?', 1)->toDbQuery();
-		}, Db\Exceptions\QueryException::class, NULL, Db\Exceptions\QueryException::MISSING_PARAM);
+		}, Db\Exceptions\QueryException::class, null, Db\Exceptions\QueryException::MISSING_PARAM);
 	}
 
 
@@ -54,7 +54,7 @@ final class QueryTest extends Tests\TestCase
 	{
 		Tester\Assert::exception(static function (): void {
 			Db\Sql\Query::create('SELECT * FROM table WHERE column = ?', 1, 2)->toDbQuery();
-		}, Db\Exceptions\QueryException::class, NULL, Db\Exceptions\QueryException::EXTRA_PARAM);
+		}, Db\Exceptions\QueryException::class, null, Db\Exceptions\QueryException::EXTRA_PARAM);
 	}
 
 
@@ -117,7 +117,7 @@ final class QueryTest extends Tests\TestCase
 
 	public function testPrepareQueryWithBool(): void
 	{
-		$query = Db\Sql\Query::create('SELECT * FROM table WHERE column1 = ? AND column2 = ?', TRUE, FALSE)->toDbQuery();
+		$query = Db\Sql\Query::create('SELECT * FROM table WHERE column1 = ? AND column2 = ?', true, false)->toDbQuery();
 		Tester\Assert::same('SELECT * FROM table WHERE column1 = $1 AND column2 = $2', $query->sql);
 		Tester\Assert::same(['t', 'f'], $query->params);
 	}
@@ -197,8 +197,8 @@ final class QueryTest extends Tests\TestCase
 		$query = $preparedStatementClass->publicPrepareQuery('SELECT * FROM table WHERE column = ? AND text ILIKE \'What\?\'');
 		Tester\Assert::same('SELECT * FROM table WHERE column = $1 AND text ILIKE \'What?\'', $query);
 
-		$params = $preparedStatementClass->publicPrepareParams([NULL, 1, TRUE, FALSE, 'test']);
-		Tester\Assert::same([NULL, 1, 'TRUE', 'FALSE', 'test'], $params);
+		$params = $preparedStatementClass->publicPrepareParams([null, 1, true, false, 'test']);
+		Tester\Assert::same([null, 1, 'TRUE', 'FALSE', 'test'], $params);
 	}
 
 }

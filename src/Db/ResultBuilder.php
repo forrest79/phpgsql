@@ -10,13 +10,13 @@ class ResultBuilder
 
 	private Events $events;
 
-	private ResultFactory|NULL $resultFactory = NULL;
+	private ResultFactory|null $resultFactory = null;
 
-	private RowFactory|NULL $rowFactory = NULL;
+	private RowFactory|null $rowFactory = null;
 
-	private DataTypeParser|NULL $dataTypeParser = NULL;
+	private DataTypeParser|null $dataTypeParser = null;
 
-	private DataTypeCache|NULL $dataTypeCache = NULL;
+	private DataTypeCache|null $dataTypeCache = null;
 
 
 	public function __construct(Connection $connection, Events $events)
@@ -52,7 +52,7 @@ class ResultBuilder
 
 	private function getResultFactory(): ResultFactory
 	{
-		if ($this->resultFactory === NULL) {
+		if ($this->resultFactory === null) {
 			$this->resultFactory = new ResultFactories\Basic();
 		}
 
@@ -68,7 +68,7 @@ class ResultBuilder
 
 	private function getRowFactory(): RowFactory
 	{
-		if ($this->rowFactory === NULL) {
+		if ($this->rowFactory === null) {
 			$this->rowFactory = new RowFactories\Basic();
 		}
 
@@ -84,7 +84,7 @@ class ResultBuilder
 
 	private function getDataTypeParser(): DataTypeParser
 	{
-		if ($this->dataTypeParser === NULL) {
+		if ($this->dataTypeParser === null) {
 			$this->dataTypeParser = new DataTypeParsers\Basic();
 		}
 
@@ -99,11 +99,11 @@ class ResultBuilder
 
 
 	/**
-	 * @return array<int, string>|NULL
+	 * @return array<int, string>|null
 	 */
-	private function getDataTypesCache(): array|NULL
+	private function getDataTypesCache(): array|null
 	{
-		return $this->dataTypeCache?->load($this->connection) ?? NULL;
+		return $this->dataTypeCache?->load($this->connection) ?? null;
 	}
 
 }

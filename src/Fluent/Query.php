@@ -71,30 +71,30 @@ class Query implements Db\Sql
 
 	private const DEFAULT_PARAMS = [
 		self::PARAM_SELECT => [],
-		self::PARAM_DISTINCT => FALSE,
+		self::PARAM_DISTINCT => false,
 		self::PARAM_DISTINCTON => [],
 		self::PARAM_TABLES => [],
 		self::PARAM_TABLE_TYPES => [
-			self::TABLE_TYPE_MAIN => NULL,
+			self::TABLE_TYPE_MAIN => null,
 			self::TABLE_TYPE_FROM => [],
 			self::TABLE_TYPE_JOINS => [],
-			self::TABLE_TYPE_USING => NULL,
+			self::TABLE_TYPE_USING => null,
 		],
 		self::PARAM_ON_CONDITIONS => [],
 		self::PARAM_LATERAL_TABLES => [],
-		self::PARAM_WHERE => NULL,
+		self::PARAM_WHERE => null,
 		self::PARAM_GROUPBY => [],
-		self::PARAM_HAVING => NULL,
+		self::PARAM_HAVING => null,
 		self::PARAM_ORDERBY => [],
-		self::PARAM_LIMIT => NULL,
-		self::PARAM_OFFSET => NULL,
+		self::PARAM_LIMIT => null,
+		self::PARAM_OFFSET => null,
 		self::PARAM_COMBINE_QUERIES => [],
 		self::PARAM_INSERT_COLUMNS => [],
 		self::PARAM_INSERT_ONCONFLICT => [
-			self::INSERT_ONCONFLICT_COLUMNS_OR_CONSTRAINT => NULL,
-			self::INSERT_ONCONFLICT_WHERE => NULL,
-			self::INSERT_ONCONFLICT_DO => NULL,
-			self::INSERT_ONCONFLICT_DO_WHERE => NULL,
+			self::INSERT_ONCONFLICT_COLUMNS_OR_CONSTRAINT => null,
+			self::INSERT_ONCONFLICT_WHERE => null,
+			self::INSERT_ONCONFLICT_DO => null,
+			self::INSERT_ONCONFLICT_DO_WHERE => null,
 		],
 		self::PARAM_RETURNING => [],
 		self::PARAM_DATA => [],
@@ -104,7 +104,7 @@ class Query implements Db\Sql
 			self::WITH_QUERIES => [],
 			self::WITH_QUERIES_SUFFIX => [],
 			self::WITH_QUERIES_NOT_MATERIALIZED => [],
-			self::WITH_RECURSIVE => FALSE,
+			self::WITH_RECURSIVE => false,
 		],
 		self::PARAM_PREFIX => [],
 		self::PARAM_SUFFIX => [],
@@ -117,9 +117,9 @@ class Query implements Db\Sql
 	/** @phpstan-var QueryParams */
 	private array $params = self::DEFAULT_PARAMS;
 
-	private Db\SqlDefinition|NULL $sqlDefinition = NULL;
+	private Db\SqlDefinition|null $sqlDefinition = null;
 
-	private Db\Query|NULL $dbQuery = NULL;
+	private Db\Query|null $dbQuery = null;
 
 
 	public function __construct(QueryBuilder $queryBuilder)
@@ -131,14 +131,14 @@ class Query implements Db\Sql
 	/**
 	 * @throws Exceptions\QueryException
 	 */
-	public function table(string|Db\Sql $table, string|NULL $alias = NULL): static
+	public function table(string|Db\Sql $table, string|null $alias = null): static
 	{
 		return $this->addTable(self::TABLE_TYPE_MAIN, $table, $alias);
 	}
 
 
 	/**
-	 * @param array<int|string, string|int|bool|\BackedEnum|Db\Sql|NULL> $columns
+	 * @param array<int|string, string|int|bool|\BackedEnum|Db\Sql|null> $columns
 	 * @throws Exceptions\QueryException
 	 */
 	public function select(array $columns): static
@@ -147,14 +147,14 @@ class Query implements Db\Sql
 
 		foreach ($columns as $alias => &$column) {
 			if (\is_int($alias)) {
-				$alias = NULL;
+				$alias = null;
 			}
 
-			if ($column === NULL) {
+			if ($column === null) {
 				$column = 'NULL';
-			} else if ($column === TRUE) {
+			} else if ($column === true) {
 				$column = 'TRUE';
-			} else if ($column === FALSE) {
+			} else if ($column === false) {
 				$column = 'FALSE';
 			}
 
@@ -178,7 +178,7 @@ class Query implements Db\Sql
 	{
 		$this->resetQuery();
 
-		$this->params[self::PARAM_DISTINCT] = TRUE;
+		$this->params[self::PARAM_DISTINCT] = true;
 
 		return $this;
 	}
@@ -200,7 +200,7 @@ class Query implements Db\Sql
 	/**
 	 * @throws Exceptions\QueryException
 	 */
-	public function from(string|Db\Sql $from, string|NULL $alias = NULL): static
+	public function from(string|Db\Sql $from, string|null $alias = null): static
 	{
 		return $this->addTable(self::TABLE_TYPE_FROM, $from, $alias);
 	}
@@ -211,8 +211,8 @@ class Query implements Db\Sql
 	 */
 	public function join(
 		string|Db\Sql $join,
-		string|NULL $alias = NULL,
-		string|Db\Sql|NULL $onCondition = NULL,
+		string|null $alias = null,
+		string|Db\Sql|null $onCondition = null,
 	): static
 	{
 		return $this->innerJoin($join, $alias, $onCondition);
@@ -224,8 +224,8 @@ class Query implements Db\Sql
 	 */
 	public function innerJoin(
 		string|Db\Sql $join,
-		string|NULL $alias = NULL,
-		string|Db\Sql|NULL $onCondition = NULL,
+		string|null $alias = null,
+		string|Db\Sql|null $onCondition = null,
 	): static
 	{
 		return $this->addTable(self::JOIN_INNER, $join, $alias, $onCondition);
@@ -237,8 +237,8 @@ class Query implements Db\Sql
 	 */
 	public function leftJoin(
 		string|Db\Sql $join,
-		string|NULL $alias = NULL,
-		string|Db\Sql|NULL $onCondition = NULL,
+		string|null $alias = null,
+		string|Db\Sql|null $onCondition = null,
 	): static
 	{
 		return $this->leftOuterJoin($join, $alias, $onCondition);
@@ -250,8 +250,8 @@ class Query implements Db\Sql
 	 */
 	public function leftOuterJoin(
 		string|Db\Sql $join,
-		string|NULL $alias = NULL,
-		string|Db\Sql|NULL $onCondition = NULL,
+		string|null $alias = null,
+		string|Db\Sql|null $onCondition = null,
 	): static
 	{
 		return $this->addTable(self::JOIN_LEFT_OUTER, $join, $alias, $onCondition);
@@ -263,8 +263,8 @@ class Query implements Db\Sql
 	 */
 	public function rightJoin(
 		string|Db\Sql $join,
-		string|NULL $alias = NULL,
-		string|Db\Sql|NULL $onCondition = NULL,
+		string|null $alias = null,
+		string|Db\Sql|null $onCondition = null,
 	): static
 	{
 		return $this->rightOuterJoin($join, $alias, $onCondition);
@@ -276,8 +276,8 @@ class Query implements Db\Sql
 	 */
 	public function rightOuterJoin(
 		string|Db\Sql $join,
-		string|NULL $alias = NULL,
-		string|Db\Sql|NULL $onCondition = NULL,
+		string|null $alias = null,
+		string|Db\Sql|null $onCondition = null,
 	): static
 	{
 		return $this->addTable(self::JOIN_RIGHT_OUTER, $join, $alias, $onCondition);
@@ -289,8 +289,8 @@ class Query implements Db\Sql
 	 */
 	public function fullJoin(
 		string|Db\Sql $join,
-		string|NULL $alias = NULL,
-		string|Db\Sql|NULL $onCondition = NULL,
+		string|null $alias = null,
+		string|Db\Sql|null $onCondition = null,
 	): static
 	{
 		return $this->fullOuterJoin($join, $alias, $onCondition);
@@ -302,8 +302,8 @@ class Query implements Db\Sql
 	 */
 	public function fullOuterJoin(
 		string|Db\Sql $join,
-		string|NULL $alias = NULL,
-		string|Db\Sql|NULL $onCondition = NULL,
+		string|null $alias = null,
+		string|Db\Sql|null $onCondition = null,
 	): static
 	{
 		return $this->addTable(self::JOIN_FULL_OUTER, $join, $alias, $onCondition);
@@ -313,7 +313,7 @@ class Query implements Db\Sql
 	/**
 	 * @throws Exceptions\QueryException
 	 */
-	public function crossJoin(string|Db\Sql $join, string|NULL $alias = NULL): static
+	public function crossJoin(string|Db\Sql $join, string|null $alias = null): static
 	{
 		return $this->addTable(self::JOIN_CROSS, $join, $alias);
 	}
@@ -325,19 +325,19 @@ class Query implements Db\Sql
 	private function addTable(
 		string $type,
 		string|Db\Sql $name,
-		string|NULL $alias,
-		string|Db\Sql|NULL $onCondition = NULL,
+		string|null $alias,
+		string|Db\Sql|null $onCondition = null,
 	): static
 	{
 		$this->resetQuery();
 
 		$this->checkAlias($name, $alias);
 
-		if (\in_array($type, [self::TABLE_TYPE_MAIN, self::TABLE_TYPE_USING], TRUE) && ($this->params[self::PARAM_TABLE_TYPES][$type] !== NULL)) {
+		if (\in_array($type, [self::TABLE_TYPE_MAIN, self::TABLE_TYPE_USING], true) && ($this->params[self::PARAM_TABLE_TYPES][$type] !== null)) {
 			throw ($type === self::TABLE_TYPE_MAIN) ? Exceptions\QueryException::onlyOneMainTable() : Exceptions\QueryException::mergeOnlyOneUsing();
 		}
 
-		if ($alias === NULL) {
+		if ($alias === null) {
 			$alias = $name;
 			\assert(\is_string($alias));
 		}
@@ -348,13 +348,13 @@ class Query implements Db\Sql
 
 		$this->params[self::PARAM_TABLES][$alias] = [$name, $type];
 
-		if (\in_array($type, [self::TABLE_TYPE_MAIN, self::TABLE_TYPE_USING], TRUE)) {
+		if (\in_array($type, [self::TABLE_TYPE_MAIN, self::TABLE_TYPE_USING], true)) {
 			$this->params[self::PARAM_TABLE_TYPES][$type] = $alias;
 		} else {
 			$this->params[self::PARAM_TABLE_TYPES][$type === self::TABLE_TYPE_FROM ? $type : self::TABLE_TYPE_JOINS][] = $alias;
 		}
 
-		if ($onCondition !== NULL) {
+		if ($onCondition !== null) {
 			$this->getConditionParam(self::PARAM_ON_CONDITIONS, $alias)->add($onCondition);
 		}
 
@@ -417,7 +417,7 @@ class Query implements Db\Sql
 	{
 		$this->resetQuery();
 
-		$condition = Condition::createAnd($conditions, NULL, $this);
+		$condition = Condition::createAnd($conditions, null, $this);
 		$this->getConditionParam(self::PARAM_WHERE)->add($condition);
 
 		return $condition;
@@ -432,7 +432,7 @@ class Query implements Db\Sql
 	{
 		$this->resetQuery();
 
-		$condition = Condition::createOr($conditions, NULL, $this);
+		$condition = Condition::createOr($conditions, null, $this);
 		$this->getConditionParam(self::PARAM_WHERE)->add($condition);
 
 		return $condition;
@@ -473,7 +473,7 @@ class Query implements Db\Sql
 	{
 		$this->resetQuery();
 
-		$condition = Condition::createAnd($conditions, NULL, $this);
+		$condition = Condition::createAnd($conditions, null, $this);
 		$this->getConditionParam(self::PARAM_HAVING)->add($condition);
 
 		return $condition;
@@ -488,14 +488,14 @@ class Query implements Db\Sql
 	{
 		$this->resetQuery();
 
-		$condition = Condition::createOr($conditions, NULL, $this);
+		$condition = Condition::createOr($conditions, null, $this);
 		$this->getConditionParam(self::PARAM_HAVING)->add($condition);
 
 		return $condition;
 	}
 
 
-	private function getConditionParam(string $param, string|NULL $alias = NULL): Condition
+	private function getConditionParam(string $param, string|null $alias = null): Condition
 	{
 		if ($param === self::PARAM_ON_CONDITIONS) {
 			if (!isset($this->params[$param][$alias])) {
@@ -504,7 +504,7 @@ class Query implements Db\Sql
 
 			return $this->params[$param][$alias];
 		} else if (($param === self::PARAM_WHERE) || ($param === self::PARAM_HAVING)) {
-			if ($this->params[$param] === NULL) {
+			if ($this->params[$param] === null) {
 				$this->params[$param] = Condition::createAnd();
 			}
 
@@ -586,16 +586,16 @@ class Query implements Db\Sql
 
 
 	/**
-	 * @param list<string>|NULL $columns
+	 * @param list<string>|null $columns
 	 * @throws Exceptions\QueryException
 	 */
-	public function insert(string|NULL $into = NULL, string|NULL $alias = NULL, array|NULL $columns = []): static
+	public function insert(string|null $into = null, string|null $alias = null, array|null $columns = []): static
 	{
 		$this->resetQuery();
 
 		$this->queryType = self::QUERY_INSERT;
 
-		if ($into !== NULL) {
+		if ($into !== null) {
 			$this->table($into, $alias);
 		}
 
@@ -636,19 +636,19 @@ class Query implements Db\Sql
 
 
 	/**
-	 * @param string|list<string>|NULL $columnsOrConstraint
+	 * @param string|list<string>|null $columnsOrConstraint
 	 * @throws Exceptions\QueryException
 	 */
-	public function onConflict(string|array|NULL $columnsOrConstraint = NULL, string|Db\Sql|NULL $where = NULL): static
+	public function onConflict(string|array|null $columnsOrConstraint = null, string|Db\Sql|null $where = null): static
 	{
 		$this->resetQuery();
 
-		if (\is_string($columnsOrConstraint) && ($where !== NULL)) {
+		if (\is_string($columnsOrConstraint) && ($where !== null)) {
 			throw Exceptions\QueryException::onConflictWhereNotForConstraint();
 		}
 
-		$this->params[self::PARAM_INSERT_ONCONFLICT][self::INSERT_ONCONFLICT_COLUMNS_OR_CONSTRAINT] = $columnsOrConstraint ?? FALSE;
-		$this->params[self::PARAM_INSERT_ONCONFLICT][self::INSERT_ONCONFLICT_WHERE] = $where === NULL ? NULL : Condition::createAnd()->add($where);
+		$this->params[self::PARAM_INSERT_ONCONFLICT][self::INSERT_ONCONFLICT_COLUMNS_OR_CONSTRAINT] = $columnsOrConstraint ?? false;
+		$this->params[self::PARAM_INSERT_ONCONFLICT][self::INSERT_ONCONFLICT_WHERE] = $where === null ? null : Condition::createAnd()->add($where);
 
 		return $this;
 	}
@@ -658,12 +658,12 @@ class Query implements Db\Sql
 	 * @param array<int|string, string|Db\Sql> $set
 	 * @throws Exceptions\QueryException
 	 */
-	public function doUpdate(array $set, string|Db\Sql|NULL $where = NULL): static
+	public function doUpdate(array $set, string|Db\Sql|null $where = null): static
 	{
 		$this->resetQuery();
 
 		$this->params[self::PARAM_INSERT_ONCONFLICT][self::INSERT_ONCONFLICT_DO] = $set;
-		$this->params[self::PARAM_INSERT_ONCONFLICT][self::INSERT_ONCONFLICT_DO_WHERE] = $where === NULL ? NULL : Condition::createAnd()->add($where);
+		$this->params[self::PARAM_INSERT_ONCONFLICT][self::INSERT_ONCONFLICT_DO_WHERE] = $where === null ? null : Condition::createAnd()->add($where);
 
 		return $this;
 	}
@@ -676,8 +676,8 @@ class Query implements Db\Sql
 	{
 		$this->resetQuery();
 
-		$this->params[self::PARAM_INSERT_ONCONFLICT][self::INSERT_ONCONFLICT_DO] = FALSE;
-		$this->params[self::PARAM_INSERT_ONCONFLICT][self::INSERT_ONCONFLICT_DO_WHERE] = NULL;
+		$this->params[self::PARAM_INSERT_ONCONFLICT][self::INSERT_ONCONFLICT_DO] = false;
+		$this->params[self::PARAM_INSERT_ONCONFLICT][self::INSERT_ONCONFLICT_DO_WHERE] = null;
 
 		return $this;
 	}
@@ -686,13 +686,13 @@ class Query implements Db\Sql
 	/**
 	 * @throws Exceptions\QueryException
 	 */
-	public function update(string|NULL $table = NULL, string|NULL $alias = NULL): static
+	public function update(string|null $table = null, string|null $alias = null): static
 	{
 		$this->resetQuery();
 
 		$this->queryType = self::QUERY_UPDATE;
 
-		if ($table !== NULL) {
+		if ($table !== null) {
 			$this->table($table, $alias);
 		}
 
@@ -718,13 +718,13 @@ class Query implements Db\Sql
 	/**
 	 * @throws Exceptions\QueryException
 	 */
-	public function delete(string|NULL $from = NULL, string|NULL $alias = NULL): static
+	public function delete(string|null $from = null, string|null $alias = null): static
 	{
 		$this->resetQuery();
 
 		$this->queryType = self::QUERY_DELETE;
 
-		if ($from !== NULL) {
+		if ($from !== null) {
 			$this->table($from, $alias);
 		}
 
@@ -749,13 +749,13 @@ class Query implements Db\Sql
 	/**
 	 * @throws Exceptions\QueryException
 	 */
-	public function merge(string|NULL $into = NULL, string|NULL $alias = NULL): static
+	public function merge(string|null $into = null, string|null $alias = null): static
 	{
 		$this->resetQuery();
 
 		$this->queryType = self::QUERY_MERGE;
 
-		if ($into !== NULL) {
+		if ($into !== null) {
 			$this->table($into, $alias);
 		}
 
@@ -768,8 +768,8 @@ class Query implements Db\Sql
 	 */
 	public function using(
 		string|Db\Sql $dataSource,
-		string|NULL $alias = NULL,
-		string|Db\Sql|NULL $onCondition = NULL,
+		string|null $alias = null,
+		string|Db\Sql|null $onCondition = null,
 	): static
 	{
 		return $this->addTable(self::TABLE_TYPE_USING, $dataSource, $alias, $onCondition);
@@ -779,14 +779,14 @@ class Query implements Db\Sql
 	/**
 	 * @throws Exceptions\QueryException
 	 */
-	public function whenMatched(string|Db\Sql $then, string|Db\Sql|NULL $condition = NULL): static
+	public function whenMatched(string|Db\Sql $then, string|Db\Sql|null $condition = null): static
 	{
 		$this->resetQuery();
 
 		$this->params[self::PARAM_MERGE][] = [
 			self::MERGE_WHEN_MATCHED,
 			$then,
-			$condition === NULL ? NULL : Condition::createAnd()->add($condition),
+			$condition === null ? null : Condition::createAnd()->add($condition),
 		];
 
 		return $this;
@@ -796,14 +796,14 @@ class Query implements Db\Sql
 	/**
 	 * @throws Exceptions\QueryException
 	 */
-	public function whenNotMatched(string|Db\Sql $then, string|Db\Sql|NULL $condition = NULL): static
+	public function whenNotMatched(string|Db\Sql $then, string|Db\Sql|null $condition = null): static
 	{
 		$this->resetQuery();
 
 		$this->params[self::PARAM_MERGE][] = [
 			self::MERGE_WHEN_NOT_MATCHED,
 			$then,
-			$condition === NULL ? NULL : Condition::createAnd()->add($condition),
+			$condition === null ? null : Condition::createAnd()->add($condition),
 		];
 
 		return $this;
@@ -813,13 +813,13 @@ class Query implements Db\Sql
 	/**
 	 * @throws Exceptions\QueryException
 	 */
-	public function truncate(string|NULL $table = NULL): static
+	public function truncate(string|null $table = null): static
 	{
 		$this->resetQuery();
 
 		$this->queryType = self::QUERY_TRUNCATE;
 
-		if ($table !== NULL) {
+		if ($table !== null) {
 			$this->table($table);
 		}
 
@@ -833,20 +833,20 @@ class Query implements Db\Sql
 	public function with(
 		string $as,
 		string|Db\Sql $query,
-		string|NULL $suffix = NULL,
-		bool $notMaterialized = FALSE,
+		string|null $suffix = null,
+		bool $notMaterialized = false,
 	): static
 	{
 		$this->resetQuery();
 
 		$this->params[self::PARAM_WITH][self::WITH_QUERIES][$as] = $query;
 
-		if ($suffix !== NULL) {
+		if ($suffix !== null) {
 			$this->params[self::PARAM_WITH][self::WITH_QUERIES_SUFFIX][$as] = $suffix;
 		}
 
 		if ($notMaterialized) {
-			$this->params[self::PARAM_WITH][self::WITH_QUERIES_NOT_MATERIALIZED][$as] = TRUE;
+			$this->params[self::PARAM_WITH][self::WITH_QUERIES_NOT_MATERIALIZED][$as] = true;
 		}
 
 		return $this;
@@ -860,7 +860,7 @@ class Query implements Db\Sql
 	{
 		$this->resetQuery();
 
-		$this->params[self::PARAM_WITH][self::WITH_RECURSIVE] = TRUE;
+		$this->params[self::PARAM_WITH][self::WITH_RECURSIVE] = true;
 
 		return $this;
 	}
@@ -933,17 +933,17 @@ class Query implements Db\Sql
 
 	protected function resetQuery(): void
 	{
-		$this->sqlDefinition = NULL;
-		$this->dbQuery = NULL;
+		$this->sqlDefinition = null;
+		$this->dbQuery = null;
 	}
 
 
 	/**
 	 * @throws Exceptions\QueryException
 	 */
-	private function checkAlias(mixed $data, string|NULL $alias): void
+	private function checkAlias(mixed $data, string|null $alias): void
 	{
-		if ((($data instanceof Db\Sql)) && ($alias === NULL)) {
+		if ((($data instanceof Db\Sql)) && ($alias === null)) {
 			throw Exceptions\QueryException::sqlMustHaveAlias();
 		}
 	}
@@ -954,7 +954,7 @@ class Query implements Db\Sql
 	 */
 	public function getSqlDefinition(): Db\SqlDefinition
 	{
-		if ($this->sqlDefinition === NULL) {
+		if ($this->sqlDefinition === null) {
 			$this->sqlDefinition = $this->queryBuilder->createSqlDefinition($this->queryType, $this->params);
 		}
 
@@ -964,7 +964,7 @@ class Query implements Db\Sql
 
 	public function toDbQuery(): Db\Query
 	{
-		if ($this->dbQuery === NULL) {
+		if ($this->dbQuery === null) {
 			$this->dbQuery = Db\SqlDefinition::createQuery($this->getSqlDefinition());
 		}
 
@@ -980,11 +980,11 @@ class Query implements Db\Sql
 			$this->params[self::PARAM_ON_CONDITIONS][$alias] = clone $joinCondition;
 		}
 
-		if ($this->params[self::PARAM_WHERE] !== NULL) {
+		if ($this->params[self::PARAM_WHERE] !== null) {
 			$this->params[self::PARAM_WHERE] = clone $this->params[self::PARAM_WHERE];
 		}
 
-		if ($this->params[self::PARAM_HAVING] !== NULL) {
+		if ($this->params[self::PARAM_HAVING] !== null) {
 			$this->params[self::PARAM_HAVING] = clone $this->params[self::PARAM_HAVING];
 		}
 	}

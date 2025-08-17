@@ -8,14 +8,14 @@ interface ResultFactory
 {
 
 	/**
-	 * @param array<int, string>|NULL $dataTypesCache
+	 * @param array<int, string>|null $dataTypesCache
 	 */
 	function create(
 		PgSql\Result $queryResource,
 		Query $query,
 		RowFactory $rowFactory,
 		DataTypeParser $dataTypeParser,
-		array|NULL $dataTypesCache,
+		array|null $dataTypesCache,
 	): Result;
 
 }

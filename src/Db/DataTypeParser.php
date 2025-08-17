@@ -5,6 +5,6 @@ namespace Forrest79\PhPgSql\Db;
 interface DataTypeParser
 {
 
-	function parse(string $type, string|NULL $value): mixed;
+	function parse(string $type, string|null $value): mixed;
 
 }

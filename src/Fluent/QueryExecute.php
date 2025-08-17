@@ -8,10 +8,10 @@ class QueryExecute extends Query implements \Countable
 {
 	private Db\Connection $connection;
 
-	private Db\Result|NULL $result = NULL;
+	private Db\Result|null $result = null;
 
-	/** @template T of Db\Row @var \Closure(T): void|NULL */
-	private \Closure|NULL $rowFetchMutator = NULL;
+	/** @template T of Db\Row @var \Closure(T): void|null */
+	private \Closure|null $rowFetchMutator = null;
 
 	/** @var array<string, callable> */
 	private array $columnsFetchMutator = [];
@@ -32,7 +32,7 @@ class QueryExecute extends Query implements \Countable
 	{
 		$this->rowFetchMutator = $rowFetchMutator;
 
-		if ($this->result !== NULL) {
+		if ($this->result !== null) {
 			$this->result->setRowFetchMutator($rowFetchMutator);
 		}
 
@@ -47,7 +47,7 @@ class QueryExecute extends Query implements \Countable
 	{
 		$this->columnsFetchMutator = $columnsFetchMutator;
 
-		if ($this->result !== NULL) {
+		if ($this->result !== null) {
 			$this->result->setColumnsFetchMutator($columnsFetchMutator);
 		}
 
@@ -60,7 +60,7 @@ class QueryExecute extends Query implements \Countable
 	 */
 	protected function resetQuery(): void
 	{
-		if ($this->result !== NULL) {
+		if ($this->result !== null) {
 			throw Exceptions\QueryException::cantUpdateQueryAfterExecute();
 		}
 
@@ -76,10 +76,10 @@ class QueryExecute extends Query implements \Countable
 	 */
 	public function execute(): Db\Result
 	{
-		if ($this->result === NULL) {
+		if ($this->result === null) {
 			$this->result = $this->connection->query($this);
 
-			if ($this->rowFetchMutator !== NULL) {
+			if ($this->rowFetchMutator !== null) {
 				$this->result->setRowFetchMutator($this->rowFetchMutator);
 			}
 
@@ -105,13 +105,13 @@ class QueryExecute extends Query implements \Countable
 	}
 
 
-	private function releaseResult(bool $freeResult = TRUE): void
+	private function releaseResult(bool $freeResult = true): void
 	{
-		if ($freeResult && ($this->result !== NULL)) {
+		if ($freeResult && ($this->result !== null)) {
 			$this->free();
 		}
 
-		$this->result = NULL;
+		$this->result = null;
 	}
 
 
@@ -120,7 +120,7 @@ class QueryExecute extends Query implements \Countable
 	 */
 	public function free(): bool
 	{
-		if ($this->result === NULL) {
+		if ($this->result === null) {
 			throw Exceptions\QueryException::youMustExecuteQueryBeforeThat();
 		}
 
@@ -159,14 +159,14 @@ class QueryExecute extends Query implements \Countable
 	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	public function fetch(): Db\Row|NULL
+	public function fetch(): Db\Row|null
 	{
 		return $this->execute()->fetch();
 	}
 
 
 	/**
-	 * @return mixed value on success, NULL if no next record
+	 * @return mixed value on success, null if no next record
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
 	 * @throws Exceptions\QueryException
@@ -185,7 +185,7 @@ class QueryExecute extends Query implements \Countable
 	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	public function fetchAll(int|NULL $offset = NULL, int|NULL $limit = NULL): array
+	public function fetchAll(int|null $offset = null, int|null $limit = null): array
 	{
 		return $this->execute()->fetchAll($offset, $limit);
 	}
@@ -211,7 +211,7 @@ class QueryExecute extends Query implements \Countable
 	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
 	 */
-	public function fetchPairs(string|NULL $key = NULL, string|NULL $value = NULL): array
+	public function fetchPairs(string|null $key = null, string|null $value = null): array
 	{
 		return $this->execute()->fetchPairs($key, $value);
 	}
@@ -245,7 +245,7 @@ class QueryExecute extends Query implements \Countable
 
 	public function __clone()
 	{
-		$this->releaseResult(FALSE); // must be before parent clone - we need to allow resetQuery() first
+		$this->releaseResult(false); // must be before parent clone - we need to allow resetQuery() first
 
 		parent::__clone();
 	}

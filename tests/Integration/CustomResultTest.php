@@ -56,14 +56,14 @@ final class CustomResultTest extends TestCase
 
 
 			/**
-			 * @param array<int, string>|NULL $dataTypesCache
+			 * @param array<int, string>|null $dataTypesCache
 			 */
 			public function create(
 				PgSql\Result $queryResource,
 				Db\Query $query,
 				Db\RowFactory $rowFactory,
 				Db\DataTypeParser $dataTypeParser,
-				array|NULL $dataTypesCache,
+				array|null $dataTypesCache,
 			): Db\Result
 			{
 				$result = new class($queryResource, $query, $rowFactory, $dataTypeParser, $dataTypesCache) extends Db\Result {

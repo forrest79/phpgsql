@@ -19,19 +19,19 @@ class PreparedStatement extends PreparedStatementHelper
 	{
 		$statementName = $this->prepareStatement();
 
-		$startTime = $this->events->hasOnQuery() ? \hrtime(TRUE) : NULL;
+		$startTime = $this->events->hasOnQuery() ? \hrtime(true) : null;
 
 		$params = self::prepareParams($params);
 
 		$query = new Query($this->query, $params);
 
 		$resource = @\pg_execute($this->connection->getResource(), $statementName, $params); // intentionally @
-		if ($resource === FALSE) {
+		if ($resource === false) {
 			throw Exceptions\QueryException::preparedStatementQueryFailed($statementName, $query, $this->connection->getLastError());
 		}
 
-		if ($startTime !== NULL) {
-			$this->events->onQuery($query, \hrtime(TRUE) - $startTime, $statementName);
+		if ($startTime !== null) {
+			$this->events->onQuery($query, \hrtime(true) - $startTime, $statementName);
 		}
 
 		return $this->resultBuilder->build($resource, $query);
@@ -40,13 +40,13 @@ class PreparedStatement extends PreparedStatementHelper
 
 	private function prepareStatement(): string
 	{
-		if ($this->statementName === NULL) {
+		if ($this->statementName === null) {
 			$statementName = self::getNextStatementName();
 
 			$this->query = self::prepareQuery($this->query);
 
 			$resource = @\pg_prepare($this->connection->getResource(), $statementName, $this->query); // intentionally @
-			if ($resource === FALSE) {
+			if ($resource === false) {
 				throw Exceptions\QueryException::preparedStatementQueryFailed(
 					$statementName,
 					new Query($this->query, []),

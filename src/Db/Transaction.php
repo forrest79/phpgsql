@@ -17,9 +17,9 @@ class Transaction
 	 * @throws Exceptions\ConnectionException
 	 * @throws Exceptions\QueryException
 	 */
-	public function begin(string|NULL $mode = NULL): static
+	public function begin(string|null $mode = null): static
 	{
-		$this->connection->query('BEGIN' . ($mode === NULL ? '' : (' ' . $mode)));
+		$this->connection->query('BEGIN' . ($mode === null ? '' : (' ' . $mode)));
 
 		return $this;
 	}

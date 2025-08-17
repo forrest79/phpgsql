@@ -11,10 +11,10 @@ class Basic implements Db\DataTypeParser
 	/**
 	 * @throws Exceptions\DataTypeParserException
 	 */
-	public function parse(string $type, string|NULL $value): mixed
+	public function parse(string $type, string|null $value): mixed
 	{
-		if ($value === NULL) {
-			return NULL;
+		if ($value === null) {
+			return null;
 		}
 
 		if ($type[0] === '_') { // arrays
@@ -74,7 +74,7 @@ class Basic implements Db\DataTypeParser
 					return $this->parseTimestampTz($value);
 				case 'json':
 				case 'jsonb':
-					return \json_decode($value, TRUE);
+					return \json_decode($value, true);
 				case 'time':
 				case 'timetz':
 				case 'bpchar':
@@ -96,7 +96,7 @@ class Basic implements Db\DataTypeParser
 	/**
 	 * @return list<mixed>
 	 */
-	protected function parseArray(string $value, callable|NULL $typeFnc = NULL): array
+	protected function parseArray(string $value, callable|null $typeFnc = null): array
 	{
 		if ((\substr($value, 0, 1) !== '{') || (\substr($value, -1) !== '}')) {
 			throw Exceptions\DataTypeParserException::valueIsNotArray($value);
@@ -110,8 +110,8 @@ class Basic implements Db\DataTypeParser
 		$array = \explode(',', $value);
 		foreach ($array as $i => $item) {
 			if ($item === 'NULL') {
-				$array[$i] = NULL;
-			} else if ($typeFnc !== NULL) {
+				$array[$i] = null;
+			} else if ($typeFnc !== null) {
 				$array[$i] = $typeFnc($item);
 			}
 		}
@@ -133,7 +133,7 @@ class Basic implements Db\DataTypeParser
 	protected function parseDate(string $value): \DateTimeImmutable
 	{
 		$datetime = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $value . ' 00:00:00');
-		if ($datetime === FALSE) {
+		if ($datetime === false) {
 			throw Exceptions\DataTypeParserException::cantConvertDatetime('Y-m-d H:i:s', $value . ' 00:00:00');
 		}
 		return $datetime;
@@ -147,11 +147,11 @@ class Basic implements Db\DataTypeParser
 	{
 		$datetime = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $value);
 
-		if ($datetime === FALSE) {
+		if ($datetime === false) {
 			$datetime = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s.u', $value);
 		}
 
-		if ($datetime === FALSE) {
+		if ($datetime === false) {
 			throw Exceptions\DataTypeParserException::cantConvertDatetime('Y-m-d H:i:s/Y-m-d H:i:s.u', $value);
 		}
 
@@ -166,11 +166,11 @@ class Basic implements Db\DataTypeParser
 	{
 		$datetime = \DateTimeImmutable::createFromFormat('Y-m-d H:i:sP', $value);
 
-		if ($datetime === FALSE) {
+		if ($datetime === false) {
 			$datetime = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s.uP', $value);
 		}
 
-		if ($datetime === FALSE) {
+		if ($datetime === false) {
 			throw Exceptions\DataTypeParserException::cantConvertDatetime('Y-m-d H:i:sP/Y-m-d H:i:s.uP', $value);
 		}
 

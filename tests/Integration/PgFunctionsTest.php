@@ -92,7 +92,7 @@ final class PgFunctionsTest extends TestCase
 		Tester\Assert::true($success1);
 
 		$result2 = \pg_get_result($this->getConnectionResource());
-		Tester\Assert::true($result2 !== FALSE);
+		Tester\Assert::true($result2 !== false);
 		Tester\Assert::false(\pg_fetch_assoc($result2));
 		Tester\Assert::contains('ERROR:  syntax error at or near "SELECTx"', self::pgResultError($result2));
 
@@ -156,7 +156,7 @@ final class PgFunctionsTest extends TestCase
 	{
 		$result1 = \pg_query_params($this->getConnectionResource(), 'SELECT 1 AS clm1', []);
 
-		Tester\Assert::true($result1 !== FALSE);
+		Tester\Assert::true($result1 !== false);
 
 		// This is just for async
 		Tester\Assert::false(\pg_connection_busy($this->getConnectionResource())); // connection is not bussy after sync query
@@ -166,7 +166,7 @@ final class PgFunctionsTest extends TestCase
 
 		$result2 = \pg_query_params($this->getConnectionResource(), 'SELECT 1 AS clm1 WHERE 1 = $1', [1]);
 
-		Tester\Assert::true($result2 !== FALSE);
+		Tester\Assert::true($result2 !== false);
 		Tester\Assert::same(['clm1' => '1'], \pg_fetch_assoc($result2));
 
 		$result3 = @\pg_query_params($this->getConnectionResource(), 'SELECT 1 AS clm1 WHERE 1 = $1; SELECT 2;', [1]); // intentionally @ - `E_WARNING: pg_query_params(): Query failed: ERROR:  cannot insert multiple commands into a prepared statement`
@@ -179,7 +179,7 @@ final class PgFunctionsTest extends TestCase
 	{
 		$result1 = \pg_query($this->getConnectionResource(), 'SELECT 1 AS clm1');
 
-		Tester\Assert::true($result1 !== FALSE);
+		Tester\Assert::true($result1 !== false);
 
 		// This is just for async
 		Tester\Assert::false(\pg_connection_busy($this->getConnectionResource())); // connection is not bussy after sync query
@@ -190,7 +190,7 @@ final class PgFunctionsTest extends TestCase
 		$result2 = \pg_query($this->getConnectionResource(), 'SELECT 1 AS clm1; SELECT 2 AS clm2;');
 
 		Tester\Assert::false(\pg_get_result($this->getConnectionResource())); // there is no waiting result for sync query, even if there is more queries in `pg_query`
-		Tester\Assert::true($result2 !== FALSE);
+		Tester\Assert::true($result2 !== false);
 		Tester\Assert::same(['clm2' => '2'], \pg_fetch_assoc($result2)); // only last query is fetched
 	}
 
@@ -223,12 +223,12 @@ final class PgFunctionsTest extends TestCase
 
 		$result2 = \pg_get_result($this->getConnectionResource());
 
-		Tester\Assert::true($result2 !== FALSE);
+		Tester\Assert::true($result2 !== false);
 		Tester\Assert::same(['clm1' => '1'], \pg_fetch_assoc($result2));
 
 		$result3 = \pg_get_result($this->getConnectionResource());
 
-		Tester\Assert::true($result3 !== FALSE);
+		Tester\Assert::true($result3 !== false);
 		Tester\Assert::same(['clm2' => '2'], \pg_fetch_assoc($result3));
 
 		$result4 = \pg_get_result($this->getConnectionResource());
@@ -266,7 +266,7 @@ final class PgFunctionsTest extends TestCase
 		// strange, error is filled after first get result
 		Tester\Assert::contains('cannot insert multiple commands into a prepared statement', \pg_last_error($this->getConnectionResource()));
 
-		Tester\Assert::true($result3 !== FALSE);
+		Tester\Assert::true($result3 !== false);
 		Tester\Assert::false(\pg_fetch_assoc($result3));
 
 		$result4 = \pg_get_result($this->getConnectionResource());
@@ -300,7 +300,7 @@ final class PgFunctionsTest extends TestCase
 
 		Tester\Assert::same('', \pg_last_error($this->getConnectionResource()));
 
-		$result1 = @\pg_send_query($this->getConnectionResource(), 'SELECT 3 AS clm3'); // intentionally @ - `E_NOTICE: pg_send_query(): There are results on this connection. Call pg_get_result() until it returns FALSE`
+		$result1 = @\pg_send_query($this->getConnectionResource(), 'SELECT 3 AS clm3'); // intentionally @ - `E_NOTICE: pg_send_query(): There are results on this connection. Call pg_get_result() until it returns false`
 
 		Tester\Assert::false($result1);
 
@@ -309,7 +309,7 @@ final class PgFunctionsTest extends TestCase
 
 		$result2 = @\pg_query($this->getConnectionResource(), 'SELECT 3 AS clm3'); // intentionally @ - `E_NOTICE: pg_query(): Found results on this connection. Use pg_get_result() to get these results first`
 
-		Tester\Assert::true($result2 !== FALSE); // but sync SELECT is done
+		Tester\Assert::true($result2 !== false); // but sync SELECT is done
 
 		Tester\Assert::contains('', \pg_last_error($this->getConnectionResource()));
 
@@ -351,7 +351,7 @@ final class PgFunctionsTest extends TestCase
 		Tester\Assert::contains('ERROR:  cannot insert multiple commands into a prepared statement', \pg_last_error($this->getConnectionResource()));
 
 		$resource3 = \pg_prepare($this->getConnectionResource(), 'stm3', 'SELECT 1 AS clm1');
-		Tester\Assert::true($resource3 !== FALSE);
+		Tester\Assert::true($resource3 !== false);
 
 		$result1 = \pg_execute($this->getConnectionResource(), 'stm3', []);
 		Tester\Assert::same(['clm1' => '1'], \pg_fetch_assoc($result1));
@@ -386,7 +386,7 @@ final class PgFunctionsTest extends TestCase
 		Tester\Assert::same('', \pg_last_error($this->getConnectionResource())); // no error until pg_get_result()
 
 		$result7 = \pg_get_result($this->getConnectionResource());
-		Tester\Assert::true($result7 !== FALSE);
+		Tester\Assert::true($result7 !== false);
 		Tester\Assert::same(\PGSQL_FATAL_ERROR, \pg_result_status($result7));
 		Tester\Assert::contains('ERROR:  syntax error at or near "SELECTx"', \pg_last_error($this->getConnectionResource()));
 		Tester\Assert::contains('ERROR:  syntax error at or near "SELECTx"', self::pgResultError($result7));
@@ -394,7 +394,7 @@ final class PgFunctionsTest extends TestCase
 		\pg_send_prepare($this->getConnectionResource(), 'stm7', 'SELECT 1 AS clm1; SELECT 2 AS clm2');
 
 		$result8 = \pg_get_result($this->getConnectionResource());
-		Tester\Assert::true($result8 !== FALSE);
+		Tester\Assert::true($result8 !== false);
 		Tester\Assert::same(\PGSQL_FATAL_ERROR, \pg_result_status($result8));
 		Tester\Assert::contains('ERROR:  cannot insert multiple commands into a prepared statement', \pg_last_error($this->getConnectionResource()));
 		Tester\Assert::contains('ERROR:  cannot insert multiple commands into a prepared statement', self::pgResultError($result8));
@@ -402,7 +402,7 @@ final class PgFunctionsTest extends TestCase
 		\pg_send_prepare($this->getConnectionResource(), 'stm8', 'SELECT 1 AS clm1 WHERE 1 = $1');
 
 		$result9 = \pg_get_result($this->getConnectionResource());
-		Tester\Assert::true($result9 !== FALSE); // we must call this after pg_send_result()
+		Tester\Assert::true($result9 !== false); // we must call this after pg_send_result()
 
 		$success2 = \pg_send_execute($this->getConnectionResource(), 'stm8', [1]);
 		Tester\Assert::true($success2);
@@ -433,10 +433,10 @@ final class PgFunctionsTest extends TestCase
 	}
 
 
-	private static function pgResultError(PgSql\Result|FALSE $result): string
+	private static function pgResultError(PgSql\Result|false $result): string
 	{
 		$error = \pg_result_error($result);
-		if ($error === FALSE) {
+		if ($error === false) {
 			throw new \RuntimeException('pg_result_error contains no error');
 		}
 		return $error;

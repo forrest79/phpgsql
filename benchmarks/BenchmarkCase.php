@@ -55,13 +55,13 @@ abstract class BenchmarkCase
 	 */
 	private function runBenchmark(callable $method, string $title, int $repeat): void
 	{
-		$start = \hrtime(TRUE);
+		$start = \hrtime(true);
 
 		for ($i = 0; $i < $repeat; $i++) {
 			$method();
 		}
 
-		echo \sprintf('| %-80s | %012.15f | %11d |', \substr($title, 0, 80), (\hrtime(TRUE) - $start) / 1000000 / $repeat, $repeat) . \PHP_EOL;
+		echo \sprintf('| %-80s | %012.15f | %11d |', \substr($title, 0, 80), (\hrtime(true) - $start) / 1000000 / $repeat, $repeat) . \PHP_EOL;
 	}
 
 
@@ -75,10 +75,10 @@ abstract class BenchmarkCase
 	}
 
 
-	private static function getAnotation(string $docComment, string $name): string|NULL
+	private static function getAnotation(string $docComment, string $name): string|null
 	{
 		if ((int) \preg_match(\sprintf('#[\\s*]@%s[\\s*](.+)#', \preg_quote($name, '#')), $docComment, $m) === 0) {
-			return NULL;
+			return null;
 		}
 		return \trim($m[1]);
 	}

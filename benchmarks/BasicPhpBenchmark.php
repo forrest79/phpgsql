@@ -10,7 +10,7 @@ final class BasicPhpBenchmark extends BenchmarkCase
 {
 	private const CONDITION = 1;
 	private const ARRAY = [1];
-	private const NULL_ARRAY = NULL;
+	private const NULL_ARRAY = null;
 
 	protected int $defaultRepeat = 1000000;
 
@@ -219,7 +219,7 @@ final class BasicPhpBenchmark extends BenchmarkCase
 	 */
 	public function benchmarkHrtimeMs(): void
 	{
-		\hrtime(TRUE);
+		\hrtime(true);
 	}
 
 
@@ -228,12 +228,12 @@ final class BasicPhpBenchmark extends BenchmarkCase
 	 */
 	public function benchmarkTernaryWithArrayAccess(): void
 	{
-		\rand() === self::CONDITION ? NULL : self::ARRAY[0];
+		\rand() === self::CONDITION ? null : self::ARRAY[0];
 	}
 
 
 	/**
-	 * @title NULL ternary operator with array access
+	 * @title null ternary operator with array access
 	 */
 	public function benchmarkNullTernaryWithArrayAccess(): void
 	{
@@ -242,7 +242,7 @@ final class BasicPhpBenchmark extends BenchmarkCase
 
 
 	/**
-	 * @title NULL ternary operator with array access on NULL array
+	 * @title null ternary operator with array access on null array
 	 */
 	public function benchmarkNullTernaryWithNullArrayAccess(): void
 	{
@@ -356,7 +356,7 @@ final class BasicPhpBenchmark extends BenchmarkCase
 	 */
 	public function benchmarkDetectNotSetItemsInArray(): void
 	{
-		$keys = ['testKey1' => NULL, 'testKey2' => ''];
+		$keys = ['testKey1' => null, 'testKey2' => ''];
 		\array_key_exists('testKey1', $keys);
 		\array_key_exists('testKey2', $keys);
 	}
@@ -367,7 +367,7 @@ final class BasicPhpBenchmark extends BenchmarkCase
 	 */
 	public function benchmarkDetectNotSetItemsInArrayNoItems(): void
 	{
-		$keys = ['testKey1' => NULL, 'testKey2' => ''];
+		$keys = ['testKey1' => null, 'testKey2' => ''];
 		isset($keys['testKey']) || \array_key_exists('testKey', $keys);
 		isset($keys['testKey']) || \array_key_exists('testKey', $keys);
 	}
@@ -378,18 +378,18 @@ final class BasicPhpBenchmark extends BenchmarkCase
 	 */
 	public function benchmarkDetectNotSetItemsInArrayNullsAndNoItems(): void
 	{
-		$keys = ['testKey1' => NULL, 'testKey2' => ''];
+		$keys = ['testKey1' => null, 'testKey2' => ''];
 		isset($keys['testKey1']) || \array_key_exists('testKey1', $keys);
 		isset($keys['testKey2']) || \array_key_exists('testKey2', $keys);
 	}
 
 
 	/**
-	 * @title string detect not set items in array (isset || array_key_exists) (NULL items)
+	 * @title string detect not set items in array (isset || array_key_exists) (null items)
 	 */
 	public function benchmarkDetectNotSetItemsInArrayNulls(): void
 	{
-		$keys = ['testKey1' => NULL, 'testKey2' => ''];
+		$keys = ['testKey1' => null, 'testKey2' => ''];
 		isset($keys['testKey1']) || \array_key_exists('testKey1', $keys);
 		isset($keys['testKey1']) || \array_key_exists('testKey1', $keys);
 	}
@@ -400,7 +400,7 @@ final class BasicPhpBenchmark extends BenchmarkCase
 	 */
 	public function benchmarkDetectNotSetItemsInArrayAll(): void
 	{
-		$keys = ['testKey1' => NULL, 'testKey2' => ''];
+		$keys = ['testKey1' => null, 'testKey2' => ''];
 		isset($keys['testKey2']) || \array_key_exists('testKey2', $keys);
 		isset($keys['testKey2']) || \array_key_exists('testKey2', $keys);
 	}

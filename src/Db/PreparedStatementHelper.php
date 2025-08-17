@@ -14,7 +14,7 @@ abstract class PreparedStatementHelper
 
 	protected string $query;
 
-	protected string|NULL $statementName = NULL;
+	protected string|null $statementName = null;
 
 
 	public function __construct(Connection $connection, ResultBuilder $resultBuilder, Events $events, string $query)

@@ -40,7 +40,7 @@ $row = $fluent
   ->where('id', 1)
   ->fetch();
 
-dump($row); // (Row) ['id' => 1, 'nick' => 'Bob', 'inserted_datetime' => '2020-01-01 09:00:00', 'active' => TRUE, 'age' => 45, 'height_cm' => 178.2, 'phones' => [200300, 487412]]
+dump($row); // (Row) ['id' => 1, 'nick' => 'Bob', 'inserted_datetime' => '2020-01-01 09:00:00', 'active' => true, 'age' => 45, 'height_cm' => 178.2, 'phones' => [200300, 487412]]
 ```
 
 But you don't want to do this so complicatedly. Use `Fluent\Connection` to create `QueryExecute` easily:
@@ -64,10 +64,10 @@ You can start a query with whatever method you want. Methods only set query prop
 
 Every query is `SELECT` at first, until you call `->insert(...)`, `->update(...)`, `->delete(...)` or `->truncate(...)`, which change query type to appropriate SQL command (you can set type more than once in one query, the last is used - except `INSERT` - `SELECT`). So you can prepare you query in a common way and at the end, you can decide if you want to `SELECT` or `DELETE` data or whatsoever. If you call some method more than once, data is merged, for example, this `->select(['column1'])->select(['column2'])` is the same as `->select(['column1', 'column2'])`. Conditions are connected with the logic `AND`.
 
-- `table($table, ?string $alias = NULL)` - creates `Query` object with defined main table - this table can be used for selects, updates, inserts, deletes or truncate - you don't need to use concrete method to define table. `$table` can be simple `string` or other `Query` or `Db\Sql`.
+- `table($table, ?string $alias = null)` - creates `Query` object with defined main table - this table can be used for selects, updates, inserts, deletes or truncate - you don't need to use concrete method to define table. `$table` can be simple `string` or other `Query` or `Db\Sql`.
 
 
-- `select(array $columns)` - defines columns (array `key => column`) to `SELECT`. String array key is column alias. Column can be `string`, `int`, `bool`, `Query`, `Db\Sql` or `NULL`
+- `select(array $columns)` - defines columns (array `key => column`) to `SELECT`. String array key is column alias. Column can be `string`, `int`, `bool`, `Query`, `Db\Sql` or `null`
 
 
 - `distinct(): Query` - creates `SELECT DISCTINCT`
@@ -76,13 +76,13 @@ Every query is `SELECT` at first, until you call `->insert(...)`, `->update(...)
 - `distinctOn(array $on): Query` - creates `SELECT DISCTINCT ON(...)`. `$on` is a list of strings.
 
 
-- `from($from, ?string $alias = NULL)` - defines table for `SELECT` query. `$from` can be simple `string` or other `Query` or `Db\Sql`.
+- `from($from, ?string $alias = null)` - defines table for `SELECT` query. `$from` can be simple `string` or other `Query` or `Db\Sql`.
 
 
-- `join($join, ?string $alias = NULL, $onCondition = NULL)` (or `innerJoin(...)`/`leftJoin(...)`/`leftOuterJoin(...)`/`rightJoin(...)`/`rightOuterJoin(...)`/`fullJoin(...)`/`fullOuterJoin(...)`) - joins table or query. You must provide alias if you want to add more conditions to `ON`. `$join` can be simple string or other `Query` or `Db\Sql`. `$onCondition` can be simple `string` or other `Condition` or `Db\Sql`. `Db\Sql` can be used for some complex expression, where you need to use `?` and parameters. 
+- `join($join, ?string $alias = null, $onCondition = null)` (or `innerJoin(...)`/`leftJoin(...)`/`leftOuterJoin(...)`/`rightJoin(...)`/`rightOuterJoin(...)`/`fullJoin(...)`/`fullOuterJoin(...)`) - joins table or query. You must provide alias if you want to add more conditions to `ON`. `$join` can be simple string or other `Query` or `Db\Sql`. `$onCondition` can be simple `string` or other `Condition` or `Db\Sql`. `Db\Sql` can be used for some complex expression, where you need to use `?` and parameters. 
 
 
-- `crossJoin($join, ?string $alias = NULL)` - defines cross-join. `$join` can be simple string or other `Query` or `Db\Sql`. There is no `ON` condition.
+- `crossJoin($join, ?string $alias = null)` - defines cross-join. `$join` can be simple string or other `Query` or `Db\Sql`. There is no `ON` condition.
 
 
 - `on(string $alias, $condition, ...$params)` - defines new `ON` condition for joins. More `ON` conditions for one join is connected with `AND`. If `$condition` is `string`, you can use `?` and parameters in `$params`. Otherwise `$condition` can be `Condition` or `Db\Sql`.
@@ -91,10 +91,10 @@ Every query is `SELECT` at first, until you call `->insert(...)`, `->update(...)
 - `lateral(string $alias)` - make subquery lateral.
 
 
-- `where($condition, ...$params)` (or `having(...)`) - defines `WHERE` or `HAVING` conditions. All `where()` or `having()` conditions are connected with logic `AND`. If you want to create complex conditions use `whereAnd/Or()` and `havingAnd/Or()` methods returning `Condition` object. You can provide condition as a `string`. When `string` condition is used, you can add `$parameters`. When in the condition is no `?` and only one parameter is used, comparison is made between condition and parameter. If parameter is scalar, simple `=` is used, for an `array` is used `IN` operator, the same applies ale for `Query` (`Fluent\Query` or `Db\Sql`). And for `NULL` is used `IS` operator. This could be handy when you want to use more parameter types in one condition. For example, you can provide `int` and `=` will be use and if you provide `array<int>` - `IN` operator will be used and the query will be working for the both parameter types. More complex conditions can be written manually as a `string` with `?` for parameters. Or you can use `Condition` or `Db\Sql` as condition. In this case, `$params` must be blank.
+- `where($condition, ...$params)` (or `having(...)`) - defines `WHERE` or `HAVING` conditions. All `where()` or `having()` conditions are connected with logic `AND`. If you want to create complex conditions use `whereAnd/Or()` and `havingAnd/Or()` methods returning `Condition` object. You can provide condition as a `string`. When `string` condition is used, you can add `$parameters`. When in the condition is no `?` and only one parameter is used, comparison is made between condition and parameter. If parameter is scalar, simple `=` is used, for an `array` is used `IN` operator, the same applies ale for `Query` (`Fluent\Query` or `Db\Sql`). And for `null` is used `IS` operator. This could be handy when you want to use more parameter types in one condition. For example, you can provide `int` and `=` will be use and if you provide `array<int>` - `IN` operator will be used and the query will be working for the both parameter types. More complex conditions can be written manually as a `string` with `?` for parameters. Or you can use `Condition` or `Db\Sql` as condition. In this case, `$params` must be blank.
 
 
-- `whereIf(bool $ifCondition, $condition, ...$params)` - the same as classics `where` method, but this condition is omitted when `$ifCondition` is `FALSE`.
+- `whereIf(bool $ifCondition, $condition, ...$params)` - the same as classics `where` method, but this condition is omitted when `$ifCondition` is `false`.
 
 
 - `whereAnd(array $conditions = []): Condition` (or `whereOr(...)` / `havingAnd(...)` / `havingOr()`) - with these methods, you can generate condition groups. Ale provided conditions are connected with logic `AND` for `whereAnd()` and `havingAnd()` and with logic `OR` for `whereOr()` and `havingOr()`. All these methods return `Condition` object (more about this later). `$conditions` items can be simple `string`, another `array` (this is a little bit magic - this works as `where()`/`having()` method - first item in this `array` is conditions and next items are parameters), `Condition` or `Db\Sql`. 
@@ -115,7 +115,7 @@ Every query is `SELECT` at first, until you call `->insert(...)`, `->update(...)
 - `union($query)` (or `` / `` / ``) - connects two queries with `UNION`, `UNION ALL`, `INTERSECT` or `EXCEPT`. Query can be simple `string,` another `Query` or `Db\Sql`.
 
 
-- `insert(?string $into = NULL, string $alias = NULL, ?array $columns = [])` - sets query as `INSERT`. When the main table is not provided yet, you can set it or rewrite it with the `$into` parameter. If you want use `INSERT ... SELECT ...` you can provide column names in `$columns` parameter (only if column names for INSERT and SELECT differs).
+- `insert(?string $into = null, string $alias = null, ?array $columns = [])` - sets query as `INSERT`. When the main table is not provided yet, you can set it or rewrite it with the `$into` parameter. If you want use `INSERT ... SELECT ...` you can provide column names in `$columns` parameter (only if column names for INSERT and SELECT differs).
 
 
 - `values(array $data)` - sets data for insertion. Key is column name and value is inserted value. Value can be scalar or `Db\Sql`. Method can be called multiple times and provided data is merged.
@@ -124,46 +124,46 @@ Every query is `SELECT` at first, until you call `->insert(...)`, `->update(...)
 - `rows(array $rows)` - this method can be used to insert multiple rows in one query. `$rows` is an `array` of arrays. Each array is one row (the same as for the `values()` method). All rows must have the same columns. Method can be called multiple and all rows are merged.
 
 
-- `onConflict($columnsOrConstraint = NULL, $where = NULL)` - this method can start `ON CONFLICT` statement for `INSERT`. When `array` is used as the `$columnsOrConstraint`, the list of columns is used, when `string` is used, constraint is used. This parameter can be completely omitted. Where condition `$where` can be defined only for the list of columns and can be simple `string` or other `Condition` or `Db\Sql`. `Db\Sql` can be used for some complex expression, where you need to use `?` and parameters.
+- `onConflict($columnsOrConstraint = null, $where = null)` - this method can start `ON CONFLICT` statement for `INSERT`. When `array` is used as the `$columnsOrConstraint`, the list of columns is used, when `string` is used, constraint is used. This parameter can be completely omitted. Where condition `$where` can be defined only for the list of columns and can be simple `string` or other `Condition` or `Db\Sql`. `Db\Sql` can be used for some complex expression, where you need to use `?` and parameters.
 
 
-- `doUpdate(array $set, $where = NULL)` - if conflict is detected, `UPDATE` is made instead of `INSERT`. Items od array `$set` can be defined in three ways. When only a `string` value is used (or key is an integer), this value is interpreted as `UPDATE SET value = EXCLUDED.value`. Only strings can be used without a key. When the array item has a `string` key, then `string` or `Db\Sql` value can be used, and now you must define a concrete statement to set (i.e., `['column' => 'EXCLUDED.column || source_table.column2']` is interpreted as `UPDATE SET column = EXCLUDED.column || source_table.column2`). `Db\Sql` can be used if you need to use parameters.
+- `doUpdate(array $set, $where = null)` - if conflict is detected, `UPDATE` is made instead of `INSERT`. Items od array `$set` can be defined in three ways. When only a `string` value is used (or key is an integer), this value is interpreted as `UPDATE SET value = EXCLUDED.value`. Only strings can be used without a key. When the array item has a `string` key, then `string` or `Db\Sql` value can be used, and now you must define a concrete statement to set (i.e., `['column' => 'EXCLUDED.column || source_table.column2']` is interpreted as `UPDATE SET column = EXCLUDED.column || source_table.column2`). `Db\Sql` can be used if you need to use parameters.
 
 
 - `doNothing()` - if conflict is detected, nothing is done.
 
 
-- `update(?string $table = NULL, ?string $alias = NULL)` - set query for update. If the main table is not set, you must set it or rewrite with the `$table` parameter. `$alias` can be provided, when you want to use `UPDATE ... FROM ...`.
+- `update(?string $table = null, ?string $alias = null)` - set query for update. If the main table is not set, you must set it or rewrite with the `$table` parameter. `$alias` can be provided, when you want to use `UPDATE ... FROM ...`.
 
 
 - `set(array $data)` - sets data to update. Rules for the data are the same as for the `values()` method.
 
 
-- `delete(?string $from = NULL, ?string $alias = NULL)` - set query for deletion. If the main table is not set, you must provide/rewrite it with `$from` parameter.
+- `delete(?string $from = null, ?string $alias = null)` - set query for deletion. If the main table is not set, you must provide/rewrite it with `$from` parameter.
 
 
 - `returning(array $returning)` - generates `RETURNING` statement for `INSERT`, `UPDATE` or `DELETE`. Syntax for `$returning` is the same as for the `select()` method.
 
 
-- `merge(?string $into = NULL, ?string $alias = NULL)` - set query for merge. If the main table is not set, you must set it or rewrite with the `$into` parameter. `$alias` can be provided.
+- `merge(?string $into = null, ?string $alias = null)` - set query for merge. If the main table is not set, you must set it or rewrite with the `$into` parameter. `$alias` can be provided.
 
 
-- `using($dataSource, ?string $alias = NULL, $onCondition = NULL)` - set a data source for a merge command. `$dataSource` can be simple string, `Db\Sql\Query` or `Fluent\Query`. `$onCondition` can be simple `string` or other `Condition` or `Db\Sql`. `Db\Sql` can be used for some complex expression, where you need to use `?` and parameters. On condition can be added or extended with the `on()` method.
+- `using($dataSource, ?string $alias = null, $onCondition = null)` - set a data source for a merge command. `$dataSource` can be simple string, `Db\Sql\Query` or `Fluent\Query`. `$onCondition` can be simple `string` or other `Condition` or `Db\Sql`. `Db\Sql` can be used for some complex expression, where you need to use `?` and parameters. On condition can be added or extended with the `on()` method.
 
 
-- `whenMatched($then, $onCondition = NULL)` - add matched branch to a merge command. `$then` is simple string or `Db\Sql` and `$onCondition` can be simple `string` or other `Condition` or `Db\Sql`. `Db\Sql` can be used for some complex expression, where you need to use `?` and parameters.
+- `whenMatched($then, $onCondition = null)` - add matched branch to a merge command. `$then` is simple string or `Db\Sql` and `$onCondition` can be simple `string` or other `Condition` or `Db\Sql`. `Db\Sql` can be used for some complex expression, where you need to use `?` and parameters.
 
 
-- `whenNotMatched($then, $onCondition = NULL)` - add not matched branch to a merge command. `$then` is simple string or `Db\Sql` and `$onCondition` can be simple `string` or other `Condition` or `Db\Sql`. `Db\Sql` can be used for some complex expression, where you need to use `?` and parameters.
+- `whenNotMatched($then, $onCondition = null)` - add not matched branch to a merge command. `$then` is simple string or `Db\Sql` and `$onCondition` can be simple `string` or other `Condition` or `Db\Sql`. `Db\Sql` can be used for some complex expression, where you need to use `?` and parameters.
 
 
-- `truncate(?string $table = NULL)` - truncates table. If the main table is not set, you must provide/rewrite it with the `$table` parameter.
+- `truncate(?string $table = null)` - truncates table. If the main table is not set, you must provide/rewrite it with the `$table` parameter.
 
 
 - `prefix(string $queryPrefix/$querySuffix, ...$params)` (or `suffix(...)`) - with this, you can define universal query prefix or suffix. This is useful for actually not supported fluent syntax. With prefix, you can create CTE (Common Table Expression) queries. With suffix, you can create `SELECT ... FOR UPDATE` for example. Definition can be simple `string` or you can use `?` and parameters.
 
 
-- `with(string $as, $query, ?string $suffix = NULL, bool $notMaterialized = FALSE)` - prepare CTE (Common Table Expression) query. `$as` is query alias/name, `$query` can be simple string, `Db\Sql\Query` or `Fluent\Query`, `$suffix` is optional definition like `SEARCH BREADTH FIRST BY ...` and `$notMaterialized` can set `WITH` branch as not materialized (materialized is default). `with()` can be called multiple times. When you use it, the query will always start with `WITH ...`.   
+- `with(string $as, $query, ?string $suffix = null, bool $notMaterialized = false)` - prepare CTE (Common Table Expression) query. `$as` is query alias/name, `$query` can be simple string, `Db\Sql\Query` or `Fluent\Query`, `$suffix` is optional definition like `SEARCH BREADTH FIRST BY ...` and `$notMaterialized` can set `WITH` branch as not materialized (materialized is default). `with()` can be called multiple times. When you use it, the query will always start with `WITH ...`.   
 
   
 - `recursive()` - defines `WITH` query recursive.
@@ -178,13 +178,13 @@ $newQuery = clone $query;
 `Query` internally saves own state for the `QueryBuilder`. You can check, if some internal state is already set with method `has(...)`. Use `Query::PARAM_*` constants as a parameter. You can also reset some settings with `reset(...)` method.
 
 ```php
-$query = $connection->createQuery()->where('column', TRUE);
+$query = $connection->createQuery()->where('column', true);
 
-dump($query->has($query::PARAM_WHERE)); // (bool) TRUE
+dump($query->has($query::PARAM_WHERE)); // (bool) true
 
 $query->reset($query::PARAM_WHERE);
 
-dump($query->has($query::PARAM_WHERE)); // (bool) FALSE
+dump($query->has($query::PARAM_WHERE)); // (bool) false
 ```
 
 Every table definition command (like `->table(...)`, `->from(...)`, joins, update table, ...) has table alias definition - it's optional, but for some places, you must define alias (also for joins, if you want to use another `on()` method, you must target `ON` condition to the concrete table with the table alias).
@@ -264,7 +264,7 @@ $param = [1, 2];
 
 $condition = Forrest79\PhPgSql\Fluent\Condition::createAnd([
   'column1 = 1',
-  ['column2', TRUE],
+  ['column2', true],
   ['column3', $param],
   ['column4 < ? OR column5 != ?', 5, 10],
 ]);
@@ -274,9 +274,9 @@ $condition->add('column4 < ? OR column5 != ?', 5, 10);
 $condition[] = ['column1', 71]; // column1 = 1
 
 $condition->addOrBranch([
-    'column != TRUE'
+    'column != true'
 ])
-  ->add('column2', TRUE)
+  ->add('column2', true)
   ->parent() // this return original condition object
     ->add('column3 < 1');
 ```
@@ -303,37 +303,37 @@ $query = $connection
 dump($query); // (Query) SELECT * FROM users WHERE (column = $1) OR (column2 IN ($2, $3)) OR ((column IN (SELECT 1)) AND (column2 = ANY(SELECT 2))) OR (column3 IS NOT NULL) [Params: (array) [1, 2, 3]]
 ```
 
-To simplify a query definition, you can use a special version of `where()` method - the `whereIf()` method. This where is used in the query only if the first `bool` parameter is `TRUE`. For example, instead of this:
+To simplify a query definition, you can use a special version of `where()` method - the `whereIf()` method. This where is used in the query only if the first `bool` parameter is `true`. For example, instead of this:
 
 ```php
-$listItems = function (string|NULL $filterName) use ($connection): Forrest79\PhPgSql\Fluent\Query
+$listItems = function (string|null $filterName) use ($connection): Forrest79\PhPgSql\Fluent\Query
 {
   $query = $connection
     ->createQuery()
     ->table('users')
     ->select(['*']);
   
-  if ($filterName !== NULL) {
+  if ($filterName !== null) {
     $query->where('name ILIKE ?', $filterName);
   }
   
   return $query;
 };
 
-dump($listItems(NULL)); // (Query) SELECT * FROM users
+dump($listItems(null)); // (Query) SELECT * FROM users
 ```
 
 You can write this:
 
 
 ```php
-$listItems = function (string|NULL $filterName) use ($connection): Forrest79\PhPgSql\Fluent\Query
+$listItems = function (string|null $filterName) use ($connection): Forrest79\PhPgSql\Fluent\Query
 {
   return $connection
     ->createQuery()
     ->table('users')
     ->select(['*'])
-    ->whereIf($filterName !== NULL, 'name ILIKE ?', $filterName);
+    ->whereIf($filterName !== null, 'name ILIKE ?', $filterName);
 };
 
 dump($listItems('forrest79')); // (Query) SELECT * FROM users WHERE name ILIKE $1 [Params: (array) ['forrest79']]
@@ -350,13 +350,13 @@ $query = $connection
   ->values([
     'nick' => 'James',
     'inserted_datetime' => Forrest79\PhPgSql\Db\Sql\Literal::create('now()'),
-    'active' => TRUE,
+    'active' => true,
     'age' => 37,
-    'height_cm' => NULL,
+    'height_cm' => null,
     'phones' => Forrest79\PhPgSql\Db\Helper::createStringPgArray(['732123456', '736987654']),
   ]);
  
-dump($query); // (Query) INSERT INTO users (nick, inserted_datetime, active, age, height_cm, phones) VALUES($1, now(), $2, $3, $4, $5) [Params: (array) ['James', 't', 37, (NULL), '{\"732123456\",\"736987654\"}']]
+dump($query); // (Query) INSERT INTO users (nick, inserted_datetime, active, age, height_cm, phones) VALUES($1, now(), $2, $3, $4, $5) [Params: (array) ['James', 't', 37, (null), '{\"732123456\",\"736987654\"}']]
 
 $result = $query->execute();
 
@@ -601,11 +601,11 @@ $query = $connection
   ->update('users', 'u')
   ->set([
     'nick' => Forrest79\PhPgSql\Db\Sql\Literal::create('u.nick || \' - \' || d.name'),
-    'age' => NULL,
+    'age' => null,
   ])
   ->from('departments', 'd');
 
-dump($query); // (Query) UPDATE users AS u SET nick = u.nick || ' - ' || d.name, age = $1 FROM departments AS d [Params: (array) [(NULL)]]
+dump($query); // (Query) UPDATE users AS u SET nick = u.nick || ' - ' || d.name, age = $1 FROM departments AS d [Params: (array) [(null)]]
 
 $result = $query->execute();
 
@@ -765,7 +765,7 @@ table($updatedRows);
 ---------------------------------
 | nick           | active       |
 |===============================|
-| (string) 'Bob' | (bool) FALSE |
+| (string) 'Bob' | (bool) false |
 ---------------------------------
 */
 
@@ -786,12 +786,12 @@ table($insertedRows);
 -------------------------------------
 | nick                | active      |
 |===================================|
-| (string) 'Margaret' | (bool) TRUE |
+| (string) 'Margaret' | (bool) true |
 -------------------------------------
 */
 ```
 
-> IMPORTANT: with this trick, when `$1`, `$2`, ... is used instead of `?`, `?`, ... we must use bool parameters as `t` and `f`. Automatic bool parameters replacing remove `?` from the query and bool parameter from the parameter list and put string `'TRUE'` or `'FALSE'` right into the query. When `$1` is used, bool parameter is still removed from the list, but the query is untouched, so there will be fewer parameters than `$1`, `$2`, ... in the query. 
+> IMPORTANT: with this trick, when `$1`, `$2`, ... is used instead of `?`, `?`, ... we must use bool parameters as `t` and `f`. Automatic bool parameters replacing remove `?` from the query and bool parameter from the parameter list and put string `'true'` or `'false'` right into the query. When `$1` is used, bool parameter is still removed from the list, but the query is untouched, so there will be fewer parameters than `$1`, `$2`, ... in the query. 
 
 ### Truncate
 
@@ -824,7 +824,7 @@ You can use `WITH` with a simple string query, or defined it with `Db\Sql\Query`
 $query = $connection
   ->createQuery()
   ->with('active_users', 'SELECT id, nick, age, height_cm FROM users WHERE active = TRUE')
-  ->with('active_departments', Forrest79\PhPgSql\Db\Sql\Query::create('SELECT id FROM departments WHERE active = ?', TRUE))
+  ->with('active_departments', Forrest79\PhPgSql\Db\Sql\Query::create('SELECT id FROM departments WHERE active = ?', true))
   ->select(['au.id', 'au.nick', 'au.age', 'au.height_cm'])
   ->from('active_users', 'au')
   ->join('user_departments', 'ud', 'ud.department_id = au.id')
@@ -872,7 +872,7 @@ Or not materialized:
 ```php
 $query = $connection
   ->createQuery()
-  ->with('w', 'SELECT * FROM big_table', NULL, TRUE)
+  ->with('w', 'SELECT * FROM big_table', null, true)
   ->select(['*'])
   ->from('w', 'w1')
   ->join('w', 'w2', 'w1.key = w2.ref')
@@ -971,8 +971,8 @@ class Query extends Forrest79\PhPgSql\Fluent\QueryExecute
 $query1 = (new Query(new Forrest79\PhPgSql\Fluent\QueryBuilder(), $connection))->from('users');
 $query2 = clone $query1;
 
-dump($query1->where('id', 1)->exists()); // (bool) TRUE
-dump($query2->where('id', 10)->exists()); // (bool) FALSE
+dump($query1->where('id', 1)->exists()); // (bool) true
+dump($query2->where('id', 10)->exists()); // (bool) false
 ```
 
 Of course, you want to use your own query right from the connection. So overwrite `Connection::createQuery()` method and return instance of your own query here.

@@ -32,7 +32,7 @@ final class CollectingResultsTest extends TestCase
 		$this->connection->query('INSERT INTO test(name) VALUES(?)', 'phpgsql');
 
 		$row = $this->connection->query('SELECT id, name FROM test')->fetch();
-		\assert($row !== NULL);
+		\assert($row !== null);
 
 		Tester\Assert::same('phpgsql', $row->name);
 
@@ -52,14 +52,14 @@ final class CollectingResultsTest extends TestCase
 		// Try also parse some non-existing column
 		Tester\Assert::exception(static function () use ($resultSelect): void {
 			$resultSelect->parseColumnValue('non_existing_column', 'someValue');
-		}, Db\Exceptions\ResultException::class, NULL, Db\Exceptions\ResultException::NO_COLUMN);
+		}, Db\Exceptions\ResultException::class, null, Db\Exceptions\ResultException::NO_COLUMN);
 
 		$querySelect = $resultSelect->getQuery();
 
 		Tester\Assert::same('SELECT id, name FROM test', $querySelect->sql);
 		Tester\Assert::same([], $querySelect->params);
 
-		Tester\Assert::equal(['id' => FALSE, 'name' => TRUE], $resultSelect->getParsedColumns());
+		Tester\Assert::equal(['id' => false, 'name' => true], $resultSelect->getParsedColumns());
 	}
 
 }

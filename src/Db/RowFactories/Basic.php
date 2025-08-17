@@ -8,7 +8,7 @@ class Basic implements Db\RowFactory
 {
 
 	/**
-	 * @param array<string, string|NULL> $rawValues
+	 * @param array<string, string|null> $rawValues
 	 */
 	public function create(Db\ColumnValueParser $columnValueParser, array $rawValues): Db\Row
 	{
