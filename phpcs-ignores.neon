@@ -594,7 +594,13 @@ ignoreErrors:
 		path: tests/Unit/QueryTest.php
 
 	-
-		sniff: PSR1.Files.SideEffects.FoundWithSymbols
-		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 5 and the first side effect is on line 4.'
+		sniff: SlevomatCodingStandard.TypeHints.DeclareStrictTypes.IncorrectWhitespaceAfterDeclare
+		message: 'Expected 1 line after declare statement, found 2.'
+		count: 1
+		path: tests/prepare-db-config.php
+
+	-
+		sniff: Squiz.Functions.GlobalFunction.Found
+		message: 'Consider putting global function "phpgsqlConnectionConfig" in a static class'
 		count: 1
 		path: tests/prepare-db-config.php

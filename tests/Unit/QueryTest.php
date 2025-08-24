@@ -174,6 +174,7 @@ final class QueryTest extends Tests\TestCase
 
 			public function __construct()
 			{
+				// Intentionally not call parent constructor
 			}
 
 

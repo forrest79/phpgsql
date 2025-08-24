@@ -11,4 +11,4 @@ require $loader;
 
 Tester\Environment::setup();
 
-require __DIR__ . '/prepare-db-config.php';
+require_once __DIR__ . '/prepare-db-config.php';

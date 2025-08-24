@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
-if (!\defined('PHPGSQL_CONNECTION_CONFIG')) {
+
+function phpgsqlConnectionConfig(): string
+{
 	$envConfig = \getenv('PHPGSQL_CONNECTION_CONFIG');
-	\define(
-		'PHPGSQL_CONNECTION_CONFIG',
-		$envConfig === false
-			? 'host=localhost port=5432 user=postgres password=postgres'
-			: $envConfig,
-	);
+
+	return $envConfig === false
+		? 'host=localhost port=5432 user=postgres password=postgres'
+		: $envConfig;
 }

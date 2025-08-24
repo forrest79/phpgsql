@@ -10,222 +10,590 @@ parameters:
 	shipmonkRules:
 		forbidCheckedExceptionInCallable:
 			enabled: false
-		forbidCheckedExceptionInYieldingMethod:
-			enabled: false
-		forbidUnsafeArrayKey:
-			enabled: false
-		forbidUnsetClassField:
-			enabled: false
-		forbidVariableTypeOverwriting:
-			enabled: false
-		uselessPrivatePropertyNullability:
-			enabled: false
 
 	ignoreErrors:
 		# === This is OK ===
 
 		-
-			message: '#^Unsafe usage of new static\(\)\.$#'
-			path: %rootDir%/../../../src/Db/Row.php
+			rawMessage: 'Method Forrest79\PhPgSql\Db\DataTypeCaches\PhpFile::load() should return array<int, string> but returns mixed.'
+			identifier: return.type
 			count: 1
+			path: src/Db/DataTypeCaches/PhpFile.php
 
 		-
-			message: '#^Unsafe usage of new static\(\)\.$#'
-			path: %rootDir%/../../../src/Fluent/Condition.php
-			count: 2
+			rawMessage: 'Property Forrest79\PhPgSql\Db\DataTypeCaches\PhpFile::$cache (array<string, array<int, string>>) does not accept array<string, mixed>.'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Db/DataTypeCaches/PhpFile.php
 
+		-
+			rawMessage: Overwriting variable $value while changing its type from BackedEnum to int|string
+			identifier: shipmonk.variableTypeOverwritten
+			count: 1
+			path: src/Db/Helper.php
+
+		-
+			rawMessage: Overwriting variable $query while changing its type from string to Forrest79\PhPgSql\Db\Sql\Query
+			identifier: shipmonk.variableTypeOverwritten
+			count: 1
+			path: src/Db/Query.php
+
+		-
+			rawMessage: 'Array key must be integer or string, but bool|float|int|string|null given.'
+			identifier: shipmonk.unsafeArrayKey
+			count: 1
+			path: src/Db/Result.php
+
+		-
+			rawMessage: Cannot access an offset on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Db/Result.php
+
+		-
+			rawMessage: Cannot access offset string on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Db/Result.php
+
+		-
+			rawMessage: 'Unsafe usage of new static().'
+			identifier: new.static
+			count: 1
+			path: src/Db/Row.php
+
+		-
+			rawMessage: 'Overwriting variable $value while changing its type from Forrest79\PhPgSql\Db\Sql|string to array<int, Forrest79\PhPgSql\Db\Sql|string>'
+			identifier: shipmonk.variableTypeOverwritten
+			count: 1
+			path: src/Fluent/Condition.php
+
+		-
+			rawMessage: 'Property Forrest79\PhPgSql\Fluent\Condition::$conditions (list<Forrest79\PhPgSql\Fluent\Condition|list<mixed>>) does not accept non-empty-array<int<0, max>, Forrest79\PhPgSql\Fluent\Condition|list<mixed>>.'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Fluent/Condition.php
+
+		-
+			rawMessage: 'Unsafe usage of new static().'
+			identifier: new.static
+			count: 2
+			path: src/Fluent/Condition.php
+
+		-
+			rawMessage: 'Array key must be integer or string, but string|null given.'
+			identifier: shipmonk.unsafeArrayKey
+			count: 3
+			path: src/Fluent/Query.php
+
+		-
+			rawMessage: Overwriting variable $column while changing its type from bool to string
+			identifier: shipmonk.variableTypeOverwritten
+			count: 2
+			path: src/Fluent/Query.php
+
+		-
+			rawMessage: Overwriting variable $query while changing its type from Forrest79\PhPgSql\Db\Sql to string
+			identifier: shipmonk.variableTypeOverwritten
+			count: 2
+			path: src/Fluent/QueryBuilder.php
+
+		-
+			rawMessage: Overwriting variable $table while changing its type from Forrest79\PhPgSql\Db\Sql to string
+			identifier: shipmonk.variableTypeOverwritten
+			count: 2
+			path: src/Fluent/QueryBuilder.php
+
+		-
+			rawMessage: Overwriting variable $then while changing its type from Forrest79\PhPgSql\Db\Sql to string
+			identifier: shipmonk.variableTypeOverwritten
+			count: 1
+			path: src/Fluent/QueryBuilder.php
+
+		-
+			rawMessage: Overwriting variable $value while changing its type from Forrest79\PhPgSql\Db\Sql to string
+			identifier: shipmonk.variableTypeOverwritten
+			count: 4
+			path: src/Fluent/QueryBuilder.php
+
+		-
+			rawMessage: 'Method Forrest79\PhPgSql\Fluent\QueryExecute::asyncExecute() has Forrest79\PhPgSql\Fluent\Exceptions\QueryBuilderException in PHPDoc @throws tag but it''s not thrown.'
+			identifier: throws.unusedType
+			count: 1
+			path: src/Fluent/QueryExecute.php
+
+		-
+			rawMessage: 'Method Forrest79\PhPgSql\Fluent\QueryExecute::asyncExecute() has Forrest79\PhPgSql\Fluent\Exceptions\QueryException in PHPDoc @throws tag but it''s not thrown.'
+			identifier: throws.unusedType
+			count: 1
+			path: src/Fluent/QueryExecute.php
 
 		# === This is OK (just for tests or benchmarks) ===
 
 		-
-			message: '#^Parameter \#1 \$result of function pg_.+ expects PgSql\\Result, PgSql\\Result\|false given\.$#'
-			path: %rootDir%/../../../tests/Integration/PgFunctionsTest.php
-			count: 47
+			rawMessage: 'Call to function array_key_exists() on a separate line has no effect.'
+			identifier: function.resultUnused
+			count: 2
+			path: benchmarks/BasicPhpBenchmark.php
 
 		-
-			message: "#^Parameter \\#2 \\$queryParams of method Forrest79\\\\PhPgSql\\\\Fluent\\\\QueryBuilder\\:\\:createSqlDefinition\\(\\) expects array\\{select\\: array\\<int\\|string, BackedEnum\\|Forrest79\\\\PhPgSql\\\\Db\\\\Sql\\|int\\|string\\>, distinct\\: bool, distinctOn\\: list\\<Forrest79\\\\PhPgSql\\\\Db\\\\Sql\\|string\\>, tables\\: array\\<string, array\\{string, string\\}\\>, table\\-types\\: array\\{main\\: string\\|null, from\\: list\\<string\\>, joins\\: list\\<string\\>, using\\: string\\|null\\}, on\\-conditions\\: array\\<string, Forrest79\\\\PhPgSql\\\\Fluent\\\\Condition\\>, lateral\\-tables\\: array\\<string, string\\>, where\\: Forrest79\\\\PhPgSql\\\\Fluent\\\\Condition\\|null, \\.\\.\\.\\}, array\\{with\\: array\\{queries\\: array\\{\\}\\}\\} given\\.$#"
+			rawMessage: 'Call to function array_key_exists() with ''testKey'' and array{testKey1: null, testKey2: ''''} will always evaluate to false.'
+			identifier: function.impossibleType
+			count: 2
+			path: benchmarks/BasicPhpBenchmark.php
+
+		-
+			rawMessage: 'Call to function array_key_exists() with ''testKey1'' and array{testKey1: null, testKey2: ''''} will always evaluate to true.'
+			identifier: function.alreadyNarrowedType
+			count: 4
+			path: benchmarks/BasicPhpBenchmark.php
+
+		-
+			rawMessage: 'Call to function array_key_exists() with ''testKey2'' and array{testKey1: null, testKey2: ''''} will always evaluate to true.'
+			identifier: function.alreadyNarrowedType
+			count: 4
+			path: benchmarks/BasicPhpBenchmark.php
+
+		-
+			rawMessage: Empty array passed to foreach.
+			identifier: foreach.emptyArray
+			count: 1
+			path: benchmarks/BasicPhpBenchmark.php
+
+		-
+			rawMessage: 'Offset ''testKey'' on array{testKey1: null, testKey2: ''''} in isset() does not exist.'
+			identifier: isset.offset
+			count: 2
+			path: benchmarks/BasicPhpBenchmark.php
+
+		-
+			rawMessage: 'Offset ''testKey1'' on array{testKey1: null, testKey2: ''''} in isset() always exists and is always null.'
+			identifier: isset.offset
+			count: 3
+			path: benchmarks/BasicPhpBenchmark.php
+
+		-
+			rawMessage: 'Offset ''testKey2'' on array{testKey1: null, testKey2: ''''} in isset() always exists and is not nullable.'
+			identifier: isset.offset
+			count: 3
+			path: benchmarks/BasicPhpBenchmark.php
+
+		-
+			rawMessage: 'Offset 0 on array{1} on left side of ?? always exists and is not nullable.'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: benchmarks/BasicPhpBenchmark.php
+
+		-
+			rawMessage: Offset 0 on null on left side of ?? does not exist.
+			identifier: nullCoalesce.offset
+			count: 1
+			path: benchmarks/BasicPhpBenchmark.php
+
+		-
+			rawMessage: 'Overwriting variable $keys while changing its type from array<int, string> to string'
+			identifier: shipmonk.variableTypeOverwritten
+			count: 2
+			path: benchmarks/BasicPhpBenchmark.php
+
+		-
+			rawMessage: 'Overwriting variable $test while changing its type from array<int, int> to array<int, float>'
+			identifier: shipmonk.variableTypeOverwritten
+			count: 2
+			path: benchmarks/BasicPhpBenchmark.php
+
+		-
+			rawMessage: 'Strict comparison using !== between array{} and array{} will always evaluate to false.'
+			identifier: notIdentical.alwaysFalse
+			count: 1
+			path: benchmarks/BasicPhpBenchmark.php
+
+		-
+			rawMessage: Unused result of "||" operator.
+			identifier: booleanOr.resultUnused
+			count: 8
+			path: benchmarks/BasicPhpBenchmark.php
+
+		-
+			rawMessage: 'Strict comparison using !== between array<int, string> and null will always evaluate to true.'
+			identifier: notIdentical.alwaysTrue
+			count: 3
+			path: benchmarks/GetFieldTypesBenchmark.php
+
+		-
+			rawMessage: 'Cannot call method toArray() on mixed.'
+			identifier: method.nonObject
+			count: 1
+			path: tests/Integration/BasicTest.php
+
+		-
+			rawMessage: 'Call to an undefined method Forrest79\PhPgSql\Db\Result::fetchOrException().'
+			identifier: method.notFound
+			count: 2
+			path: tests/Integration/CustomResultTest.php
+
+		-
+			rawMessage: Cannot access property $name on mixed.
+			identifier: property.nonObject
+			count: 1
+			path: tests/Integration/CustomResultTest.php
+
+		-
+			rawMessage: Overwriting variable $value while changing its type from DateTimeImmutable to string
+			identifier: shipmonk.variableTypeOverwritten
+			count: 1
+			path: tests/Integration/DocsTest.php
+
+		-
+			rawMessage: 'Overwriting variable $value while changing its type from array<mixed, mixed> to string'
+			identifier: shipmonk.variableTypeOverwritten
+			count: 1
+			path: tests/Integration/DocsTest.php
+
+		-
+			rawMessage: Overwriting variable $value while changing its type from bool to string
+			identifier: shipmonk.variableTypeOverwritten
+			count: 1
+			path: tests/Integration/DocsTest.php
+
+		-
+			rawMessage: 'Overwriting variable $var while changing its type from Forrest79\PhPgSql\Db\Row to array<string, mixed>'
+			identifier: shipmonk.variableTypeOverwritten
+			count: 1
+			path: tests/Integration/DocsTest.php
+
+		-
+			rawMessage: Binary operation "+" between mixed and 1 results in an error.
+			identifier: binaryOp.invalid
+			count: 3
+			path: tests/Integration/FetchMutatorTest.php
+
+		-
+			rawMessage: Binary operation "." between 'NAME' and mixed results in an error.
+			identifier: binaryOp.invalid
+			count: 1
+			path: tests/Integration/FetchMutatorTest.php
+
+		-
+			rawMessage: Binary operation "." between 'NAME_' and mixed results in an error.
+			identifier: binaryOp.invalid
+			count: 1
+			path: tests/Integration/FetchMutatorTest.php
+
+		-
+			rawMessage: Binary operation "." between 'id' and mixed results in an error.
+			identifier: binaryOp.invalid
+			count: 1
+			path: tests/Integration/FetchMutatorTest.php
+
+		-
+			rawMessage: Binary operation "." between 'type' and mixed results in an error.
+			identifier: binaryOp.invalid
+			count: 1
+			path: tests/Integration/FetchMutatorTest.php
+
+		-
+			rawMessage: Binary operation "." between mixed and '-' results in an error.
+			identifier: binaryOp.invalid
+			count: 10
+			path: tests/Integration/FetchMutatorTest.php
+
+		-
+			rawMessage: Binary operation "." between non-falsy-string and mixed results in an error.
+			identifier: binaryOp.invalid
+			count: 10
+			path: tests/Integration/FetchMutatorTest.php
+
+		-
+			rawMessage: 'Binary operation ".=" between mixed and ''-rowMutated'' results in an error.'
+			identifier: assignOp.invalid
+			count: 1
+			path: tests/Integration/FetchMutatorTest.php
+
+		-
+			rawMessage: 'Using + over non-number (mixed + int)'
+			identifier: shipmonk.arithmeticOnNonNumber
+			count: 3
+			path: tests/Integration/FetchMutatorTest.php
+
+		-
+			rawMessage: 'Array key must be integer or string, but null given.'
+			identifier: shipmonk.unsafeArrayKey
+			count: 1
+			path: tests/Integration/FetchTest.php
+
+		-
+			rawMessage: Cannot assign offset 1 to Forrest79\PhPgSql\Db\Row.
+			identifier: offsetAssign.dimType
+			count: 1
+			path: tests/Integration/FetchTest.php
+
+		-
+			rawMessage: Cannot unset offset 1 on Forrest79\PhPgSql\Db\Row.
+			identifier: unset.offset
+			count: 1
+			path: tests/Integration/FetchTest.php
+
+		-
+			rawMessage: Expression "$row->cnt" on a separate line does not do anything.
+			identifier: expr.resultUnused
+			count: 1
+			path: tests/Integration/FetchTest.php
+
+		-
+			rawMessage: Expression "$row->column" on a separate line does not do anything.
+			identifier: expr.resultUnused
+			count: 1
+			path: tests/Integration/FetchTest.php
+
+		-
+			rawMessage: Expression "$row->type" on a separate line does not do anything.
+			identifier: expr.resultUnused
+			count: 2
+			path: tests/Integration/FetchTest.php
+
+		-
+			rawMessage: 'Expression "$row[''another_type'']" on a separate line does not do anything.'
+			identifier: expr.resultUnused
+			count: 2
+			path: tests/Integration/FetchTest.php
+
+		-
+			rawMessage: 'Expression "$row[1]" on a separate line does not do anything.'
+			identifier: expr.resultUnused
+			count: 1
+			path: tests/Integration/FetchTest.php
+
+		-
+			rawMessage: 'Expression "isset($row[1])" on a separate line does not do anything.'
+			identifier: expr.resultUnused
+			count: 1
+			path: tests/Integration/FetchTest.php
+
+		-
+			rawMessage: Offset 1 does not exist on Forrest79\PhPgSql\Db\Row.
+			identifier: offsetAccess.notFound
+			count: 1
+			path: tests/Integration/FetchTest.php
+
+		-
+			rawMessage: 'Offset 1 on Forrest79\PhPgSql\Db\Row in isset() does not exist.'
+			identifier: isset.offset
+			count: 1
+			path: tests/Integration/FetchTest.php
+
+		-
+			rawMessage: 'Unsetting class field is forbidden as it causes un-initialization, assign null instead'
+			identifier: shipmonk.unsettingClassProperty
+			count: 2
+			path: tests/Integration/FetchTest.php
+
+		-
+			rawMessage: Cannot access offset 0 on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 41
+			path: tests/Integration/ParseDataTypeTest.php
+
+		-
+			rawMessage: Cannot access offset 1 on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 12
+			path: tests/Integration/ParseDataTypeTest.php
+
+		-
+			rawMessage: Cannot access offset 2 on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 10
+			path: tests/Integration/ParseDataTypeTest.php
+
+		-
+			rawMessage: Expression "$row->type_hstore" on a separate line does not do anything.
+			identifier: expr.resultUnused
+			count: 1
+			path: tests/Integration/ParseDataTypeTest.php
+
+		-
+			rawMessage: Expression "$row->type_money" on a separate line does not do anything.
+			identifier: expr.resultUnused
+			count: 1
+			path: tests/Integration/ParseDataTypeTest.php
+
+		-
+			rawMessage: Expression "$row->type_point" on a separate line does not do anything.
+			identifier: expr.resultUnused
+			count: 1
+			path: tests/Integration/ParseDataTypeTest.php
+
+		-
+			rawMessage: Expression "$row->type_tsvector" on a separate line does not do anything.
+			identifier: expr.resultUnused
+			count: 1
+			path: tests/Integration/ParseDataTypeTest.php
+
+		-
+			rawMessage: 'Parameter #1 $result of function pg_affected_rows expects PgSql\Result, PgSql\Result|false given.'
+			identifier: argument.type
+			count: 1
+			path: tests/Integration/PgFunctionsTest.php
+
+		-
+			rawMessage: 'Parameter #1 $result of function pg_fetch_assoc expects PgSql\Result, PgSql\Result|false given.'
+			identifier: argument.type
+			count: 19
+			path: tests/Integration/PgFunctionsTest.php
+
+		-
+			rawMessage: 'Parameter #1 $result of function pg_field_name expects PgSql\Result, PgSql\Result|false given.'
+			identifier: argument.type
+			count: 2
+			path: tests/Integration/PgFunctionsTest.php
+
+		-
+			rawMessage: 'Parameter #1 $result of function pg_field_type expects PgSql\Result, PgSql\Result|false given.'
+			identifier: argument.type
+			count: 2
+			path: tests/Integration/PgFunctionsTest.php
+
+		-
+			rawMessage: 'Parameter #1 $result of function pg_field_type_oid expects PgSql\Result, PgSql\Result|false given.'
+			identifier: argument.type
+			count: 2
+			path: tests/Integration/PgFunctionsTest.php
+
+		-
+			rawMessage: 'Parameter #1 $result of function pg_free_result expects PgSql\Result, PgSql\Result|false given.'
+			identifier: argument.type
+			count: 2
+			path: tests/Integration/PgFunctionsTest.php
+
+		-
+			rawMessage: 'Parameter #1 $result of function pg_num_fields expects PgSql\Result, PgSql\Result|false given.'
+			identifier: argument.type
+			count: 1
+			path: tests/Integration/PgFunctionsTest.php
+
+		-
+			rawMessage: 'Parameter #1 $result of function pg_num_rows expects PgSql\Result, PgSql\Result|false given.'
+			identifier: argument.type
+			count: 1
+			path: tests/Integration/PgFunctionsTest.php
+
+		-
+			rawMessage: 'Parameter #1 $result of function pg_result_error expects PgSql\Result, PgSql\Result|false given.'
+			identifier: argument.type
+			count: 1
+			path: tests/Integration/PgFunctionsTest.php
+
+		-
+			rawMessage: 'Parameter #1 $result of function pg_result_error_field expects PgSql\Result, PgSql\Result|false given.'
+			identifier: argument.type
+			count: 12
+			path: tests/Integration/PgFunctionsTest.php
+
+		-
+			rawMessage: 'Parameter #1 $result of function pg_result_status expects PgSql\Result, PgSql\Result|false given.'
+			identifier: argument.type
+			count: 4
+			path: tests/Integration/PgFunctionsTest.php
+
+		-
+			rawMessage: 'Parameter #1 $columns of method Forrest79\PhPgSql\Fluent\Query::select() expects array<int|string, BackedEnum|bool|Forrest79\PhPgSql\Db\Sql|int|string|null>, array<string, array<int, string>> given.'
+			identifier: argument.type
 			count: 1
 			path: tests/Unit/FluentQueryTest.php
 
 		-
-			message: '#^Parameter \#1 \$columns of method Forrest79\\PhPgSql\\Fluent\\Query::select\(\) expects array\<int\|string, BackedEnum\|bool\|Forrest79\\PhPgSql\\Db\\Sql\|int\|string\|null\>, array\<string, array\<int, string\>\> given\.$#'
-			path: %rootDir%/../../../tests/Unit/FluentQueryTest.php
+			rawMessage: 'Parameter #2 $queryParams of method Forrest79\PhPgSql\Fluent\QueryBuilder::createSqlDefinition() expects array{select: array<int|string, BackedEnum|Forrest79\PhPgSql\Db\Sql|int|string>, distinct: bool, distinctOn: list<Forrest79\PhPgSql\Db\Sql|string>, tables: array<string, array{string, string}>, table-types: array{main: string|null, from: list<string>, joins: list<string>, using: string|null}, on-conditions: array<string, Forrest79\PhPgSql\Fluent\Condition>, lateral-tables: array<string, string>, where: Forrest79\PhPgSql\Fluent\Condition|null, ...}, array{with: array{queries: array{}}} given.'
+			identifier: argument.type
 			count: 1
+			path: tests/Unit/FluentQueryTest.php
 
 		-
-			message: '#^AnonymousClass.+::__construct\(\) does not call parent constructor from Forrest79\\PhPgSql\\Db\\PreparedStatementHelper\.$#'
-			path: %rootDir%/../../../tests/Unit/QueryTest.php
-			count: 1
+			rawMessage: Cannot access offset 0 on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 8
+			path: tests/Unit/ParseDataTypeTest.php
 
 		-
-			message: '#^Call to an undefined method Forrest79\\PhPgSql\\Db\\Result::fetchOrException\(\)\.$#'
-			path: %rootDir%/../../../tests/Integration/CustomResultTest.php
-			count: 2
-
-		-
-			message: '#^Binary operation ".=?" between .+ results in an error\.$#'
-			path: %rootDir%/../../../tests/Integration/FetchMutatorTest.php
-			count: 28
-
-		-
-			message: '#^Using \+ over non-number \(mixed \+ int\)$#'
-			path: %rootDir%/../../../tests/Integration/FetchMutatorTest.php
+			rawMessage: Cannot access offset 1 on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
 			count: 3
+			path: tests/Unit/ParseDataTypeTest.php
 
 		-
-			message: '#^Expression ".+" on a separate line does not do anything\.$#'
-			path: %rootDir%/../../../tests/Integration/FetchTest.php
-			count: 8
-
-		-
-			message: '#^Offset 1 does not exist on Forrest79\\PhPgSql\\Db\\Row\.$#'
-			path: %rootDir%/../../../tests/Integration/FetchTest.php
-			count: 1
-
-		-
-			message: '#^Cannot assign offset 1 to Forrest79\\PhPgSql\\Db\\Row\.$#'
-			path: %rootDir%/../../../tests/Integration/FetchTest.php
-			count: 1
-
-		-
-			message: '#^Offset 1 on Forrest79\\PhPgSql\\Db\\Row in isset\(\) does not exist\.$#'
-			path: %rootDir%/../../../tests/Integration/FetchTest.php
-			count: 1
-
-		-
-			message: '#^Cannot unset offset 1 on Forrest79\\PhPgSql\\Db\\Row\.$#'
-			path: %rootDir%/../../../tests/Integration/FetchTest.php
-			count: 1
-
-		-
-			message: '#^Expression ".+" on a separate line does not do anything\.$#'
-			path: %rootDir%/../../../tests/Integration/ParseDataTypeTest.php
-			count: 4
-
-		-
-			message: "#^Call to function array_key_exists\\(\\) with '.+' and array\\{.+\\} will always evaluate to (true|false)\\.$#"
-			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
-			count: 10
-
-		-
-			message: '#^Call to function array_key_exists\(\) on a separate line has no effect\.$#'
-			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
-			count: 2
-
-		-
-			message: '#^Offset 0 on (array\{1\}|null) on left side of \?\? .+\.$#'
-			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
-			count: 2
-
-		-
-			message: "#^Offset '[a-zA-Z0-9]+' on array\\{.+\\} in isset\\(\\) .+\\.$#"
-			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
-			count: 8
-
-		-
-			message: '#^Empty array passed to foreach\.$#'
-			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
-			count: 1
-
-		-
-			message: '#^Call to function hrtime\(\) on a separate line has no effect\.$#'
-			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
-			count: 1
-
-		-
-			message: '#^Strict comparison using \!\=\= between array\{\} and array\{\} will always evaluate to false\.$#'
-			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
-			count: 1
-
-		-
-			message: '#^Unused result of "\|\|" operator\.$#'
-			path: %rootDir%/../../../benchmarks/BasicPhpBenchmark.php
-			count: 8
-
-		-
-			message: '#^Strict comparison using \!\=\= between array\<int, string\> and null will always evaluate to true\.$#'
-			path: %rootDir%/../../../benchmarks/GetFieldTypesBenchmark.php
-			count: 3
-
-		# === Explicit mixed check (correct type is checked in tests)
-
-		-
-			message: '#^Cannot call method toArray\(\) on mixed\.$#'
-			path: %rootDir%/../../../tests/Integration/BasicTest.php
-			count: 1
-
-		-
-			message: '#^Cannot access offset [012] on mixed\.$#'
-			path: %rootDir%/../../../tests/Integration/ParseDataTypeTest.php
-			count: 63
-
-		-
-			message: '#^Cannot access offset [01] on mixed\.$#'
-			path: %rootDir%/../../../tests/Unit/ParseDataTypeTest.php
-			count: 11
-
-		-
-			message: '#^Cannot call method format\(\) on mixed\.$#'
-			path: %rootDir%/../../../tests/Unit/ParseDataTypeTest.php
+			rawMessage: 'Cannot call method format() on mixed.'
+			identifier: method.nonObject
 			count: 17
+			path: tests/Unit/ParseDataTypeTest.php
+
+		-
+			rawMessage: 'AnonymousClass9e2a62bb2c94f025d33938f045f89554::__construct() does not call parent constructor from Forrest79\PhPgSql\Db\PreparedStatementHelper.'
+			identifier: constructor.missingParentCall
+			count: 1
+			path: tests/Unit/QueryTest.php
 
 		# === We know, that this can happen ===
 
 		-
-			message: '#^Instanceof between BackedEnum and BackedEnum will always evaluate to true\.$#'
-			path: %rootDir%/../../../src/Fluent/Query.php
+			rawMessage: Instanceof between BackedEnum and BackedEnum will always evaluate to true.
+			identifier: instanceof.alwaysTrue
 			count: 1
+			path: src/Fluent/Query.php
 
 		-
-			message: '#^Result of && is always false\.$#'
-			path: %rootDir%/../../../src/Fluent/Query.php
+			rawMessage: Result of && is always false.
+			identifier: booleanAnd.alwaysFalse
 			count: 1
+			path: src/Fluent/Query.php
 
 		-
-			message: "#^Strict comparison using === between 'suffix' and 'suffix' will always evaluate to true\\.$#"
-			path: %rootDir%/../../../src/Fluent/QueryBuilder.php
+			rawMessage: 'Offset ''prefix''|''suffix'' on array{select: array<int|string, BackedEnum|Forrest79\PhPgSql\Db\Sql|int|string>, distinct: bool, distinctOn: list<Forrest79\PhPgSql\Db\Sql|string>, tables: array<string, array{string, string}>, table-types: array{main: string|null, from: list<string>, joins: list<string>, using: string|null}, on-conditions: array<string, Forrest79\PhPgSql\Fluent\Condition>, lateral-tables: array<string, string>, where: Forrest79\PhPgSql\Fluent\Condition|null, ...} on left side of ?? always exists and is not nullable.'
+			identifier: nullCoalesce.offset
 			count: 1
+			path: src/Fluent/QueryBuilder.php
 
 		-
-			message: '#^Unreachable statement - code above always terminates\.$#'
-			path: %rootDir%/../../../src/Fluent/QueryBuilder.php
+			rawMessage: 'Strict comparison using === between ''suffix'' and ''suffix'' will always evaluate to true.'
+			identifier: identical.alwaysTrue
 			count: 1
+			path: src/Fluent/QueryBuilder.php
 
 		-
-			message: "#^Offset 'prefix'\\|'suffix' on array\\{select\\: array\\<int\\|string, BackedEnum\\|Forrest79\\\\PhPgSql\\\\Db\\\\Sql\\|int\\|string\\>, distinct\\: bool, distinctOn\\: list\\<Forrest79\\\\PhPgSql\\\\Db\\\\Sql\\|string\\>, tables\\: array\\<string, array\\{string, string\\}\\>, table\\-types\\: array\\{main\\: string\\|null, from\\: list\\<string\\>, joins\\: list\\<string\\>, using\\: string\\|null\\}, on\\-conditions\\: array\\<string, Forrest79\\\\PhPgSql\\\\Fluent\\\\Condition\\>, lateral\\-tables\\: array\\<string, string\\>, where\\: Forrest79\\\\PhPgSql\\\\Fluent\\\\Condition\\|null, \\.\\.\\.\\} on left side of \\?\\? always exists and is not nullable\\.$#"
-			path: %rootDir%/../../../src/Fluent/QueryBuilder.php
+			rawMessage: Unreachable statement - code above always terminates.
+			identifier: deadCode.unreachable
 			count: 1
+			path: src/Fluent/QueryBuilder.php
 
 		# === We know, that this can't happen ===
 
 		-
-			message: '#^Property Forrest79\\PhPgSql\\Fluent\\Condition::\$conditions \(list\<list\<mixed\>\|Forrest79\\PhPgSql\\Fluent\\Condition\>\) does not accept non\-empty\-array\<int, list\<mixed\>\|Forrest79\\PhPgSql\\Fluent\\Condition\>\.$#'
-			path: %rootDir%/../../../src/Fluent/Condition.php
+			rawMessage: 'Parameter #2 $rawValues of method Forrest79\PhPgSql\Db\RowFactory::create() expects array<string, string|null>, array<int|string, string|null> given.'
+			identifier: argument.type
 			count: 1
+			path: src/Db/Result.php
 
 		-
-			message: '#^Parameter \#2 \$expected of static method Forrest79\\PhPgSql\\Fluent\\Exceptions\\ConditionException::badParamsCount\(\) expects int, int(\<0, max\>)?\|false(\|null)? given\.$#' # (|null)? is for forward PHP 8 compatibility
-			path: %rootDir%/../../../src/Fluent/Condition.php
-			count: 1
-
-		-
-			message: '#^Parameter \#2 \$rawValues of method Forrest79\\PhPgSql\\Db\\RowFactory::create\(\) expects array\<string, string\|null\>, array\<int\|string, string\|null\> given\.$#'
-			path: %rootDir%/../../../src/Db/Result.php
-			count: 1
-
-		-
-			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
-			path: %rootDir%/../../../src/Db/Row.php
+			rawMessage: 'Call to function is_string() with string will always evaluate to true.'
+			identifier: function.alreadyNarrowedType
 			count: 3
+			path: src/Db/Row.php
 
 		-
-			message: '#^Method Forrest79\\PhPgSql\\Db\\RowIterator::current\(\) should return Forrest79\\PhPgSql\\Db\\Row but returns Forrest79\\PhPgSql\\Db\\Row\|null\.$#'
-			path: %rootDir%/../../../src/Db/RowIterator.php
+			rawMessage: 'Method Forrest79\PhPgSql\Db\RowIterator::current() should return Forrest79\PhPgSql\Db\Row but returns Forrest79\PhPgSql\Db\Row|null.'
+			identifier: return.type
 			count: 1
+			path: src/Db/RowIterator.php
+
+		-
+			rawMessage: 'Parameter #2 $expected of static method Forrest79\PhPgSql\Fluent\Exceptions\ConditionException::badParamsCount() expects int, int<0, max>|false given.'
+			identifier: argument.type
+			count: 1
+			path: src/Fluent/Condition.php
 
 		# === PHPStan imperfection ===
 
 		-
-			message: "#^Property Forrest79\\\\PhPgSql\\\\Fluent\\\\Query\\:\\:\\$params \\(array\\{select\\: array\\<int\\|string, BackedEnum\\|Forrest79\\\\PhPgSql\\\\Db\\\\Sql\\|int\\|string\\>, distinct\\: bool, distinctOn\\: list\\<Forrest79\\\\PhPgSql\\\\Db\\\\Sql\\|string\\>, tables\\: array\\<string, array\\{string, string\\}\\>, table\\-types\\: array\\{main\\: string\\|null, from\\: list\\<string\\>, joins\\: list\\<string\\>, using\\: string\\|null\\}, on\\-conditions\\: array\\<string, Forrest79\\\\PhPgSql\\\\Fluent\\\\Condition\\>, lateral\\-tables\\: array\\<string, string\\>, where\\: Forrest79\\\\PhPgSql\\\\Fluent\\\\Condition\\|null, \\.\\.\\.\\}\\) does not accept .+\\.$#"
+			message: "#^Property Forrest79\\\\PhPgSql\\\\Fluent\\\\Query::\\$params \\(array\\{select: array\\<int\\|string, BackedEnum\\|Forrest79\\\\PhPgSql\\\\Db\\\\Sql\\|int\\|string\\>, distinct: bool, distinctOn: list\\<Forrest79\\\\PhPgSql\\\\Db\\\\Sql\\|string\\>, tables: array\\<string, array\\{string, string\\}\\>, table\\-types: array\\{main: string\\|null, from: list\\<string\\>, joins: list\\<string\\>, using: string\\|null\\}, on\\-conditions: array\\<string, Forrest79\\\\PhPgSql\\\\Fluent\\\\Condition\\>, lateral\\-tables: array\\<string, string\\>, where: Forrest79\\\\PhPgSql\\\\Fluent\\\\Condition\\|null, \\.\\.\\.\\}\\) does not accept .+\\.$#"
+			identifier: assign.propertyType
 			path: src/Fluent/Query.php
 			count: 8

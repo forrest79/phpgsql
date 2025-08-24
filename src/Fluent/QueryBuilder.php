@@ -814,7 +814,6 @@ class QueryBuilder
 
 	/**
 	 * @param list<mixed> $params
-	 * @throws Exceptions\QueryBuilderException
 	 */
 	private function processCondition(Condition $condition, array &$params): string
 	{

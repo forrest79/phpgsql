@@ -9,4 +9,4 @@ if (!\file_exists($loader)) {
 
 require $loader;
 
-require __DIR__ . '/../tests/prepare-db-config.php';
+require_once __DIR__ . '/../tests/prepare-db-config.php';

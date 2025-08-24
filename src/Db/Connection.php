@@ -68,9 +68,6 @@ class Connection
 	}
 
 
-	/**
-	 * @throws Exceptions\ConnectionException
-	 */
 	public function isConnected(): bool
 	{
 		return $this->connected;

@@ -21,8 +21,14 @@ abstract class TestCase extends Tests\TestCase
 	protected function setUp(): void
 	{
 		parent::setUp();
-		$this->dbname = \sprintf('phpgsql_%s_%s', \getmypid(), \uniqid());
-		$this->config = \PHPGSQL_CONNECTION_CONFIG;
+
+		$pid = \getmypid();
+		if ($pid === false) {
+			throw new \RuntimeException('PID is not set.');
+		}
+
+		$this->dbname = \sprintf('phpgsql_%d_%s', $pid, \uniqid());
+		$this->config = \phpgsqlConnectionConfig();
 		$this->adminConnection = new Db\Connection($this->config);
 
 		$this->adminConnection->query('CREATE DATABASE ?', Db\Sql\Literal::create($this->getDbName()));

@@ -4,7 +4,7 @@ namespace Forrest79\PhPgSql\Benchmarks;
 
 use Forrest79\PhPgSql\Db;
 
-require __DIR__ . '/boostrap.php';
+require __DIR__ . '/bootstrap.php';
 
 final class BasicPhpBenchmark extends BenchmarkCase
 {
@@ -276,7 +276,7 @@ final class BasicPhpBenchmark extends BenchmarkCase
 	public function benchmarkStringConcatenationSprintf(): void
 	{
 		$i = 'a';
-		$i = \sprintf('$%d, ', $i);
+		$i = \sprintf('$%s, ', $i);
 	}
 
 
@@ -321,7 +321,7 @@ final class BasicPhpBenchmark extends BenchmarkCase
 		$x2 = 'a';
 		$y2 = 'b';
 		$z2 = 'c';
-		$z2 = \sprintf('$%d, $%d, $%d, $%d, $%d, $%d', $x1, $y1, $z1, $x2, $y2, $z2);
+		$z2 = \sprintf('$%s, $%s, $%s, $%s, $%s, $%s', $x1, $y1, $z1, $x2, $y2, $z2);
 	}
 
 

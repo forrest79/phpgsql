@@ -27,15 +27,15 @@ abstract class BenchmarkCase
 
 			$docComment = (string) $method->getDocComment();
 
-			$method = [$this, $benchmarkMethod];
-			if (!\is_callable($method)) {
+			$methodCallback = [$this, $benchmarkMethod];
+			if (!\is_callable($methodCallback)) {
 				throw new \RuntimeException(\sprintf('Method \'%s\' is not callable.', $benchmarkMethod));
 			}
 
 			$repeat = (int) self::getAnotation($docComment, 'repeat');
 
 			$this->runBenchmark(
-				$method,
+				$methodCallback,
 				self::getAnotation($docComment, 'title') ?? \substr($benchmarkMethod, 9),
 				$repeat > 0 ? $repeat : $this->defaultRepeat,
 			);

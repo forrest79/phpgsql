@@ -1661,25 +1661,25 @@ final class FluentQueryTest extends Tests\TestCase
 	{
 		$query = $this->query();
 
-		Tester\Assert::false($query->has($query::PARAM_SELECT));
-		Tester\Assert::false($query->has($query::PARAM_DISTINCT));
-		Tester\Assert::false($query->has($query::PARAM_DISTINCTON));
-		Tester\Assert::false($query->has($query::PARAM_TABLES));
-		Tester\Assert::false($query->has($query::PARAM_TABLE_TYPES));
-		Tester\Assert::false($query->has($query::PARAM_ON_CONDITIONS));
-		Tester\Assert::false($query->has($query::PARAM_WHERE));
-		Tester\Assert::false($query->has($query::PARAM_GROUPBY));
-		Tester\Assert::false($query->has($query::PARAM_HAVING));
-		Tester\Assert::false($query->has($query::PARAM_ORDERBY));
-		Tester\Assert::false($query->has($query::PARAM_LIMIT));
-		Tester\Assert::false($query->has($query::PARAM_OFFSET));
-		Tester\Assert::false($query->has($query::PARAM_COMBINE_QUERIES));
-		Tester\Assert::false($query->has($query::PARAM_INSERT_COLUMNS));
-		Tester\Assert::false($query->has($query::PARAM_RETURNING));
-		Tester\Assert::false($query->has($query::PARAM_DATA));
-		Tester\Assert::false($query->has($query::PARAM_ROWS));
-		Tester\Assert::false($query->has($query::PARAM_PREFIX));
-		Tester\Assert::false($query->has($query::PARAM_SUFFIX));
+		Tester\Assert::false($query->has(Fluent\Query::PARAM_SELECT));
+		Tester\Assert::false($query->has(Fluent\Query::PARAM_DISTINCT));
+		Tester\Assert::false($query->has(Fluent\Query::PARAM_DISTINCTON));
+		Tester\Assert::false($query->has(Fluent\Query::PARAM_TABLES));
+		Tester\Assert::false($query->has(Fluent\Query::PARAM_TABLE_TYPES));
+		Tester\Assert::false($query->has(Fluent\Query::PARAM_ON_CONDITIONS));
+		Tester\Assert::false($query->has(Fluent\Query::PARAM_WHERE));
+		Tester\Assert::false($query->has(Fluent\Query::PARAM_GROUPBY));
+		Tester\Assert::false($query->has(Fluent\Query::PARAM_HAVING));
+		Tester\Assert::false($query->has(Fluent\Query::PARAM_ORDERBY));
+		Tester\Assert::false($query->has(Fluent\Query::PARAM_LIMIT));
+		Tester\Assert::false($query->has(Fluent\Query::PARAM_OFFSET));
+		Tester\Assert::false($query->has(Fluent\Query::PARAM_COMBINE_QUERIES));
+		Tester\Assert::false($query->has(Fluent\Query::PARAM_INSERT_COLUMNS));
+		Tester\Assert::false($query->has(Fluent\Query::PARAM_RETURNING));
+		Tester\Assert::false($query->has(Fluent\Query::PARAM_DATA));
+		Tester\Assert::false($query->has(Fluent\Query::PARAM_ROWS));
+		Tester\Assert::false($query->has(Fluent\Query::PARAM_PREFIX));
+		Tester\Assert::false($query->has(Fluent\Query::PARAM_SUFFIX));
 
 		$query
 			->select(['column'])
@@ -1697,41 +1697,41 @@ final class FluentQueryTest extends Tests\TestCase
 			->suffix('some SQL suffix')
 			->union('SELECT 1');
 
-		Tester\Assert::true($query->has($query::PARAM_SELECT));
-		Tester\Assert::true($query->has($query::PARAM_DISTINCT));
-		Tester\Assert::false($query->has($query::PARAM_DISTINCTON));
-		Tester\Assert::true($query->has($query::PARAM_TABLES));
-		Tester\Assert::true($query->has($query::PARAM_TABLE_TYPES));
-		Tester\Assert::true($query->has($query::PARAM_ON_CONDITIONS));
-		Tester\Assert::true($query->has($query::PARAM_WHERE));
-		Tester\Assert::true($query->has($query::PARAM_GROUPBY));
-		Tester\Assert::true($query->has($query::PARAM_HAVING));
-		Tester\Assert::true($query->has($query::PARAM_ORDERBY));
-		Tester\Assert::true($query->has($query::PARAM_LIMIT));
-		Tester\Assert::true($query->has($query::PARAM_OFFSET));
-		Tester\Assert::true($query->has($query::PARAM_COMBINE_QUERIES));
-		Tester\Assert::true($query->has($query::PARAM_PREFIX));
-		Tester\Assert::true($query->has($query::PARAM_SUFFIX));
+		Tester\Assert::true($query->has(Fluent\Query::PARAM_SELECT));
+		Tester\Assert::true($query->has(Fluent\Query::PARAM_DISTINCT));
+		Tester\Assert::false($query->has(Fluent\Query::PARAM_DISTINCTON));
+		Tester\Assert::true($query->has(Fluent\Query::PARAM_TABLES));
+		Tester\Assert::true($query->has(Fluent\Query::PARAM_TABLE_TYPES));
+		Tester\Assert::true($query->has(Fluent\Query::PARAM_ON_CONDITIONS));
+		Tester\Assert::true($query->has(Fluent\Query::PARAM_WHERE));
+		Tester\Assert::true($query->has(Fluent\Query::PARAM_GROUPBY));
+		Tester\Assert::true($query->has(Fluent\Query::PARAM_HAVING));
+		Tester\Assert::true($query->has(Fluent\Query::PARAM_ORDERBY));
+		Tester\Assert::true($query->has(Fluent\Query::PARAM_LIMIT));
+		Tester\Assert::true($query->has(Fluent\Query::PARAM_OFFSET));
+		Tester\Assert::true($query->has(Fluent\Query::PARAM_COMBINE_QUERIES));
+		Tester\Assert::true($query->has(Fluent\Query::PARAM_PREFIX));
+		Tester\Assert::true($query->has(Fluent\Query::PARAM_SUFFIX));
 
 		$query = $this->query()->select(['column'])->distinctOn('column');
 
-		Tester\Assert::false($query->has($query::PARAM_DISTINCT));
-		Tester\Assert::true($query->has($query::PARAM_DISTINCTON));
+		Tester\Assert::false($query->has(Fluent\Query::PARAM_DISTINCT));
+		Tester\Assert::true($query->has(Fluent\Query::PARAM_DISTINCTON));
 
 		$query = $this->query()->insert('table', columns: ['column'])->select(['1'])->returning(['column']);
 
-		Tester\Assert::true($query->has($query::PARAM_INSERT_COLUMNS));
-		Tester\Assert::true($query->has($query::PARAM_RETURNING));
+		Tester\Assert::true($query->has(Fluent\Query::PARAM_INSERT_COLUMNS));
+		Tester\Assert::true($query->has(Fluent\Query::PARAM_RETURNING));
 
 		$query = $this->query()->insert('table')->rows([
 			['column' => 1],
 		]);
 
-		Tester\Assert::true($query->has($query::PARAM_ROWS));
+		Tester\Assert::true($query->has(Fluent\Query::PARAM_ROWS));
 
 		$query = $this->query()->update('table')->set(['column' => 'data']);
 
-		Tester\Assert::true($query->has($query::PARAM_DATA));
+		Tester\Assert::true($query->has(Fluent\Query::PARAM_DATA));
 	}
 
 
