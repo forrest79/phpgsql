@@ -94,7 +94,7 @@ Every query is `SELECT` at first, until you call `->insert(...)`, `->update(...)
 - `where($condition, ...$params)` (or `having(...)`) - defines `WHERE` or `HAVING` conditions. All `where()` or `having()` conditions are connected with logic `AND`. If you want to create complex conditions use `whereAnd/Or()` and `havingAnd/Or()` methods returning `Condition` object. You can provide condition as a `string`. When `string` condition is used, you can add `$parameters`. When in the condition is no `?` and only one parameter is used, comparison is made between condition and parameter. If parameter is scalar, simple `=` is used, for an `array` is used `IN` operator, the same applies ale for `Query` (`Fluent\Query` or `Db\Sql`). And for `null` is used `IS` operator. This could be handy when you want to use more parameter types in one condition. For example, you can provide `int` and `=` will be use and if you provide `array<int>` - `IN` operator will be used and the query will be working for the both parameter types. More complex conditions can be written manually as a `string` with `?` for parameters. Or you can use `Condition` or `Db\Sql` as condition. In this case, `$params` must be blank.
 
 
-- `whereIf(bool $ifCondition, $condition, ...$params)` - the same as classics `where` method, but this condition is omitted when `$ifCondition` is `false`.
+- `whereIf(bool $ifCondition, $condition, ...$params)` - the same as classics `where` method, but this condition is omitted when `$ifCondition` is `false`. Param can be a `callable` type and the callable is run only if the `$ifCondition` is `true`. 
 
 
 - `whereAnd(array $conditions = []): Condition` (or `whereOr(...)` / `havingAnd(...)` / `havingOr()`) - with these methods, you can generate condition groups. Ale provided conditions are connected with logic `AND` for `whereAnd()` and `havingAnd()` and with logic `OR` for `whereOr()` and `havingOr()`. All these methods return `Condition` object (more about this later). `$conditions` items can be simple `string`, another `array` (this is a little bit magic - this works as `where()`/`having()` method - first item in this `array` is conditions and next items are parameters), `Condition` or `Db\Sql`. 
@@ -325,7 +325,6 @@ dump($listItems(null)); // (Query) SELECT * FROM users
 
 You can write this:
 
-
 ```php
 $listItems = function (string|null $filterName) use ($connection): Forrest79\PhPgSql\Fluent\Query
 {
@@ -337,6 +336,30 @@ $listItems = function (string|null $filterName) use ($connection): Forrest79\PhP
 };
 
 dump($listItems('forrest79')); // (Query) SELECT * FROM users WHERE name ILIKE $1 [Params: (array) ['forrest79']]
+```
+
+If you want to postpone parameter recognition in `whereIf`, you can wrap it into a `callable` type:
+
+```php
+enum Filter: string
+{
+	case User1 = 'user1';
+	case User2 = 'user2';
+
+}
+
+$listItems = function (Filter|null $filter) use ($connection): Forrest79\PhPgSql\Fluent\Query
+{
+  return $connection
+    ->createQuery()
+    ->table('users')
+    ->select(['*'])
+    //->whereIf($filter !== null, 'name ILIKE ?', $filter->value) // this will fail for $filter = null, because null->value does not exist
+    ->whereIf($filter !== null, 'name ILIKE ?', fn (): string => $filter->value);
+};
+
+dump($listItems(null)); // (Query) SELECT * FROM users
+dump($listItems(Filter::User2)); // (Query) SELECT * FROM users WHERE name ILIKE $1 [Params: (array) ['user2']]
 ```
 
 ### Insert

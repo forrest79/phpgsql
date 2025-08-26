@@ -250,6 +250,22 @@ final class FluentQueryTest extends Tests\TestCase
 	}
 
 
+	public function testWhereIfCallable(): void
+	{
+		$queryWithTrueIfCondition = $this->query()
+			->select(['x.column'])
+			->from('table', 't')
+			->whereIf(true, 'x.column = ?', static fn (): int => 2)
+			->whereIf(false, 'x.column = ?', static function (): int {
+				throw new \Exception('This should never happen');
+			})
+			->toDbQuery();
+
+		Tester\Assert::same('SELECT x.column FROM table AS t WHERE x.column = $1', $queryWithTrueIfCondition->sql);
+		Tester\Assert::same([2], $queryWithTrueIfCondition->params);
+	}
+
+
 	public function testWhereAnd(): void
 	{
 		$condition = Fluent\Condition::createAnd()

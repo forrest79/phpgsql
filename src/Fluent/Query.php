@@ -402,6 +402,12 @@ class Query implements Db\Sql
 	public function whereIf(bool $ifCondition, string|Db\Sql $condition, mixed ...$params): static
 	{
 		if ($ifCondition) {
+			foreach ($params as $i => $param) {
+				if (is_callable($param)) {
+					$params[$i] = call_user_func($param);
+				}
+			}
+
 			return $this->where($condition, ...$params);
 		}
 
