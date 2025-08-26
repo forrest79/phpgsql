@@ -2,13 +2,14 @@
 
 namespace Forrest79\PhPgSql\Benchmarks;
 
+use Forrest79\PhPgSql\Tests\Helper;
 use PgSql;
 
 require __DIR__ . '/bootstrap.php';
 
 final class GetFieldTypesBenchmark extends BenchmarkCase
 {
-	private const COLUMNS = [
+	private const array COLUMNS = [
 		'col1' => 1,
 		'col2' => 2,
 		'col3' => 3,
@@ -33,7 +34,7 @@ final class GetFieldTypesBenchmark extends BenchmarkCase
 	{
 		parent::setUp();
 
-		$connection = \pg_connect(\phpgsqlConnectionConfig());
+		$connection = \pg_connect(Helper::connectionConfig());
 		if ($connection === false) {
 			throw new \RuntimeException('pg_connect failed');
 		}

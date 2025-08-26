@@ -4,7 +4,7 @@ namespace Forrest79\PhPgSql\Db\Exceptions;
 
 class DataTypeCacheException extends Exception
 {
-	public const CANT_LOAD_TYPES = 1;
+	public const int CANT_LOAD_TYPES = 1;
 
 
 	public static function cantLoadTypes(string $error): self

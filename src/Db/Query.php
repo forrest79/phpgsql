@@ -2,12 +2,12 @@
 
 namespace Forrest79\PhPgSql\Db;
 
-class Query
+readonly class Query
 {
-	public readonly string $sql;
+	public string $sql;
 
 	/** @var list<mixed> */
-	public readonly array $params;
+	public array $params;
 
 
 	/**

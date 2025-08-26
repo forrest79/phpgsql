@@ -33,8 +33,8 @@ use Forrest79\PhPgSql\Db;
  */
 class QueryBuilder
 {
-	private const TABLE_NAME = 0;
-	private const TABLE_TYPE = 1;
+	private const int TABLE_NAME = 0;
+	private const int TABLE_TYPE = 1;
 
 
 	/**

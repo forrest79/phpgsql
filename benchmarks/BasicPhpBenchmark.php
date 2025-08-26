@@ -8,13 +8,13 @@ require __DIR__ . '/bootstrap.php';
 
 final class BasicPhpBenchmark extends BenchmarkCase
 {
-	private const CONDITION = 1;
-	private const ARRAY = [1];
-	private const NULL_ARRAY = null;
+	private const int CONDITION = 1;
+	private const array ARRAY = [1];
+	private const null NULL_ARRAY = null;
 
 	protected int $defaultRepeat = 1000000;
 
-	private const TEST_ARRAY = [1, 2, 3];
+	private const array TEST_ARRAY = [1, 2, 3];
 
 	private \Closure $updateFunction;
 

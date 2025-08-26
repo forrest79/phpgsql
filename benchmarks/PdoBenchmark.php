@@ -2,6 +2,7 @@
 
 namespace Forrest79\PhPgSql\Benchmarks;
 
+use Forrest79\PhPgSql\Tests\Helper;
 use PgSql;
 
 require __DIR__ . '/bootstrap.php';
@@ -25,13 +26,13 @@ final class PdoBenchmark extends BenchmarkCase
 	{
 		parent::setUp();
 
-		$connection = \pg_connect(\phpgsqlConnectionConfig());
+		$connection = \pg_connect(Helper::connectionConfig());
 		if ($connection === false) {
 			throw new \RuntimeException('pg_connect failed');
 		}
 		$this->connection = $connection;
 
-		$pdoConfig = 'pgsql:' . \str_replace(' ', ';', \phpgsqlConnectionConfig());
+		$pdoConfig = 'pgsql:' . \str_replace(' ', ';', Helper::connectionConfig());
 
 		$this->pdo = new \PDO($pdoConfig);
 

@@ -6,16 +6,16 @@ use Forrest79\PhPgSql\Db;
 
 class ResultException extends Exception
 {
-	public const NO_COLUMN = 1;
-	public const COLUMN_NAME_IS_ALREADY_IN_USE = 2;
-	public const FETCH_ASSOC_BAD_DESCRIPTOR = 3;
-	public const FETCH_ASSOC_NO_COLUMN = 4;
-	public const FETCH_ASSOC_ONLY_SCALAR_AS_KEY = 5;
-	public const FETCH_PAIRS_BAD_COLUMNS = 6;
-	public const FETCH_PAIRS_ONLY_SCALAR_AS_KEY = 7;
-	public const FETCH_MUTATOR_BAR_RETURN_TYPE = 8;
-	public const NO_OTHER_ASYNC_RESULT = 9;
-	public const NO_OID_IN_DATA_TYPE_CACHE = 10;
+	public const int NO_COLUMN = 1;
+	public const int COLUMN_NAME_IS_ALREADY_IN_USE = 2;
+	public const int FETCH_ASSOC_BAD_DESCRIPTOR = 3;
+	public const int FETCH_ASSOC_NO_COLUMN = 4;
+	public const int FETCH_ASSOC_ONLY_SCALAR_AS_KEY = 5;
+	public const int FETCH_PAIRS_BAD_COLUMNS = 6;
+	public const int FETCH_PAIRS_ONLY_SCALAR_AS_KEY = 7;
+	public const int FETCH_MUTATOR_BAR_RETURN_TYPE = 8;
+	public const int NO_OTHER_ASYNC_RESULT = 9;
+	public const int NO_OID_IN_DATA_TYPE_CACHE = 10;
 
 
 	public static function noColumn(string $column): self

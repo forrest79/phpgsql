@@ -9,67 +9,67 @@ use Forrest79\PhPgSql\Db;
  */
 class Query implements Db\Sql
 {
-	public const QUERY_SELECT = 'select';
-	public const QUERY_INSERT = 'insert';
-	public const QUERY_UPDATE = 'update';
-	public const QUERY_DELETE = 'delete';
-	public const QUERY_MERGE = 'merge';
-	public const QUERY_TRUNCATE = 'truncate';
+	public const string QUERY_SELECT = 'select';
+	public const string QUERY_INSERT = 'insert';
+	public const string QUERY_UPDATE = 'update';
+	public const string QUERY_DELETE = 'delete';
+	public const string QUERY_MERGE = 'merge';
+	public const string QUERY_TRUNCATE = 'truncate';
 
-	public const PARAM_SELECT = 'select';
-	public const PARAM_DISTINCT = 'distinct';
-	public const PARAM_DISTINCTON = 'distinctOn';
-	public const PARAM_TABLES = 'tables';
-	public const PARAM_TABLE_TYPES = 'table-types';
-	public const PARAM_ON_CONDITIONS = 'on-conditions';
-	public const PARAM_LATERAL_TABLES = 'lateral-tables';
-	public const PARAM_WHERE = 'where';
-	public const PARAM_GROUPBY = 'groupBy';
-	public const PARAM_HAVING = 'having';
-	public const PARAM_ORDERBY = 'orderBy';
-	public const PARAM_LIMIT = 'limit';
-	public const PARAM_OFFSET = 'offset';
-	public const PARAM_COMBINE_QUERIES = 'combine-queries';
-	public const PARAM_INSERT_COLUMNS = 'insert-columns';
-	public const PARAM_INSERT_ONCONFLICT = 'insert-onconflict';
-	public const PARAM_RETURNING = 'returning';
-	public const PARAM_DATA = 'data';
-	public const PARAM_ROWS = 'rows';
-	public const PARAM_MERGE = 'merge';
-	public const PARAM_WITH = 'with';
-	public const PARAM_PREFIX = 'prefix';
-	public const PARAM_SUFFIX = 'suffix';
+	public const string PARAM_SELECT = 'select';
+	public const string PARAM_DISTINCT = 'distinct';
+	public const string PARAM_DISTINCTON = 'distinctOn';
+	public const string PARAM_TABLES = 'tables';
+	public const string PARAM_TABLE_TYPES = 'table-types';
+	public const string PARAM_ON_CONDITIONS = 'on-conditions';
+	public const string PARAM_LATERAL_TABLES = 'lateral-tables';
+	public const string PARAM_WHERE = 'where';
+	public const string PARAM_GROUPBY = 'groupBy';
+	public const string PARAM_HAVING = 'having';
+	public const string PARAM_ORDERBY = 'orderBy';
+	public const string PARAM_LIMIT = 'limit';
+	public const string PARAM_OFFSET = 'offset';
+	public const string PARAM_COMBINE_QUERIES = 'combine-queries';
+	public const string PARAM_INSERT_COLUMNS = 'insert-columns';
+	public const string PARAM_INSERT_ONCONFLICT = 'insert-onconflict';
+	public const string PARAM_RETURNING = 'returning';
+	public const string PARAM_DATA = 'data';
+	public const string PARAM_ROWS = 'rows';
+	public const string PARAM_MERGE = 'merge';
+	public const string PARAM_WITH = 'with';
+	public const string PARAM_PREFIX = 'prefix';
+	public const string PARAM_SUFFIX = 'suffix';
 
-	public const TABLE_TYPE_MAIN = 'main';
-	public const TABLE_TYPE_FROM = 'from';
-	public const TABLE_TYPE_JOINS = 'joins';
-	public const TABLE_TYPE_USING = 'using';
+	public const string TABLE_TYPE_MAIN = 'main';
+	public const string TABLE_TYPE_FROM = 'from';
+	public const string TABLE_TYPE_JOINS = 'joins';
+	public const string TABLE_TYPE_USING = 'using';
 
-	private const JOIN_INNER = 'INNER JOIN';
-	private const JOIN_LEFT_OUTER = 'LEFT OUTER JOIN';
-	private const JOIN_RIGHT_OUTER = 'RIGHT OUTER JOIN';
-	private const JOIN_FULL_OUTER = 'FULL OUTER JOIN';
-	public const JOIN_CROSS = 'CROSS JOIN';
+	private const string JOIN_INNER = 'INNER JOIN';
+	private const string JOIN_LEFT_OUTER = 'LEFT OUTER JOIN';
+	private const string JOIN_RIGHT_OUTER = 'RIGHT OUTER JOIN';
+	private const string JOIN_FULL_OUTER = 'FULL OUTER JOIN';
+	public const string JOIN_CROSS = 'CROSS JOIN';
 
-	private const COMBINE_UNION = 'UNION';
-	private const COMBINE_UNION_ALL = 'UNION ALL';
-	private const COMBINE_INTERSECT = 'INTERSECT';
-	private const COMBINE_EXCEPT = 'EXCEPT';
+	private const string COMBINE_UNION = 'UNION';
+	private const string COMBINE_UNION_ALL = 'UNION ALL';
+	private const string COMBINE_INTERSECT = 'INTERSECT';
+	private const string COMBINE_EXCEPT = 'EXCEPT';
 
-	public const INSERT_ONCONFLICT_COLUMNS_OR_CONSTRAINT = 'columns-or-constraint';
-	public const INSERT_ONCONFLICT_WHERE = 'where';
-	public const INSERT_ONCONFLICT_DO = 'do';
-	public const INSERT_ONCONFLICT_DO_WHERE = 'do-where';
+	public const string INSERT_ONCONFLICT_COLUMNS_OR_CONSTRAINT = 'columns-or-constraint';
+	public const string INSERT_ONCONFLICT_WHERE = 'where';
+	public const string INSERT_ONCONFLICT_DO = 'do';
+	public const string INSERT_ONCONFLICT_DO_WHERE = 'do-where';
 
-	public const MERGE_WHEN_MATCHED = 'when-matched';
-	public const MERGE_WHEN_NOT_MATCHED = 'when-not-matched';
+	public const string MERGE_WHEN_MATCHED = 'when-matched';
+	public const string MERGE_WHEN_NOT_MATCHED = 'when-not-matched';
 
-	public const WITH_QUERIES = 'queries';
-	public const WITH_QUERIES_SUFFIX = 'queries-suffix';
-	public const WITH_QUERIES_NOT_MATERIALIZED = 'queries-not-materialized';
-	public const WITH_RECURSIVE = 'recursive';
+	public const string WITH_QUERIES = 'queries';
+	public const string WITH_QUERIES_SUFFIX = 'queries-suffix';
+	public const string WITH_QUERIES_NOT_MATERIALIZED = 'queries-not-materialized';
+	public const string WITH_RECURSIVE = 'recursive';
 
-	private const DEFAULT_PARAMS = [
+	private const array DEFAULT_PARAMS = [
 		self::PARAM_SELECT => [],
 		self::PARAM_DISTINCT => false,
 		self::PARAM_DISTINCTON => [],

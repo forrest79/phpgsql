@@ -11,8 +11,8 @@
 		}
 	],
 	"require": {
-		"php": "^8.1",
-		"ext-pgsql": "^8.1"
+		"php": "^8.3",
+		"ext-pgsql": "^8.3"
 	},
 	"require-dev": {
 		"forrest79/phpcs": "^2.0",

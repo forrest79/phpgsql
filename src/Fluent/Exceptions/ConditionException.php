@@ -4,10 +4,10 @@ namespace Forrest79\PhPgSql\Fluent\Exceptions;
 
 class ConditionException extends Exception
 {
-	public const NO_PARENT = 1;
-	public const NO_QUERY = 2;
-	public const ONLY_STRING_CONDITION_CAN_HAVE_PARAMS = 3;
-	public const BAD_PARAMS_COUNT = 4;
+	public const int NO_PARENT = 1;
+	public const int NO_QUERY = 2;
+	public const int ONLY_STRING_CONDITION_CAN_HAVE_PARAMS = 3;
+	public const int BAD_PARAMS_COUNT = 4;
 
 
 	public static function noParent(): self

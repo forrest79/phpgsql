@@ -4,16 +4,16 @@ namespace Forrest79\PhPgSql\Db\Exceptions;
 
 class ConnectionException extends Exception
 {
-	public const NO_CONFIG = 1;
-	public const CANT_CHANGE_CONNECTION_CONFIG_WHEN_CONNECTED = 2;
-	public const CONNECTION_FAILED = 3;
-	public const BAD_CONNECTION = 4;
-	public const CANT_GET_NOTICES = 5;
-	public const ASYNC_CANCEL_FAILED = 6;
-	public const ASYNC_QUERY_SENT_FAILED = 7;
-	public const ASYNC_NO_QUERY_IS_SENT = 8;
-	public const ASYNC_NO_EXECUTE_IS_SENT = 9;
-	public const ASYNC_ANOTHER_QUERY_IS_RUNNING = 10;
+	public const int NO_CONFIG = 1;
+	public const int CANT_CHANGE_CONNECTION_CONFIG_WHEN_CONNECTED = 2;
+	public const int CONNECTION_FAILED = 3;
+	public const int BAD_CONNECTION = 4;
+	public const int CANT_GET_NOTICES = 5;
+	public const int ASYNC_CANCEL_FAILED = 6;
+	public const int ASYNC_QUERY_SENT_FAILED = 7;
+	public const int ASYNC_NO_QUERY_IS_SENT = 8;
+	public const int ASYNC_NO_EXECUTE_IS_SENT = 9;
+	public const int ASYNC_ANOTHER_QUERY_IS_RUNNING = 10;
 
 
 	public static function noConfig(): self

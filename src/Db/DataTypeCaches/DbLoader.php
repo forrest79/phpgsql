@@ -6,7 +6,7 @@ use Forrest79\PhPgSql\Db;
 
 abstract class DbLoader implements Db\DataTypeCache
 {
-	private const LOAD_QUERY = 'SELECT oid, typname FROM pg_catalog.pg_type';
+	private const string LOAD_QUERY = 'SELECT oid, typname FROM pg_catalog.pg_type';
 
 
 	/**

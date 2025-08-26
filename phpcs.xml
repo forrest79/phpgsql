@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
 <ruleset name="PhpFpmRequest">
-	<rule ref="./vendor/forrest79/phpcs/Forrest79CodingStandard/ruleset.xml">
-		<exclude name="SlevomatCodingStandard.TypeHints.ClassConstantTypeHint.MissingNativeTypeHint"/><!-- PHP 8.3+ -->
-	</rule>
+	<rule ref="./vendor/forrest79/phpcs/Forrest79CodingStandard/ruleset.xml"/>
 
 	<rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
 		<properties>

@@ -2,6 +2,7 @@
 
 namespace Forrest79\PhPgSql\Benchmarks;
 
+use Forrest79\PhPgSql\Tests\Helper;
 use PgSql;
 
 require __DIR__ . '/bootstrap.php';
@@ -15,7 +16,7 @@ final class PgQueryBenchmark extends BenchmarkCase
 	{
 		parent::setUp();
 
-		$connection = \pg_connect(\phpgsqlConnectionConfig());
+		$connection = \pg_connect(Helper::connectionConfig());
 		if ($connection === false) {
 			throw new \RuntimeException('pg_connect failed');
 		}

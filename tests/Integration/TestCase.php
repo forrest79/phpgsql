@@ -28,7 +28,7 @@ abstract class TestCase extends Tests\TestCase
 		}
 
 		$this->dbname = \sprintf('phpgsql_%d_%s', $pid, \uniqid());
-		$this->config = \phpgsqlConnectionConfig();
+		$this->config = Tests\Helper::connectionConfig();
 		$this->adminConnection = new Db\Connection($this->config);
 
 		$this->adminConnection->query('CREATE DATABASE ?', Db\Sql\Literal::create($this->getDbName()));

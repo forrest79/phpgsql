@@ -4,15 +4,15 @@ namespace Forrest79\PhPgSql\Fluent\Exceptions;
 
 class QueryException extends Exception
 {
-	public const ONLY_ONE_MAIN_TABLE = 1;
-	public const TABLE_ALIAS_ALREADY_EXISTS = 2;
-	public const NON_EXISTING_QUERY_PARAM = 3;
-	public const SQL_MUST_HAVE_ALIAS = 4;
-	public const PARAM_MUST_BE_SCALAR_OR_ENUM_OR_EXPRESSION = 5;
-	public const CANT_UPDATE_QUERY_AFTER_EXECUTE = 6;
-	public const YOU_MUST_EXECUTE_QUERY_BEFORE_THAT = 7;
-	public const MERGE_ONLY_ONE_USING = 8;
-	public const ON_CONFLICT_WHERE_NOT_FOR_CONSTRAINT = 9;
+	public const int ONLY_ONE_MAIN_TABLE = 1;
+	public const int TABLE_ALIAS_ALREADY_EXISTS = 2;
+	public const int NON_EXISTING_QUERY_PARAM = 3;
+	public const int SQL_MUST_HAVE_ALIAS = 4;
+	public const int PARAM_MUST_BE_SCALAR_OR_ENUM_OR_EXPRESSION = 5;
+	public const int CANT_UPDATE_QUERY_AFTER_EXECUTE = 6;
+	public const int YOU_MUST_EXECUTE_QUERY_BEFORE_THAT = 7;
+	public const int MERGE_ONLY_ONE_USING = 8;
+	public const int ON_CONFLICT_WHERE_NOT_FOR_CONSTRAINT = 9;
 
 
 	public static function onlyOneMainTable(): self

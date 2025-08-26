@@ -9,8 +9,8 @@ use Forrest79\PhPgSql\Db;
  */
 class Condition implements Db\Sql, \ArrayAccess
 {
-	public const TYPE_AND = 'AND';
-	public const TYPE_OR = 'OR';
+	public const string TYPE_AND = 'AND';
+	public const string TYPE_OR = 'OR';
 
 	private string $type;
 

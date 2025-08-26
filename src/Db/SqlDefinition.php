@@ -2,12 +2,12 @@
 
 namespace Forrest79\PhPgSql\Db;
 
-class SqlDefinition
+readonly class SqlDefinition
 {
-	public readonly string $sql;
+	public string $sql;
 
 	/** @var list<mixed> */
-	public readonly array $params;
+	public array $params;
 
 
 	/**

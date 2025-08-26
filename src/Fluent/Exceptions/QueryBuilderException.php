@@ -4,22 +4,22 @@ namespace Forrest79\PhPgSql\Fluent\Exceptions;
 
 class QueryBuilderException extends Exception
 {
-	public const BAD_QUERY_TYPE = 1;
-	public const NO_COLUMNS_TO_SELECT = 2;
-	public const NO_ON_CONDITION = 3;
-	public const NO_DATA_TO_INSERT = 4;
-	public const NO_DATA_TO_UPDATE = 5;
-	public const DATA_CANT_CONTAIN_ARRAY = 6;
-	public const NO_MAIN_TABLE = 7;
-	public const NO_CORRESPONDING_TABLE = 8;
-	public const SELECT_ALL_COLUMNS_CANT_BE_COMBINED_WITH_CONCRETE_COLUMN_FOR_INSERT_SELECT_WITH_COLUMN_DETECTION = 9;
-	public const MERGE_NO_USING = 10;
-	public const MERGE_NO_WHEN = 11;
-	public const ON_CONFLICT_NO_DO = 12;
-	public const ON_CONFLICT_DO_WITHOUT_DEFINITION = 13;
-	public const ON_CONFLICT_DO_UPDATE_SET_SINGLE_COLUMN_CAN_BE_ONLY_STRING = 14;
-	public const MISSING_COLUMN_ALIAS = 15;
-	public const CANT_COMBINE_DISTINCT_AND_DISTINCT_ON = 16;
+	public const int BAD_QUERY_TYPE = 1;
+	public const int NO_COLUMNS_TO_SELECT = 2;
+	public const int NO_ON_CONDITION = 3;
+	public const int NO_DATA_TO_INSERT = 4;
+	public const int NO_DATA_TO_UPDATE = 5;
+	public const int DATA_CANT_CONTAIN_ARRAY = 6;
+	public const int NO_MAIN_TABLE = 7;
+	public const int NO_CORRESPONDING_TABLE = 8;
+	public const int SELECT_ALL_COLUMNS_CANT_BE_COMBINED_WITH_CONCRETE_COLUMN_FOR_INSERT_SELECT_WITH_COLUMN_DETECTION = 9;
+	public const int MERGE_NO_USING = 10;
+	public const int MERGE_NO_WHEN = 11;
+	public const int ON_CONFLICT_NO_DO = 12;
+	public const int ON_CONFLICT_DO_WITHOUT_DEFINITION = 13;
+	public const int ON_CONFLICT_DO_UPDATE_SET_SINGLE_COLUMN_CAN_BE_ONLY_STRING = 14;
+	public const int MISSING_COLUMN_ALIAS = 15;
+	public const int CANT_COMBINE_DISTINCT_AND_DISTINCT_ON = 16;
 
 
 	public static function badQueryType(string $type): self

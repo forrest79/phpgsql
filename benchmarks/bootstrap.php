@@ -8,5 +8,3 @@ if (!\file_exists($loader)) {
 }
 
 require $loader;
-
-require_once __DIR__ . '/../tests/prepare-db-config.php';

@@ -61,19 +61,19 @@ ignoreErrors:
 
 	-
 		sniff: PSR1.Files.SideEffects.FoundWithSymbols
-		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 9 and the first side effect is on line 7.'
+		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 10 and the first side effect is on line 8.'
 		count: 1
 		path: benchmarks/GetFieldTypesBenchmark.php
 
 	-
 		sniff: PSR1.Files.SideEffects.FoundWithSymbols
-		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 9 and the first side effect is on line 7.'
+		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 10 and the first side effect is on line 8.'
 		count: 1
 		path: benchmarks/PdoBenchmark.php
 
 	-
 		sniff: PSR1.Files.SideEffects.FoundWithSymbols
-		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 9 and the first side effect is on line 7.'
+		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 10 and the first side effect is on line 8.'
 		count: 1
 		path: benchmarks/PgQueryBenchmark.php
 
@@ -592,15 +592,3 @@ ignoreErrors:
 		message: 'A file should declare new symbols (classes, functions, constants, etc.) and cause no other side effects, or it should execute logic with side effects, but should not do both. The first symbol is defined on line 14 and the first side effect is on line 9.'
 		count: 1
 		path: tests/Unit/QueryTest.php
-
-	-
-		sniff: SlevomatCodingStandard.TypeHints.DeclareStrictTypes.IncorrectWhitespaceAfterDeclare
-		message: 'Expected 1 line after declare statement, found 2.'
-		count: 1
-		path: tests/prepare-db-config.php
-
-	-
-		sniff: Squiz.Functions.GlobalFunction.Found
-		message: 'Consider putting global function "phpgsqlConnectionConfig" in a static class'
-		count: 1
-		path: tests/prepare-db-config.php

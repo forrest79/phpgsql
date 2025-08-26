@@ -13,7 +13,7 @@ require_once __DIR__ . '/TestCase.php';
  */
 final class DocsTest extends TestCase
 {
-	private const DOCS_DIRECTORY = __DIR__ . '/../../docs';
+	private const string DOCS_DIRECTORY = __DIR__ . '/../../docs';
 
 
 	protected function setUp(): void

@@ -10,5 +10,3 @@ if (!\file_exists($loader)) {
 require $loader;
 
 Tester\Environment::setup();
-
-require_once __DIR__ . '/prepare-db-config.php';

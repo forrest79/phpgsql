@@ -4,8 +4,8 @@ namespace Forrest79\PhPgSql\Db\Exceptions;
 
 class RowException extends Exception
 {
-	public const NO_COLUMN = 1;
-	public const NOT_STRING_KEY = 2;
+	public const int NO_COLUMN = 1;
+	public const int NOT_STRING_KEY = 2;
 
 
 	public static function noColumn(string $column): self
