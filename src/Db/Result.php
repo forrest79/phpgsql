@@ -126,7 +126,10 @@ class Result implements ColumnValueParser, \Countable
 			return null;
 		}
 
+		// Detecting column data types need valid query result and it can be closed before columns data types
+		//   ...are detected, that's why we're detecting it with the first fetch (before first row is created)
 		$this->detectColumnDataTypes();
+
 		$row = $this->rowFactory->create($this, $data);
 
 		if ($this->rowFetchMutator !== null) {
