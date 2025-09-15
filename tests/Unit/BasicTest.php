@@ -70,6 +70,12 @@ final class BasicTest extends Tests\TestCase
 		}, \RuntimeException::class, 'You can\'t serialize or unserialize \'Forrest79\PhPgSql\Db\Connection\' instances.');
 	}
 
+
+	public function testPrepareConnectionConfigHelper(): void
+	{
+		Tester\Assert::same('dbname=\'test_db\' port=\'5432\' connection_timeout=\'1.5\'', Db\Helper::prepareConnectionConfig(['dbname' => 'test_db', 'port' => 5432, 'connection_timeout' => 1.5, 'password' => NULL]));
+	}
+
 }
 
 (new BasicTest())->run();

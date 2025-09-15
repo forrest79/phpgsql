@@ -1000,8 +1000,8 @@ $connection->query('SELECT nick FROM users WHERE id = ?', 3);
 
 On the `Forrest79\PhPgSql\Db\Helpers` object are three useful static methods:
 
-- `createStringPgArray()` - create PostgreSQL array syntax for strings, that can be used in a SQL query
-- `createPgArray()` - create PostgreSQL array syntax for numeric, that can be used in a SQL query
+- `createStringPgArray(array $array)` - create PostgreSQL array syntax for strings, that can be used in a SQL query
+- `createPgArray(array $array)` - create PostgreSQL array syntax for numeric, that can be used in a SQL query
 
 > There is no automatic conversion from PHP to PostgreSQL - even arrays are not automatically converted. When you need this, you must perform conversion manually.
 
@@ -1017,6 +1017,13 @@ dump($array2); // (string) '{\"1.2\",\"3.4\"}'
 ```
 
 - `dump($sql, $params, $type = 'cli'/'html')` - print the SQL query with highlighted syntax. If you pass parameters, the query is printed with these parameters, and you can copy it and run in the DB. `$type` can be `cli` or `html` (`html` is also everything different from `cli`)
+
+- `prepareConnectionConfig(array $config)` - prepare connection config (connection string) from an array of keys and values. The connection string has format `key=value key2=value2` (for example: `host=localhost port=5432 dbname=phpgsql_test`)   
+
+```php
+$connectionString = Forrest79\PhPgSql\Db\Helper::prepareConnectionConfig(['host' => 'localhost', 'port' => 5432, 'dbname' => 'phpgsql_test']);
+dump($connectionString); // (string) 'host='localhost' port='5432' dbname='phpgsql_test''
+```
 
 ## Getting notices
 
