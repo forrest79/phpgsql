@@ -5,7 +5,7 @@ namespace Forrest79\PhPgSql\Db\Exceptions;
 class ConnectionException extends Exception
 {
 	public const NO_CONFIG = 1;
-	public const CANT_CHANGE_WHEN_CONNECTED = 2;
+	public const CANT_CHANGE_CONNECTION_CONFIG_WHEN_CONNECTED = 2;
 	public const CONNECTION_FAILED = 3;
 	public const BAD_CONNECTION = 4;
 	public const CANT_GET_NOTICES = 5;
@@ -22,9 +22,9 @@ class ConnectionException extends Exception
 	}
 
 
-	public static function cantChangeWhenConnected(string $type): self
+	public static function cantChangeConnectionConfigWhenConnected(): self
 	{
-		return new self(\sprintf('You can\'t change \'%s\' when connected.', $type), self::CANT_CHANGE_WHEN_CONNECTED);
+		return new self('You can\'t change \'connectionConfig\' when connected.', self::CANT_CHANGE_CONNECTION_CONFIG_WHEN_CONNECTED);
 	}
 
 

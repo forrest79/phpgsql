@@ -18,12 +18,11 @@ Pass `TRUE` as the second parameter to force new connection (otherwise, existing
 
 > Personal note: I'm thinking about removing this in the next big release.
 
-You can create a blank `Connection` object and set connection parameters on this object with functions `setConnectionConfig()` and `setConnectForceNew()`. You must set it before `connect()` is executed.
+You can create a blank `Connection` object and set connection parameters on this object with function `setConnectionConfig()` later. You must set it before `connect()` is executed.
 
 ```php
 $connection = new Forrest79\PhPgSql\Db\Connection();
 $connection->setConnectionConfig('host=localhost port=5432 dbname=test user=user1 password=xyz111 connect_timeout=5');
-$connection->setConnectForceNew(TRUE);
 ```
 
 Once you have a connection, you can manually connect it:
@@ -96,6 +95,10 @@ dump(pg_ping($connection->getResource())); // (bool) TRUE
 ```
 
 Note about serialization: `Connection` object can't be serialized and deserialized.
+
+> IMPORTANT! All connections are created with `PGSQL_CONNECT_FORCE_NEW` flag in `pg_connect()` function. Without this, pgsql extension shares the same resource for connection with the same connection string.
+> This is really dangerous - imagine - you want to create two `Connection` object to the same DB. You will close one of them and the connection resource of the other is magically closed too.
+> With `PGSQL_CONNECT_FORCE_NEW` is always created a new connection resource.
 
 ### Running queries and getting results
 

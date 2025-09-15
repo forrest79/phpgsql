@@ -88,13 +88,6 @@ final class BasicTest extends TestCase
 	}
 
 
-	public function testConnectionForceNew(): void
-	{
-		$this->connection->setConnectForceNew(TRUE);
-		Tester\Assert::true($this->connection->ping());
-	}
-
-
 	public function testFailedConnection(): void
 	{
 		$this->connection->setConnectionConfig(\str_replace('user=', 'user=non-existing-user-', $this->getConfig()));
@@ -111,16 +104,11 @@ final class BasicTest extends TestCase
 
 		Tester\Assert::exception(function (): void {
 			$this->connection->setConnectionConfig('');
-		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::CANT_CHANGE_WHEN_CONNECTED);
-
-		Tester\Assert::exception(function (): void {
-			$this->connection->setConnectForceNew();
-		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::CANT_CHANGE_WHEN_CONNECTED);
+		}, Db\Exceptions\ConnectionException::class, NULL, Db\Exceptions\ConnectionException::CANT_CHANGE_CONNECTION_CONFIG_WHEN_CONNECTED);
 
 		$this->connection->close();
 
 		$this->connection->setConnectionConfig('');
-		$this->connection->setConnectForceNew();
 	}
 
 
