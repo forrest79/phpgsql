@@ -185,7 +185,7 @@ class Query implements Sql
 	/**
 	 * @throws Exceptions\QueryException
 	 */
-	public function distinctOn(string ...$on): static
+	public function distinctOn(string|Query|Db\Sql ...$on): static
 	{
 		$this->resetQuery();
 

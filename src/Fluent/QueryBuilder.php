@@ -8,7 +8,7 @@ use Forrest79\PhPgSql\Db;
  * @phpstan-type QueryParams array{
  *   select: array<int|string, string|int|\BackedEnum|Query|Db\Sql>,
  *   distinct: bool,
- *   distinctOn: list<string>,
+ *   distinctOn: list<string|Query|Db\Sql>,
  *   tables: array<string, array{0: string, 1: string}>,
  *   table-types: array{main: string|NULL, from: list<string>, joins: list<string>, using: string|NULL},
  *   on-conditions: array<string, Complex>,
@@ -26,7 +26,7 @@ use Forrest79\PhPgSql\Db;
  *   data: array<string, mixed>,
  *   rows: array<int, array<string, mixed>>,
  *   merge: list<array{0: string, 1: string|Db\Sql, 2: Complex|NULL}>,
- *   with: array{queries: array<string, string|Query|Db\Sql>, queries-suffix: array<string, string>, queries-not-materialized: array<string, string>, recursive: bool},
+ *   with: array{queries: array<string, string|Query|Db\Sql>, queries-suffix: array<string, string>, queries-not-materialized: array<string, bool>, recursive: bool},
  *   prefix: list<array<mixed>>,
  *   suffix: list<array<mixed>>
  * }
@@ -95,7 +95,7 @@ class QueryBuilder
 	): string
 	{
 		$selectSql = 'SELECT ' .
-			$this->getSelectDistinct($queryParams) .
+			$this->getSelectDistinct($queryParams, $params) .
 			$this->getSelectColumns($queryParams, $params, $insertSelectColumnNames) .
 			$this->getFrom($queryParams, $params, $insertSelectColumnNames === NULL) .
 			$this->getJoins($queryParams, $params) .
@@ -429,9 +429,10 @@ class QueryBuilder
 
 	/**
 	 * @param array<string, mixed> $queryParams
-	 * @phpstan-param QueryParams $queryParams
+     * @param list<mixed> $params
+     * @phpstan-param QueryParams $queryParams
 	 */
-	private function getSelectDistinct(array $queryParams): string
+	private function getSelectDistinct(array $queryParams, array &$params): string
 	{
 		if (($queryParams[Query::PARAM_DISTINCT] === TRUE) && ($queryParams[Query::PARAM_DISTINCTON] !== [])) {
 			throw Exceptions\QueryBuilderException::cantCombineDistinctAndDistinctOn();
@@ -440,11 +441,34 @@ class QueryBuilder
 		if ($queryParams[Query::PARAM_DISTINCT] === TRUE) {
 			return 'DISTINCT ';
 		} else if ($queryParams[Query::PARAM_DISTINCTON] !== []) {
-			return 'DISTINCT ON (' . implode(', ', $queryParams[Query::PARAM_DISTINCTON]) . ') ';
+			return 'DISTINCT ON (' . $this->getColumnsString($queryParams[Query::PARAM_DISTINCTON], $params) . ') ';
 		}
 
 		return '';
 	}
+
+
+    /**
+     * @param array<string|Query|Db\Sql> $columns
+     * @param list<mixed> $params
+     */
+    private function getColumnsString(array $columns, array &$params): string
+    {
+        $return = [];
+
+        foreach ($columns as $value) {
+            if ($value instanceof Db\Sql) {
+                $params[] = $value;
+                $value = '?';
+            } else if ($value instanceof Query) {
+                $params[] = $value->createSqlQuery();
+                $value = '(?)';
+            }
+            $return[] = $value;
+        }
+
+        return \implode(', ', $return);
+    }
 
 
 	/**
@@ -631,19 +655,7 @@ class QueryBuilder
 			return '';
 		}
 
-		$columns = [];
-		foreach ($orderBy as $value) {
-			if ($value instanceof Db\Sql) {
-				$params[] = $value;
-				$value = '?';
-			} else if ($value instanceof Query) {
-				$params[] = $value->createSqlQuery();
-				$value = '(?)';
-			}
-			$columns[] = $value;
-		}
-
-		return ' ORDER BY ' . \implode(', ', $columns);
+		return ' ORDER BY ' . $this->getColumnsString($orderBy, $params);
 	}
 
 
