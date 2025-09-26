@@ -6,6 +6,7 @@ class RowException extends Exception
 {
 	public const int NO_COLUMN = 1;
 	public const int NOT_STRING_KEY = 2;
+	public const int COLUMN_VALUE_PARSER_MISSING = 3;
 
 
 	public static function noColumn(string $column): self
@@ -17,6 +18,12 @@ class RowException extends Exception
 	public static function notStringKey(): self
 	{
 		return new self('Requested key must be string.', self::NOT_STRING_KEY);
+	}
+
+
+	public static function columnValueParserMissing(): self
+	{
+		return new self('You must pass the ColumnValueParser, if there are some rawValues.', self::COLUMN_VALUE_PARSER_MISSING);
 	}
 
 }

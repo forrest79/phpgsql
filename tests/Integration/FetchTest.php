@@ -815,6 +815,15 @@ final class FetchTest extends TestCase
 	}
 
 
+	public function testColumnValueParserWithNonExistingColumn(): void
+	{
+		Tester\Assert::exception(static function (): void {
+			$columnValueParser = new Db\ColumnValueParser(new Db\DataTypeParsers\Basic(), ['column' => 'int4']);
+			$columnValueParser->parseColumnValue('non_existing_column', 'someValue');
+		}, Db\Exceptions\ColumnValueParserException::class, code: Db\Exceptions\ColumnValueParserException::NO_COLUMN);
+	}
+
+
 	private function fetch(Db\Result $result): Db\Row
 	{
 		return $result->fetch() ?? throw new \RuntimeException('No data from database were returned');

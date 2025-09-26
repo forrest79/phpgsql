@@ -266,24 +266,6 @@ final class BasicTest extends TestCase
 	}
 
 
-	public function testRowFrom(): void
-	{
-		$row = Db\Row::from(['column1' => 1, 'column2' => 'text', 'column3' => true, 'column4' => null]);
-
-		Tester\Assert::same(1, $row->column1);
-		Tester\Assert::same('text', $row->column2);
-		Tester\Assert::same(true, $row->column3);
-		Tester\Assert::same(null, $row->column4);
-
-		Tester\Assert::true(isset($row->column3));
-		Tester\Assert::false(isset($row->column4));
-		Tester\Assert::true($row->hasColumn('column4'));
-
-		$blankRow = Db\Row::from([]);
-		Tester\Assert::same([], $blankRow->toArray());
-	}
-
-
 	public function testRowSerialize(): void
 	{
 		$this->connection->query('

@@ -4,7 +4,7 @@ namespace Forrest79\PhPgSql\Db;
 
 use PgSql;
 
-class Result implements ColumnValueParser, \Countable
+class Result implements \Countable
 {
 	protected PgSql\Result $queryResource;
 
@@ -28,8 +28,7 @@ class Result implements ColumnValueParser, \Countable
 	/** @var array<string, string>|null */
 	private array|null $columnsDataTypes = null;
 
-	/** @var array<string, bool> */
-	private array $parsedColumns = [];
+	private ColumnValueParser|null $columnValueParser = null;
 
 
 	/**
@@ -126,11 +125,7 @@ class Result implements ColumnValueParser, \Countable
 			return null;
 		}
 
-		// Detecting column data types need valid query result and it can be closed before columns data types
-		//   ...are detected, that's why we're detecting it with the first fetch (before first row is created)
-		$this->detectColumnDataTypes();
-
-		$row = $this->rowFactory->create($this, $data);
+		$row = $this->rowFactory->create($this->getColumnValueParser(), $data);
 
 		if ($this->rowFetchMutator !== null) {
 			call_user_func($this->rowFetchMutator, $row);
@@ -406,14 +401,24 @@ class Result implements ColumnValueParser, \Countable
 	}
 
 
-	public function parseColumnValue(string $column, mixed $rawValue): mixed
+	/**
+	 * @return array<string, bool>|null null = no fetch was called yet
+	 */
+	public function getParsedColumns(): array|null
 	{
-		\assert(($rawValue === null) || \is_string($rawValue)); // database result all values as string or null
-		$value = $this->dataTypeParser->parse($this->getColumnType($column), $rawValue);
+		return $this->columnValueParser === null
+			? null
+			: \array_fill_keys($this->columnValueParser->getParsedColumns(), true) + \array_fill_keys($this->getColumns(), false);
+	}
 
-		$this->parsedColumns[$column] = true;
 
-		return $value;
+	private function getColumnValueParser(): ColumnValueParser
+	{
+		if ($this->columnValueParser === null) {
+			$this->columnValueParser = new ColumnValueParser($this->dataTypeParser, $this->getColumnsDataTypes());
+		}
+
+		return $this->columnValueParser;
 	}
 
 
@@ -421,15 +426,6 @@ class Result implements ColumnValueParser, \Countable
 	 * @return array<string, string>
 	 */
 	private function getColumnsDataTypes(): array
-	{
-		$this->detectColumnDataTypes();
-		\assert($this->columnsDataTypes !== null);
-
-		return $this->columnsDataTypes;
-	}
-
-
-	private function detectColumnDataTypes(): void
 	{
 		if ($this->columnsDataTypes === null) {
 			$this->columnsDataTypes = [];
@@ -455,17 +451,8 @@ class Result implements ColumnValueParser, \Countable
 				$this->columnsDataTypes[$name] = $type;
 			}
 		}
-	}
 
-
-	/**
-	 * @return array<string, bool>|null null = no column was used
-	 */
-	public function getParsedColumns(): array|null
-	{
-		return $this->parsedColumns === []
-			? null
-			: $this->parsedColumns + \array_fill_keys($this->getColumns(), false);
+		return $this->columnsDataTypes;
 	}
 
 }

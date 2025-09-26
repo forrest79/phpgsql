@@ -49,11 +49,6 @@ final class CollectingResultsTest extends TestCase
 
 		$resultSelect = $results[2];
 
-		// Try also parse some non-existing column
-		Tester\Assert::exception(static function () use ($resultSelect): void {
-			$resultSelect->parseColumnValue('non_existing_column', 'someValue');
-		}, Db\Exceptions\ResultException::class, code: Db\Exceptions\ResultException::NO_COLUMN);
-
 		$querySelect = $resultSelect->getQuery();
 
 		Tester\Assert::same('SELECT id, name FROM test', $querySelect->sql);

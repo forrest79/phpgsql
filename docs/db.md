@@ -314,15 +314,6 @@ dump($columns); // (array) ['id', 'nick', 'active']
 
 All row data (columns) are automatically parsed to the correct PHP types (detected from the DB column type - but no DB structure is read, PG send type of all columns in the result).
 
-You can get your own data (manually passed, not from DB) parsed to the same type as have the column in the result:
-
-```php
-$result = $connection->query('SELECT id, nick, active FROM users');
-
-$data = $result->parseColumnValue('id', '123');
-dump($data); // (integer) 123
-```
-
 On the result object, we can also check what columns were accessed in our application. You can check this before your request ends, and you can get possible columns that are unnecessary to be selected from the DB:
 
 ```php
@@ -654,8 +645,6 @@ table($rows);
 ```
 
 > There are some PostgreSQL types that are hard to convert to the PHP type (some types of arrays, hstore...), and these types can be simply converted to the JSON in a DB, and this JSON can be simply converted in PHP. The parser throws an exception and gives you a hint - convert type in SELECT to JSON. If you need parsing without converting to JSON, you need to write your own PHP logic (and you can create a pull-request for this :-)).
-
-> Internal info: There is the interface `Forrest79\PhPgSql\Db\ColumnValueParser` that is required by the `Row` object. Main implementation is in the `Result` object, that makes the real values parsing. Second is the `DummyColumnValueParser` that is used for manually created rows or for unserialized rows and this parser does nothing and just return a value.
 
 ### How to extend default data type parsing
 

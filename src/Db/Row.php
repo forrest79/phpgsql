@@ -8,7 +8,7 @@ namespace Forrest79\PhPgSql\Db;
  */
 class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializable
 {
-	private ColumnValueParser $columnValueParser;
+	private ColumnValueParser|null $columnValueParser;
 
 	/** @var array<string, string|null> */
 	private array $rawValues;
@@ -20,8 +20,12 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 	/**
 	 * @param array<string, string|null> $rawValues
 	 */
-	public function __construct(ColumnValueParser $columnValueParser, array $rawValues)
+	public function __construct(ColumnValueParser|null $columnValueParser, array $rawValues)
 	{
+		if ($columnValueParser === null && $rawValues !== []) {
+			throw Exceptions\RowException::columnValueParserMissing();
+		}
+
 		$this->columnValueParser = $columnValueParser;
 		$this->rawValues = $rawValues;
 
@@ -185,7 +189,7 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 	 */
 	public function __unserialize(array $values): void
 	{
-		$this->columnValueParser = new DummyColumnValueParser();
+		$this->columnValueParser = null;
 		$this->rawValues = [];
 		$this->values = $values;
 	}
@@ -193,6 +197,7 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 
 	private function parseValue(string $column): void
 	{
+		assert($this->columnValueParser !== null);
 		$this->values[$column] = $this->columnValueParser->parseColumnValue($column, $this->rawValues[$column]);
 		unset($this->rawValues[$column]);
 	}
@@ -226,7 +231,9 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 	 */
 	public static function from(array $values): static
 	{
-		return new static(new DummyColumnValueParser(), $values);
+		$row = new static(null, []);
+		$row->values = $values;
+		return $row;
 	}
 
 }

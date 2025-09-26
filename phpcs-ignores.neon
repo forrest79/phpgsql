@@ -96,8 +96,8 @@ ignoreErrors:
 		path: src/Db/AsyncQuery.php
 
 	-
-		sniff: Squiz.Scope.MethodScope.Missing
-		message: Visibility must be declared on method "parseColumnValue"
+		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
+		message: All classes should be declared using either the "abstract" or "final" keyword.
 		count: 1
 		path: src/Db/ColumnValueParser.php
 
@@ -141,19 +141,13 @@ ignoreErrors:
 		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
 		message: All classes should be declared using either the "abstract" or "final" keyword.
 		count: 1
-		path: src/Db/DummyColumnValueParser.php
-
-	-
-		sniff: SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
-		message: Unused parameter $column.
-		count: 1
-		path: src/Db/DummyColumnValueParser.php
+		path: src/Db/Events.php
 
 	-
 		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
 		message: All classes should be declared using either the "abstract" or "final" keyword.
 		count: 1
-		path: src/Db/Events.php
+		path: src/Db/Exceptions/ColumnValueParserException.php
 
 	-
 		sniff: SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal
