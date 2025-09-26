@@ -19,7 +19,7 @@ interface Sql
 	function distinct(): Query;
 
 
-	function distinctOn(string ...$on): Query;
+	function distinctOn(string|Query|Db\Sql ...$on): Query;
 
 
 	function from(string|Query|Db\Sql $from, string|NULL $alias = NULL): Query;

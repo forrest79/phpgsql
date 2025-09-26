@@ -39,14 +39,14 @@ final class FluentQueryTest extends Tests\TestCase
 	{
 		$query = $this->query()
 			->select(['t.column'])
-			->distinctOn('t.column')
+			->distinctOn('t.column', Db\Sql\Expression::create('x = ?', 1))
 			->from('table', 't')
 			->where('t.column', 100)
 			->createSqlQuery()
 			->createQuery();
 
-		Tester\Assert::same('SELECT DISTINCT ON (t.column) t.column FROM table AS t WHERE t.column = $1', $query->getSql());
-		Tester\Assert::same([100], $query->getParams());
+		Tester\Assert::same('SELECT DISTINCT ON (t.column, x = $1) t.column FROM table AS t WHERE t.column = $2', $query->getSql());
+		Tester\Assert::same([1, 100], $query->getParams());
 	}
 
 

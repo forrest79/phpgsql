@@ -8,7 +8,7 @@ use Forrest79\PhPgSql\Db;
  * @phpstan-type QueryParams array{
  *   select: array<int|string, string|int|\BackedEnum|Query|Db\Sql>,
  *   distinct: bool,
- *   distinctOn: list<string>,
+ *   distinctOn: list<string|Query|Db\Sql>,
  *   tables: array<string, array{0: string, 1: string}>,
  *   table-types: array{main: string|NULL, from: list<string>, joins: list<string>, using: string|NULL},
  *   on-conditions: array<string, Complex>,
@@ -95,7 +95,7 @@ class QueryBuilder
 	): string
 	{
 		$selectSql = 'SELECT ' .
-			$this->getSelectDistinct($queryParams) .
+			$this->getSelectDistinct($queryParams, $params) .
 			$this->getSelectColumns($queryParams, $params, $insertSelectColumnNames) .
 			$this->getFrom($queryParams, $params, $insertSelectColumnNames === NULL) .
 			$this->getJoins($queryParams, $params) .
@@ -429,9 +429,10 @@ class QueryBuilder
 
 	/**
 	 * @param array<string, mixed> $queryParams
+	 * @param list<mixed> $params
 	 * @phpstan-param QueryParams $queryParams
 	 */
-	private function getSelectDistinct(array $queryParams): string
+	private function getSelectDistinct(array $queryParams, array &$params): string
 	{
 		if (($queryParams[Query::PARAM_DISTINCT] === TRUE) && ($queryParams[Query::PARAM_DISTINCTON] !== [])) {
 			throw Exceptions\QueryBuilderException::cantCombineDistinctAndDistinctOn();
@@ -440,7 +441,7 @@ class QueryBuilder
 		if ($queryParams[Query::PARAM_DISTINCT] === TRUE) {
 			return 'DISTINCT ';
 		} else if ($queryParams[Query::PARAM_DISTINCTON] !== []) {
-			return 'DISTINCT ON (' . implode(', ', $queryParams[Query::PARAM_DISTINCTON]) . ') ';
+			return 'DISTINCT ON (' . $this->processElements($queryParams[Query::PARAM_DISTINCTON], $params) . ') ';
 		}
 
 		return '';
@@ -631,19 +632,7 @@ class QueryBuilder
 			return '';
 		}
 
-		$columns = [];
-		foreach ($orderBy as $value) {
-			if ($value instanceof Db\Sql) {
-				$params[] = $value;
-				$value = '?';
-			} else if ($value instanceof Query) {
-				$params[] = $value->createSqlQuery();
-				$value = '(?)';
-			}
-			$columns[] = $value;
-		}
-
-		return ' ORDER BY ' . \implode(', ', $columns);
+		return ' ORDER BY ' . $this->processElements($orderBy, $params);
 	}
 
 
@@ -880,6 +869,29 @@ class QueryBuilder
 		}
 
 		return \implode(' ' . $complex->getType() . ' ', $processedConditions);
+	}
+
+
+	/**
+	 * @param list<string|Query|Db\Sql> $elements
+	 * @param list<mixed> $params
+	 */
+	private function processElements(array $elements, array &$params): string
+	{
+		$return = [];
+
+		foreach ($elements as $element) {
+			if ($element instanceof Db\Sql) {
+				$params[] = $element;
+				$element = '?';
+			} else if ($element instanceof Query) {
+				$params[] = $element->createSqlQuery();
+				$element = '(?)';
+			}
+			$return[] = $element;
+		}
+
+		return \implode(', ', $return);
 	}
 
 }
