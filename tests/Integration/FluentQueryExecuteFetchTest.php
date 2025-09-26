@@ -243,7 +243,7 @@ final class FluentQueryExecuteFetchTest extends TestCase
 	{
 		Tester\Assert::exception(function (): void {
 			$this->connection->createQuery()->select([1])->free();
-		}, Fluent\Exceptions\QueryException::class, null, Fluent\Exceptions\QueryException::YOU_MUST_EXECUTE_QUERY_BEFORE_THAT);
+		}, Fluent\Exceptions\QueryException::class, code: Fluent\Exceptions\QueryException::YOU_MUST_EXECUTE_QUERY_BEFORE_THAT);
 	}
 
 
@@ -255,7 +255,7 @@ final class FluentQueryExecuteFetchTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($query): void {
 			$query->from('table');
-		}, Fluent\Exceptions\QueryException::class, null, Fluent\Exceptions\QueryException::CANT_UPDATE_QUERY_AFTER_EXECUTE);
+		}, Fluent\Exceptions\QueryException::class, code: Fluent\Exceptions\QueryException::CANT_UPDATE_QUERY_AFTER_EXECUTE);
 	}
 
 

@@ -273,23 +273,23 @@ final class FetchTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($result): void {
 			$result->fetchAssoc('');
-		}, Db\Exceptions\ResultException::class, null, Db\Exceptions\ResultException::FETCH_ASSOC_BAD_DESCRIPTOR);
+		}, Db\Exceptions\ResultException::class, code: Db\Exceptions\ResultException::FETCH_ASSOC_BAD_DESCRIPTOR);
 
 		Tester\Assert::exception(static function () use ($result): void {
 			$result->fetchAssoc('=types');
-		}, Db\Exceptions\ResultException::class, null, Db\Exceptions\ResultException::FETCH_ASSOC_BAD_DESCRIPTOR);
+		}, Db\Exceptions\ResultException::class, code: Db\Exceptions\ResultException::FETCH_ASSOC_BAD_DESCRIPTOR);
 
 		Tester\Assert::exception(static function () use ($result): void {
 			$result->fetchAssoc('|types');
-		}, Db\Exceptions\ResultException::class, null, Db\Exceptions\ResultException::FETCH_ASSOC_BAD_DESCRIPTOR);
+		}, Db\Exceptions\ResultException::class, code: Db\Exceptions\ResultException::FETCH_ASSOC_BAD_DESCRIPTOR);
 
 		Tester\Assert::exception(static function () use ($result): void {
 			$result->fetchAssoc('types=');
-		}, Db\Exceptions\ResultException::class, null, Db\Exceptions\ResultException::FETCH_ASSOC_BAD_DESCRIPTOR);
+		}, Db\Exceptions\ResultException::class, code: Db\Exceptions\ResultException::FETCH_ASSOC_BAD_DESCRIPTOR);
 
 		Tester\Assert::exception(static function () use ($result): void {
 			$result->fetchAssoc('types|');
-		}, Db\Exceptions\ResultException::class, null, Db\Exceptions\ResultException::FETCH_ASSOC_BAD_DESCRIPTOR);
+		}, Db\Exceptions\ResultException::class, code: Db\Exceptions\ResultException::FETCH_ASSOC_BAD_DESCRIPTOR);
 
 		$result->free();
 	}
@@ -310,7 +310,7 @@ final class FetchTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($result): void {
 			$result->fetchAssoc('id=types');
-		}, Db\Exceptions\ResultException::class, null, Db\Exceptions\ResultException::FETCH_ASSOC_NO_COLUMN);
+		}, Db\Exceptions\ResultException::class, code: Db\Exceptions\ResultException::FETCH_ASSOC_NO_COLUMN);
 
 		$result->free();
 	}
@@ -353,7 +353,7 @@ final class FetchTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($result): void {
 			$result->fetchAssoc('test_date=id');
-		}, Db\Exceptions\ResultException::class, null, Db\Exceptions\ResultException::FETCH_ASSOC_ONLY_SCALAR_AS_KEY);
+		}, Db\Exceptions\ResultException::class, code: Db\Exceptions\ResultException::FETCH_ASSOC_ONLY_SCALAR_AS_KEY);
 
 		$result->free();
 	}
@@ -399,7 +399,7 @@ final class FetchTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($result): void {
 			$result->fetchPairs('name');
-		}, Db\Exceptions\ResultException::class, null, Db\Exceptions\ResultException::FETCH_PAIRS_BAD_COLUMNS);
+		}, Db\Exceptions\ResultException::class, code: Db\Exceptions\ResultException::FETCH_PAIRS_BAD_COLUMNS);
 
 		$result->free();
 	}
@@ -445,7 +445,7 @@ final class FetchTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($result): void {
 			$result->fetchPairs('test_date', 'id');
-		}, Db\Exceptions\ResultException::class, null, Db\Exceptions\ResultException::FETCH_PAIRS_ONLY_SCALAR_AS_KEY);
+		}, Db\Exceptions\ResultException::class, code: Db\Exceptions\ResultException::FETCH_PAIRS_ONLY_SCALAR_AS_KEY);
 
 		$result->free();
 	}
@@ -467,12 +467,12 @@ final class FetchTest extends TestCase
 		// Bad key
 		Tester\Assert::exception(static function () use ($result): void {
 			$result->fetchPairs('type', 'name');
-		}, Db\Exceptions\ResultException::class, null, Db\Exceptions\ResultException::NO_COLUMN);
+		}, Db\Exceptions\ResultException::class, code: Db\Exceptions\ResultException::NO_COLUMN);
 
 		// Bad value
 		Tester\Assert::exception(static function () use ($result): void {
 			$result->fetchPairs('id', 'type');
-		}, Db\Exceptions\ResultException::class, null, Db\Exceptions\ResultException::NO_COLUMN);
+		}, Db\Exceptions\ResultException::class, code: Db\Exceptions\ResultException::NO_COLUMN);
 
 		$result->free();
 	}
@@ -504,19 +504,19 @@ final class FetchTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($row): void {
 			$row[1];
-		}, Db\Exceptions\RowException::class, null, Db\Exceptions\RowException::NOT_STRING_KEY);
+		}, Db\Exceptions\RowException::class, code: Db\Exceptions\RowException::NOT_STRING_KEY);
 
 		Tester\Assert::exception(static function () use ($row): void {
 			$row[1] = 'value';
-		}, Db\Exceptions\RowException::class, null, Db\Exceptions\RowException::NOT_STRING_KEY);
+		}, Db\Exceptions\RowException::class, code: Db\Exceptions\RowException::NOT_STRING_KEY);
 
 		Tester\Assert::exception(static function () use ($row): void {
 			isset($row[1]);
-		}, Db\Exceptions\RowException::class, null, Db\Exceptions\RowException::NOT_STRING_KEY);
+		}, Db\Exceptions\RowException::class, code: Db\Exceptions\RowException::NOT_STRING_KEY);
 
 		Tester\Assert::exception(static function () use ($row): void {
 			unset($row[1]);
-		}, Db\Exceptions\RowException::class, null, Db\Exceptions\RowException::NOT_STRING_KEY);
+		}, Db\Exceptions\RowException::class, code: Db\Exceptions\RowException::NOT_STRING_KEY);
 
 		$result->free();
 	}
@@ -539,7 +539,7 @@ final class FetchTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($row): void {
 			$row->cnt;
-		}, Db\Exceptions\RowException::class, null, Db\Exceptions\RowException::NO_COLUMN);
+		}, Db\Exceptions\RowException::class, code: Db\Exceptions\RowException::NO_COLUMN);
 
 		$result->free();
 	}
@@ -666,7 +666,7 @@ final class FetchTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($result): void {
 			$result->getColumnType('count');
-		}, Db\Exceptions\ResultException::class, null, Db\Exceptions\ResultException::NO_COLUMN);
+		}, Db\Exceptions\ResultException::class, code: Db\Exceptions\ResultException::NO_COLUMN);
 
 		$result->free();
 	}
@@ -680,7 +680,7 @@ final class FetchTest extends TestCase
 			$row = $result->fetch();
 			\assert($row !== null);
 			$row->column;
-		}, Db\Exceptions\ResultException::class, null, Db\Exceptions\ResultException::COLUMN_NAME_IS_ALREADY_IN_USE);
+		}, Db\Exceptions\ResultException::class, code: Db\Exceptions\ResultException::COLUMN_NAME_IS_ALREADY_IN_USE);
 
 		$result->free();
 	}
@@ -770,11 +770,11 @@ final class FetchTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($row): void {
 			$row->type;
-		}, Db\Exceptions\RowException::class, null, Db\Exceptions\RowException::NO_COLUMN);
+		}, Db\Exceptions\RowException::class, code: Db\Exceptions\RowException::NO_COLUMN);
 
 		Tester\Assert::exception(static function () use ($row): void {
 			$row['another_type'];
-		}, Db\Exceptions\RowException::class, null, Db\Exceptions\RowException::NO_COLUMN);
+		}, Db\Exceptions\RowException::class, code: Db\Exceptions\RowException::NO_COLUMN);
 
 		$row->type = 'test';
 
@@ -794,7 +794,7 @@ final class FetchTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($row): void {
 			$row->type;
-		}, Db\Exceptions\RowException::class, null, Db\Exceptions\RowException::NO_COLUMN);
+		}, Db\Exceptions\RowException::class, code: Db\Exceptions\RowException::NO_COLUMN);
 
 		unset($row['another_type']);
 
@@ -802,7 +802,7 @@ final class FetchTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($row): void {
 			$row['another_type'];
-		}, Db\Exceptions\RowException::class, null, Db\Exceptions\RowException::NO_COLUMN);
+		}, Db\Exceptions\RowException::class, code: Db\Exceptions\RowException::NO_COLUMN);
 
 		unset($row->name);
 

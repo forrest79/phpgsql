@@ -483,7 +483,7 @@ final class ParseDataTypeTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($row): void {
 			$row->type_hstore;
-		}, Db\Exceptions\DataTypeParserException::class, null, Db\Exceptions\DataTypeParserException::TRY_USE_CONVERT_TO_JSON);
+		}, Db\Exceptions\DataTypeParserException::class, code: Db\Exceptions\DataTypeParserException::TRY_USE_CONVERT_TO_JSON);
 	}
 
 
@@ -501,7 +501,7 @@ final class ParseDataTypeTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($row): void {
 			$row->type_point;
-		}, Db\Exceptions\DataTypeParserException::class, null, Db\Exceptions\DataTypeParserException::CANT_PARSE_TYPE);
+		}, Db\Exceptions\DataTypeParserException::class, code: Db\Exceptions\DataTypeParserException::CANT_PARSE_TYPE);
 	}
 
 
@@ -519,7 +519,7 @@ final class ParseDataTypeTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($row): void {
 			$row->type_tsvector;
-		}, Db\Exceptions\DataTypeParserException::class, null, Db\Exceptions\DataTypeParserException::TRY_USE_CONVERT_TO_JSON);
+		}, Db\Exceptions\DataTypeParserException::class, code: Db\Exceptions\DataTypeParserException::TRY_USE_CONVERT_TO_JSON);
 	}
 
 
@@ -537,7 +537,7 @@ final class ParseDataTypeTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($row): void {
 			$row->type_money;
-		}, Db\Exceptions\DataTypeParserException::class, null, Db\Exceptions\DataTypeParserException::CANT_PARSE_TYPE);
+		}, Db\Exceptions\DataTypeParserException::class, code: Db\Exceptions\DataTypeParserException::CANT_PARSE_TYPE);
 	}
 
 

@@ -84,7 +84,7 @@ final class BasicTest extends TestCase
 
 		Tester\Assert::exception(function (): void {
 			$this->connection->connect();
-		}, Db\Exceptions\ConnectionException::class, null, Db\Exceptions\ConnectionException::NO_CONFIG);
+		}, Db\Exceptions\ConnectionException::class, code: Db\Exceptions\ConnectionException::NO_CONFIG);
 	}
 
 
@@ -94,7 +94,7 @@ final class BasicTest extends TestCase
 
 		Tester\Assert::exception(function (): void {
 			$this->connection->ping();
-		}, Db\Exceptions\ConnectionException::class, null, Db\Exceptions\ConnectionException::CONNECTION_FAILED);
+		}, Db\Exceptions\ConnectionException::class, code: Db\Exceptions\ConnectionException::CONNECTION_FAILED);
 	}
 
 
@@ -104,7 +104,7 @@ final class BasicTest extends TestCase
 
 		Tester\Assert::exception(function (): void {
 			$this->connection->setConnectionConfig('');
-		}, Db\Exceptions\ConnectionException::class, null, Db\Exceptions\ConnectionException::CANT_CHANGE_CONNECTION_CONFIG_WHEN_CONNECTED);
+		}, Db\Exceptions\ConnectionException::class, code: Db\Exceptions\ConnectionException::CANT_CHANGE_CONNECTION_CONFIG_WHEN_CONNECTED);
 
 		$this->connection->close();
 
@@ -187,7 +187,7 @@ final class BasicTest extends TestCase
 				Tester\Assert::true($e->getQuery() instanceof Db\Query);
 				throw $e;
 			}
-		}, Db\Exceptions\QueryException::class, null, Db\Exceptions\QueryException::QUERY_FAILED);
+		}, Db\Exceptions\QueryException::class, code: Db\Exceptions\QueryException::QUERY_FAILED);
 	}
 
 
@@ -196,7 +196,7 @@ final class BasicTest extends TestCase
 		Tester\Assert::exception(function (): void {
 			$query = Db\Sql\Query::create('SELECT 1');
 			$this->connection->query($query, 1);
-		}, Db\Exceptions\QueryException::class, null, Db\Exceptions\QueryException::CANT_PASS_PARAMS);
+		}, Db\Exceptions\QueryException::class, code: Db\Exceptions\QueryException::CANT_PASS_PARAMS);
 	}
 
 
@@ -243,7 +243,7 @@ final class BasicTest extends TestCase
 	{
 		Tester\Assert::exception(function (): void {
 			$this->connection->execute('SELECT bad_column');
-		}, Db\Exceptions\QueryException::class, null, Db\Exceptions\QueryException::QUERY_FAILED);
+		}, Db\Exceptions\QueryException::class, code: Db\Exceptions\QueryException::QUERY_FAILED);
 	}
 
 

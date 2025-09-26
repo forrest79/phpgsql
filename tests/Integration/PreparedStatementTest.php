@@ -66,13 +66,13 @@ final class PreparedStatementTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($preparedStatement1): void {
 			$preparedStatement1->execute();
-		}, Db\Exceptions\QueryException::class, null, Db\Exceptions\QueryException::PREPARED_STATEMENT_QUERY_FAILED);
+		}, Db\Exceptions\QueryException::class, code: Db\Exceptions\QueryException::PREPARED_STATEMENT_QUERY_FAILED);
 
 		$preparedStatement2 = $this->connection->prepareStatement('SELECT 1 AS clm1 WHERE 1 = $1');
 
 		Tester\Assert::exception(static function () use ($preparedStatement2): void {
 			$preparedStatement2->execute(0, 1);
-		}, Db\Exceptions\QueryException::class, null, Db\Exceptions\QueryException::PREPARED_STATEMENT_QUERY_FAILED);
+		}, Db\Exceptions\QueryException::class, code: Db\Exceptions\QueryException::PREPARED_STATEMENT_QUERY_FAILED);
 	}
 
 
@@ -135,18 +135,18 @@ final class PreparedStatementTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($preparedStatement1): void {
 			$preparedStatement1->execute();
-		}, Db\Exceptions\QueryException::class, null, Db\Exceptions\QueryException::ASYNC_PREPARED_STATEMENT_QUERY_FAILED);
+		}, Db\Exceptions\QueryException::class, code: Db\Exceptions\QueryException::ASYNC_PREPARED_STATEMENT_QUERY_FAILED);
 
 		$preparedStatement2 = $this->connection->asyncPrepareStatement('SELECT 1 AS clm1 WHERE 1 = $1');
 
 		Tester\Assert::exception(static function () use ($preparedStatement2): void {
 			$preparedStatement2->execute(0, 1)->getNextResult();
-		}, Db\Exceptions\QueryException::class, null, Db\Exceptions\QueryException::ASYNC_PREPARED_STATEMENT_QUERY_FAILED);
+		}, Db\Exceptions\QueryException::class, code: Db\Exceptions\QueryException::ASYNC_PREPARED_STATEMENT_QUERY_FAILED);
 
 		$preparedStatement2->execute(2);
 		Tester\Assert::exception(static function () use ($preparedStatement2): void {
 			$preparedStatement2->execute(3)->getNextResult();
-		}, Db\Exceptions\QueryException::class, null, Db\Exceptions\QueryException::ASYNC_PREPARED_STATEMENT_QUERY_FAILED);
+		}, Db\Exceptions\QueryException::class, code: Db\Exceptions\QueryException::ASYNC_PREPARED_STATEMENT_QUERY_FAILED);
 	}
 
 

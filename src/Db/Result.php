@@ -393,12 +393,7 @@ class Result implements ColumnValueParser, \Countable
 	 */
 	public function getColumnType(string $column): string
 	{
-		$type = $this->getColumnsDataTypes()[$column] ?? null;
-		if ($type === null) {
-			throw Exceptions\ResultException::noColumn($column);
-		}
-
-		return $type;
+		return $this->getColumnsDataTypes()[$column] ?? throw Exceptions\ResultException::noColumn($column);
 	}
 
 

@@ -108,7 +108,7 @@ final class DataTypeCacheTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($result2): void {
 			Tester\Assert::same('hstore', $result2->getColumnType('data'));
-		}, Db\Exceptions\ResultException::class, null, Db\Exceptions\ResultException::NO_OID_IN_DATA_TYPE_CACHE);
+		}, Db\Exceptions\ResultException::class, code: Db\Exceptions\ResultException::NO_OID_IN_DATA_TYPE_CACHE);
 
 		$result2->free();
 	}

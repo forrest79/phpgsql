@@ -46,7 +46,7 @@ final class QueryTest extends Tests\TestCase
 	{
 		Tester\Assert::exception(static function (): void {
 			Db\Sql\Query::create('SELECT * FROM table WHERE column = ? AND column2 = ?', 1)->toDbQuery();
-		}, Db\Exceptions\QueryException::class, null, Db\Exceptions\QueryException::MISSING_PARAM);
+		}, Db\Exceptions\QueryException::class, code: Db\Exceptions\QueryException::MISSING_PARAM);
 	}
 
 
@@ -54,7 +54,7 @@ final class QueryTest extends Tests\TestCase
 	{
 		Tester\Assert::exception(static function (): void {
 			Db\Sql\Query::create('SELECT * FROM table WHERE column = ?', 1, 2)->toDbQuery();
-		}, Db\Exceptions\QueryException::class, null, Db\Exceptions\QueryException::EXTRA_PARAM);
+		}, Db\Exceptions\QueryException::class, code: Db\Exceptions\QueryException::EXTRA_PARAM);
 	}
 
 

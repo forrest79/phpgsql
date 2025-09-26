@@ -92,7 +92,7 @@ final class AsyncTest extends TestCase
 	{
 		Tester\Assert::exception(function (): void {
 			$this->connection->asyncExecute('SELECT 1')->asyncExecute('SELECT 2');
-		}, Db\Exceptions\ConnectionException::class, null, Db\Exceptions\ConnectionException::ASYNC_QUERY_SENT_FAILED);
+		}, Db\Exceptions\ConnectionException::class, code: Db\Exceptions\ConnectionException::ASYNC_QUERY_SENT_FAILED);
 	}
 
 
@@ -101,7 +101,7 @@ final class AsyncTest extends TestCase
 		Tester\Assert::exception(function (): void {
 			$this->connection->asyncQuery('SELECT 1');
 			$this->connection->completeAsyncExecute();
-		}, Db\Exceptions\ConnectionException::class, null, Db\Exceptions\ConnectionException::ASYNC_NO_EXECUTE_IS_SENT);
+		}, Db\Exceptions\ConnectionException::class, code: Db\Exceptions\ConnectionException::ASYNC_NO_EXECUTE_IS_SENT);
 	}
 
 
@@ -112,7 +112,7 @@ final class AsyncTest extends TestCase
 		Tester\Assert::exception(function () use ($asyncQuery): void {
 			$this->connection->asyncExecute('SELECT 2');
 			$asyncQuery->getNextResult();
-		}, Db\Exceptions\ConnectionException::class, null, Db\Exceptions\ConnectionException::ASYNC_QUERY_SENT_FAILED);
+		}, Db\Exceptions\ConnectionException::class, code: Db\Exceptions\ConnectionException::ASYNC_QUERY_SENT_FAILED);
 	}
 
 
@@ -124,7 +124,7 @@ final class AsyncTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($asyncQuery): void {
 			$asyncQuery->getNextResult();
-		}, Db\Exceptions\ConnectionException::class, null, Db\Exceptions\ConnectionException::ASYNC_NO_QUERY_IS_SENT);
+		}, Db\Exceptions\ConnectionException::class, code: Db\Exceptions\ConnectionException::ASYNC_NO_QUERY_IS_SENT);
 	}
 
 
@@ -146,7 +146,7 @@ final class AsyncTest extends TestCase
 
 		Tester\Assert::exception(function (): void {
 			$this->connection->asyncQuery('SELECT 2');
-		}, Db\Exceptions\ConnectionException::class, null, Db\Exceptions\ConnectionException::ASYNC_QUERY_SENT_FAILED);
+		}, Db\Exceptions\ConnectionException::class, code: Db\Exceptions\ConnectionException::ASYNC_QUERY_SENT_FAILED);
 	}
 
 
@@ -162,13 +162,13 @@ final class AsyncTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($asyncQuery1): void {
 			$asyncQuery1->getNextResult();
-		}, Db\Exceptions\ResultException::class, null, Db\Exceptions\ResultException::NO_OTHER_ASYNC_RESULT);
+		}, Db\Exceptions\ResultException::class, code: Db\Exceptions\ResultException::NO_OTHER_ASYNC_RESULT);
 
 		$asyncQuery2 = $this->connection->asyncQuery('SELECT 3');
 
 		Tester\Assert::exception(static function () use ($asyncQuery1): void {
 			$asyncQuery1->getNextResult();
-		}, Db\Exceptions\ConnectionException::class, null, Db\Exceptions\ConnectionException::ASYNC_ANOTHER_QUERY_IS_RUNNING);
+		}, Db\Exceptions\ConnectionException::class, code: Db\Exceptions\ConnectionException::ASYNC_ANOTHER_QUERY_IS_RUNNING);
 
 		$result3 = $asyncQuery2->getNextResult();
 		Tester\Assert::same(3, $result3->fetchSingle());
@@ -177,7 +177,7 @@ final class AsyncTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($asyncQuery1): void {
 			$asyncQuery1->getNextResult();
-		}, Db\Exceptions\ConnectionException::class, null, Db\Exceptions\ConnectionException::ASYNC_ANOTHER_QUERY_IS_RUNNING);
+		}, Db\Exceptions\ConnectionException::class, code: Db\Exceptions\ConnectionException::ASYNC_ANOTHER_QUERY_IS_RUNNING);
 	}
 
 
@@ -196,12 +196,12 @@ final class AsyncTest extends TestCase
 		$asyncQuery = $this->connection->asyncQuery('SELECT bad_column');
 		Tester\Assert::exception(static function () use ($asyncQuery): void {
 			$asyncQuery->getNextResult();
-		}, Db\Exceptions\QueryException::class, null, Db\Exceptions\QueryException::ASYNC_QUERY_FAILED);
+		}, Db\Exceptions\QueryException::class, code: Db\Exceptions\QueryException::ASYNC_QUERY_FAILED);
 
 		$this->connection->asyncExecute('SELECT bad_column');
 		Tester\Assert::exception(function (): void {
 			$this->connection->completeAsyncExecute();
-		}, Db\Exceptions\QueryException::class, null, Db\Exceptions\QueryException::ASYNC_QUERY_FAILED);
+		}, Db\Exceptions\QueryException::class, code: Db\Exceptions\QueryException::ASYNC_QUERY_FAILED);
 	}
 
 

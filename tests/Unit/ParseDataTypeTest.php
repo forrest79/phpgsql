@@ -117,7 +117,7 @@ final class ParseDataTypeTest extends Tests\TestCase
 	{
 		Tester\Assert::exception(function (): void {
 			$this->createBasicDataTypeParser()->parse('hstore', 'a=>1');
-		}, Db\Exceptions\DataTypeParserException::class, null, Db\Exceptions\DataTypeParserException::TRY_USE_CONVERT_TO_JSON);
+		}, Db\Exceptions\DataTypeParserException::class, code: Db\Exceptions\DataTypeParserException::TRY_USE_CONVERT_TO_JSON);
 	}
 
 
@@ -125,7 +125,7 @@ final class ParseDataTypeTest extends Tests\TestCase
 	{
 		Tester\Assert::exception(function (): void {
 			$this->createBasicDataTypeParser()->parse('point', '(1,2)');
-		}, Db\Exceptions\DataTypeParserException::class, null, Db\Exceptions\DataTypeParserException::CANT_PARSE_TYPE);
+		}, Db\Exceptions\DataTypeParserException::class, code: Db\Exceptions\DataTypeParserException::CANT_PARSE_TYPE);
 	}
 
 
@@ -133,7 +133,7 @@ final class ParseDataTypeTest extends Tests\TestCase
 	{
 		Tester\Assert::exception(function (): void {
 			$this->createBasicDataTypeParser()->parse('_tsvector', '{\'text\'}');
-		}, Db\Exceptions\DataTypeParserException::class, null, Db\Exceptions\DataTypeParserException::TRY_USE_CONVERT_TO_JSON);
+		}, Db\Exceptions\DataTypeParserException::class, code: Db\Exceptions\DataTypeParserException::TRY_USE_CONVERT_TO_JSON);
 	}
 
 
@@ -141,7 +141,7 @@ final class ParseDataTypeTest extends Tests\TestCase
 	{
 		Tester\Assert::exception(function (): void {
 			$this->createBasicDataTypeParser()->parse('_money', '{1)}');
-		}, Db\Exceptions\DataTypeParserException::class, null, Db\Exceptions\DataTypeParserException::CANT_PARSE_TYPE);
+		}, Db\Exceptions\DataTypeParserException::class, code: Db\Exceptions\DataTypeParserException::CANT_PARSE_TYPE);
 	}
 
 
@@ -168,7 +168,7 @@ final class ParseDataTypeTest extends Tests\TestCase
 	{
 		Tester\Assert::exception(function (): void {
 			$this->createBasicDataTypeParser()->parse('_int2', '123');
-		}, Db\Exceptions\DataTypeParserException::class, null, Db\Exceptions\DataTypeParserException::VALUE_IS_NOT_ARRAY);
+		}, Db\Exceptions\DataTypeParserException::class, code: Db\Exceptions\DataTypeParserException::VALUE_IS_NOT_ARRAY);
 	}
 
 
@@ -176,15 +176,15 @@ final class ParseDataTypeTest extends Tests\TestCase
 	{
 		Tester\Assert::exception(function (): void {
 			$this->createBasicDataTypeParser()->parse('date', '20201-02-31');
-		}, Db\Exceptions\DataTypeParserException::class, null, Db\Exceptions\DataTypeParserException::CANT_CONVERT_DATETIME);
+		}, Db\Exceptions\DataTypeParserException::class, code: Db\Exceptions\DataTypeParserException::CANT_CONVERT_DATETIME);
 
 		Tester\Assert::exception(function (): void {
 			$this->createBasicDataTypeParser()->parse('timestamp', '20201-02-31 12:30:00');
-		}, Db\Exceptions\DataTypeParserException::class, null, Db\Exceptions\DataTypeParserException::CANT_CONVERT_DATETIME);
+		}, Db\Exceptions\DataTypeParserException::class, code: Db\Exceptions\DataTypeParserException::CANT_CONVERT_DATETIME);
 
 		Tester\Assert::exception(function (): void {
 			$this->createBasicDataTypeParser()->parse('timestamptz', '20201-02-31 12:30:00+02');
-		}, Db\Exceptions\DataTypeParserException::class, null, Db\Exceptions\DataTypeParserException::CANT_CONVERT_DATETIME);
+		}, Db\Exceptions\DataTypeParserException::class, code: Db\Exceptions\DataTypeParserException::CANT_CONVERT_DATETIME);
 	}
 
 

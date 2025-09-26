@@ -6,9 +6,9 @@ use Forrest79\PhPgSql\Db;
 
 /**
  * @phpstan-type QueryParams array{
- *   select: array<int|string, string|int|\BackedEnum|Query|Db\Sql>,
+ *   select: array<int|string, string|int|\BackedEnum|Db\Sql>,
  *   distinct: bool,
- *   distinctOn: list<string|Query|Db\Sql>,
+ *   distinctOn: list<string|Db\Sql>,
  *   tables: array<string, array{0: string, 1: string}>,
  *   table-types: array{main: string|null, from: list<string>, joins: list<string>, using: string|null},
  *   on-conditions: array<string, Condition>,
@@ -16,17 +16,17 @@ use Forrest79\PhPgSql\Db;
  *   where: Condition|null,
  *   groupBy: list<string>,
  *   having: Condition|null,
- *   orderBy: list<string|Db\Sql|Query>,
+ *   orderBy: list<string|Db\Sql>,
  *   limit: int|null,
  *   offset: int|null,
- *   combine-queries: list<array{0: string|Query|Db\Sql, 1: string}>,
+ *   combine-queries: list<array{0: string|Db\Sql, 1: string}>,
  *   insert-columns: list<string>,
  *   insert-onconflict: array{columns-or-constraint: string|list<string>|false|null, where: Condition|null, do: array<int|string, string|Db\Sql>|false|null, do-where: Condition|null},
- *   returning: array<int|string, string|int|Query|Db\Sql>,
+ *   returning: array<int|string, string|int|Db\Sql>,
  *   data: array<string, mixed>,
  *   rows: array<int, array<string, mixed>>,
  *   merge: list<array{0: string, 1: string|Db\Sql, 2: Condition|null}>,
- *   with: array{queries: array<string, string|Query|Db\Sql>, queries-suffix: array<string, string>, queries-not-materialized: array<string, string>, recursive: bool},
+ *   with: array{queries: array<string, string|Db\Sql>, queries-suffix: array<string, string>, queries-not-materialized: array<string, string>, recursive: bool},
  *   prefix: list<array<mixed>>,
  *   suffix: list<array<mixed>>
  * }

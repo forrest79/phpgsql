@@ -212,7 +212,7 @@ final class FetchMutatorTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($result): void {
 			$result->fetchAssoc('test_date=id');
-		}, Db\Exceptions\ResultException::class, null, Db\Exceptions\ResultException::FETCH_MUTATOR_BAR_RETURN_TYPE);
+		}, Db\Exceptions\ResultException::class, code: Db\Exceptions\ResultException::FETCH_MUTATOR_BAR_RETURN_TYPE);
 
 		$result->free();
 	}
@@ -415,7 +415,7 @@ final class FetchMutatorTest extends TestCase
 
 		Tester\Assert::exception(static function () use ($result): void {
 			$result->fetchPairs();
-		}, Db\Exceptions\ResultException::class, null, Db\Exceptions\ResultException::FETCH_MUTATOR_BAR_RETURN_TYPE);
+		}, Db\Exceptions\ResultException::class, code: Db\Exceptions\ResultException::FETCH_MUTATOR_BAR_RETURN_TYPE);
 
 		$result->free();
 	}
