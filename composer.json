@@ -17,7 +17,7 @@
 	"require-dev": {
 		"forrest79/phpcs": "^2.3",
 		"forrest79/phpcs-ignores": "^0.6",
-		"forrest79/phpgsql-phpstan": "^1.9",
+		"forrest79/phpgsql-phpstan": "^2.0",
 		"nette/tester": "^2.5",
 		"phpstan/phpstan-strict-rules": "^2.0",
 		"shipmonk/phpstan-rules": "^4.2"
