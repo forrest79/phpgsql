@@ -7,3 +7,4 @@ tests export-ignore
 phpcs.xml export-ignore
 phpcs-ignores.neon export-ignore
 phpstan.neon export-ignore
+upgrade.md export-ignore
