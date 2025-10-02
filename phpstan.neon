@@ -57,6 +57,12 @@ parameters:
 			path: src/Db/Result.php
 
 		-
+			rawMessage: Possibly invalid array key type bool|float|int|string|null.
+			identifier: offsetAccess.invalidOffset
+			count: 1
+			path: src/Db/Result.php
+
+		-
 			rawMessage: 'Unsafe usage of new static().'
 			identifier: new.static
 			count: 1
@@ -65,12 +71,6 @@ parameters:
 		-
 			rawMessage: 'Overwriting variable $value while changing its type from Forrest79\PhPgSql\Db\Sql|string to array<int, Forrest79\PhPgSql\Db\Sql|string>'
 			identifier: shipmonk.variableTypeOverwritten
-			count: 1
-			path: src/Fluent/Condition.php
-
-		-
-			rawMessage: 'Property Forrest79\PhPgSql\Fluent\Condition::$conditions (list<Forrest79\PhPgSql\Fluent\Condition|list<mixed>>) does not accept non-empty-array<int<0, max>, Forrest79\PhPgSql\Fluent\Condition|list<mixed>>.'
-			identifier: assign.propertyType
 			count: 1
 			path: src/Fluent/Condition.php
 
@@ -115,18 +115,6 @@ parameters:
 			identifier: shipmonk.variableTypeOverwritten
 			count: 4
 			path: src/Fluent/QueryBuilder.php
-
-		-
-			rawMessage: 'Method Forrest79\PhPgSql\Fluent\QueryExecute::asyncExecute() has Forrest79\PhPgSql\Fluent\Exceptions\QueryBuilderException in PHPDoc @throws tag but it''s not thrown.'
-			identifier: throws.unusedType
-			count: 1
-			path: src/Fluent/QueryExecute.php
-
-		-
-			rawMessage: 'Method Forrest79\PhPgSql\Fluent\QueryExecute::asyncExecute() has Forrest79\PhPgSql\Fluent\Exceptions\QueryException in PHPDoc @throws tag but it''s not thrown.'
-			identifier: throws.unusedType
-			count: 1
-			path: src/Fluent/QueryExecute.php
 
 		# === This is OK (just for tests or benchmarks) ===
 
