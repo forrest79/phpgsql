@@ -69,12 +69,6 @@ parameters:
 			path: src/Fluent/Condition.php
 
 		-
-			rawMessage: 'Property Forrest79\PhPgSql\Fluent\Condition::$conditions (list<Forrest79\PhPgSql\Fluent\Condition|list<mixed>>) does not accept non-empty-array<int<0, max>, Forrest79\PhPgSql\Fluent\Condition|list<mixed>>.'
-			identifier: assign.propertyType
-			count: 1
-			path: src/Fluent/Condition.php
-
-		-
 			rawMessage: 'Unsafe usage of new static().'
 			identifier: new.static
 			count: 2
