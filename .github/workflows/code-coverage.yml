@@ -44,6 +44,6 @@ jobs:
         run: tests/run-tests -d zend_extension=xdebug.so --coverage coverage.xml --coverage-src src
 
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
