@@ -106,7 +106,7 @@ final class PgFunctionsTest extends TestCase
 		Tester\Assert::null(\pg_result_error_field($result2, \PGSQL_DIAG_INTERNAL_QUERY));
 		Tester\Assert::null(\pg_result_error_field($result2, \PGSQL_DIAG_CONTEXT));
 		Tester\Assert::same('scan.l', \pg_result_error_field($result2, \PGSQL_DIAG_SOURCE_FILE));
-		Tester\Assert::contains(\pg_result_error_field($result2, \PGSQL_DIAG_SOURCE_LINE), ['1149', '1176', '1180', '1188']); // PG12 => 1149, PG13 => 1176|1180, PG14/15 => 1188
+		Tester\Assert::contains(\pg_result_error_field($result2, \PGSQL_DIAG_SOURCE_LINE), ['1149', '1176', '1180', '1188', '1244', '1236']); // PG12 => 1149, PG13 => 1176|1180, PG14/15 => 1188, PG16/17 => 1244, PG18 => 1236
 		Tester\Assert::same('scanner_yyerror', \pg_result_error_field($result2, \PGSQL_DIAG_SOURCE_FUNCTION));
 
 		// ---

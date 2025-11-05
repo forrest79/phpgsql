@@ -13,11 +13,12 @@ jobs:
     strategy:
       matrix:
         php-versions: ['8.3', '8.4']
+        postgresql-versions: ['15', '16', '17', '18']
       fail-fast: false
 
     services:
       postgres:
-        image: postgres:15
+        image: postgres:${{ matrix.postgresql-versions }}
         env:
           POSTGRES_PASSWORD: postgres
         ports:
@@ -56,14 +57,7 @@ jobs:
         run: composer phpstan
 
       - name: Run tests
-        #run: composer tests # manually with `-j 1` and retry is used because of random async connection errors
-        uses: nick-invision/retry@v2
-        with:
-          timeout_seconds: 120
-          retry_wait_seconds: 5
-          max_attempts: 15
-          retry_on: error
-          command: tests/run-tests tests -j 1
+        run: composer tests
 
       - if: failure()
         uses: actions/upload-artifact@v4
