@@ -52,6 +52,7 @@ final class ParseDataTypeTest extends Tests\TestCase
 		Tester\Assert::same('query', $basicDataTypeParser->parse('tsquery', 'query'));
 		Tester\Assert::same('vector', $basicDataTypeParser->parse('tsvector', 'vector'));
 		Tester\Assert::same('1 day', $basicDataTypeParser->parse('interval', '1 day'));
+		Tester\Assert::same('[0.1,0.2]', $basicDataTypeParser->parse('vector', '[0.1,0.2]'));
 	}
 
 
