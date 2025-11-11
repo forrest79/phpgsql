@@ -83,6 +83,7 @@ class Basic implements Db\DataTypeParser
 				case 'tsquery':
 				case 'tsvector':
 				case 'interval':
+				case 'vector':
 					return $value;
 				case 'hstore':
 					throw Exceptions\DataTypeParserException::tryUseConvertToJson($type, $value, 'hstore_to_json');
