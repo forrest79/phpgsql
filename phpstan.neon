@@ -81,12 +81,6 @@ parameters:
 			path: src/Fluent/Condition.php
 
 		-
-			rawMessage: 'Array key must be integer or string, but string|null given.'
-			identifier: shipmonk.unsafeArrayKey
-			count: 3
-			path: src/Fluent/Query.php
-
-		-
 			rawMessage: Overwriting variable $column while changing its type from bool to string
 			identifier: shipmonk.variableTypeOverwritten
 			count: 2
@@ -303,12 +297,6 @@ parameters:
 			identifier: shipmonk.arithmeticOnNonNumber
 			count: 3
 			path: tests/Integration/FetchMutatorTest.php
-
-		-
-			rawMessage: 'Array key must be integer or string, but null given.'
-			identifier: shipmonk.unsafeArrayKey
-			count: 1
-			path: tests/Integration/FetchTest.php
 
 		-
 			rawMessage: Cannot assign offset 1 to Forrest79\PhPgSql\Db\Row.

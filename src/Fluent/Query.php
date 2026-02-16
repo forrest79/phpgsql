@@ -504,11 +504,11 @@ class Query implements Db\Sql
 	private function getConditionParam(string $param, string|null $alias = null): Condition
 	{
 		if ($param === self::PARAM_ON_CONDITIONS) {
-			if (!isset($this->params[$param][$alias])) {
-				$this->params[$param][$alias] = Condition::createAnd();
+			if (!isset($this->params[$param][$alias ?? ''])) {
+				$this->params[$param][$alias ?? ''] = Condition::createAnd();
 			}
 
-			return $this->params[$param][$alias];
+			return $this->params[$param][$alias ?? ''];
 		} else if (($param === self::PARAM_WHERE) || ($param === self::PARAM_HAVING)) {
 			if ($this->params[$param] === null) {
 				$this->params[$param] = Condition::createAnd();

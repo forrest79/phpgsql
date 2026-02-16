@@ -332,7 +332,7 @@ final class FetchTest extends TestCase
 		$row = $result->fetchAssoc('test_column=id');
 
 		Tester\Assert::same('', \key($row));
-		Tester\Assert::same(1, $row[null]);
+		Tester\Assert::same(1, $row['']);
 
 		$result->free();
 	}
