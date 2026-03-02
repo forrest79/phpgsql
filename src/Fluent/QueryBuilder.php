@@ -179,7 +179,7 @@ class QueryBuilder
 			throw Exceptions\QueryBuilderException::onConflictNoDo();
 		} else if (($onConflictColumnsOrConstraint === null) && ($onConflictDo !== null)) {
 			throw Exceptions\QueryBuilderException::onConflictDoWithoutDefinition();
-		} else if (($onConflictColumnsOrConstraint !== null) && ($onConflictDo !== null)) {
+		} else if ($onConflictDo !== null) {
 			$onConflict = ' ON CONFLICT';
 
 			if (\is_array($onConflictColumnsOrConstraint)) {
@@ -468,8 +468,6 @@ class QueryBuilder
 					throw Exceptions\QueryBuilderException::missingColumnAlias();
 				}
 
-				\assert(\is_string($key) || \is_string($value));
-
 				$columnNames[] = \is_int($key) ? $value : $key;
 			}
 
@@ -698,6 +696,7 @@ class QueryBuilder
 		$processedItems = [];
 		foreach ($items as $itemParams) {
 			$item = \array_shift($itemParams);
+			assert(is_string($item));
 
 			foreach ($itemParams as $param) {
 				$params[] = $param;

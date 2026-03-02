@@ -267,6 +267,8 @@ class Result implements \Countable
 		}
 
 		unset($x);
+
+		assert(is_array($data));
 		return $data;
 	}
 

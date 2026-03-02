@@ -27,6 +27,12 @@ parameters:
 			path: src/Db/DataTypeCaches/PhpFile.php
 
 		-
+			rawMessage: 'Parameter #2 $array of function implode expects array<string>, list<mixed> given.'
+			identifier: argument.type
+			count: 1
+			path: src/Db/Helper.php
+
+		-
 			rawMessage: Overwriting variable $value while changing its type from BackedEnum to int|string
 			identifier: shipmonk.variableTypeOverwritten
 			count: 1
@@ -133,7 +139,19 @@ parameters:
 		-
 			rawMessage: 'Call to function array_key_exists() with ''testKey2'' and array{testKey1: null, testKey2: ''''} will always evaluate to true.'
 			identifier: function.alreadyNarrowedType
-			count: 4
+			count: 1
+			path: benchmarks/BasicPhpBenchmark.php
+
+		-
+			rawMessage: 'Call to function array_key_exists() with ''testKey2'' and *NEVER* will always evaluate to true.'
+			identifier: function.alreadyNarrowedType
+			count: 3
+			path: benchmarks/BasicPhpBenchmark.php
+
+		-
+			rawMessage: 'Call to new Forrest79\PhPgSql\Db\Sql\Literal() on a separate line has no effect.'
+			identifier: new.resultUnused
+			count: 1
 			path: benchmarks/BasicPhpBenchmark.php
 
 		-
@@ -219,6 +237,12 @@ parameters:
 			identifier: property.nonObject
 			count: 1
 			path: tests/Integration/CustomResultTest.php
+
+		-
+			rawMessage: 'Parameter #2 $array of function implode expects array<string>, array<mixed, mixed> given.'
+			identifier: argument.type
+			count: 1
+			path: tests/Integration/DocsTest.php
 
 		-
 			rawMessage: Overwriting variable $value while changing its type from DateTimeImmutable to string
@@ -326,24 +350,6 @@ parameters:
 			rawMessage: Expression "$row->type" on a separate line does not do anything.
 			identifier: expr.resultUnused
 			count: 2
-			path: tests/Integration/FetchTest.php
-
-		-
-			rawMessage: 'Expression "$row[''another_type'']" on a separate line does not do anything.'
-			identifier: expr.resultUnused
-			count: 2
-			path: tests/Integration/FetchTest.php
-
-		-
-			rawMessage: 'Expression "$row[1]" on a separate line does not do anything.'
-			identifier: expr.resultUnused
-			count: 1
-			path: tests/Integration/FetchTest.php
-
-		-
-			rawMessage: 'Expression "isset($row[1])" on a separate line does not do anything.'
-			identifier: expr.resultUnused
-			count: 1
 			path: tests/Integration/FetchTest.php
 
 		-
