@@ -133,7 +133,13 @@ parameters:
 		-
 			rawMessage: 'Call to function array_key_exists() with ''testKey2'' and array{testKey1: null, testKey2: ''''} will always evaluate to true.'
 			identifier: function.alreadyNarrowedType
-			count: 4
+			count: 1
+			path: benchmarks/BasicPhpBenchmark.php
+
+		-
+			rawMessage: 'Call to function array_key_exists() with ''testKey2'' and *NEVER* will always evaluate to true.'
+			identifier: function.alreadyNarrowedType
+			count: 3
 			path: benchmarks/BasicPhpBenchmark.php
 
 		-

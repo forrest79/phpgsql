@@ -71,8 +71,8 @@ class QueryExecute extends Query implements \Countable
 	/**
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
-	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
+	 * @throws Exceptions\QueryException
 	 */
 	public function execute(): Db\Result
 	{
@@ -95,8 +95,8 @@ class QueryExecute extends Query implements \Countable
 	/**
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
-	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
+	 * @throws Exceptions\QueryException
 	 */
 	public function reexecute(): Db\Result
 	{
@@ -131,8 +131,8 @@ class QueryExecute extends Query implements \Countable
 	/**
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
-	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
+	 * @throws Exceptions\QueryException
 	 */
 	public function count(): int
 	{
@@ -144,8 +144,8 @@ class QueryExecute extends Query implements \Countable
 	/**
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
-	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
+	 * @throws Exceptions\QueryException
 	 */
 	public function getAffectedRows(): int
 	{
@@ -156,8 +156,8 @@ class QueryExecute extends Query implements \Countable
 	/**
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
-	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
+	 * @throws Exceptions\QueryException
 	 */
 	public function fetch(): Db\Row|null
 	{
@@ -169,8 +169,8 @@ class QueryExecute extends Query implements \Countable
 	 * @return mixed value on success, null if no next record
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
-	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
+	 * @throws Exceptions\QueryException
 	 */
 	public function fetchSingle(): mixed
 	{
@@ -182,8 +182,8 @@ class QueryExecute extends Query implements \Countable
 	 * @return list<Db\Row>
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
-	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
+	 * @throws Exceptions\QueryException
 	 */
 	public function fetchAll(int|null $offset = null, int|null $limit = null): array
 	{
@@ -195,8 +195,8 @@ class QueryExecute extends Query implements \Countable
 	 * @return array<int|string, mixed>
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
-	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
+	 * @throws Exceptions\QueryException
 	 */
 	public function fetchAssoc(string $assoc): array
 	{
@@ -208,8 +208,8 @@ class QueryExecute extends Query implements \Countable
 	 * @return array<int|string, mixed>
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
-	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
+	 * @throws Exceptions\QueryException
 	 */
 	public function fetchPairs(string|null $key = null, string|null $value = null): array
 	{
@@ -221,8 +221,8 @@ class QueryExecute extends Query implements \Countable
 	 * @return Db\RowIterator<int, Db\Row>
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
-	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
+	 * @throws Exceptions\QueryException
 	 */
 	public function fetchIterator(): Db\RowIterator
 	{
@@ -234,8 +234,8 @@ class QueryExecute extends Query implements \Countable
 	/**
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException
-	 * @throws Exceptions\QueryException
 	 * @throws Exceptions\QueryBuilderException
+	 * @throws Exceptions\QueryException
 	 */
 	public function asyncExecute(): Db\AsyncQuery
 	{
