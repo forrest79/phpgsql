@@ -930,6 +930,38 @@ final class FluentQueryTest extends Tests\TestCase
 	}
 
 
+	public function testInsertOverridingSystemValue(): void
+	{
+		$query = $this->query()
+			->insert('table')
+			->overridingSystemValue()
+			->values([
+				'id' => 1,
+				'name' => 'Bob',
+			])
+			->toDbQuery();
+
+		Tester\Assert::same('INSERT INTO table (id, name) OVERRIDING SYSTEM VALUE VALUES($1, $2)', $query->sql);
+		Tester\Assert::same([1, 'Bob'], $query->params);
+	}
+
+
+	public function testInsertOverridingUserValue(): void
+	{
+		$query = $this->query()
+			->insert('table')
+			->overridingUserValue()
+			->values([
+				'id' => 1,
+				'name' => 'Bob',
+			])
+			->toDbQuery();
+
+		Tester\Assert::same('INSERT INTO table (id, name) OVERRIDING USER VALUE VALUES($1, $2)', $query->sql);
+		Tester\Assert::same([1, 'Bob'], $query->params);
+	}
+
+
 	public function testInsertOnConflictDoUpdate(): void
 	{
 		$query = $this->query()

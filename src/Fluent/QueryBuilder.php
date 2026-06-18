@@ -21,6 +21,7 @@ use Forrest79\PhPgSql\Db;
  *   offset: int|null,
  *   combine-queries: list<array{0: string|Db\Sql, 1: string}>,
  *   insert-columns: list<string>,
+ *   insert-overriding: string|null,
  *   insert-onconflict: array{columns-or-constraint: string|list<string>|false|null, where: Condition|null, do: array<int|string, string|Db\Sql>|false|null, do-where: Condition|null},
  *   returning: array<int|string, string|int|Db\Sql>,
  *   data: array<string, mixed>,
@@ -225,8 +226,18 @@ class QueryBuilder
 			}
 		}
 
+		$overriding = '';
+		if ($queryParams[Query::PARAM_INSERT_OVERRIDING] !== null) {
+			$overriding = ' OVERRIDING ' . match ($queryParams[Query::PARAM_INSERT_OVERRIDING]) {
+				Query::INSERT_OVERRIDING_SYSTEM_VALUE => 'SYSTEM',
+				Query::INSERT_OVERRIDING_USER_VALUE => 'USER',
+				default => throw new Exceptions\ShouldNotHappenException(\sprintf('Bad OVERRIDING VALUE type \'%s\' for INSERT.', $queryParams[Query::PARAM_INSERT_OVERRIDING])),
+			} . ' VALUE';
+		}
+
 		return $insert
 			. ($columns === ['*'] ? '' : ' (' . \implode(', ', $columns) . ')')
+			. $overriding
 			. $data
 			. $onConflict
 			. $this->getPrefixSuffix($queryParams, Query::PARAM_SUFFIX, $params)

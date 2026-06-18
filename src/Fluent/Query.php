@@ -31,6 +31,7 @@ class Query implements Db\Sql
 	public const string PARAM_OFFSET = 'offset';
 	public const string PARAM_COMBINE_QUERIES = 'combine-queries';
 	public const string PARAM_INSERT_COLUMNS = 'insert-columns';
+	public const string PARAM_INSERT_OVERRIDING = 'insert-overriding';
 	public const string PARAM_INSERT_ONCONFLICT = 'insert-onconflict';
 	public const string PARAM_RETURNING = 'returning';
 	public const string PARAM_DATA = 'data';
@@ -55,6 +56,9 @@ class Query implements Db\Sql
 	private const string COMBINE_UNION_ALL = 'UNION ALL';
 	private const string COMBINE_INTERSECT = 'INTERSECT';
 	private const string COMBINE_EXCEPT = 'EXCEPT';
+
+	public const string INSERT_OVERRIDING_SYSTEM_VALUE = 'system';
+	public const string INSERT_OVERRIDING_USER_VALUE = 'user';
 
 	public const string INSERT_ONCONFLICT_COLUMNS_OR_CONSTRAINT = 'columns-or-constraint';
 	public const string INSERT_ONCONFLICT_WHERE = 'where';
@@ -90,6 +94,7 @@ class Query implements Db\Sql
 		self::PARAM_OFFSET => null,
 		self::PARAM_COMBINE_QUERIES => [],
 		self::PARAM_INSERT_COLUMNS => [],
+		self::PARAM_INSERT_OVERRIDING => null,
 		self::PARAM_INSERT_ONCONFLICT => [
 			self::INSERT_ONCONFLICT_COLUMNS_OR_CONSTRAINT => null,
 			self::INSERT_ONCONFLICT_WHERE => null,
@@ -684,6 +689,32 @@ class Query implements Db\Sql
 
 		$this->params[self::PARAM_INSERT_ONCONFLICT][self::INSERT_ONCONFLICT_DO] = false;
 		$this->params[self::PARAM_INSERT_ONCONFLICT][self::INSERT_ONCONFLICT_DO_WHERE] = null;
+
+		return $this;
+	}
+
+
+	/**
+	 * @throws Exceptions\QueryException
+	 */
+	public function overridingSystemValue(): static
+	{
+		$this->resetQuery();
+
+		$this->params[self::PARAM_INSERT_OVERRIDING] = self::INSERT_OVERRIDING_SYSTEM_VALUE;
+
+		return $this;
+	}
+
+
+	/**
+	 * @throws Exceptions\QueryException
+	 */
+	public function overridingUserValue(): static
+	{
+		$this->resetQuery();
+
+		$this->params[self::PARAM_INSERT_OVERRIDING] = self::INSERT_OVERRIDING_USER_VALUE;
 
 		return $this;
 	}
