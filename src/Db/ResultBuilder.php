@@ -103,7 +103,7 @@ class ResultBuilder
 	 */
 	private function getDataTypesCache(): array|null
 	{
-		return $this->dataTypeCache?->load($this->connection) ?? null;
+		return $this->dataTypeCache?->load($this->connection);
 	}
 
 }

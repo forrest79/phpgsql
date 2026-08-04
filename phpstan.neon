@@ -215,6 +215,12 @@ parameters:
 			path: benchmarks/BasicPhpBenchmark.php
 
 		-
+			rawMessage: 'Call to function array_map() on a separate line has no effect.'
+			identifier: function.resultUnused
+			count: 1
+			path: benchmarks/BasicPhpBenchmark.php
+
+		-
 			rawMessage: 'Strict comparison using !== between array<int, string> and null will always evaluate to true.'
 			identifier: notIdentical.alwaysTrue
 			count: 3
