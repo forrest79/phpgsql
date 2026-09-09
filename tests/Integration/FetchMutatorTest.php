@@ -27,7 +27,7 @@ final class FetchMutatorTest extends TestCase
 
 		$result = $this->connection
 			->query('SELECT id, name FROM test')
-			->setRowFetchMutator(static function (Db\Row $row): void {
+			->addRowFetchMutator(static function (Db\Row $row): void {
 				$row->new_column = $row->id . '-' . $row->name;
 			});
 
@@ -57,7 +57,7 @@ final class FetchMutatorTest extends TestCase
 
 		$result = $this->connection
 			->query('SELECT id, name FROM test ORDER BY id')
-			->setRowFetchMutator(static function (Db\Row $row): void {
+			->addRowFetchMutator(static function (Db\Row $row): void {
 				$row->new_column = $row->id . '-' . $row->name;
 				$row->repeat = ($row->repeat ?? 0) + 1;
 			});
@@ -94,7 +94,7 @@ final class FetchMutatorTest extends TestCase
 
 		$result = $this->connection
 			->query('SELECT name FROM test')
-			->setColumnsFetchMutator([
+			->addColumnsFetchMutator([
 				'name' => static function (string $name): string {
 					return \strtoupper($name);
 				},
@@ -119,16 +119,82 @@ final class FetchMutatorTest extends TestCase
 
 		$result = $this->connection
 			->query('SELECT name FROM test')
-			->setRowFetchMutator(static function (Db\Row $row): void {
+			->addRowFetchMutator(static function (Db\Row $row): void {
 				$row->name .= '-rowMutated';
 			})
-			->setColumnsFetchMutator([
+			->addColumnsFetchMutator([
 				'name' => static function (string $name): string {
 					return \strtoupper($name);
 				},
 			]);
 
 		Tester\Assert::same('PHPGSQL-ROWMUTATED', $result->fetchSingle());
+
+		$result->free();
+	}
+
+
+	public function testFetchMultipleRowMutators(): void
+	{
+		$this->connection->query('
+			CREATE TABLE test(
+				id serial,
+	  			name text
+			);
+		');
+
+		$this->connection->query('INSERT INTO test(name) VALUES(?)', 'phpgsql');
+
+		$callOrder = [];
+
+		$result = $this->connection
+			->query('SELECT id, name FROM test')
+			->addRowFetchMutator(static function (Db\Row $row) use (&$callOrder): void {
+				$callOrder[] = 'first';
+				$row->first_mutator = true;
+			})
+			->addRowFetchMutator(static function (Db\Row $row) use (&$callOrder): void {
+				$callOrder[] = 'second';
+				$row->second_mutator = true;
+			});
+
+		$row = $result->fetch();
+		if ($row === null) {
+			throw new \RuntimeException('No data from database were returned');
+		}
+
+		Tester\Assert::same(['first', 'second'], $callOrder);
+		Tester\Assert::same(['id' => 1, 'name' => 'phpgsql', 'first_mutator' => true, 'second_mutator' => true], $row->toArray());
+
+		$result->free();
+	}
+
+
+	public function testFetchSingleMultipleColumnMutators(): void
+	{
+		$this->connection->query('
+			CREATE TABLE test(
+				id serial,
+	  			name text
+			);
+		');
+
+		$this->connection->query('INSERT INTO test(name) VALUES(?)', 'phpgsql');
+
+		$result = $this->connection
+			->query('SELECT name FROM test')
+			->addColumnsFetchMutator([
+				'name' => static function (string $name): string {
+					return \strtoupper($name);
+				},
+			])
+			->addColumnsFetchMutator([
+				'name' => static function (string $name): string {
+					return $name . '-mutated';
+				},
+			]);
+
+		Tester\Assert::same('PHPGSQL-mutated', $result->fetchSingle());
 
 		$result->free();
 	}
@@ -149,7 +215,7 @@ final class FetchMutatorTest extends TestCase
 		$result = $this->connection->query('SELECT id, type, name FROM test ORDER BY id');
 
 		$rows = $result
-			->setColumnsFetchMutator([
+			->addColumnsFetchMutator([
 				'type' => static function (int $type): string {
 					return 'type' . $type;
 				},
@@ -178,7 +244,7 @@ final class FetchMutatorTest extends TestCase
 		$result = $this->connection->query('SELECT id, test_date FROM test');
 
 		$rows = $result
-			->setColumnsFetchMutator([
+			->addColumnsFetchMutator([
 				'test_date' => static function (\DateTimeImmutable $date): string {
 					return $date->format('Ymd');
 				},
@@ -204,7 +270,7 @@ final class FetchMutatorTest extends TestCase
 
 		$result = $this->connection
 			->query('SELECT id, test_date FROM test')
-			->setColumnsFetchMutator([
+			->addColumnsFetchMutator([
 				'test_date' => static function (\DateTimeImmutable $date): \DateTimeImmutable {
 					return $date;
 				},
@@ -279,10 +345,10 @@ final class FetchMutatorTest extends TestCase
 		$result = $this->connection->query('SELECT id, type, name FROM test ORDER BY id');
 
 		$rows = $result
-			->setRowFetchMutator(static function (Db\Row $row): void {
+			->addRowFetchMutator(static function (Db\Row $row): void {
 				$row->new_column = $row->id . '-' . $row->name;
 			})
-			->setColumnsFetchMutator([
+			->addColumnsFetchMutator([
 				'type' => static function (int $type): string {
 					return 'type' . $type;
 				},
@@ -312,11 +378,11 @@ final class FetchMutatorTest extends TestCase
 		$result = $this->connection->query('SELECT id, type, name FROM test ORDER BY id');
 
 		$rows = $result
-			->setRowFetchMutator(static function (Db\Row $row): void {
+			->addRowFetchMutator(static function (Db\Row $row): void {
 				$row->type = 'type' . $row->id;
 				$row->name = 'NAME_' . $row->name;
 			})
-			->setColumnsFetchMutator([
+			->addColumnsFetchMutator([
 				'type' => static function (string $type): string {
 					return \strtoupper($type);
 				},
@@ -345,7 +411,7 @@ final class FetchMutatorTest extends TestCase
 
 		$result = $this->connection
 			->query('SELECT id, name FROM test ORDER BY id')
-			->setColumnsFetchMutator([
+			->addColumnsFetchMutator([
 				'name' => static function (string $name): int {
 					return (int) \substr($name, -1, 1);
 				},
@@ -376,7 +442,7 @@ final class FetchMutatorTest extends TestCase
 
 		$result = $this->connection
 			->query('SELECT id, name FROM test ORDER BY id')
-			->setColumnsFetchMutator([
+			->addColumnsFetchMutator([
 				'id' => static function (int $id): string {
 					return 'id' . $id;
 				},
@@ -407,7 +473,7 @@ final class FetchMutatorTest extends TestCase
 
 		$result = $this->connection
 			->query('SELECT id, name FROM test ORDER BY id')
-			->setColumnsFetchMutator([
+			->addColumnsFetchMutator([
 				'id' => static function (int $id): \DateTimeImmutable {
 					return new \DateTimeImmutable('2020-04-0' . $id);
 				},
@@ -434,7 +500,7 @@ final class FetchMutatorTest extends TestCase
 
 		$result = $this->connection
 			->query('SELECT id, name FROM test ORDER BY id')
-			->setColumnsFetchMutator([
+			->addColumnsFetchMutator([
 				'id' => static function (int $id): string {
 					return 'id' . $id;
 				},
@@ -468,7 +534,7 @@ final class FetchMutatorTest extends TestCase
 
 		$result = $this->connection
 			->query('SELECT type FROM test ORDER BY id')
-			->setColumnsFetchMutator([
+			->addColumnsFetchMutator([
 				'type' => static function (int $type): string {
 					return 'type' . $type;
 				},
@@ -499,11 +565,11 @@ final class FetchMutatorTest extends TestCase
 
 		$result = $this->connection
 			->query('SELECT id, name FROM test ORDER BY id')
-			->setRowFetchMutator(static function (Db\Row $row): void {
+			->addRowFetchMutator(static function (Db\Row $row): void {
 				$row->name = 'NAME' . $row->id;
 				$row->id = 'id' . $row->id;
 			})
-			->setColumnsFetchMutator([
+			->addColumnsFetchMutator([
 				'id' => static function (string $id): string {
 					return \strtoupper($id);
 				},
@@ -515,6 +581,67 @@ final class FetchMutatorTest extends TestCase
 		$rows = $result->fetchPairs('id', 'name');
 
 		Tester\Assert::same(['ID1' => 'name1', 'ID2' => 'name2', 'ID3' => 'name3'], $rows);
+
+		$result->free();
+	}
+
+
+	public function testDeprecatedSetRowFetchMutator(): void
+	{
+		$this->connection->query('
+			CREATE TABLE test(
+				id serial,
+	  			name text
+			);
+		');
+
+		$this->connection->query('INSERT INTO test(name) VALUES(?)', 'phpgsql');
+
+		$result = $this->connection
+			->query('SELECT id, name FROM test')
+			->addRowFetchMutator(static function (Db\Row $row): void {
+				$row->from_add = true;
+			})
+			->setRowFetchMutator(static function (Db\Row $row): void {
+				$row->from_set = true;
+			});
+
+		$row = $result->fetch();
+		if ($row === null) {
+			throw new \RuntimeException('No data from database were returned');
+		}
+
+		Tester\Assert::same(['id' => 1, 'name' => 'phpgsql', 'from_set' => true], $row->toArray());
+
+		$result->free();
+	}
+
+
+	public function testDeprecatedSetColumnsFetchMutator(): void
+	{
+		$this->connection->query('
+			CREATE TABLE test(
+				id serial,
+	  			name text
+			);
+		');
+
+		$this->connection->query('INSERT INTO test(name) VALUES(?)', 'phpgsql');
+
+		$result = $this->connection
+			->query('SELECT name FROM test')
+			->addColumnsFetchMutator([
+				'name' => static function (string $name): string {
+					return 'should-be-replaced-' . $name;
+				},
+			])
+			->setColumnsFetchMutator([
+				'name' => static function (string $name): string {
+					return \strtoupper($name);
+				},
+			]);
+
+		Tester\Assert::same('PHPGSQL', $result->fetchSingle());
 
 		$result->free();
 	}
@@ -535,7 +662,7 @@ final class FetchMutatorTest extends TestCase
 			->table('test')
 			->select(['id', 'name'])
 			->orderBy('id')
-			->setRowFetchMutator(static function (Db\Row $row): void {
+			->addRowFetchMutator(static function (Db\Row $row): void {
 				$row->new_column = $row->id . '-' . $row->name;
 			})
 			->fetchAll();
@@ -543,6 +670,40 @@ final class FetchMutatorTest extends TestCase
 		Tester\Assert::same(['id' => 1, 'name' => 'name3', 'new_column' => '1-name3'], $rows[0]->toArray());
 		Tester\Assert::same(['id' => 2, 'name' => 'name2', 'new_column' => '2-name2'], $rows[1]->toArray());
 		Tester\Assert::same(['id' => 3, 'name' => 'name1', 'new_column' => '3-name1'], $rows[2]->toArray());
+	}
+
+
+	public function testFluentQueryMultipleRowFetchMutatorsBeforeExecute(): void
+	{
+		$this->connection->query('
+			CREATE TABLE test(
+				id serial,
+				name character varying
+			);
+		');
+
+		$this->connection->query('INSERT INTO test(name) SELECT \'name\' || generate_series FROM generate_series(3, 1, -1)');
+
+		$callOrder = [];
+
+		$rows = $this->createFluentQuery()
+			->table('test')
+			->select(['id', 'name'])
+			->orderBy('id')
+			->addRowFetchMutator(static function (Db\Row $row) use (&$callOrder): void {
+				$callOrder[] = 'first';
+				$row->first_mutator = true;
+			})
+			->addRowFetchMutator(static function (Db\Row $row) use (&$callOrder): void {
+				$callOrder[] = 'second';
+				$row->second_mutator = true;
+			})
+			->fetchAll();
+
+		Tester\Assert::same(['first', 'second', 'first', 'second', 'first', 'second'], $callOrder);
+		Tester\Assert::same(['id' => 1, 'name' => 'name3', 'first_mutator' => true, 'second_mutator' => true], $rows[0]->toArray());
+		Tester\Assert::same(['id' => 2, 'name' => 'name2', 'first_mutator' => true, 'second_mutator' => true], $rows[1]->toArray());
+		Tester\Assert::same(['id' => 3, 'name' => 'name1', 'first_mutator' => true, 'second_mutator' => true], $rows[2]->toArray());
 	}
 
 
@@ -565,7 +726,7 @@ final class FetchMutatorTest extends TestCase
 		$query->execute();
 
 		$rows = $query
-			->setRowFetchMutator(static function (Db\Row $row): void {
+			->addRowFetchMutator(static function (Db\Row $row): void {
 				$row->new_column = $row->id . '-' . $row->name;
 			})
 			->fetchAll();
@@ -592,7 +753,7 @@ final class FetchMutatorTest extends TestCase
 			->table('test')
 			->select(['id', 'type', 'name'])
 			->orderBy('id')
-			->setColumnsFetchMutator([
+			->addColumnsFetchMutator([
 				'type' => static function (int $type): string {
 					return 'type' . $type;
 				},
@@ -602,6 +763,40 @@ final class FetchMutatorTest extends TestCase
 		Tester\Assert::same(['id' => 1, 'type' => 3, 'name' => 'name3'], $rows['type3']->toArray());
 		Tester\Assert::same(['id' => 2, 'type' => 2, 'name' => 'name2'], $rows['type2']->toArray());
 		Tester\Assert::same(['id' => 3, 'type' => 1, 'name' => 'name1'], $rows['type1']->toArray());
+	}
+
+
+	public function testFluentQueryMultipleColumnsFetchMutatorsBeforeExecute(): void
+	{
+		$this->connection->query('
+			CREATE TABLE test(
+				id serial,
+				type integer,
+				name character varying
+			);
+		');
+
+		$this->connection->query('INSERT INTO test(type, name) SELECT generate_series, \'name\' || generate_series FROM generate_series(3, 1, -1)');
+
+		$rows = $this->createFluentQuery()
+			->table('test')
+			->select(['id', 'type', 'name'])
+			->orderBy('id')
+			->addColumnsFetchMutator([
+				'type' => static function (int $type): string {
+					return 'type' . $type;
+				},
+			])
+			->addColumnsFetchMutator([
+				'type' => static function (string $type): string {
+					return \strtoupper($type);
+				},
+			])
+			->fetchAssoc('type');
+
+		Tester\Assert::same(['id' => 1, 'type' => 3, 'name' => 'name3'], $rows['TYPE3']->toArray());
+		Tester\Assert::same(['id' => 2, 'type' => 2, 'name' => 'name2'], $rows['TYPE2']->toArray());
+		Tester\Assert::same(['id' => 3, 'type' => 1, 'name' => 'name1'], $rows['TYPE1']->toArray());
 	}
 
 
@@ -625,7 +820,7 @@ final class FetchMutatorTest extends TestCase
 		$query->execute();
 
 		$rows = $query
-			->setColumnsFetchMutator([
+			->addColumnsFetchMutator([
 				'type' => static function (int $type): string {
 					return 'type' . $type;
 				},
@@ -654,10 +849,10 @@ final class FetchMutatorTest extends TestCase
 			->table('test')
 			->select(['id', 'type', 'name'])
 			->orderBy('id')
-			->setRowFetchMutator(static function (Db\Row $row): void {
+			->addRowFetchMutator(static function (Db\Row $row): void {
 				$row->new_column = $row->id . '-' . $row->name;
 			})
-			->setColumnsFetchMutator([
+			->addColumnsFetchMutator([
 				'type' => static function (int $type): string {
 					return 'type' . $type;
 				},
@@ -690,10 +885,10 @@ final class FetchMutatorTest extends TestCase
 		$query->execute();
 
 		$rows = $query
-			->setRowFetchMutator(static function (Db\Row $row): void {
+			->addRowFetchMutator(static function (Db\Row $row): void {
 				$row->new_column = $row->id . '-' . $row->name;
 			})
-			->setColumnsFetchMutator([
+			->addColumnsFetchMutator([
 				'type' => static function (int $type): string {
 					return 'type' . $type;
 				},
@@ -722,10 +917,10 @@ final class FetchMutatorTest extends TestCase
 			->table('test')
 			->select(['id', 'type', 'name'])
 			->orderBy('id')
-			->setRowFetchMutator(static function (Db\Row $row): void {
+			->addRowFetchMutator(static function (Db\Row $row): void {
 				$row->new_column = $row->id . '-' . $row->name;
 			})
-			->setColumnsFetchMutator([
+			->addColumnsFetchMutator([
 				'type' => static function (int $type): string {
 					return 'type' . $type;
 				},
@@ -739,6 +934,69 @@ final class FetchMutatorTest extends TestCase
 		Tester\Assert::same(['id' => 1, 'type' => 3, 'name' => 'name3', 'new_column' => '1-name3'], $rows['type3']->toArray());
 		Tester\Assert::same(['id' => 2, 'type' => 2, 'name' => 'name2', 'new_column' => '2-name2'], $rows['type2']->toArray());
 		Tester\Assert::same(['id' => 3, 'type' => 1, 'name' => 'name1', 'new_column' => '3-name1'], $rows['type1']->toArray());
+	}
+
+
+	public function testFluentQueryDeprecatedSetRowFetchMutator(): void
+	{
+		$this->connection->query('
+			CREATE TABLE test(
+				id serial,
+				name character varying
+			);
+		');
+
+		$this->connection->query('INSERT INTO test(name) SELECT \'name\' || generate_series FROM generate_series(3, 1, -1)');
+
+		$rows = $this->createFluentQuery()
+			->table('test')
+			->select(['id', 'name'])
+			->orderBy('id')
+			->addRowFetchMutator(static function (Db\Row $row): void {
+				$row->from_add = true;
+			})
+			->setRowFetchMutator(static function (Db\Row $row): void {
+				$row->from_set = true;
+			})
+			->fetchAll();
+
+		Tester\Assert::same(['id' => 1, 'name' => 'name3', 'from_set' => true], $rows[0]->toArray());
+		Tester\Assert::same(['id' => 2, 'name' => 'name2', 'from_set' => true], $rows[1]->toArray());
+		Tester\Assert::same(['id' => 3, 'name' => 'name1', 'from_set' => true], $rows[2]->toArray());
+	}
+
+
+	public function testFluentQueryDeprecatedSetColumnsFetchMutator(): void
+	{
+		$this->connection->query('
+			CREATE TABLE test(
+				id serial,
+				type integer,
+				name character varying
+			);
+		');
+
+		$this->connection->query('INSERT INTO test(type, name) SELECT generate_series, \'name\' || generate_series FROM generate_series(3, 1, -1)');
+
+		$rows = $this->createFluentQuery()
+			->table('test')
+			->select(['id', 'type', 'name'])
+			->orderBy('id')
+			->addColumnsFetchMutator([
+				'type' => static function (int $type): string {
+					return 'should-be-replaced-' . $type;
+				},
+			])
+			->setColumnsFetchMutator([
+				'type' => static function (int $type): string {
+					return 'type' . $type;
+				},
+			])
+			->fetchAssoc('type');
+
+		Tester\Assert::same(['id' => 1, 'type' => 3, 'name' => 'name3'], $rows['type3']->toArray());
+		Tester\Assert::same(['id' => 2, 'type' => 2, 'name' => 'name2'], $rows['type2']->toArray());
+		Tester\Assert::same(['id' => 3, 'type' => 1, 'name' => 'name1'], $rows['type1']->toArray());
 	}
 
 

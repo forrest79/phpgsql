@@ -17,11 +17,11 @@ class Result implements \Countable
 	/** @var array<int, string>|null */
 	private array|null $dataTypesCache;
 
-	/** @template T of Row @var \Closure(Row): void|null */
-	private \Closure|null $rowFetchMutator = null;
+	/** @var list<\Closure(Row): void> */
+	private array $rowFetchMutators = [];
 
-	/** @var array<string, callable> */
-	private array $columnsFetchMutator = [];
+	/** @var array<string, list<callable>> */
+	private array $columnsFetchMutators = [];
 
 	private int|null $affectedRows = null;
 
@@ -59,12 +59,11 @@ class Result implements \Countable
 
 
 	/**
-	 * @template T of Row
-	 * @param \Closure(T): void $rowFetchMutator
+	 * @param \Closure(Row): void $rowFetchMutator
 	 */
-	public function setRowFetchMutator(\Closure $rowFetchMutator): static
+	public function addRowFetchMutator(\Closure $rowFetchMutator): static
 	{
-		$this->rowFetchMutator = $rowFetchMutator;
+		$this->rowFetchMutators[] = $rowFetchMutator;
 
 		return $this;
 	}
@@ -73,11 +72,37 @@ class Result implements \Countable
 	/**
 	 * @param non-empty-array<string, callable> $columnsFetchMutator
 	 */
-	public function setColumnsFetchMutator(array $columnsFetchMutator): static
+	public function addColumnsFetchMutator(array $columnsFetchMutator): static
 	{
-		$this->columnsFetchMutator = $columnsFetchMutator;
+		foreach ($columnsFetchMutator as $column => $mutator) {
+			$this->columnsFetchMutators[$column][] = $mutator;
+		}
 
 		return $this;
+	}
+
+
+	/**
+	 * @param \Closure(Row): void $rowFetchMutator
+	 * @deprecated use addRowFetchMutator() instead
+	 */
+	public function setRowFetchMutator(\Closure $rowFetchMutator): static
+	{
+		$this->rowFetchMutators = [];
+
+		return $this->addRowFetchMutator($rowFetchMutator);
+	}
+
+
+	/**
+	 * @param non-empty-array<string, callable> $columnsFetchMutator
+	 * @deprecated use addColumnsFetchMutator() instead
+	 */
+	public function setColumnsFetchMutator(array $columnsFetchMutator): static
+	{
+		$this->columnsFetchMutators = [];
+
+		return $this->addColumnsFetchMutator($columnsFetchMutator);
 	}
 
 
@@ -127,8 +152,8 @@ class Result implements \Countable
 
 		$row = $this->rowFactory->create($this->getColumnValueParser(), $data);
 
-		if ($this->rowFetchMutator !== null) {
-			call_user_func($this->rowFetchMutator, $row);
+		foreach ($this->rowFetchMutators as $rowFetchMutator) {
+			call_user_func($rowFetchMutator, $row);
 		}
 
 		return $row;
@@ -150,9 +175,7 @@ class Result implements \Countable
 		$columns = $this->getColumns();
 		$firstColumn = $columns[0];
 
-		return isset($this->columnsFetchMutator[$firstColumn])
-			? call_user_func($this->columnsFetchMutator[$firstColumn], $row[$firstColumn])
-			: $row[$firstColumn];
+		return $this->applyColumnFetchMutators($this->getColumnFetchMutators($firstColumn), $row[$firstColumn]);
 	}
 
 
@@ -240,13 +263,14 @@ class Result implements \Countable
 						$x = $row->toArray();
 					} else { // get concrete Row column
 						$key = $parts[$i + 1];
-						$x = isset($this->columnsFetchMutator[$key]) ? call_user_func($this->columnsFetchMutator[$key], $row->$key) : $row->$key;
+						$x = $this->applyColumnFetchMutators($this->getColumnFetchMutators($key), $row->$key);
 					}
 
 					continue 2;
 				} else if ($part !== '|') { // associative-array node
-					if (isset($this->columnsFetchMutator[$part])) {
-						$val = call_user_func($this->columnsFetchMutator[$part], $row->$part);
+					$mutators = $this->getColumnFetchMutators($part);
+					if ($mutators !== []) {
+						$val = $this->applyColumnFetchMutators($mutators, $row->$part);
 						if (($val !== null) && !\is_scalar($val)) {
 							throw Exceptions\ResultException::fetchMutatorBadReturnType($part, $val);
 						}
@@ -299,9 +323,9 @@ class Result implements \Countable
 			$tmp = \array_keys($row->toArray());
 			$key = $tmp[0];
 			if (\count($row) < 2) { // indexed-array
-				$fetchMutator = $this->columnsFetchMutator[$key] ?? null;
+				$mutators = $this->getColumnFetchMutators($key);
 				do {
-					$data[] = $fetchMutator !== null ? call_user_func($fetchMutator, $row[$key]) : $row[$key];
+					$data[] = $this->applyColumnFetchMutators($mutators, $row[$key]);
 					$row = $this->fetch();
 				} while ($row !== null);
 
@@ -315,9 +339,9 @@ class Result implements \Countable
 			}
 
 			if ($key === null) { // indexed-array
-				$fetchMutator = $this->columnsFetchMutator[$value] ?? null;
+				$mutators = $this->getColumnFetchMutators($value);
 				do {
-					$data[] = $fetchMutator !== null ? call_user_func($fetchMutator, $row[$value]) : $row[$value];
+					$data[] = $this->applyColumnFetchMutators($mutators, $row[$value]);
 					$row = $this->fetch();
 				} while ($row !== null);
 
@@ -329,12 +353,12 @@ class Result implements \Countable
 			}
 		}
 
-		$fetchMutatorKey = $this->columnsFetchMutator[$key] ?? null;
-		$fetchMutatorValue = $this->columnsFetchMutator[$value] ?? null;
+		$keyMutators = $this->getColumnFetchMutators($key);
+		$valueMutators = $this->getColumnFetchMutators($value);
 
 		do {
-			if ($fetchMutatorKey !== null) {
-				$keyValue = call_user_func($fetchMutatorKey, $row[$key]);
+			if ($keyMutators !== []) {
+				$keyValue = $this->applyColumnFetchMutators($keyMutators, $row[$key]);
 				if (($keyValue !== null) && !\is_scalar($keyValue)) {
 					throw Exceptions\ResultException::fetchMutatorBadReturnType($key, $keyValue);
 				}
@@ -345,7 +369,7 @@ class Result implements \Countable
 				}
 			}
 
-			$data[$keyValue] = $fetchMutatorValue !== null ? call_user_func($fetchMutatorValue, $row[$value]) : $row[$value];
+			$data[$keyValue] = $this->applyColumnFetchMutators($valueMutators, $row[$value]);
 
 			$row = $this->fetch();
 		} while ($row !== null);
@@ -411,6 +435,28 @@ class Result implements \Countable
 		return $this->columnValueParser === null
 			? null
 			: \array_fill_keys($this->columnValueParser->getParsedColumns(), true) + \array_fill_keys($this->getColumns(), false);
+	}
+
+
+	/**
+	 * @return list<callable>
+	 */
+	private function getColumnFetchMutators(string $column): array
+	{
+		return $this->columnsFetchMutators[$column] ?? [];
+	}
+
+
+	/**
+	 * @param list<callable> $mutators
+	 */
+	private function applyColumnFetchMutators(array $mutators, mixed $value): mixed
+	{
+		foreach ($mutators as $mutator) {
+			$value = call_user_func($mutator, $value);
+		}
+
+		return $value;
 	}
 
 

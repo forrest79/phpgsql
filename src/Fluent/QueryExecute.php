@@ -10,11 +10,11 @@ class QueryExecute extends Query implements \Countable
 
 	private Db\Result|null $result = null;
 
-	/** @template T of Db\Row @var \Closure(T): void|null */
-	private \Closure|null $rowFetchMutator = null;
+	/** @var list<\Closure(Db\Row): void> */
+	private array $rowFetchMutators = [];
 
-	/** @var array<string, callable> */
-	private array $columnsFetchMutator = [];
+	/** @var array<string, list<callable>> */
+	private array $columnsFetchMutators = [];
 
 
 	public function __construct(QueryBuilder $queryBuilder, Db\Connection $connection)
@@ -25,12 +25,44 @@ class QueryExecute extends Query implements \Countable
 
 
 	/**
-	 * @template T of Db\Row
-	 * @param \Closure(T): void $rowFetchMutator
+	 * @param \Closure(Db\Row): void $rowFetchMutator
+	 */
+	public function addRowFetchMutator(\Closure $rowFetchMutator): static
+	{
+		$this->rowFetchMutators[] = $rowFetchMutator;
+
+		if ($this->result !== null) {
+			$this->result->addRowFetchMutator($rowFetchMutator);
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * @param non-empty-array<string, callable> $columnsFetchMutator
+	 */
+	public function addColumnsFetchMutator(array $columnsFetchMutator): static
+	{
+		foreach ($columnsFetchMutator as $column => $mutator) {
+			$this->columnsFetchMutators[$column][] = $mutator;
+		}
+
+		if ($this->result !== null) {
+			$this->result->addColumnsFetchMutator($columnsFetchMutator);
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * @param \Closure(Db\Row): void $rowFetchMutator
+	 * @deprecated use addRowFetchMutator() instead
 	 */
 	public function setRowFetchMutator(\Closure $rowFetchMutator): static
 	{
-		$this->rowFetchMutator = $rowFetchMutator;
+		$this->rowFetchMutators = [$rowFetchMutator];
 
 		if ($this->result !== null) {
 			$this->result->setRowFetchMutator($rowFetchMutator);
@@ -42,10 +74,15 @@ class QueryExecute extends Query implements \Countable
 
 	/**
 	 * @param non-empty-array<string, callable> $columnsFetchMutator
+	 * @deprecated use addColumnsFetchMutator() instead
 	 */
 	public function setColumnsFetchMutator(array $columnsFetchMutator): static
 	{
-		$this->columnsFetchMutator = $columnsFetchMutator;
+		$this->columnsFetchMutators = [];
+
+		foreach ($columnsFetchMutator as $column => $mutator) {
+			$this->columnsFetchMutators[$column] = [$mutator];
+		}
 
 		if ($this->result !== null) {
 			$this->result->setColumnsFetchMutator($columnsFetchMutator);
@@ -79,12 +116,14 @@ class QueryExecute extends Query implements \Countable
 		if ($this->result === null) {
 			$this->result = $this->connection->query($this);
 
-			if ($this->rowFetchMutator !== null) {
-				$this->result->setRowFetchMutator($this->rowFetchMutator);
+			foreach ($this->rowFetchMutators as $rowFetchMutator) {
+				$this->result->addRowFetchMutator($rowFetchMutator);
 			}
 
-			if ($this->columnsFetchMutator !== []) {
-				$this->result->setColumnsFetchMutator($this->columnsFetchMutator);
+			foreach ($this->columnsFetchMutators as $column => $mutators) {
+				foreach ($mutators as $mutator) {
+					$this->result->addColumnsFetchMutator([$column => $mutator]);
+				}
 			}
 		}
 
