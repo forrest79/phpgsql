@@ -16,6 +16,7 @@ class ResultException extends Exception
 	public const int FETCH_MUTATOR_BAR_RETURN_TYPE = 8;
 	public const int NO_OTHER_ASYNC_RESULT = 9;
 	public const int NO_OID_IN_DATA_TYPE_CACHE = 10;
+	public const int CANNOT_HYDRATE_OBJECT = 11;
 
 
 	public static function noColumn(string $column): self
@@ -75,6 +76,15 @@ class ResultException extends Exception
 	public static function noOidInDataTypeCache(int|string|false $oid): self
 	{
 		return new self(\sprintf('There is no oid \'%s\' in data type cache. Try clear your data type cache.', $oid === false ? 'false' : $oid), self::NO_OID_IN_DATA_TYPE_CACHE);
+	}
+
+
+	/**
+	 * @param list<string> $columns
+	 */
+	public static function cannotHydrateObject(string $class, array $columns, \Throwable $previous): self
+	{
+		return new self(\sprintf('Can\'t create object \'%s\' from columns \'%s\': %s', $class, \implode('\', \'', $columns), $previous->getMessage()), self::CANNOT_HYDRATE_OBJECT, $previous);
 	}
 
 }

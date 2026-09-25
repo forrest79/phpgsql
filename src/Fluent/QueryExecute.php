@@ -205,6 +205,53 @@ class QueryExecute extends Query implements \Countable
 
 
 	/**
+	 * @template T of object
+	 * @param class-string<T> $class
+	 * @return T|null
+	 * @throws Db\Exceptions\ConnectionException
+	 * @throws Db\Exceptions\QueryException
+	 * @throws Db\Exceptions\ResultException
+	 * @throws Exceptions\QueryBuilderException
+	 * @throws Exceptions\QueryException
+	 */
+	public function fetchObject(string $class): object|null
+	{
+		return $this->execute()->fetchObject($class);
+	}
+
+
+	/**
+	 * @template T of object
+	 * @param class-string<T> $class
+	 * @return list<T>
+	 * @throws Db\Exceptions\ConnectionException
+	 * @throws Db\Exceptions\QueryException
+	 * @throws Db\Exceptions\ResultException
+	 * @throws Exceptions\QueryBuilderException
+	 * @throws Exceptions\QueryException
+	 */
+	public function fetchAllObjects(string $class, int|null $offset = null, int|null $limit = null): array
+	{
+		return $this->execute()->fetchAllObjects($class, $offset, $limit);
+	}
+
+
+	/**
+	 * @template T of object
+	 * @param class-string<T> $class
+	 * @return Db\ObjectIterator<T>
+	 * @throws Db\Exceptions\ConnectionException
+	 * @throws Db\Exceptions\QueryException
+	 * @throws Exceptions\QueryBuilderException
+	 * @throws Exceptions\QueryException
+	 */
+	public function fetchObjectIterator(string $class): Db\ObjectIterator
+	{
+		return $this->execute()->fetchObjectIterator($class);
+	}
+
+
+	/**
 	 * @return mixed value on success, null if no next record
 	 * @throws Db\Exceptions\ConnectionException
 	 * @throws Db\Exceptions\QueryException

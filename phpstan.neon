@@ -567,6 +567,12 @@ parameters:
 			path: src/Db/Row.php
 
 		-
+			rawMessage: 'Method Forrest79\PhPgSql\Db\ObjectIterator::current() should return T of object but returns (T of object)|null.'
+			identifier: return.type
+			count: 1
+			path: src/Db/ObjectIterator.php
+
+		-
 			rawMessage: 'Method Forrest79\PhPgSql\Db\RowIterator::current() should return Forrest79\PhPgSql\Db\Row but returns Forrest79\PhPgSql\Db\Row|null.'
 			identifier: return.type
 			count: 1

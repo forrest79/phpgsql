@@ -621,6 +621,29 @@ dump($row->age()); // (string) '24 years'
 
 > By default, is used `Forrest79\PhPgSql\Db\RowFactories\Basic` row factory that produces default `Row` objects.
 
+### Fetching typed objects
+
+All columns on the `Row` object are `mixed` for static analysis tools like [PHPStan](https://phpstan.org/) or [Psalm](https://psalm.dev/). If you want real types, you can fetch your rows as typed objects with methods `fetchObject(class)`, `fetchAllObjects(class, offset, limit)` and `fetchObjectIterator(class)`. These methods are generic (`class-string<T>`), so static analysis knows the returned type without any extension. They are available on `Result` and on fluent `QueryExecute`. Row fetch mutators are applied before the object is created.
+
+The object is created with all columns (already converted to PHP types) passed as named constructor parameters. Use SQL aliases to match your parameter names. Thanks to typed constructor parameters (and `strict_types`), the types are also checked at runtime - when the columns don't match the constructor, `Db\Exceptions\ResultException` with code `CANNOT_HYDRATE_OBJECT` is thrown:
+
+```php
+final class User
+{
+  public function __construct(
+    public readonly int $id,
+    public readonly string $nick,
+    public readonly int|null $age,
+    public readonly \DateTimeImmutable|null $insertedDatetime,
+  ) {}
+}
+
+$user = $connection->query('SELECT id, nick, age, inserted_datetime AS "insertedDatetime" FROM users WHERE id = ?', 1)->fetchObject(User::class);
+dump($user?->nick); // (string) 'Bob'
+
+$users = $connection->query('SELECT id, nick, age, inserted_datetime AS "insertedDatetime" FROM users ORDER BY id')->fetchAllObjects(User::class); // list<User>
+```
+
 ## Data type converting
 
 This library automatically converts PostgreSQL types to the PHP types. Basic types are converted by `Forrest79\PhPgSql\Db\DataTypeParsers\Basic`. If some type is not able to be parsed, an exception is thrown. If you need to parse another type or if you want to change parsing behavior, you can extend this parser or write your own.

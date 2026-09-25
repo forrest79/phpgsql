@@ -161,6 +161,59 @@ class Result implements \Countable
 
 
 	/**
+	 * Fetches next record as an object of the given class, column values are passed as named constructor parameters.
+	 *
+	 * @template T of object
+	 * @param class-string<T> $class
+	 * @return T|null
+	 * @throws Exceptions\ResultException
+	 */
+	public function fetchObject(string $class): object|null
+	{
+		$row = $this->fetch();
+		if ($row === null) {
+			return null;
+		}
+
+		return $this->hydrateObject($class, $row);
+	}
+
+
+	/**
+	 * Fetches all records as objects of the given class.
+	 *
+	 * @template T of object
+	 * @param class-string<T> $class
+	 * @return list<T>
+	 * @throws Exceptions\ResultException
+	 */
+	public function fetchAllObjects(string $class, int|null $offset = null, int|null $limit = null): array
+	{
+		$limit = $limit ?? -1;
+		$this->seek($offset ?? 0);
+
+		$data = [];
+		while (($limit !== 0) && (($object = $this->fetchObject($class)) !== null)) {
+			$limit--;
+			$data[] = $object;
+		}
+
+		return $data;
+	}
+
+
+	/**
+	 * @template T of object
+	 * @param class-string<T> $class
+	 * @return ObjectIterator<T>
+	 */
+	public function fetchObjectIterator(string $class): ObjectIterator
+	{
+		return new ObjectIterator($this, $class);
+	}
+
+
+	/**
 	 * Like fetch(), but returns only first field.
 	 *
 	 * @return mixed value on success, null if no next record
@@ -435,6 +488,22 @@ class Result implements \Countable
 		return $this->columnValueParser === null
 			? null
 			: \array_fill_keys($this->columnValueParser->getParsedColumns(), true) + \array_fill_keys($this->getColumns(), false);
+	}
+
+
+	/**
+	 * @template T of object
+	 * @param class-string<T> $class
+	 * @return T
+	 * @throws Exceptions\ResultException
+	 */
+	private function hydrateObject(string $class, Row $row): object
+	{
+		try {
+			return new $class(...$row->toArray());
+		} catch (\Error $e) { // \ArgumentCountError, \TypeError and unknown named parameter
+			throw Exceptions\ResultException::cannotHydrateObject($class, $row->getColumns(), $e);
+		}
 	}
 
 
