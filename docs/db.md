@@ -661,6 +661,9 @@ dump($row?->age); // (integer) 45
 ```
 
 > Your `Row` subclass must keep the original `Row` constructor signature.
+
+> If you're using [forrest79/phpgsql-phpstan](https://github.com/forrest79/phpgsql-phpstan), you can also type rows with array shapes (`Row<array{id: int, nick: string}>`) or let PHPStan infer column types right from your SQL queries.
+
 ## Data type converting
 
 This library automatically converts PostgreSQL types to the PHP types. Basic types are converted by `Forrest79\PhPgSql\Db\DataTypeParsers\Basic`. If some type is not able to be parsed, an exception is thrown. If you need to parse another type or if you want to change parsing behavior, you can extend this parser or write your own.

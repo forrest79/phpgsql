@@ -567,6 +567,18 @@ parameters:
 			path: src/Db/Row.php
 
 		-
+			rawMessage: 'Method Forrest79\PhPgSql\Db\Row::toArray() should return TShape of array<string, mixed> = array<string, mixed> but returns array<string, mixed>.'
+			identifier: return.type
+			count: 1
+			path: src/Db/Row.php
+
+		-
+			rawMessage: 'Method Forrest79\PhPgSql\Db\Row::from() should return static(Forrest79\PhPgSql\Db\Row<TShape of array<string, mixed> = array<string, mixed>>) but returns static(Forrest79\PhPgSql\Db\Row<array<string, mixed>>).'
+			identifier: return.type
+			count: 1
+			path: src/Db/Row.php
+
+		-
 			rawMessage: 'Method Forrest79\PhPgSql\Db\ObjectIterator::current() should return T of object but returns (T of object)|null.'
 			identifier: return.type
 			count: 1

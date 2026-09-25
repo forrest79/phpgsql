@@ -3,6 +3,7 @@
 namespace Forrest79\PhPgSql\Db;
 
 /**
+ * @template-covariant TShape of array<string, mixed> = array<string, mixed> column types, for static analysis only
  * @implements \ArrayAccess<string, mixed>
  * @implements \IteratorAggregate<string, mixed>
  */
@@ -61,7 +62,7 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 
 
 	/**
-	 * @return array<string, mixed>
+	 * @return TShape
 	 */
 	public function toArray(): array
 	{
@@ -218,7 +219,7 @@ class Row implements \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializ
 
 
 	/**
-	 * @return array<string, mixed>
+	 * @return TShape
 	 */
 	public function jsonSerialize(): array
 	{

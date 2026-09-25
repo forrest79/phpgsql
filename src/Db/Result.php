@@ -4,6 +4,9 @@ namespace Forrest79\PhPgSql\Db;
 
 use PgSql;
 
+/**
+ * @template TRow of Row = Row fetched row type, for static analysis only (is used by forrest79/phpgsql-phpstan)
+ */
 class Result implements \Countable
 {
 	protected PgSql\Result $queryResource;
