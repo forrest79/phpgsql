@@ -99,6 +99,29 @@ final class FetchObjectTest extends TestCase
 	}
 
 
+	public function testFetchObjectAsRowSubclass(): void
+	{
+		$this->createTestTable();
+
+		$result = $this->connection->query('SELECT id, name, created_at FROM test ORDER BY id');
+
+		$row = $result->fetchObject(FetchObjectRow::class);
+		if ($row === null) {
+			throw new \RuntimeException('No data from database were returned');
+		}
+
+		Tester\Assert::type(FetchObjectRow::class, $row);
+		Tester\Assert::same(['id' => false, 'name' => false, 'created_at' => false], $result->getParsedColumns()); // lazy parsing as standard row
+
+		Tester\Assert::same(1, $row->id);
+		Tester\Assert::same(['id' => true, 'name' => false, 'created_at' => false], $result->getParsedColumns());
+
+		Tester\Assert::same([1, 2, 3], \array_map(static fn (FetchObjectRow $row): int => $row->id, $result->fetchAllObjects(FetchObjectRow::class)));
+
+		$result->free();
+	}
+
+
 	public function testFetchObjectBadColumns(): void
 	{
 		$this->createTestTable();

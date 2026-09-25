@@ -145,23 +145,13 @@ class Result implements \Countable
 
 	public function fetch(): Row|null
 	{
-		$data = \pg_fetch_assoc($this->queryResource);
-		if ($data === false) {
-			return null;
-		}
-
-		$row = $this->rowFactory->create($this->getColumnValueParser(), $data);
-
-		foreach ($this->rowFetchMutators as $rowFetchMutator) {
-			call_user_func($rowFetchMutator, $row);
-		}
-
-		return $row;
+		return $this->fetchRow($this->rowFactory->create(...));
 	}
 
 
 	/**
-	 * Fetches next record as an object of the given class, column values are passed as named constructor parameters.
+	 * Fetches next record as an object of the given class. Row subclasses are created lazily
+	 * (like standard rows), other classes are created with column values as named constructor parameters.
 	 *
 	 * @template T of object
 	 * @param class-string<T> $class
@@ -170,6 +160,10 @@ class Result implements \Countable
 	 */
 	public function fetchObject(string $class): object|null
 	{
+		if (\is_a($class, Row::class, true)) {
+			return $this->fetchRow(static fn (ColumnValueParser $columnValueParser, array $rawValues): Row => new $class($columnValueParser, $rawValues));
+		}
+
 		$row = $this->fetch();
 		if ($row === null) {
 			return null;
@@ -488,6 +482,28 @@ class Result implements \Countable
 		return $this->columnValueParser === null
 			? null
 			: \array_fill_keys($this->columnValueParser->getParsedColumns(), true) + \array_fill_keys($this->getColumns(), false);
+	}
+
+
+	/**
+	 * @template TCreatedRow of Row
+	 * @param callable(ColumnValueParser, array<string, string|null>): TCreatedRow $createRow
+	 * @return TCreatedRow|null
+	 */
+	private function fetchRow(callable $createRow): Row|null
+	{
+		$data = \pg_fetch_assoc($this->queryResource);
+		if ($data === false) {
+			return null;
+		}
+
+		$row = $createRow($this->getColumnValueParser(), $data);
+
+		foreach ($this->rowFetchMutators as $rowFetchMutator) {
+			call_user_func($rowFetchMutator, $row);
+		}
+
+		return $row;
 	}
 
 

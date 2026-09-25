@@ -625,7 +625,7 @@ dump($row->age()); // (string) '24 years'
 
 All columns on the `Row` object are `mixed` for static analysis tools like [PHPStan](https://phpstan.org/) or [Psalm](https://psalm.dev/). If you want real types, you can fetch your rows as typed objects with methods `fetchObject(class)`, `fetchAllObjects(class, offset, limit)` and `fetchObjectIterator(class)`. These methods are generic (`class-string<T>`), so static analysis knows the returned type without any extension. They are available on `Result` and on fluent `QueryExecute`. Row fetch mutators are applied before the object is created.
 
-The object is created with all columns (already converted to PHP types) passed as named constructor parameters. Use SQL aliases to match your parameter names. Thanks to typed constructor parameters (and `strict_types`), the types are also checked at runtime - when the columns don't match the constructor, `Db\Exceptions\ResultException` with code `CANNOT_HYDRATE_OBJECT` is thrown:
+When the class is not a `Row`, the object is created with all columns (already converted to PHP types) passed as named constructor parameters. Use SQL aliases to match your parameter names. Thanks to typed constructor parameters (and `strict_types`), the types are also checked at runtime - when the columns don't match the constructor, `Db\Exceptions\ResultException` with code `CANNOT_HYDRATE_OBJECT` is thrown:
 
 ```php
 final class User
@@ -644,6 +644,23 @@ dump($user?->nick); // (string) 'Bob'
 $users = $connection->query('SELECT id, nick, age, inserted_datetime AS "insertedDatetime" FROM users ORDER BY id')->fetchAllObjects(User::class); // list<User>
 ```
 
+When the class extends `Row`, it is created the same way as standard rows (with the lazy data type converting), and you can describe the columns with `@property-read` annotations. This costs nothing at runtime, but the types are only declared, not checked (`$row?->age` in the example is `int|null` for static analysis):
+
+```php
+/**
+ * @property-read int $id
+ * @property-read string $nick
+ * @property-read int|null $age
+ */
+final class UserRow extends Forrest79\PhPgSql\Db\Row
+{
+}
+
+$row = $connection->query('SELECT id, nick, age FROM users WHERE id = ?', 1)->fetchObject(UserRow::class);
+dump($row?->age); // (integer) 45
+```
+
+> Your `Row` subclass must keep the original `Row` constructor signature.
 ## Data type converting
 
 This library automatically converts PostgreSQL types to the PHP types. Basic types are converted by `Forrest79\PhPgSql\Db\DataTypeParsers\Basic`. If some type is not able to be parsed, an exception is thrown. If you need to parse another type or if you want to change parsing behavior, you can extend this parser or write your own.

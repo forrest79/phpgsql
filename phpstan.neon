@@ -555,7 +555,7 @@ parameters:
 		# === We know, that this can't happen ===
 
 		-
-			rawMessage: 'Parameter #2 $rawValues of method Forrest79\PhPgSql\Db\RowFactory::create() expects array<string, string|null>, array<int|string, string|null> given.'
+			rawMessage: 'Parameter #2 of callable callable(Forrest79\PhPgSql\Db\ColumnValueParser, array<string, string|null>): TCreatedRow expects array<string, string|null>, array<int|string, string|null> given.'
 			identifier: argument.type
 			count: 1
 			path: src/Db/Result.php
