@@ -1574,6 +1574,20 @@ final class FluentQueryTest extends Tests\TestCase
 	}
 
 
+	public function testWithMaterialized(): void
+	{
+		$query = $this->query()
+			->with('w', 'SELECT * FROM big_table', materialized: true)
+			->select(['*'])
+			->from('w')
+			->where('w.key', 123)
+			->toDbQuery();
+
+		Tester\Assert::same('WITH w AS MATERIALIZED (SELECT * FROM big_table) SELECT * FROM w WHERE w.key = $1', $query->sql);
+		Tester\Assert::same([123], $query->params);
+	}
+
+
 	public function testWithInsert(): void
 	{
 		$query = $this->query()

@@ -584,4 +584,4 @@ parameters:
 			message: "#^Property Forrest79\\\\PhPgSql\\\\Fluent\\\\Query::\\$params \\(array\\{select: array\\<int\\|string, BackedEnum\\|Forrest79\\\\PhPgSql\\\\Db\\\\Sql\\|int\\|string\\>, distinct: bool, distinctOn: list\\<Forrest79\\\\PhPgSql\\\\Db\\\\Sql\\|string\\>, tables: array\\<string, array\\{string, string\\}\\>, table\\-types: array\\{main: string\\|null, from: list\\<string\\>, joins: list\\<string\\>, using: string\\|null\\}, on\\-conditions: array\\<string, Forrest79\\\\PhPgSql\\\\Fluent\\\\Condition\\>, lateral\\-tables: array\\<string, string\\>, where: Forrest79\\\\PhPgSql\\\\Fluent\\\\Condition\\|null, \\.\\.\\.\\}\\) does not accept .+\\.$#"
 			identifier: assign.propertyType
 			path: src/Fluent/Query.php
-			count: 8
+			count: 7
