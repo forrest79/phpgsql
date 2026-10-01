@@ -381,9 +381,6 @@ class Connection
 	public function getNotices(bool $clearAfterRead = true): array
 	{
 		$notices = \pg_last_notice($this->getConnectedResource(), \PGSQL_NOTICE_ALL);
-		if ($notices === false) {
-			throw Exceptions\ConnectionException::cantGetNotices();
-		}
 
 		if ($clearAfterRead) {
 			\pg_last_notice($this->getConnectedResource(), \PGSQL_NOTICE_CLEAR);

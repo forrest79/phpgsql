@@ -10,7 +10,7 @@ class QueryExecute extends Query implements \Countable
 
 	private Db\Result|null $result = null;
 
-	/** @var list<\Closure(Db\Row): void> */
+	/** @var list<\Closure> */
 	private array $rowFetchMutators = [];
 
 	/** @var array<string, list<callable>> */
@@ -25,7 +25,8 @@ class QueryExecute extends Query implements \Countable
 
 
 	/**
-	 * @param \Closure(Db\Row): void $rowFetchMutator
+	 * @template T of Db\Row
+	 * @param \Closure(T): void $rowFetchMutator
 	 */
 	public function addRowFetchMutator(\Closure $rowFetchMutator): static
 	{
@@ -57,7 +58,8 @@ class QueryExecute extends Query implements \Countable
 
 
 	/**
-	 * @param \Closure(Db\Row): void $rowFetchMutator
+	 * @template T of Db\Row
+	 * @param \Closure(T): void $rowFetchMutator
 	 * @deprecated use addRowFetchMutator() instead
 	 */
 	public function setRowFetchMutator(\Closure $rowFetchMutator): static

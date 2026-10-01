@@ -17,7 +17,7 @@ class Result implements \Countable
 	/** @var array<int, string>|null */
 	private array|null $dataTypesCache;
 
-	/** @var list<\Closure(Row): void> */
+	/** @var list<\Closure> */
 	private array $rowFetchMutators = [];
 
 	/** @var array<string, list<callable>> */
@@ -59,7 +59,8 @@ class Result implements \Countable
 
 
 	/**
-	 * @param \Closure(Row): void $rowFetchMutator
+	 * @template T of Row
+	 * @param \Closure(T): void $rowFetchMutator
 	 */
 	public function addRowFetchMutator(\Closure $rowFetchMutator): static
 	{
@@ -83,7 +84,8 @@ class Result implements \Countable
 
 
 	/**
-	 * @param \Closure(Row): void $rowFetchMutator
+	 * @template T of Row
+	 * @param \Closure(T): void $rowFetchMutator
 	 * @deprecated use addRowFetchMutator() instead
 	 */
 	public function setRowFetchMutator(\Closure $rowFetchMutator): static

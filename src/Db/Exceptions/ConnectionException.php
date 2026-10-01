@@ -8,12 +8,11 @@ class ConnectionException extends Exception
 	public const int CANT_CHANGE_CONNECTION_CONFIG_WHEN_CONNECTED = 2;
 	public const int CONNECTION_FAILED = 3;
 	public const int BAD_CONNECTION = 4;
-	public const int CANT_GET_NOTICES = 5;
-	public const int ASYNC_CANCEL_FAILED = 6;
-	public const int ASYNC_QUERY_SENT_FAILED = 7;
-	public const int ASYNC_NO_QUERY_IS_SENT = 8;
-	public const int ASYNC_NO_EXECUTE_IS_SENT = 9;
-	public const int ASYNC_ANOTHER_QUERY_IS_RUNNING = 10;
+	public const int ASYNC_CANCEL_FAILED = 5;
+	public const int ASYNC_QUERY_SENT_FAILED = 6;
+	public const int ASYNC_NO_QUERY_IS_SENT = 7;
+	public const int ASYNC_NO_EXECUTE_IS_SENT = 8;
+	public const int ASYNC_ANOTHER_QUERY_IS_RUNNING = 9;
 
 
 	public static function noConfig(): self
@@ -43,12 +42,6 @@ class ConnectionException extends Exception
 	public static function badConnection(): self
 	{
 		return new self('Connection failed (bad connection).', self::BAD_CONNECTION);
-	}
-
-
-	public static function cantGetNotices(): self
-	{
-		return new self('Can\'t get notices from connection. Is notice message tracking not ignored in php.ini - pgsql.ignore_notice = 0 is the right value.', self::CANT_GET_NOTICES);
 	}
 
 
