@@ -137,15 +137,21 @@ parameters:
 			path: benchmarks/BasicPhpBenchmark.php
 
 		-
+			rawMessage: 'Call to function array_key_exists() with ''testKey2'' and *NEVER* will always evaluate to true.'
+			identifier: function.alreadyNarrowedType
+			count: 3
+			path: benchmarks/BasicPhpBenchmark.php
+
+		-
 			rawMessage: 'Call to function array_key_exists() with ''testKey2'' and array{testKey1: null, testKey2: ''''} will always evaluate to true.'
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: benchmarks/BasicPhpBenchmark.php
 
 		-
-			rawMessage: 'Call to function array_key_exists() with ''testKey2'' and *NEVER* will always evaluate to true.'
-			identifier: function.alreadyNarrowedType
-			count: 3
+			rawMessage: 'Call to function array_map() on a separate line has no effect.'
+			identifier: function.resultUnused
+			count: 1
 			path: benchmarks/BasicPhpBenchmark.php
 
 		-
@@ -158,6 +164,12 @@ parameters:
 			rawMessage: Empty array passed to foreach.
 			identifier: foreach.emptyArray
 			count: 1
+			path: benchmarks/BasicPhpBenchmark.php
+
+		-
+			rawMessage: Foreach value variable $item is never read.
+			identifier: foreach.unusedValue
+			count: 2
 			path: benchmarks/BasicPhpBenchmark.php
 
 		-
@@ -215,15 +227,63 @@ parameters:
 			path: benchmarks/BasicPhpBenchmark.php
 
 		-
-			rawMessage: 'Call to function array_map() on a separate line has no effect.'
-			identifier: function.resultUnused
+			rawMessage: 'Value assigned to $test[$i] is never read.'
+			identifier: assign.unused
+			count: 2
+			path: benchmarks/BasicPhpBenchmark.php
+
+		-
+			rawMessage: 'Value assigned to $test[$i] only flows into values that are never used.'
+			identifier: assign.unusedFlow
 			count: 1
+			path: benchmarks/BasicPhpBenchmark.php
+
+		-
+			rawMessage: 'Value assigned to $test[] is never read.'
+			identifier: assign.unused
+			count: 4
+			path: benchmarks/BasicPhpBenchmark.php
+
+		-
+			rawMessage: Value assigned to variable $i is never read.
+			identifier: assign.unused
+			count: 3
+			path: benchmarks/BasicPhpBenchmark.php
+
+		-
+			rawMessage: Value assigned to variable $keys is never read.
+			identifier: assign.unused
+			count: 2
+			path: benchmarks/BasicPhpBenchmark.php
+
+		-
+			rawMessage: Value assigned to variable $test is never read.
+			identifier: assign.unused
+			count: 10
+			path: benchmarks/BasicPhpBenchmark.php
+
+		-
+			rawMessage: Value assigned to variable $z2 is never read.
+			identifier: assign.unused
+			count: 3
 			path: benchmarks/BasicPhpBenchmark.php
 
 		-
 			rawMessage: 'Strict comparison using !== between array<int, string> and null will always evaluate to true.'
 			identifier: notIdentical.alwaysTrue
 			count: 3
+			path: benchmarks/GetFieldTypesBenchmark.php
+
+		-
+			rawMessage: 'Value assigned to $types[$column] is never read.'
+			identifier: assign.unused
+			count: 1
+			path: benchmarks/GetFieldTypesBenchmark.php
+
+		-
+			rawMessage: 'Value assigned to $types[\pg_field_name($this->queryResult, $i)] is never read.'
+			identifier: assign.unused
+			count: 2
 			path: benchmarks/GetFieldTypesBenchmark.php
 
 		-
