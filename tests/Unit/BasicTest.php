@@ -52,6 +52,7 @@ final class BasicTest extends Tests\TestCase
 		Tester\Assert::same('{"A","B","C"}', Db\Helper::createStringPgArray(['A', 'B', 'C']));
 		Tester\Assert::same('{"A, B","C","D"}', Db\Helper::createStringPgArray(['A, B', 'C', 'D']));
 		Tester\Assert::same('{"A","\"B\"","C"}', Db\Helper::createStringPgArray(['A', '"B"', 'C']));
+		Tester\Assert::same('{"A\\\\B","C\\\\","\\\\\"D"}', Db\Helper::createStringPgArray(['A\\B', 'C\\', '\\"D']));
 		Tester\Assert::same('{"1","2","3"}', Db\Helper::createStringPgArray([1, 2, 3]));
 		Tester\Assert::same('{"1","2","3"}', Db\Helper::createStringPgArray([1, Tests\TestEnum::Two, 3]));
 		Tester\Assert::same('{"1",NULL,"3",NULL}', Db\Helper::createStringPgArray([1, null, 3, null]));

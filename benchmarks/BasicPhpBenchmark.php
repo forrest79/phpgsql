@@ -16,6 +16,9 @@ final class BasicPhpBenchmark extends BenchmarkCase
 
 	private const array TEST_ARRAY = [1, 2, 3];
 
+	private const string ESCAPE_PLAIN = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit';
+	private const string ESCAPE_SPECIAL = 'Lorem "ipsum" dolor \\ sit amet, C:\\path\\to\\"file"';
+
 	private \Closure $updateFunction;
 
 
@@ -421,6 +424,66 @@ final class BasicPhpBenchmark extends BenchmarkCase
 	public function benchmarkCreateNewInstanceViaStaticMethod(): void
 	{
 		Db\Sql\Literal::create('now()');
+	}
+
+
+	/**
+	 * @title escape pg array string with "addcslashes" (plain string)
+	 */
+	public function benchmarkEscapeAddCSlashesPlain(): void
+	{
+		$test = self::ESCAPE_PLAIN;
+		$test = \addcslashes($test, '"\\');
+	}
+
+
+	/**
+	 * @title escape pg array string with "str_replace" (plain string)
+	 */
+	public function benchmarkEscapeStrReplacePlain(): void
+	{
+		$test = self::ESCAPE_PLAIN;
+		$test = \str_replace(['\\', '"'], ['\\\\', '\"'], $test);
+	}
+
+
+	/**
+	 * @title escape pg array string with "strtr" (plain string)
+	 */
+	public function benchmarkEscapeStrtrPlain(): void
+	{
+		$test = self::ESCAPE_PLAIN;
+		$test = \strtr($test, ['\\' => '\\\\', '"' => '\"']);
+	}
+
+
+	/**
+	 * @title escape pg array string with "addcslashes" (string with " and \)
+	 */
+	public function benchmarkEscapeAddCSlashesSpecial(): void
+	{
+		$test = self::ESCAPE_SPECIAL;
+		$test = \addcslashes($test, '"\\');
+	}
+
+
+	/**
+	 * @title escape pg array string with "str_replace" (string with " and \)
+	 */
+	public function benchmarkEscapeStrReplaceSpecial(): void
+	{
+		$test = self::ESCAPE_SPECIAL;
+		$test = \str_replace(['\\', '"'], ['\\\\', '\"'], $test);
+	}
+
+
+	/**
+	 * @title escape pg array string with "strtr" (string with " and \)
+	 */
+	public function benchmarkEscapeStrtrSpecial(): void
+	{
+		$test = self::ESCAPE_SPECIAL;
+		$test = \strtr($test, ['\\' => '\\\\', '"' => '\"']);
 	}
 
 }

@@ -304,6 +304,16 @@ final class BasicTest extends TestCase
 		Tester\Assert::same(['NOTICE:  Test notice'], $this->connection->getNotices());
 	}
 
+
+	public function testStringPgArrayParam(): void
+	{
+		$values = ['A', 'B, C', '"D"', 'E\\F', 'G\\', '\\"H', '{I}', ' J ', 'NULL', null];
+
+		$rows = $this->connection->query('SELECT unnest(?::text[]) AS value', Db\Helper::createStringPgArray($values))->fetchAll();
+
+		Tester\Assert::same($values, \array_map(static fn (Db\Row $row): mixed => $row->value, $rows));
+	}
+
 }
 
 (new BasicTest())->run();

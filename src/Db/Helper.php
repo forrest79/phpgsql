@@ -41,7 +41,7 @@ class Helper
 				}
 
 				\assert(\is_scalar($value));
-				$array[$i] = '"' . \str_replace('"', '\"', (string) $value) . '"';
+				$array[$i] = '"' . \addcslashes((string) $value, '"\\') . '"';
 			} else if ($value instanceof \BackedEnum) {
 				$array[$i] = $value->value;
 			}
