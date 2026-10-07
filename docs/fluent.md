@@ -163,7 +163,7 @@ Every query is `SELECT` at first, until you call `->insert(...)`, `->update(...)
 - `prefix(string $queryPrefix/$querySuffix, ...$params)` (or `suffix(...)`) - with this, you can define universal query prefix or suffix. This is useful for actually not supported fluent syntax. With prefix, you can create CTE (Common Table Expression) queries. With suffix, you can create `SELECT ... FOR UPDATE` for example. Definition can be simple `string` or you can use `?` and parameters.
 
 
-- `with(string $as, $query, ?string $suffix = null, bool $notMaterialized = false)` - prepare CTE (Common Table Expression) query. `$as` is query alias/name, `$query` can be simple string, `Db\Sql\Query` or `Fluent\Query`, `$suffix` is optional definition like `SEARCH BREADTH FIRST BY ...` and `$notMaterialized` can set `WITH` branch as not materialized (materialized is default). `with()` can be called multiple times. When you use it, the query will always start with `WITH ...`.   
+- `with(string $as, $query, ?string $suffix = null, bool $notMaterialized = false, bool $materialized = false)` - prepare CTE (Common Table Expression) query. `$as` is query alias/name, `$query` can be simple string, `Db\Sql\Query` or `Fluent\Query`, `$suffix` is optional definition like `SEARCH BREADTH FIRST BY ...` and `$notMaterialized` or `$materialized` can force `WITH` branch as not materialized or materialized (by default, PostgreSQL materializes a branch only if it is referenced more than once). `with()` can be called multiple times. When you use it, the query will always start with `WITH ...`.   
 
   
 - `recursive()` - defines `WITH` query recursive.

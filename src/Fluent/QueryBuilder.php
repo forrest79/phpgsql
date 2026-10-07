@@ -27,7 +27,7 @@ use Forrest79\PhPgSql\Db;
  *   data: array<string, mixed>,
  *   rows: array<int, array<string, mixed>>,
  *   merge: list<array{0: string, 1: string|Db\Sql, 2: Condition|null}>,
- *   with: array{queries: array<string, string|Db\Sql>, queries-suffix: array<string, string>, queries-not-materialized: array<string, string>, recursive: bool},
+ *   with: array{queries: array<string, string|Db\Sql>, queries-suffix: array<string, string>, queries-materialized: array<string, bool>, recursive: bool},
  *   prefix: list<array<mixed>>,
  *   suffix: list<array<mixed>>
  * }
@@ -420,7 +420,11 @@ class QueryBuilder
 				$query = '?';
 			}
 			$queries[] = $as . ' AS '
-				. (isset($queryParams[Query::PARAM_WITH][Query::WITH_QUERIES_NOT_MATERIALIZED][$as]) ? 'NOT MATERIALIZED ' : '')
+				. match ($queryParams[Query::PARAM_WITH][Query::WITH_QUERIES_MATERIALIZED][$as] ?? null) {
+					true => 'MATERIALIZED ',
+					false => 'NOT MATERIALIZED ',
+					null => '',
+				}
 				. '(' . $query . ')'
 				. (isset($queryParams[Query::PARAM_WITH][Query::WITH_QUERIES_SUFFIX][$as]) ? (' ' . $queryParams[Query::PARAM_WITH][Query::WITH_QUERIES_SUFFIX][$as]) : '');
 		}

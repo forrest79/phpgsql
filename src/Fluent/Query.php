@@ -70,7 +70,7 @@ class Query implements Db\Sql
 
 	public const string WITH_QUERIES = 'queries';
 	public const string WITH_QUERIES_SUFFIX = 'queries-suffix';
-	public const string WITH_QUERIES_NOT_MATERIALIZED = 'queries-not-materialized';
+	public const string WITH_QUERIES_MATERIALIZED = 'queries-materialized';
 	public const string WITH_RECURSIVE = 'recursive';
 
 	private const array DEFAULT_PARAMS = [
@@ -108,7 +108,7 @@ class Query implements Db\Sql
 		self::PARAM_WITH => [
 			self::WITH_QUERIES => [],
 			self::WITH_QUERIES_SUFFIX => [],
-			self::WITH_QUERIES_NOT_MATERIALIZED => [],
+			self::WITH_QUERIES_MATERIALIZED => [],
 			self::WITH_RECURSIVE => false,
 		],
 		self::PARAM_PREFIX => [],
@@ -872,6 +872,7 @@ class Query implements Db\Sql
 		string|Db\Sql $query,
 		string|null $suffix = null,
 		bool $notMaterialized = false,
+		bool $materialized = false,
 	): static
 	{
 		$this->resetQuery();
@@ -882,8 +883,8 @@ class Query implements Db\Sql
 			$this->params[self::PARAM_WITH][self::WITH_QUERIES_SUFFIX][$as] = $suffix;
 		}
 
-		if ($notMaterialized) {
-			$this->params[self::PARAM_WITH][self::WITH_QUERIES_NOT_MATERIALIZED][$as] = true;
+		if ($notMaterialized || $materialized) {
+			$this->params[self::PARAM_WITH][self::WITH_QUERIES_MATERIALIZED][$as] = $materialized;
 		}
 
 		return $this;
