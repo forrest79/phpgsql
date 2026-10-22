@@ -70,7 +70,7 @@ class Query implements Db\Sql
 
 	public const string WITH_QUERIES = 'queries';
 	public const string WITH_QUERIES_SUFFIX = 'queries-suffix';
-	public const string WITH_QUERIES_NOT_MATERIALIZED = 'queries-not-materialized';
+	public const string WITH_QUERIES_MATERIALIZED = 'queries-materialized';
 	public const string WITH_RECURSIVE = 'recursive';
 
 	private const array DEFAULT_PARAMS = [
@@ -108,7 +108,7 @@ class Query implements Db\Sql
 		self::PARAM_WITH => [
 			self::WITH_QUERIES => [],
 			self::WITH_QUERIES_SUFFIX => [],
-			self::WITH_QUERIES_NOT_MATERIALIZED => [],
+			self::WITH_QUERIES_MATERIALIZED => [],
 			self::WITH_RECURSIVE => false,
 		],
 		self::PARAM_PREFIX => [],
@@ -865,6 +865,8 @@ class Query implements Db\Sql
 
 
 	/**
+	 * @param bool $notMaterialized deprecated, use $materialized: false instead
+	 * @param bool|null $materialized true = MATERIALIZED, false = NOT MATERIALIZED, null = PostgreSQL default
 	 * @throws Exceptions\QueryException
 	 */
 	public function with(
@@ -872,9 +874,19 @@ class Query implements Db\Sql
 		string|Db\Sql $query,
 		string|null $suffix = null,
 		bool $notMaterialized = false,
+		bool|null $materialized = null,
 	): static
 	{
 		$this->resetQuery();
+
+		if ($notMaterialized) {
+			if ($materialized !== null) {
+				throw Exceptions\QueryException::withNotMaterializedAndMaterialized($as);
+			}
+
+			\trigger_error('Parameter $notMaterialized in with() is deprecated, use $materialized: false instead.', \E_USER_DEPRECATED);
+			$materialized = false;
+		}
 
 		$this->params[self::PARAM_WITH][self::WITH_QUERIES][$as] = $query;
 
@@ -882,8 +894,10 @@ class Query implements Db\Sql
 			$this->params[self::PARAM_WITH][self::WITH_QUERIES_SUFFIX][$as] = $suffix;
 		}
 
-		if ($notMaterialized) {
-			$this->params[self::PARAM_WITH][self::WITH_QUERIES_NOT_MATERIALIZED][$as] = true;
+		if ($materialized === null) {
+			unset($this->params[self::PARAM_WITH][self::WITH_QUERIES_MATERIALIZED][$as]);
+		} else {
+			$this->params[self::PARAM_WITH][self::WITH_QUERIES_MATERIALIZED][$as] = $materialized;
 		}
 
 		return $this;

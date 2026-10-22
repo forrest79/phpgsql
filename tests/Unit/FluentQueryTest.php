@@ -1562,7 +1562,7 @@ final class FluentQueryTest extends Tests\TestCase
 	public function testWithNotMaterialized(): void
 	{
 		$query = $this->query()
-			->with('w', 'SELECT * FROM big_table', notMaterialized: true)
+			->with('w', 'SELECT * FROM big_table', materialized: false)
 			->select(['*'])
 			->from('w', 'w1')
 			->join('w', 'w2', 'w1.key = w2.ref')
@@ -1571,6 +1571,53 @@ final class FluentQueryTest extends Tests\TestCase
 
 		Tester\Assert::same('WITH w AS NOT MATERIALIZED (SELECT * FROM big_table) SELECT * FROM w AS w1 INNER JOIN w AS w2 ON w1.key = w2.ref WHERE w2.key = $1', $query->sql);
 		Tester\Assert::same([123], $query->params);
+	}
+
+
+	public function testWithNotMaterializedDeprecated(): void
+	{
+		$query = $this->query()->select(['*'])->from('w');
+
+		Tester\Assert::error(static function () use ($query): void {
+			$query->with('w', 'SELECT * FROM big_table', notMaterialized: true);
+		}, \E_USER_DEPRECATED, 'Parameter $notMaterialized in with() is deprecated, use $materialized: false instead.');
+
+		Tester\Assert::same('WITH w AS NOT MATERIALIZED (SELECT * FROM big_table) SELECT * FROM w', $query->toDbQuery()->sql);
+	}
+
+
+	public function testWithNotMaterializedAndMaterialized(): void
+	{
+		Tester\Assert::exception(function (): void {
+			$this->query()->with('w', 'SELECT * FROM big_table', notMaterialized: true, materialized: false);
+		}, Fluent\Exceptions\QueryException::class, code: Fluent\Exceptions\QueryException::WITH_NOT_MATERIALIZED_AND_MATERIALIZED);
+	}
+
+
+	public function testWithMaterialized(): void
+	{
+		$query = $this->query()
+			->with('w', 'SELECT * FROM big_table', materialized: true)
+			->select(['*'])
+			->from('w')
+			->where('w.key', 123)
+			->toDbQuery();
+
+		Tester\Assert::same('WITH w AS MATERIALIZED (SELECT * FROM big_table) SELECT * FROM w WHERE w.key = $1', $query->sql);
+		Tester\Assert::same([123], $query->params);
+	}
+
+
+	public function testWithMaterializedReset(): void
+	{
+		$query = $this->query()
+			->with('w', 'SELECT * FROM big_table', materialized: true)
+			->with('w', 'SELECT * FROM big_table')
+			->select(['*'])
+			->from('w')
+			->toDbQuery();
+
+		Tester\Assert::same('WITH w AS (SELECT * FROM big_table) SELECT * FROM w', $query->sql);
 	}
 
 

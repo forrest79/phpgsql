@@ -13,6 +13,7 @@ class QueryException extends Exception
 	public const int YOU_MUST_EXECUTE_QUERY_BEFORE_THAT = 7;
 	public const int MERGE_ONLY_ONE_USING = 8;
 	public const int ON_CONFLICT_WHERE_NOT_FOR_CONSTRAINT = 9;
+	public const int WITH_NOT_MATERIALIZED_AND_MATERIALIZED = 10;
 
 
 	public static function onlyOneMainTable(): self
@@ -69,6 +70,12 @@ class QueryException extends Exception
 	public static function onConflictWhereNotForConstraint(): self
 	{
 		return new self('ON CONFLICT with constraint can\'t have a WHERE clause.', self::ON_CONFLICT_WHERE_NOT_FOR_CONSTRAINT);
+	}
+
+
+	public static function withNotMaterializedAndMaterialized(string $as): self
+	{
+		return new self(\sprintf('WITH query "%s" can\'t use both $notMaterialized and $materialized, use only $materialized.', $as), self::WITH_NOT_MATERIALIZED_AND_MATERIALIZED);
 	}
 
 }

@@ -163,7 +163,7 @@ Every query is `SELECT` at first, until you call `->insert(...)`, `->update(...)
 - `prefix(string $queryPrefix/$querySuffix, ...$params)` (or `suffix(...)`) - with this, you can define universal query prefix or suffix. This is useful for actually not supported fluent syntax. With prefix, you can create CTE (Common Table Expression) queries. With suffix, you can create `SELECT ... FOR UPDATE` for example. Definition can be simple `string` or you can use `?` and parameters.
 
 
-- `with(string $as, $query, ?string $suffix = null, bool $notMaterialized = false)` - prepare CTE (Common Table Expression) query. `$as` is query alias/name, `$query` can be simple string, `Db\Sql\Query` or `Fluent\Query`, `$suffix` is optional definition like `SEARCH BREADTH FIRST BY ...` and `$notMaterialized` can set `WITH` branch as not materialized (materialized is default). `with()` can be called multiple times. When you use it, the query will always start with `WITH ...`.   
+- `with(string $as, $query, ?string $suffix = null, bool $notMaterialized = false, ?bool $materialized = null)` - prepare CTE (Common Table Expression) query. `$as` is query alias/name, `$query` can be simple string, `Db\Sql\Query` or `Fluent\Query`, `$suffix` is optional definition like `SEARCH BREADTH FIRST BY ...` and `$materialized` can force `WITH` branch as materialized (`true`) or not materialized (`false`) - by default (`null`), PostgreSQL materializes a branch only if it is referenced more than once. Parameter `$notMaterialized` is deprecated (use `materialized: false`) and will be removed - always pass `$materialized` as a named argument (`->with('w', $query, materialized: false)`), because its position will change. `with()` can be called multiple times. When you use it, the query will always start with `WITH ...`.   
 
   
 - `recursive()` - defines `WITH` query recursive.
@@ -890,12 +890,26 @@ $query = $connection
 dump($query); // (Query) WITH search_tree(id, link, data) AS (SELECT t.id, t.link, t.data FROM tree AS t UNION ALL SELECT t.id, t.link, t.data FROM tree AS t, search_tree AS st WHERE t.id = st.link) SEARCH BREADTH FIRST BY id SET ordercol SELECT * FROM search_tree ORDER BY ordercol
 ```
 
+Or materialized:
+
+```php
+$query = $connection
+  ->createQuery()
+  ->with('w', 'SELECT * FROM big_table', null, materialized: true)
+  ->select(['*'])
+  ->from('w', 'w1')
+  ->join('w', 'w2', 'w1.key = w2.ref')
+  ->where('w2.key', 123);
+
+dump($query); // (Query) WITH w AS MATERIALIZED (SELECT * FROM big_table) SELECT * FROM w AS w1 INNER JOIN w AS w2 ON w1.key = w2.ref WHERE w2.key = $1 [Params: (array) [123]]
+```
+
 Or not materialized:
 
 ```php
 $query = $connection
   ->createQuery()
-  ->with('w', 'SELECT * FROM big_table', null, true)
+  ->with('w', 'SELECT * FROM big_table', null, materialized: false)
   ->select(['*'])
   ->from('w', 'w1')
   ->join('w', 'w2', 'w1.key = w2.ref')
