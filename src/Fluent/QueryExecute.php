@@ -58,43 +58,6 @@ class QueryExecute extends Query implements \Countable
 
 
 	/**
-	 * @template T of Db\Row
-	 * @param \Closure(T): void $rowFetchMutator
-	 * @deprecated use addRowFetchMutator() instead
-	 */
-	public function setRowFetchMutator(\Closure $rowFetchMutator): static
-	{
-		$this->rowFetchMutators = [$rowFetchMutator];
-
-		if ($this->result !== null) {
-			$this->result->setRowFetchMutator($rowFetchMutator);
-		}
-
-		return $this;
-	}
-
-
-	/**
-	 * @param non-empty-array<string, callable> $columnsFetchMutator
-	 * @deprecated use addColumnsFetchMutator() instead
-	 */
-	public function setColumnsFetchMutator(array $columnsFetchMutator): static
-	{
-		$this->columnsFetchMutators = [];
-
-		foreach ($columnsFetchMutator as $column => $mutator) {
-			$this->columnsFetchMutators[$column] = [$mutator];
-		}
-
-		if ($this->result !== null) {
-			$this->result->setColumnsFetchMutator($columnsFetchMutator);
-		}
-
-		return $this;
-	}
-
-
-	/**
 	 * @throws Exceptions\QueryException
 	 */
 	protected function resetQuery(): void

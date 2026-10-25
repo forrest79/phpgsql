@@ -83,31 +83,6 @@ class Result implements \Countable
 	}
 
 
-	/**
-	 * @template T of Row
-	 * @param \Closure(T): void $rowFetchMutator
-	 * @deprecated use addRowFetchMutator() instead
-	 */
-	public function setRowFetchMutator(\Closure $rowFetchMutator): static
-	{
-		$this->rowFetchMutators = [];
-
-		return $this->addRowFetchMutator($rowFetchMutator);
-	}
-
-
-	/**
-	 * @param non-empty-array<string, callable> $columnsFetchMutator
-	 * @deprecated use addColumnsFetchMutator() instead
-	 */
-	public function setColumnsFetchMutator(array $columnsFetchMutator): static
-	{
-		$this->columnsFetchMutators = [];
-
-		return $this->addColumnsFetchMutator($columnsFetchMutator);
-	}
-
-
 	public function free(): bool
 	{
 		return \pg_free_result($this->queryResource);

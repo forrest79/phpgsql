@@ -697,9 +697,11 @@ Calling `fetch...()` methods returns data gathered right from the database. Fetc
 
 There are two fetch mutators types:
 
-- first is row fetch mutator - sets with method `Result::setRowFetchMutator(callable)`. As the name suggests, this mutator can update return `Row` object. `callable` parameter is some function with one parameter - original `Row` and no return is excepted. You can update the `Row` object in callback. This mutator can be used for all fetch methods - in `fetch()`, `fetchAll()` and in some cases also in `fetchAssoc()` methods, the updated `Row` is returned. In `fetchSingle()`, `fetchPairs()` and `fetchAssoc()` methods, the mutator is called and the updated `Row` is used as method input. So you can update column data that are returned from these methods.
+- first are row fetch mutators - added with method `Result::addRowFetchMutator(\Closure)`. As the name suggests, these mutators can update returned `Row` object. `\Closure` parameter is some function with one parameter - original `Row` and no return is expected. You can update the `Row` object in callback. These mutators can be used for all fetch methods - in `fetch()`, `fetchAll()` and in some cases also in `fetchAssoc()` methods, the updated `Row` is returned. In `fetchSingle()`, `fetchPairs()` and `fetchAssoc()` methods, the mutators are called and the updated `Row` is used as method input. So you can update column data that are returned from these methods.
 
-- second are columns fetch mutator - sets with method `Result::setColumnsFetchMutator(array<string, callable>)`. These mutators can update only one concrete column. The parameter is an array, where key is a `column` name and value is some function with one parameter - the column value (if there is also set row fetch mutator, then this is the updated value) and return can be `string` or `int` if column is used as an array key (for `fetchPairs()` or `fetchAssoc()`) or `mixed` if columns is used as an array value (for `fetchPairs()`, `fetchAssoc()` and `fetchSingle()`).  
+- second are columns fetch mutators - added with method `Result::addColumnsFetchMutator(array<string, callable>)`. These mutators can update only one concrete column. The parameter is an array, where key is a `column` name and value is some function with one parameter - the column value (if there are also row fetch mutators, then this is the updated value) and return can be `string` or `int` if column is used as an array key (for `fetchPairs()` or `fetchAssoc()`) or `mixed` if columns is used as an array value (for `fetchPairs()`, `fetchAssoc()` and `fetchSingle()`).  
+
+Both methods can be called multiple times - mutators are added, not replaced, and are called in the order they were added. Row fetch mutators are called one by one on the same `Row` object. Column fetch mutators for the same column are chained - every mutator gets the value returned from the previous one, so the return type rules above apply to the last one. Already added mutators can't be removed.
 
 Examples:
 
@@ -707,7 +709,7 @@ Examples:
 ```php
 $rowsFetchAll = $connection
   ->query('SELECT nick, inserted_datetime, height_cm FROM users ORDER BY id')
-  ->setRowFetchMutator(function (Forrest79\PhPgSql\Db\Row $row): void {
+  ->addRowFetchMutator(function (Forrest79\PhPgSql\Db\Row $row): void {
     $row->height_inch = $row->height_cm / 2.54;
     $row->height_cm = (int) $row->height_cm;
     $row->date = $row->inserted_datetime->format('Y-m-d');
@@ -729,10 +731,10 @@ table($rowsFetchAll);
 
 $rowsFetchAssoc = $connection
   ->query('SELECT nick, inserted_datetime, height_cm FROM users ORDER BY id')
-  ->setRowFetchMutator(function (Forrest79\PhPgSql\Db\Row $row): void {
+  ->addRowFetchMutator(function (Forrest79\PhPgSql\Db\Row $row): void {
     $row->height_inch = $row->height_cm / 2.54;
   })
-  ->setColumnsFetchMutator([
+  ->addColumnsFetchMutator([
     'inserted_datetime' => function (\DateTimeImmutable $datetime): string {
       return $datetime->format('Y-m-d_H:i:s');
     },
@@ -740,6 +742,22 @@ $rowsFetchAssoc = $connection
   ->fetchAssoc('inserted_datetime[]=height_inch');
 
 dump($rowsFetchAssoc); // (array) ['2020-01-01_09:00:00' => [70.157480314961], '2020-01-02_12:05:00' => [71.023622047244, 66.141732283465], '2020-01-03_13:10:00' => [69.173228346457], '2020-01-04_14:15:00' => [66.220472440945]]
+
+$nick = $connection
+  ->query('SELECT nick FROM users WHERE id = ?', 1)
+  ->addColumnsFetchMutator([
+    'nick' => function (string $nick): string {
+      return strtoupper($nick);
+    },
+  ])
+  ->addColumnsFetchMutator([
+    'nick' => function (string $nick): string {
+      return $nick . '!';
+    },
+  ])
+  ->fetchSingle();
+
+dump($nick); // (string) 'BOB!'
 ```
 
 ### Micro-optimization

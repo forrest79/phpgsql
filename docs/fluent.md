@@ -975,8 +975,8 @@ dump($userNick); // (string) 'Bob'
 
 ### Fetch mutators
 
-You can set fetch mutators for the `Result` object right on the `QueryExecute`. There are the same two methods: `QueryExecute::setRowFetchMutator(callable)` and `QueryExecute::setColumnsFetchMutator(array<string, callable>)`.
-Already set fetch mutators are keep also for re-execution the query.  
+You can set fetch mutators for the `Result` object right on the `QueryExecute`. There are the same two methods: `QueryExecute::addRowFetchMutator(\Closure)` and `QueryExecute::addColumnsFetchMutator(array<string, callable>)` and they behave the same way - mutators are added and called in the order they were added.
+Mutators can be added before or after the query is executed. Mutators added after execution are applied to the current result. All added fetch mutators are kept also for re-execution of the query.  
 
 ## Extending
 
