@@ -18,7 +18,7 @@
 		"forrest79/phpcs": "^2.5",
 		"forrest79/phpcs-ignores": "^0.6",
 		"forrest79/phpgsql-phpstan": "^2.0",
-		"nette/tester": "^2.6",
+		"nette/tester": "^2.7",
 		"phpstan/phpstan-strict-rules": "^2.1",
 		"shipmonk/phpstan-rules": "^4.4"
 	},

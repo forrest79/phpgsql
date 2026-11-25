@@ -575,7 +575,7 @@ parameters:
 			path: tests/Unit/ParseDataTypeTest.php
 
 		-
-			rawMessage: 'AnonymousClass9e2a62bb2c94f025d33938f045f89554::__construct() does not call parent constructor from Forrest79\PhPgSql\Db\PreparedStatementHelper.'
+			rawMessage: 'Forrest79\PhPgSql\Db\PreparedStatementHelper@anonymous/tests/Unit/QueryTest.php:172::__construct() does not call parent constructor from Forrest79\PhPgSql\Db\PreparedStatementHelper.'
 			identifier: constructor.missingParentCall
 			count: 1
 			path: tests/Unit/QueryTest.php
